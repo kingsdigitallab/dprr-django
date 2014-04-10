@@ -11,12 +11,14 @@ For production settings see
 https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 """
 
+from wagtailbase import settings as ws
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 PROJECT_NAME = 'dprr'
-PROJECT_TITLE = 'DPRR'
+PROJECT_TITLE = 'Digitising the Prosopography of the Roman Republic'
 
 #------------------------------------------------------------------------------
 # Core Settings
@@ -30,6 +32,24 @@ MANAGERS = ADMINS
 
 ALLOWED_HOSTS = []
 
+# https://docs.djangoproject.com/en/1.6/ref/settings/#caches
+# https://docs.djangoproject.com/en/dev/topics/cache/
+# http://redis.io/topics/lru-cache
+# http://niwibe.github.io/django-redis/
+CACHE_REDIS_DATABASE = '1'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.cache.RedisCache',
+        'LOCATION': '127.0.0.1:6379:' + CACHE_REDIS_DATABASE,
+        'OPTIONS': {
+            'CLIENT_CLASS': 'redis_cache.client.DefaultClient',
+            'IGNORE_EXCEPTIONS': True
+        }
+    }
+}
+
+
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 DATABASES = {
 }
@@ -39,6 +59,8 @@ DEBUG = False
 TEMPLATE_DEBUG = False
 
 INSTALLED_APPS = (
+    'grappelli',
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -46,8 +68,12 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'south',
-    'grappelli',
-    'django.contrib.admin'
+)
+
+INSTALLED_APPS += ws.INSTALLED_APPS
+
+INSTALLED_APPS += (
+    'wagtailbase',
 )
 
 INTERNAL_IPS = ('127.0.0.1',)
@@ -94,6 +120,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+MIDDLEWARE_CLASSES += ws.MIDDLEWARE_CLASSES
+
 ROOT_URLCONF = PROJECT_NAME + '.urls'
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -104,7 +132,7 @@ TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
 )
 
-#TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'))
+TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'))
 
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -160,6 +188,18 @@ if not os.path.exists(MEDIA_ROOT):
 # Installed Applications Settings
 #------------------------------------------------------------------------------
 
+#------------------------------------------------------------------------------
+# CMS
+#------------------------------------------------------------------------------
+
+ITEMS_PER_PAGE = ws.ITEMS_PER_PAGE
+
+#------------------------------------------------------------------------------
+# Wagtail
+# http://wagtail.readthedocs.org/en/latest/
+#------------------------------------------------------------------------------
+
+WAGTAIL_SITE_NAME = PROJECT_TITLE
 
 #------------------------------------------------------------------------------
 # Django Grappelli

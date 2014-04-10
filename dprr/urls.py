@@ -1,31 +1,28 @@
 from django.conf.urls import patterns, include, url
-from django.contrib.gis import admin
-from mezzanine.core.views import direct_to_template
-from mezzanine.conf import settings
 
+import settings
+from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-                       ('^admin/', include(admin.site.urls)),
-                       )
+    # Examples:
+    # url(r'^$', 'app.views.home', name='home'),
+    # url(r'^blog/', include('blog.urls')),
 
-# Filebrowser admin media library.
-if getattr(settings, 'PACKAGE_NAME_FILEBROWSER') in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-                            ('^admin/media-library/',
-                             include('%s.urls' %
-                                     settings.PACKAGE_NAME_FILEBROWSER)),
-                            )
+    url(r'^admin/', include(admin.site.urls)),
+)
 
-urlpatterns += patterns('',
-                        # homepage as static template
-                        url('^$', direct_to_template,
-                            {'template': 'index.html'}, name='home'),
 
-                        url('^', include('mezzanine.urls')),
-                        )
+#------------------------------------------------------------------------------
+# Django Debug Toolbar URLS
+#------------------------------------------------------------------------------
 
-# Adds ``STATIC_URL`` to the context of error pages, so that error
-# pages can use JS, CSS and images.
-handler404 = 'mezzanine.core.views.page_not_found'
-handler500 = 'mezzanine.core.views.server_error'
+try:
+    if settings.DEBUG:
+        import debug_toolbar
+        urlpatterns += patterns('',
+            url(r'^__debug__/', include(debug_toolbar.urls)),
+        )
+
+except ImportError:
+    pass

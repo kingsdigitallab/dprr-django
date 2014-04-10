@@ -1,0 +1,13 @@
+syntax: glob
+*~
+*.db
+*.log
+*.pyc
+.DS_Store
+.ropeproject
+.sass*
+db.*
+local_settings.py
+logs
+static
+tags

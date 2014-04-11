@@ -73,6 +73,7 @@ INSTALLED_APPS = (
 INSTALLED_APPS += ws.INSTALLED_APPS
 
 INSTALLED_APPS += (
+    'promrep',
     'wagtailbase',
 )
 

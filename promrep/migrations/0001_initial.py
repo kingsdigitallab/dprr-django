@@ -39,11 +39,13 @@ class Migration(SchemaMigration):
             ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
             ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
             ('praenomen', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Praenomen'])),
-            ('nomen', self.gf('django.db.models.fields.CharField')(unique=True, max_length=128)),
-            ('cognomen', self.gf('django.db.models.fields.CharField')(unique=True, max_length=128)),
+            ('nomen', self.gf('django.db.models.fields.CharField')(max_length=128)),
+            ('cognomen', self.gf('django.db.models.fields.CharField')(max_length=128)),
             ('sex', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Sex'])),
-            ('real_number', self.gf('django.db.models.fields.CharField')(unique=True, max_length=32)),
-            ('real_attribute', self.gf('django.db.models.fields.CharField')(unique=True, max_length=128)),
+            ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
+            ('filliation', self.gf('django.db.models.fields.CharField')(max_length=256, blank=True)),
+            ('real_number', self.gf('django.db.models.fields.CharField')(max_length=32)),
+            ('real_attribute', self.gf('django.db.models.fields.CharField')(max_length=128, blank=True)),
         ))
         db.send_create_signal(u'promrep', ['Person'])
 
@@ -91,6 +93,35 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'promrep', ['AssertionPerson'])
 
+        # Adding model 'DateType'
+        db.create_table(u'promrep_datetype', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=32)),
+            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, blank=True)),
+        ))
+        db.send_create_signal(u'promrep', ['DateType'])
+
+        # Adding model 'Date'
+        db.create_table(u'promrep_date', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'])),
+            ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')()),
+            ('date_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.DateType'], null=True, blank=True)),
+            ('interval', self.gf('django.db.models.fields.SmallIntegerField')()),
+            ('year', self.gf('promrep.models.IntegerRangeField')(null=True, blank=True)),
+            ('year_uncertain', self.gf('django.db.models.fields.BooleanField')()),
+            ('month', self.gf('promrep.models.IntegerRangeField')(null=True, blank=True)),
+            ('month_uncertain', self.gf('django.db.models.fields.BooleanField')()),
+            ('day', self.gf('promrep.models.IntegerRangeField')(null=True, blank=True)),
+            ('day_uncertain', self.gf('django.db.models.fields.BooleanField')()),
+            ('circa', self.gf('django.db.models.fields.BooleanField')()),
+            ('notes', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, blank=True)),
+        ))
+        db.send_create_signal(u'promrep', ['Date'])
+
 
     def backwards(self, orm):
         # Deleting model 'Praenomen'
@@ -117,8 +148,21 @@ class Migration(SchemaMigration):
         # Deleting model 'AssertionPerson'
         db.delete_table(u'promrep_assertionperson')
 
+        # Deleting model 'DateType'
+        db.delete_table(u'promrep_datetype')
+
+        # Deleting model 'Date'
+        db.delete_table(u'promrep_date')
+
 
     models = {
+        u'contenttypes.contenttype': {
+            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
+            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+        },
         u'promrep.assertion': {
             'Meta': {'object_name': 'Assertion'},
             'assertion_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.AssertionType']"}),
@@ -145,6 +189,31 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'})
         },
+        u'promrep.date': {
+            'Meta': {'object_name': 'Date'},
+            'circa': ('django.db.models.fields.BooleanField', [], {}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'date_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.DateType']", 'null': 'True', 'blank': 'True'}),
+            'day': ('promrep.models.IntegerRangeField', [], {'null': 'True', 'blank': 'True'}),
+            'day_uncertain': ('django.db.models.fields.BooleanField', [], {}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'interval': ('django.db.models.fields.SmallIntegerField', [], {}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'auto_now_add': 'True', 'blank': 'True'}),
+            'month': ('promrep.models.IntegerRangeField', [], {'null': 'True', 'blank': 'True'}),
+            'month_uncertain': ('django.db.models.fields.BooleanField', [], {}),
+            'notes': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
+            'year': ('promrep.models.IntegerRangeField', [], {'null': 'True', 'blank': 'True'}),
+            'year_uncertain': ('django.db.models.fields.BooleanField', [], {})
+        },
+        u'promrep.datetype': {
+            'Meta': {'ordering': "['name']", 'object_name': 'DateType'},
+            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'auto_now_add': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '32'})
+        },
         u'promrep.office': {
             'Meta': {'object_name': 'Office'},
             'description': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
@@ -158,14 +227,16 @@ class Migration(SchemaMigration):
         },
         u'promrep.person': {
             'Meta': {'object_name': 'Person'},
-            'cognomen': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'}),
+            'cognomen': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
+            'filliation': ('django.db.models.fields.CharField', [], {'max_length': '256', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
-            'nomen': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'}),
+            'nomen': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
             'praenomen': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Praenomen']"}),
-            'real_attribute': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'}),
-            'real_number': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '32'}),
+            'real_attribute': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
+            'real_number': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
             'sex': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Sex']"})
         },
         u'promrep.praenomen': {

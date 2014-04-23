@@ -1,9 +1,13 @@
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
 
-from models import Person, Office, Assertion, AssertionPerson, Praenomen, AssertionType
+from models import Person, Office, Praenomen, \
+    AssertionPerson, Assertion, AssertionType, \
+    Date, DateType
 
 admin.site.register(AssertionType)
+admin.site.register(Date)
+admin.site.register(DateType)
 
 class AssertionPersonInline(admin.TabularInline):
     model = AssertionPerson

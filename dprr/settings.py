@@ -74,6 +74,17 @@ INSTALLED_APPS = (
 
 INSTALLED_APPS += ws.INSTALLED_APPS
 
+
+# Promrep settings
+DATE_SINGLE = 0
+DATE_MIN = 1
+DATE_MAX = 2
+DATE_INTERVAL_CHOICES = (
+       (DATE_SINGLE, 'single'),
+       (DATE_MIN, 'min'),
+       (DATE_MAX, 'max')
+       )
+
 INSTALLED_APPS += (
     'promrep',
     'wagtailbase',

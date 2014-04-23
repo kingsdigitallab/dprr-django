@@ -15,6 +15,7 @@ class Migration(DataMigration):
         from django.core.management import call_command
 
         call_command("loaddata", "promrep/fixtures/promrep_sex.json")
+        call_command("loaddata", "promrep/fixtures/promrep_praenomina.json")
 
     def backwards(self, orm):
         "Write your backwards methods here."

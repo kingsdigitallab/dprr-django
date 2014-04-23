@@ -1,0 +1,16 @@
+[
+{
+    "pk": 1, 
+    "model": "promrep.sex", 
+    "fields": {
+        "name": "Male"
+    }
+},
+{
+    "pk": 2, 
+    "model": "promrep.sex", 
+    "fields": {
+        "name": "Female"
+    }
+}
+]

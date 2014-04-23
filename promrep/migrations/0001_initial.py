@@ -29,7 +29,7 @@ class Migration(SchemaMigration):
             ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
             ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
             ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=128)),
-            ('description', self.gf('django.db.models.fields.CharField')(unique=True, max_length=1024)),
+            ('description', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
         ))
         db.send_create_signal(u'promrep', ['RoleType'])
 
@@ -50,11 +50,13 @@ class Migration(SchemaMigration):
         # Adding model 'Office'
         db.create_table(u'promrep_office', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
-            ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
             ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=256)),
-            ('description', self.gf('django.db.models.fields.CharField')(unique=True, max_length=1024)),
-            ('notes', self.gf('django.db.models.fields.CharField')(unique=True, max_length=1024)),
+            ('description', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
+            ('parent', self.gf('mptt.fields.TreeForeignKey')(blank=True, related_name='children', null=True, to=orm['promrep.Office'])),
+            (u'lft', self.gf('django.db.models.fields.PositiveIntegerField')(db_index=True)),
+            (u'rght', self.gf('django.db.models.fields.PositiveIntegerField')(db_index=True)),
+            (u'tree_id', self.gf('django.db.models.fields.PositiveIntegerField')(db_index=True)),
+            (u'level', self.gf('django.db.models.fields.PositiveIntegerField')(db_index=True)),
         ))
         db.send_create_signal(u'promrep', ['Office'])
 
@@ -71,9 +73,9 @@ class Migration(SchemaMigration):
             ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
             ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
             ('assertion_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.AssertionType'])),
-            ('display_text', self.gf('django.db.models.fields.CharField')(unique=True, max_length=1024)),
-            ('date_year', self.gf('django.db.models.fields.CharField')(unique=True, max_length=64)),
-            ('notes', self.gf('django.db.models.fields.CharField')(unique=True, max_length=1024)),
+            ('display_text', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
+            ('date_year', self.gf('django.db.models.fields.CharField')(max_length=64, blank=True)),
+            ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
         ))
         db.send_create_signal(u'promrep', ['Assertion'])
 
@@ -85,7 +87,7 @@ class Migration(SchemaMigration):
             ('person', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Person'])),
             ('assertion', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Assertion'])),
             ('role', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.RoleType'])),
-            ('original_text', self.gf('django.db.models.fields.CharField')(unique=True, max_length=1024)),
+            ('original_text', self.gf('django.db.models.fields.CharField')(max_length=1024)),
         ))
         db.send_create_signal(u'promrep', ['AssertionPerson'])
 
@@ -121,11 +123,11 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Assertion'},
             'assertion_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.AssertionType']"}),
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
-            'date_year': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '64'}),
-            'display_text': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '1024'}),
+            'date_year': ('django.db.models.fields.CharField', [], {'max_length': '64', 'blank': 'True'}),
+            'display_text': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
-            'notes': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '1024'}),
+            'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
             'persons': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['promrep.Person']", 'through': u"orm['promrep.AssertionPerson']", 'symmetrical': 'False'})
         },
         u'promrep.assertionperson': {
@@ -134,7 +136,7 @@ class Migration(SchemaMigration):
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
-            'original_text': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '1024'}),
+            'original_text': ('django.db.models.fields.CharField', [], {'max_length': '1024'}),
             'person': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Person']"}),
             'role': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.RoleType']"})
         },
@@ -145,12 +147,14 @@ class Migration(SchemaMigration):
         },
         u'promrep.office': {
             'Meta': {'object_name': 'Office'},
-            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
-            'description': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '1024'}),
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
+            u'level': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
+            u'lft': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'}),
-            'notes': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '1024'})
+            'parent': ('mptt.fields.TreeForeignKey', [], {'blank': 'True', 'related_name': "'children'", 'null': 'True', 'to': u"orm['promrep.Office']"}),
+            u'rght': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
+            u'tree_id': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'})
         },
         u'promrep.person': {
             'Meta': {'object_name': 'Person'},
@@ -173,7 +177,7 @@ class Migration(SchemaMigration):
         u'promrep.roletype': {
             'Meta': {'object_name': 'RoleType'},
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
-            'description': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '1024'}),
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'})

@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'south',
+    'mptt',
 )
 
 INSTALLED_APPS += ws.INSTALLED_APPS

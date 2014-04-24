@@ -1,0 +1,80 @@
+[
+{
+    "pk": 1, 
+    "model": "promrep.office", 
+    "fields": {
+        "rght": 6, 
+        "name": "Sacerdotes", 
+        "parent": null, 
+        "level": 0, 
+        "lft": 1, 
+        "tree_id": 1, 
+        "description": ""
+    }
+},
+{
+    "pk": 2, 
+    "model": "promrep.office", 
+    "fields": {
+        "rght": 3, 
+        "name": "Vestales", 
+        "parent": 1, 
+        "level": 1, 
+        "lft": 2, 
+        "tree_id": 1, 
+        "description": ""
+    }
+},
+{
+    "pk": 3, 
+    "model": "promrep.office", 
+    "fields": {
+        "rght": 5, 
+        "name": "Augures", 
+        "parent": 1, 
+        "level": 1, 
+        "lft": 4, 
+        "tree_id": 1, 
+        "description": ""
+    }
+},
+{
+    "pk": 4, 
+    "model": "promrep.office", 
+    "fields": {
+        "rght": 6, 
+        "name": "Civic Offices", 
+        "parent": null, 
+        "level": 0, 
+        "lft": 1, 
+        "tree_id": 2, 
+        "description": ""
+    }
+},
+{
+    "pk": 5, 
+    "model": "promrep.office", 
+    "fields": {
+        "rght": 3, 
+        "name": "Consul", 
+        "parent": 4, 
+        "level": 1, 
+        "lft": 2, 
+        "tree_id": 2, 
+        "description": ""
+    }
+},
+{
+    "pk": 6, 
+    "model": "promrep.office", 
+    "fields": {
+        "rght": 5, 
+        "name": "Praetors", 
+        "parent": 4, 
+        "level": 1, 
+        "lft": 4, 
+        "tree_id": 2, 
+        "description": ""
+    }
+}
+]

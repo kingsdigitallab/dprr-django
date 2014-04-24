@@ -58,6 +58,7 @@ class Person(TimeStampedModel):
     cognomen = models.CharField(max_length=128)
     sex = models.ForeignKey(Sex)
 
+
     notes = models.CharField(max_length=1024, blank=True)
 
     filliation = models.CharField(max_length=256, blank=True)
@@ -71,9 +72,24 @@ class Person(TimeStampedModel):
         return r_id.strip()
 
     def __unicode__(self):
-        name_parts = [self.praenomen, self.nomen, self.cognomen]
+        # TODO: add praenomen, Re number
+        name_parts = [self.nomen, self.cognomen]
 
-        return " ".join(name_parts + self.real_id())
+        return " ".join(name_parts)
+
+
+
+# broughton, etc
+class SecondarySource(models.Model):
+    name = models.CharField(max_length=256, unique=True)
+
+    abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
+    biblio = models.CharField(max_length=512, unique=True, blank=True)
+
+
+#
+class PrimarySource(models.Model):
+    name = models.CharField(max_length=256, unique=True)
 
 
 class Office(MPTTModel):
@@ -81,6 +97,14 @@ class Office(MPTTModel):
     description = models.CharField(max_length=1024, blank=True)
 
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
+
+    class Meta:
+        verbose_name_plural = 'Offices'
+        verbose_name = 'Office List'
+        ordering = ['tree_id', 'lft', 'name']
+
+    class MPTTMeta:
+        order_insertion_by = ['name',]
 
     def __unicode__(self):
         return self.name
@@ -96,12 +120,16 @@ class AssertionType(models.Model):
 class Assertion(TimeStampedModel):
     persons = models.ManyToManyField(Person, through='AssertionPerson')
     assertion_type = models.ForeignKey(AssertionType)
+    office = models.ForeignKey(Office)
+    secondary_source = models.ForeignKey(SecondarySource)
 
     display_text = models.CharField(max_length=1024, blank=True)
     date_year = models.CharField(max_length=64, blank=True)
 
     notes = models.CharField(max_length=1024, blank=True)
 
+    def get_persons(self):
+        return "\n".join([str(a) for a in self.persons.all()])
 
 
 class AssertionPerson(TimeStampedModel):
@@ -110,7 +138,7 @@ class AssertionPerson(TimeStampedModel):
     assertion = models.ForeignKey(Assertion)
 
     role = models.ForeignKey(RoleType)
-    original_text = models.CharField(max_length=1024)
+    original_text = models.CharField(max_length=1024, blank=True)
 
 
 class DateType(models.Model):
@@ -151,6 +179,11 @@ class Date(models.Model):
 
 
 
-
+# TODO:
+#
+# multiple secondary sources -- multiple assertions ?????
+#
+# multiple secondary sources -- multiple primary sources (via primary source ref? -- original text)
+# no direct link between assertion and primary source ????
 
 

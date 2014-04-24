@@ -49,6 +49,22 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'promrep', ['Person'])
 
+        # Adding model 'SecondarySource'
+        db.create_table(u'promrep_secondarysource', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=256)),
+            ('abbrev_name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=256, blank=True)),
+            ('biblio', self.gf('django.db.models.fields.CharField')(unique=True, max_length=512, blank=True)),
+        ))
+        db.send_create_signal(u'promrep', ['SecondarySource'])
+
+        # Adding model 'PrimarySource'
+        db.create_table(u'promrep_primarysource', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=256)),
+        ))
+        db.send_create_signal(u'promrep', ['PrimarySource'])
+
         # Adding model 'Office'
         db.create_table(u'promrep_office', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -75,6 +91,8 @@ class Migration(SchemaMigration):
             ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
             ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
             ('assertion_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.AssertionType'])),
+            ('office', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Office'])),
+            ('secondary_source', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.SecondarySource'])),
             ('display_text', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
             ('date_year', self.gf('django.db.models.fields.CharField')(max_length=64, blank=True)),
             ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
@@ -136,6 +154,12 @@ class Migration(SchemaMigration):
         # Deleting model 'Person'
         db.delete_table(u'promrep_person')
 
+        # Deleting model 'SecondarySource'
+        db.delete_table(u'promrep_secondarysource')
+
+        # Deleting model 'PrimarySource'
+        db.delete_table(u'promrep_primarysource')
+
         # Deleting model 'Office'
         db.delete_table(u'promrep_office')
 
@@ -172,7 +196,9 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
-            'persons': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['promrep.Person']", 'through': u"orm['promrep.AssertionPerson']", 'symmetrical': 'False'})
+            'office': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Office']"}),
+            'persons': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['promrep.Person']", 'through': u"orm['promrep.AssertionPerson']", 'symmetrical': 'False'}),
+            'secondary_source': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.SecondarySource']"})
         },
         u'promrep.assertionperson': {
             'Meta': {'object_name': 'AssertionPerson'},
@@ -215,7 +241,7 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '32'})
         },
         u'promrep.office': {
-            'Meta': {'object_name': 'Office'},
+            'Meta': {'ordering': "['tree_id', 'lft', 'name']", 'object_name': 'Office'},
             'description': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             u'level': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
@@ -245,6 +271,11 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'})
         },
+        u'promrep.primarysource': {
+            'Meta': {'object_name': 'PrimarySource'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'})
+        },
         u'promrep.roletype': {
             'Meta': {'object_name': 'RoleType'},
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
@@ -252,6 +283,13 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'})
+        },
+        u'promrep.secondarysource': {
+            'Meta': {'object_name': 'SecondarySource'},
+            'abbrev_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256', 'blank': 'True'}),
+            'biblio': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '512', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'})
         },
         u'promrep.sex': {
             'Meta': {'object_name': 'Sex'},

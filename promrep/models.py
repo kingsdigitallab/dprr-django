@@ -71,11 +71,15 @@ class Person(TimeStampedModel):
 
         return r_id.strip()
 
-    def __unicode__(self):
-        # TODO: add praenomen, Re number
-        name_parts = [self.nomen, self.cognomen]
+    def get_name(self):
+        name_parts = [self.praenomen.abbrev, self.nomen, self.cognomen]
 
         return " ".join(name_parts)
+
+    def __unicode__(self):
+        # TODO: add praenomen, Re number
+
+        return self.get_name() + " (" + self.real_id() + ")"
 
 
 
@@ -86,11 +90,16 @@ class SecondarySource(models.Model):
     abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
     biblio = models.CharField(max_length=512, unique=True, blank=True)
 
+    def __unicode__(self):
+        return self.abbrev_name
 
 #
 class PrimarySource(models.Model):
     name = models.CharField(max_length=256, unique=True)
 
+
+    def __unicode__(self):
+        return self.name
 
 class Office(MPTTModel):
     name = models.CharField(max_length=256, unique=True)
@@ -121,6 +130,7 @@ class Assertion(TimeStampedModel):
     persons = models.ManyToManyField(Person, through='AssertionPerson')
     assertion_type = models.ForeignKey(AssertionType)
     office = models.ForeignKey(Office)
+
     secondary_source = models.ForeignKey(SecondarySource)
 
     display_text = models.CharField(max_length=1024, blank=True)

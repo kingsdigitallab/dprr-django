@@ -20,7 +20,7 @@ class AssertionPersonInline(admin.TabularInline):
 class PersonAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Database Info', {'fields': ['id',]}),
-        ('Person',   {'fields': ['sex', 'praenomen', 'nomen', 'cognomen', 'filliation',]}),
+        ('Person',   {'fields': ['sex', 'praenomen', 'nomen', 'cognomen_first', 'cognomen_other', 'filliation',]}),
         ('Real',   {'fields': ['real_number', 'real_attribute']}),
         ('Other', {'fields': ['is_noble', 'is_novus_homo']}),
     ]

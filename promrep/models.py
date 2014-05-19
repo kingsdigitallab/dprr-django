@@ -53,9 +53,11 @@ class RoleType(TimeStampedModel):
         return self.name
 
 
+
 class Person(TimeStampedModel):
-    praenomen = models.ForeignKey( Praenomen )
+    praenomen = models.ForeignKey( Praenomen, default=lambda: Praenomen.objects.get( name="Unknown")  )
     nomen = models.CharField( max_length=128 )
+
     cognomen = models.CharField( max_length=128 )
     sex = models.ForeignKey(Sex)
 
@@ -91,7 +93,6 @@ class Person(TimeStampedModel):
         return self.get_name() + " (" + self.real_id() + ")"
 
 
-
 # broughton, etc
 class SecondarySource(models.Model):
     name = models.CharField(max_length=256, unique=True)
@@ -109,6 +110,7 @@ class PrimarySource(models.Model):
 
     def __unicode__(self):
         return self.name
+
 
 class Office(MPTTModel):
     name = models.CharField(max_length=256, unique=True)

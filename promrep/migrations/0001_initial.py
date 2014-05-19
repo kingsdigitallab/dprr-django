@@ -42,6 +42,8 @@ class Migration(SchemaMigration):
             ('nomen', self.gf('django.db.models.fields.CharField')(max_length=128)),
             ('cognomen', self.gf('django.db.models.fields.CharField')(max_length=128)),
             ('sex', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Sex'])),
+            ('is_noble', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('is_novus_homo', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
             ('filliation', self.gf('django.db.models.fields.CharField')(max_length=256, blank=True)),
             ('real_number', self.gf('django.db.models.fields.CharField')(max_length=32)),
@@ -107,7 +109,7 @@ class Migration(SchemaMigration):
             ('person', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Person'])),
             ('assertion', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Assertion'])),
             ('role', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.RoleType'])),
-            ('original_text', self.gf('django.db.models.fields.CharField')(max_length=1024)),
+            ('original_text', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
         ))
         db.send_create_signal(u'promrep', ['AssertionPerson'])
 
@@ -206,7 +208,7 @@ class Migration(SchemaMigration):
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
-            'original_text': ('django.db.models.fields.CharField', [], {'max_length': '1024'}),
+            'original_text': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
             'person': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Person']"}),
             'role': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.RoleType']"})
         },
@@ -257,6 +259,8 @@ class Migration(SchemaMigration):
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             'filliation': ('django.db.models.fields.CharField', [], {'max_length': '256', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_noble': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_novus_homo': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'nomen': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),

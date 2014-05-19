@@ -21,6 +21,8 @@ class PersonAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Database Info', {'fields': ['id',]}),
         ('Person',   {'fields': ['sex', 'praenomen', 'nomen', 'cognomen', 'filliation',]}),
+        ('Real',   {'fields': ['real_number', 'real_attribute']}),
+        ('Other', {'fields': ['is_noble', 'is_novus_homo']}),
     ]
 
     readonly_fields=('id',)

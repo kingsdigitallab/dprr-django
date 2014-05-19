@@ -53,11 +53,13 @@ class RoleType(TimeStampedModel):
 
 
 class Person(TimeStampedModel):
-    praenomen = models.ForeignKey(Praenomen)
-    nomen = models.CharField(max_length=128)
-    cognomen = models.CharField(max_length=128)
+    praenomen = models.ForeignKey( Praenomen )
+    nomen = models.CharField( max_length=128 )
+    cognomen = models.CharField( max_length=128 )
     sex = models.ForeignKey(Sex)
 
+    is_noble = models.BooleanField( default=False, blank=True )
+    is_novus_homo = models.BooleanField( default=False, blank=True )
 
     notes = models.CharField(max_length=1024, blank=True)
 

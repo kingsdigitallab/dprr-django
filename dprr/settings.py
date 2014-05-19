@@ -74,6 +74,12 @@ INSTALLED_APPS = (
 
 INSTALLED_APPS += ws.INSTALLED_APPS
 
+INSTALLED_APPS += (
+    'promrep',
+    'wagtailbase',
+)
+
+INTERNAL_IPS = ('127.0.0.1',)
 
 # Promrep settings
 DATE_SINGLE = 0
@@ -85,12 +91,9 @@ DATE_INTERVAL_CHOICES = (
        (DATE_MAX, 'max')
        )
 
-INSTALLED_APPS += (
-    'promrep',
-    'wagtailbase',
-)
 
-INTERNAL_IPS = ('127.0.0.1',)
+
+
 
 # https://docs.djangoproject.com/en/1.6/topics/logging/
 LOGGING_ROOT = os.path.join(BASE_DIR, 'logs')
@@ -169,7 +172,7 @@ WSGI_APPLICATION = PROJECT_NAME + '.wsgi.application'
 #------------------------------------------------------------------------------
 
 LOGIN_URL = 'django.contrib.auth.views.login'
-LOGIN_REDIRECT_URL = ''
+LOGIN_REDIRECT_URL = 'wagtailadmin_home'
 
 
 #------------------------------------------------------------------------------
@@ -191,6 +194,8 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
 )
 
+STATICFILES_FINDERS += ws.STATICFILES_FINDERS
+
 MEDIA_URL = STATIC_URL + 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL.strip('/'))
 
@@ -207,6 +212,14 @@ if not os.path.exists(MEDIA_ROOT):
 #------------------------------------------------------------------------------
 
 ITEMS_PER_PAGE = ws.ITEMS_PER_PAGE
+
+
+#------------------------------------------------------------------------------
+# Django Compressor
+# http://django-compressor.readthedocs.org/en/latest/
+#------------------------------------------------------------------------------
+
+COMPRESS_PRECOMPILERS = ws.COMPRESS_PRECOMPILERS
 
 #------------------------------------------------------------------------------
 # Wagtail

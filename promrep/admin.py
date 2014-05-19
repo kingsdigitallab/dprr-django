@@ -26,7 +26,7 @@ class PersonAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields=('id',)
-    list_display = ('id', 'praenomen', 'nomen', 'cognomen', 'sex', 'filliation', )
+    list_display = ('id', 'url_to_edit_person', 'sex', 'is_noble', 'is_novus_homo', 'filliation', 'notes', )
 
     inlines = (AssertionPersonInline,)
 

@@ -6,6 +6,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+from django.core.urlresolvers import reverse
 
 class IntegerRangeField(models.IntegerField):
     def __init__(self, verbose_name=None, name=None, min_value=None,
@@ -58,11 +59,10 @@ class Person(TimeStampedModel):
     cognomen = models.CharField( max_length=128 )
     sex = models.ForeignKey(Sex)
 
-    is_noble = models.BooleanField( default=False, blank=True )
-    is_novus_homo = models.BooleanField( default=False, blank=True )
+    is_noble = models.BooleanField( default=False, blank=True, verbose_name = "Noble" )
+    is_novus_homo = models.BooleanField( default=False, blank=True, verbose_name = "Novus Homo" )
 
     notes = models.CharField(max_length=1024, blank=True)
-
     filliation = models.CharField(max_length=256, blank=True)
 
     real_number = models.CharField(max_length=32)
@@ -77,6 +77,13 @@ class Person(TimeStampedModel):
         name_parts = [self.praenomen.abbrev, self.nomen, self.cognomen]
 
         return " ".join(name_parts)
+
+    def url_to_edit_person(self):
+        url = reverse('admin:%s_%s_change' %(self._meta.app_label,  self._meta.module_name),  args=[self.id] )
+        return u'<a href="%s">%s</a>' %(url,  self.__unicode__())
+
+    url_to_edit_person.allow_tags = True
+    url_to_edit_person.short_description = 'Person'
 
     def __unicode__(self):
         # TODO: add praenomen, Re number

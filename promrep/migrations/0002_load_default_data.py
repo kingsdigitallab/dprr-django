@@ -17,6 +17,7 @@ class Migration(DataMigration):
         call_command("loaddata", "promrep/fixtures/promrep_sex.json")
         call_command("loaddata", "promrep/fixtures/promrep_praenomina.json")
         call_command("loaddata", "promrep/fixtures/promrep_offices.json")
+        call_command("loaddata", "promrep/fixtures/promrep_certainty.json")
 
     def backwards(self, orm):
         "Write your backwards methods here."

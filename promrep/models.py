@@ -8,6 +8,7 @@ from django.contrib.contenttypes import generic
 
 from django.core.urlresolvers import reverse
 
+
 class IntegerRangeField(models.IntegerField):
     def __init__(self, verbose_name=None, name=None, min_value=None,
             max_value=None, **kwargs):
@@ -37,6 +38,7 @@ class Praenomen(models.Model):
         ordering = ['name']
 
 
+
 class Sex(models.Model):
     name = models.CharField(max_length=64, unique=True)
 
@@ -54,9 +56,8 @@ class RoleType(TimeStampedModel):
 
 
 class Certainty(models.Model):
-    name = models.CharField(max_length=64, unique=True)
-
-    description = models.CharField(max_length=256, blank=True)
+    name = models.CharField( max_length=64, unique=True )
+    description = models.CharField( max_length=256, blank=True )
 
     def __unicode__(self):
         return self.name
@@ -67,23 +68,29 @@ class Person(TimeStampedModel):
     nomen = models.CharField( max_length=128 )
 
     cognomen_first = models.CharField( max_length=64 )
-    cognomen_other = models.CharField( max_length=128 )
+    cognomen_other = models.CharField( max_length=128, blank=True )
 
     sex = models.ForeignKey(Sex)
 
     tribe = models.CharField( max_length=128, blank=True )
 
     is_patrician = models.BooleanField( default=False, blank=True, verbose_name = "Patrician" )
+    patrician_certainty = models.ForeignKey( Certainty, related_name='person_patrician_certainty' )
+
     is_noble = models.BooleanField( default=False, blank=True, verbose_name = "Noble" )
+    noble_certainty = models.ForeignKey( Certainty, related_name='person_noble_certainty' )
+
     is_novus_homo = models.BooleanField( default=False, blank=True, verbose_name = "Novus Homo" )
+    novus_homo_certainty = models.ForeignKey( Certainty, related_name='person_novus_homo_certainty' )
 
     notes = models.CharField(max_length=1024, blank=True)
     filliation = models.CharField(max_length=256, blank=True)
 
-    real_number = models.CharField(max_length=32, verbose_name="RE Number")
-    real_number_old = models.CharField(max_length=32, verbose_name="RE Number (Starred)")
+    real_number = models.CharField(max_length=32, blank=True, verbose_name="RE Number")
+    real_number_old = models.CharField(max_length=32, blank=True, verbose_name="RE Number (Starred)")
 
     real_attribute = models.CharField(max_length=128, blank=True)
+
 
     def cognomen(self):
         return self.cognomen_first + self.cognomen_other

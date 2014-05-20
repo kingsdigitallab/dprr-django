@@ -3,13 +3,14 @@ from mptt.admin import MPTTModelAdmin
 
 from models import Person, Office, Praenomen, \
     AssertionPerson, Assertion, AssertionType, RoleType, \
-    Date, DateType, \
+    Date, DateType, Certainty, \
     SecondarySource
 
 admin.site.register(AssertionType)
 admin.site.register(Date)
 admin.site.register(DateType)
 admin.site.register(RoleType)
+
 
 class AssertionPersonInline(admin.TabularInline):
     readonly_fields=('id',)
@@ -21,12 +22,12 @@ class PersonAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Database Info', {'fields': ['id',]}),
         ('Person',   {'fields': ['sex', 'praenomen', 'nomen', 'cognomen_first', 'cognomen_other', 'filliation',]}),
-        ('Real',   {'fields': ['real_number', 'real_attribute']}),
-        ('Other', {'fields': ['is_noble', 'is_novus_homo']}),
+        ('Real',   {'fields': ['real_number', 'real_number_old', 'real_attribute']}),
+        ('Other', {'fields': ['is_noble', 'noble_certainty', 'is_novus_homo', 'novus_homo_certainty', 'is_patrician', 'patrician_certainty']}),
     ]
 
     readonly_fields=('id',)
-    list_display = ('id', 'url_to_edit_person', 'sex', 'is_noble', 'is_novus_homo', 'filliation', 'notes', )
+    list_display = ('id', 'url_to_edit_person', 'filliation', 'sex', 'is_noble', 'is_novus_homo', 'is_patrician', 'notes', )
 
     inlines = (AssertionPersonInline,)
 
@@ -51,6 +52,14 @@ class AssertionAdmin(admin.ModelAdmin):
     ]
 
 admin.site.register(Assertion, AssertionAdmin)
+
+
+class CertaintyAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'description')
+    readonly_fields=('id',)
+    list_display_links = ('id', 'name', 'description')
+
+admin.site.register(Certainty, CertaintyAdmin)
 
 
 class PraenomenAdmin(admin.ModelAdmin):

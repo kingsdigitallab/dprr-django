@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from bs4 import BeautifulSoup, NavigableString
+from bs4 import BeautifulSoup
 import regex
 
 from promrep.models import Assertion, AssertionPerson, AssertionType, \
@@ -13,12 +13,14 @@ def run():
 
     # this is the file exported by OpenOffice
 
-    ifile = 'output-tidy-v4-MR-v1.xml'
+    ifile = 'promrep/scripts/data/output-tidy-v4-MR-v1.xml'
     print 'Will process input file', ifile
     processXML(ifile)
 
 
-def parse_person_name(self, text):
+def parse_person_name(text):
+
+    print "Will parse person: ", text
 
     # TODO: this should come from the database...
 
@@ -63,7 +65,7 @@ def parse_person_name(self, text):
         (?P<date_certainty>\?[\s\-])?    # question mark followed by either a space or a dash in the start of line
         (?P<praenomen>%s\s)?
         (?P<nomen>\(?\w+?\)?\s)?
-        (?P<affiliation>(%s|-)\s[fn-]?\.?\s){0,6}?
+        (?P<filiation>(%s|-)\s[fn-]?\.?\s){0,6}?
         (?P<cognomen>\(?[\?\w]+?\)?\s){0,8}
         (?<patrician>Pat\.\s)?
          \(\*?(?P<real>
@@ -82,29 +84,60 @@ def parse_person_name(self, text):
     captured = person_re.match(text)
 
     if captured:
-        print captured.captures(1), captured.captures(2), \
-            captured.captures(3)
-        self.real = captured.captures('real')[0].strip()
+        real = captured.captures('real')[0].strip()
+
+        sex = Sex.objects.get(name="Male")
+
         if len(captured.captures('praenomen')):
-            self.praenomen = captured.captures('praenomen')[0].strip()
-        self.nomen = captured.captures('nomen')[0].strip()
-        if len(captured.captures('patrician')):
-            self.is_patrician = True
+            praenomen = captured.captures('praenomen')[0].strip()
+            praenomen = Praenomen.objects.get(abbrev = praenomen)
         else:
-            self.is_patrician = False
+            praenomen = None
+
+        nomen = captured.captures('nomen')[0].strip()
+
+        if len(captured.captures('patrician')):
+            is_patrician = True
+        else:
+            is_patrician = False
+
         cog_list = captured.captures('cognomen')
+
+        cognomen_first = ''
+        cognomen_other = ''
+
         if len(cog_list):
-            self.cognomen_first = cog_list[0].strip()
+            cognomen_first = cog_list[0].strip()
+
         if len(cog_list) > 1:
-            self.cognomen_other = \
-                ' '.join(cog_list[1:]).strip().replace('  ', ' ')
-        if len(captured.captures('date_certainty')):
-            if captured.captures('date_certainty')[0].strip() == '?':
-                self.date_certainty = 'Uncertain'
-        self.affiliation = ''.join(captured.captures('affiliation'
-                                   )).strip()
+            cognomen_other = ' '.join(cog_list[1:]).strip().replace('  '
+                    , ' ')
+
+        # if len(captured.captures('date_certainty')):
+        #    if captured.captures('date_certainty')[0].strip() == '?':
+        #        person.date_certainty = 'Uncertain'
+
+        filiation = ''.join(captured.captures('filiation')).strip()
+
+        p = Person(original_text=text,
+                   sex = sex,
+                   real_number=real,
+                   nomen=nomen,
+                   praenomen=praenomen,
+                   filiation = filiation,
+                   cognomen_first = cognomen_first,
+                   cognomen_other = cognomen_other,
+                   is_patrician = is_patrician)
+
+        try:
+            p.save()
+            print "      [OK] Saved person " + str(p) + " with id: " + str(p.id)
+        except Exception, e:
+            raise e
+
     else:
-        print 'NADA'
+        print "[ERROR] Could not parse the person:", text
+
 
 def processXML(ifile):
     page = file(ifile)

@@ -78,15 +78,15 @@ class Certainty(models.Model):
 
 class Person(TimeStampedModel):
 
-    original_text = models.CharField(max_length=256)
+    original_text = models.CharField(max_length=256, blank=True)
 
-    praenomen = models.ForeignKey(Praenomen)
-    nomen = models.CharField(max_length=128)
+    praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
+    nomen = models.CharField(max_length=128, blank=True )
 
-    cognomen_first = models.CharField(max_length=64)
+    cognomen_first = models.CharField(max_length=64, blank=True)
     cognomen_other = models.CharField(max_length=128, blank=True)
 
-    sex = models.ForeignKey(Sex)
+    sex = models.ForeignKey(Sex, blank=True, null=True)
 
     tribe = models.CharField(max_length=128, blank=True)
 

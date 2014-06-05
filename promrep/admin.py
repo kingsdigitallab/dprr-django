@@ -21,13 +21,13 @@ class AssertionPersonInline(admin.TabularInline):
 class PersonAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Database Info', {'fields': ['id',]}),
-        ('Person',   {'fields': ['sex', 'praenomen', 'nomen', 'cognomen_first', 'cognomen_other', 'filliation',]}),
+        ('Person',   {'fields': ['original_text', 'sex', 'praenomen', 'nomen', 'cognomen_first', 'cognomen_other', 'filiation',]}),
         ('Real',   {'fields': ['real_number', 'real_number_old', 'real_attribute']}),
         ('Other', {'fields': ['is_noble', 'noble_certainty', 'is_novus_homo', 'novus_homo_certainty', 'is_patrician', 'patrician_certainty']}),
     ]
 
-    readonly_fields=('id',)
-    list_display = ('id', 'url_to_edit_person', 'filliation', 'sex', 'is_noble', 'is_novus_homo', 'is_patrician', 'notes', )
+    readonly_fields=('id', 'original_text')
+    list_display = ('id', 'url_to_edit_person', 'filiation', 'sex', 'is_noble', 'is_novus_homo', 'is_patrician', 'notes', )
 
     inlines = (AssertionPersonInline,)
 

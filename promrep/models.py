@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 from django.db import models
 from django.conf import settings
 from model_utils.models import TimeStampedModel
@@ -21,6 +22,7 @@ class IntegerRangeField(models.IntegerField):
         max_value=None,
         **kwargs
         ):
+
         (self.min_value, self.max_value) = (min_value, max_value)
         models.IntegerField.__init__(self, verbose_name, name, **kwargs)
 
@@ -81,7 +83,7 @@ class Person(TimeStampedModel):
     original_text = models.CharField(max_length=256, blank=True)
 
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
-    nomen = models.CharField(max_length=128, blank=True )
+    nomen = models.CharField(max_length=128, blank=True)
 
     cognomen_first = models.CharField(max_length=64, blank=True)
     cognomen_other = models.CharField(max_length=128, blank=True)
@@ -93,20 +95,23 @@ class Person(TimeStampedModel):
     is_patrician = models.BooleanField(default=False, blank=True,
             verbose_name='Patrician')
     patrician_certainty = models.ForeignKey(Certainty,
-            related_name='person_patrician_certainty')
+            related_name='person_patrician_certainty', null=True,
+            blank=True)
 
     is_noble = models.BooleanField(default=False, blank=True,
                                    verbose_name='Noble')
     noble_certainty = models.ForeignKey(Certainty,
-            related_name='person_noble_certainty')
+            related_name='person_noble_certainty', null=True,
+            blank=True)
 
     is_novus_homo = models.BooleanField(default=False, blank=True,
             verbose_name='Novus Homo')
     novus_homo_certainty = models.ForeignKey(Certainty,
-            related_name='person_novus_homo_certainty')
+            related_name='person_novus_homo_certainty', null=True,
+            blank=True)
 
     notes = models.CharField(max_length=1024, blank=True)
-    filliation = models.CharField(max_length=256, blank=True)
+    filiation = models.CharField(max_length=256, blank=True)
 
     real_number = models.CharField(max_length=32, blank=True,
                                    verbose_name='RE Number')
@@ -124,10 +129,16 @@ class Person(TimeStampedModel):
         return r_id.strip()
 
     def get_name(self):
-        name_parts = [self.praenomen.abbrev, self.nomen,
-                      self.cognomen_first, self.cognomen_other]
 
-        return ' '.join(name_parts)
+        name_parts = [self.nomen, self.cognomen_first,
+                      self.cognomen_other]
+
+        if self.praenomen:
+            name = self.praenomen.abbrev + ' '.join(name_parts)
+        else:
+            name = ' '.join(name_parts)
+
+        return name
 
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (self._meta.app_label,

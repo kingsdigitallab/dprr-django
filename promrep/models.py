@@ -157,7 +157,7 @@ class Person(TimeStampedModel):
 
 # Broughton, Rupke, etc
 
-class SecondarySource(models.Model):
+class SecondarySource(TimeStampedModel):
 
     name = models.CharField(max_length=256, unique=True)
 
@@ -179,7 +179,7 @@ class PrimarySource(models.Model):
         return self.name
 
 
-class Office(MPTTModel):
+class Office(MPTTModel, TimeStampedModel):
 
     name = models.CharField(max_length=256, unique=True)
     description = models.CharField(max_length=1024, blank=True)

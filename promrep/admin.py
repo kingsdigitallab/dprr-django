@@ -36,7 +36,7 @@ admin.site.register(Person, PersonAdmin)
 
 class OfficeAdmin(MPTTModelAdmin):
     readonly_fields=('id',)
-    list_display = ('id', 'name', 'parent', 'description')
+    list_display = ('id', 'name', 'parent', 'description', 'modified', 'created')
 
 admin.site.register(Office, OfficeAdmin)
 

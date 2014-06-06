@@ -70,6 +70,8 @@ class Migration(SchemaMigration):
         # Adding model 'SecondarySource'
         db.create_table(u'promrep_secondarysource', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
+            ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
             ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=256)),
             ('abbrev_name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=256, blank=True)),
             ('biblio', self.gf('django.db.models.fields.CharField')(unique=True, max_length=512, blank=True)),
@@ -86,6 +88,8 @@ class Migration(SchemaMigration):
         # Adding model 'Office'
         db.create_table(u'promrep_office', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
+            ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
             ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=256)),
             ('description', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
             ('parent', self.gf('mptt.fields.TreeForeignKey')(blank=True, related_name='children', null=True, to=orm['promrep.Office'])),
@@ -269,10 +273,12 @@ class Migration(SchemaMigration):
         },
         u'promrep.office': {
             'Meta': {'ordering': "['tree_id', 'lft', 'name']", 'object_name': 'Office'},
+            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             'description': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             u'level': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
             u'lft': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
+            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'}),
             'parent': ('mptt.fields.TreeForeignKey', [], {'blank': 'True', 'related_name': "'children'", 'null': 'True', 'to': u"orm['promrep.Office']"}),
             u'rght': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
@@ -325,7 +331,9 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'SecondarySource'},
             'abbrev_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256', 'blank': 'True'}),
             'biblio': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '512', 'blank': 'True'}),
+            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'})
         },
         u'promrep.sex': {

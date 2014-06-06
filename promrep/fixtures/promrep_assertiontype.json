@@ -1,0 +1,16 @@
+[
+{
+    "pk": 1,
+    "model": "promrep.assertiontype",
+    "fields": {
+        "name": "Office"
+    }
+},
+{
+    "pk": 2,
+    "model": "promrep.assertiontype",
+    "fields": {
+        "name": "Relationship"
+    }
+}
+]

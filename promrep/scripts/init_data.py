@@ -20,3 +20,12 @@ def run():
 
     print 'Loading Certainty Data...'
     call_command('loaddata', 'promrep/fixtures/promrep_certainty.json')
+
+    print 'Loading Role Types...'
+    call_command('loaddata', 'promrep/fixtures/promrep_roletype.json')
+
+    print 'Loading Assertion Types...'
+    call_command('loaddata', 'promrep/fixtures/promrep_assertiontype.json')
+
+    print 'Loading Secondary Sources...'
+    call_command('loaddata', ' )

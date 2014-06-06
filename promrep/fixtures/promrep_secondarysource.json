@@ -1,0 +1,38 @@
+[
+{
+    "pk": 1,
+    "model": "promrep.secondarysource",
+    "fields": {
+        "biblio": "T. Robert S. Broughton: The Magistrates of the Roman Republic, Vol. I. Published by the American Philological Association. New York 1952.",
+        "name": "T. Robert S. Broughton: The Magistrates of the Roman Republic, Vol. I",
+        "abbrev_name": "Broughton MRR I"
+    }
+},
+{
+    "pk": 2,
+    "model": "promrep.secondarysource",
+    "fields": {
+        "biblio": "T. Robert S. Broughton: The Magistrates of the Roman Republic, Vol. II (99 B.C.-31 B.C.). Published by the American Philological Association. New York 1952.",
+        "name": "T. Robert S. Broughton: The Magistrates of the Roman Republic, Vol. II",
+        "abbrev_name": "Broughton MRR II"
+    }
+},
+{
+    "pk": 3,
+    "model": "promrep.secondarysource",
+    "fields": {
+        "biblio": "",
+        "name": "Badian Consuls",
+        "abbrev_name": "Badian Consuls"
+    }
+},
+{
+    "pk": 4,
+    "model": "promrep.secondarysource",
+    "fields": {
+        "biblio": "no need for this",
+        "name": "Rupke Priester ...",
+        "abbrev_name": "Rupke"
+    }
+}
+]

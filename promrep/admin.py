@@ -42,7 +42,7 @@ admin.site.register(Office, OfficeAdmin)
 
 
 class AssertionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'assertion_type', 'get_persons', 'display_text','secondary_source')
+    list_display = ('id', 'assertion_type', 'get_persons', 'assertion_type', 'office', 'display_text','secondary_source', 'modified', 'created')
     list_display_links = ('id', 'display_text', )
 
     readonly_fields=('id',)

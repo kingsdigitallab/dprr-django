@@ -19,6 +19,7 @@ def run():
 
 
 def parse_person_name(text):
+    """ Will return a person object """
 
     print 'Will parse person: ', text
 
@@ -119,7 +120,7 @@ def parse_person_name(text):
 
         filiation = ''.join(captured.captures('filiation')).strip()
 
-        p = Person(
+        person = Person(
             original_text=text,
             sex=sex,
             real_number=real,
@@ -132,14 +133,16 @@ def parse_person_name(text):
             )
 
         try:
-            p.save()
-            print '      [OK] Saved person ' + str(p) + ' with id: ' \
-                + str(p.id)
+            person.save()
+            print '      [OK] Saved person ' + str(person) \
+                + ' with id: ' + str(person.id)
         except Exception, e:
             raise e
     else:
-
         print '[ERROR] Could not parse the person:', text
+        person = None
+
+    return person
 
 
 def processXML(ifile):
@@ -174,5 +177,22 @@ def processXML(ifile):
                 text = p.find('name').get_text()
                 print 'PERSON ' + text
 
+                person = parse_person_name(text)
+                if person != None:
 
-                # parse_person_name(text)
+                    # create both the assertion and the assertionperson objects
+
+                    assertion_type = AssertionType.objects.get(name='Office')
+                    source = SecondarySource.objects.get(abbrev_name='Broughton MRR II')
+
+                    assertion = Assertion(office=office,
+                            assertion_type=assertion_type,
+                            secondary_source=source)
+
+                    assertion.save()
+
+                    assertion_person = \
+                        AssertionPerson(role=RoleType.objects.get(name='Holder'
+                            ), assertion=assertion, person=person)
+
+                    assertion_person.save()

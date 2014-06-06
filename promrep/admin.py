@@ -15,15 +15,23 @@ admin.site.register(RoleType)
 class AssertionPersonInline(admin.TabularInline):
     readonly_fields=('id',)
     model = AssertionPerson
-    extra = 1
+    extra = 0
+
+    fields = ('id', 'role', 'original_text')
+
+
+class PersonInline(admin.TabularInline):
+    readonly_fields=('id',)
+    model = Assertion.persons.through
+    extra = 0
 
 
 class PersonAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Database Info', {'fields': ['id',]}),
-        ('Person',   {'fields': ['original_text', 'sex', 'praenomen', 'nomen', 'cognomen_first', 'cognomen_other', 'filiation',]}),
+        ('Person',   {'fields': ['original_text', 'sex', 'praenomen', 'nomen', ('cognomen_first', 'cognomen_other'), 'filiation',]}),
         ('Real',   {'fields': ['real_number', 'real_number_old', 'real_attribute']}),
-        ('Other', {'fields': ['is_noble', 'noble_certainty', 'is_novus_homo', 'novus_homo_certainty', 'is_patrician', 'patrician_certainty']}),
+        ('Other', {'fields': [('is_noble', 'noble_certainty'), ('is_novus_homo', 'novus_homo_certainty'), ('is_patrician', 'patrician_certainty')]}),
     ]
 
     readonly_fields=('id', 'original_text')
@@ -42,13 +50,15 @@ admin.site.register(Office, OfficeAdmin)
 
 
 class AssertionAdmin(admin.ModelAdmin):
+
     list_display = ('id', 'assertion_type', 'get_persons', 'assertion_type', 'office', 'display_text','secondary_source', 'modified', 'created')
     list_display_links = ('id', 'display_text', )
 
     readonly_fields=('id',)
 
     inlines = [
-            AssertionPersonInline,
+    #        AssertionPersonInline,
+        PersonInline,
     ]
 
 admin.site.register(Assertion, AssertionAdmin)

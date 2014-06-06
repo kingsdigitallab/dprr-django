@@ -132,12 +132,29 @@ def parse_person_name(text):
             is_patrician=is_patrician,
             )
 
-        try:
-            person.save()
-            print '      [OK] Saved person ' + str(person) \
-                + ' with id: ' + str(person.id)
-        except Exception, e:
-            raise e
+        # before saving, need to test if the person exists...
+        identic_persons = Person.objects.filter(
+            real_number=real,
+            nomen=nomen,
+            praenomen=praenomen,
+            filiation=filiation,
+            cognomen_first=cognomen_first,
+            cognomen_other=cognomen_other,
+            )
+
+        if identic_persons.count() == 1:
+            person = identic_persons[0]
+            print "[HITS], id", person.id, person.get_name()
+        elif identic_persons.count() > 1:
+            print "[ERROR]: more than one person matches query for", text
+            person = None
+        else:
+            try:
+                person.save()
+                print '      [OK] Saved person ' + str(person) \
+                    + ' with id: ' + str(person.id)
+            except Exception, e:
+                raise e
     else:
         print '[ERROR] Could not parse the person:', text
         person = None
@@ -173,6 +190,7 @@ def processXML(ifile):
 
                 print 'Added ', office, office.id
 
+            # TODO: should test for notes...
             for p in office_tag.find_all('person'):
                 text = p.find('name').get_text()
                 print 'PERSON ' + text

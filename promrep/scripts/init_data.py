@@ -28,4 +28,4 @@ def run():
     call_command('loaddata', 'promrep/fixtures/promrep_assertiontype.json')
 
     print 'Loading Secondary Sources...'
-    call_command('loaddata', ' )
+    call_command('loaddata', 'promrep/fixtures/promrep_secondarysource.json')

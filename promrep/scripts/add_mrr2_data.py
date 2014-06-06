@@ -20,7 +20,7 @@ def run():
 
 def parse_person_name(text):
 
-    print "Will parse person: ", text
+    print 'Will parse person: ', text
 
     # TODO: this should come from the database...
 
@@ -86,11 +86,11 @@ def parse_person_name(text):
     if captured:
         real = captured.captures('real')[0].strip()
 
-        sex = Sex.objects.get(name="Male")
+        sex = Sex.objects.get(name='Male')
 
         if len(captured.captures('praenomen')):
             praenomen = captured.captures('praenomen')[0].strip()
-            praenomen = Praenomen.objects.get(abbrev = praenomen)
+            praenomen = Praenomen.objects.get(abbrev=praenomen)
         else:
             praenomen = None
 
@@ -119,24 +119,27 @@ def parse_person_name(text):
 
         filiation = ''.join(captured.captures('filiation')).strip()
 
-        p = Person(original_text=text,
-                   sex = sex,
-                   real_number=real,
-                   nomen=nomen,
-                   praenomen=praenomen,
-                   filiation = filiation,
-                   cognomen_first = cognomen_first,
-                   cognomen_other = cognomen_other,
-                   is_patrician = is_patrician)
+        p = Person(
+            original_text=text,
+            sex=sex,
+            real_number=real,
+            nomen=nomen,
+            praenomen=praenomen,
+            filiation=filiation,
+            cognomen_first=cognomen_first,
+            cognomen_other=cognomen_other,
+            is_patrician=is_patrician,
+            )
 
         try:
             p.save()
-            print "      [OK] Saved person " + str(p) + " with id: " + str(p.id)
+            print '      [OK] Saved person ' + str(p) + ' with id: ' \
+                + str(p.id)
         except Exception, e:
             raise e
-
     else:
-        print "[ERROR] Could not parse the person:", text
+
+        print '[ERROR] Could not parse the person:', text
 
 
 def processXML(ifile):
@@ -146,9 +149,30 @@ def processXML(ifile):
     years = soup.findAll('year')
 
     for year in years[0:4]:
-        print year.find('name').get_text()
+        print 'YEAR ' + year.find('name').get_text()
 
-        for p in year.find_all('person'):
-            text = p.find('name').get_text()
+        for office_tag in year.findAll('office'):
+            office_name = office_tag.find('name').get_text()
+            print '[mrr2-add]: Processing OFFICE ' + office_name
 
-            parse_person_name(text)
+            try:
+                office = Office.objects.get(name=office_name)
+                print 'Found', office
+            except Office.DoesNotExist:
+
+                # in MRR2 all offices are "civil"
+
+                parent = Office.objects.get(name='Civic Offices')
+
+                office = Office(name=office_name)
+                office.parent = parent
+                office.save()
+
+                print 'Added ', office, office.id
+
+            for p in office_tag.find_all('person'):
+                text = p.find('name').get_text()
+                print 'PERSON ' + text
+
+
+                # parse_person_name(text)

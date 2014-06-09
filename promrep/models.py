@@ -230,7 +230,7 @@ class Assertion(TimeStampedModel):
         if office != None:
             office = self.office.name
 
-        return type + " (" + office + ") " + str(self.id)
+        return type + " (" + office + ")"
 
 
 class AssertionPerson(TimeStampedModel):

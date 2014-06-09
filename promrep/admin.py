@@ -14,8 +14,12 @@ admin.site.register(RoleType)
 
 class PersonInline(admin.TabularInline):
     model = Assertion.persons.through
-    readonly_fields=('id', )
+
+    fields = ('id', 'person', 'role', 'assertion', 'original_text')
+    readonly_fields=('id', 'assertion', 'person', )
     extra = 0
+
+
 
 
 class PersonAdmin(admin.ModelAdmin):

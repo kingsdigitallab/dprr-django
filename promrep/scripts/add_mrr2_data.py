@@ -130,20 +130,18 @@ def parse_person_name(text):
             cognomen_first=cognomen_first,
             cognomen_other=cognomen_other,
             is_patrician=is_patrician,
+            is_noble = False,
             )
 
         # before saving, need to test if the person exists...
         identic_persons = Person.objects.filter(
             real_number=real,
             nomen=nomen,
-            praenomen=praenomen,
-            filiation=filiation,
-            cognomen_first=cognomen_first,
-            cognomen_other=cognomen_other,
             )
 
         if identic_persons.count() == 1:
             person = identic_persons[0]
+            print
             print "[HITS], id", person.id, person.get_name()
         elif identic_persons.count() > 1:
             print "[ERROR]: more than one person matches query for", text

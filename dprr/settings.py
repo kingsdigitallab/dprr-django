@@ -67,7 +67,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'django_extensions',
     'south',
     'mptt',
 )
@@ -257,12 +256,22 @@ except ImportError:
 #------------------------------------------------------------------------------
 
 try:
-
     import debug_toolbar
-
     INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
     MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + ('debug_toolbar.middleware.DebugToolbarMiddleware',)
     DEBUG_TOOLBAR_PATCH_SETTINGS = False
+
+    DEBUG_TOOLBAR_PANELS = [
+        'debug_toolbar.panels.version.VersionDebugPanel',
+        'debug_toolbar.panels.timer.TimerDebugPanel',
+        'debug_toolbar.panels.headers.HeaderDebugPanel',
+        'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
+        'debug_toolbar.panels.sql.SQLDebugPanel',
+        'debug_toolbar.panels.template.TemplateDebugPanel',
+        'debug_toolbar.panels.cache.CacheDebugPanel',
+        #'debug_toolbar.panels.signals.SignalDebugPanel',
+        'debug_toolbar.panels.profiling.ProfilingDebugPanel',
+    ]
 
 except ImportError:
     pass

@@ -12,17 +12,9 @@ admin.site.register(DateType)
 admin.site.register(RoleType)
 
 
-class AssertionPersonInline(admin.TabularInline):
-    readonly_fields=('id',)
-    model = AssertionPerson
-    extra = 0
-
-    fields = ('id', 'role', 'original_text')
-
-
 class PersonInline(admin.TabularInline):
-    readonly_fields=('id',)
     model = Assertion.persons.through
+    readonly_fields=('id', )
     extra = 0
 
 
@@ -37,7 +29,7 @@ class PersonAdmin(admin.ModelAdmin):
     readonly_fields=('id', 'original_text')
     list_display = ('id', 'url_to_edit_person', 'filiation', 'sex', 'is_noble', 'is_novus_homo', 'is_patrician', 'notes', 'modified', 'created')
 
-    inlines = (AssertionPersonInline,)
+    inlines = (PersonInline,)
 
 admin.site.register(Person, PersonAdmin)
 
@@ -57,9 +49,9 @@ class AssertionAdmin(admin.ModelAdmin):
     readonly_fields=('id',)
 
     inlines = [
-    #        AssertionPersonInline,
         PersonInline,
     ]
+    exclude = ('persons',)
 
 admin.site.register(Assertion, AssertionAdmin)
 

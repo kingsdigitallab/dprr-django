@@ -92,14 +92,12 @@ class Person(TimeStampedModel):
 
     tribe = models.CharField(max_length=128, blank=True)
 
-    is_patrician = models.BooleanField(default=False, blank=True,
-            verbose_name='Patrician')
+    is_patrician = models.BooleanField(blank=True, verbose_name='Patrician')
     patrician_certainty = models.ForeignKey(Certainty,
             related_name='person_patrician_certainty', null=True,
             blank=True)
 
-    is_noble = models.BooleanField(default=False, blank=True,
-                                   verbose_name='Noble')
+    is_noble = models.BooleanField(blank=True, verbose_name='Noble')
     noble_certainty = models.ForeignKey(Certainty,
             related_name='person_noble_certainty', null=True,
             blank=True)
@@ -224,6 +222,15 @@ class Assertion(TimeStampedModel):
 
     def get_persons(self):
         return '\n'.join([str(a) for a in self.persons.all()])
+
+    def __unicode__(self):
+        type = self.assertion_type.name
+        office = self.office.name
+
+        if office != None:
+            office = self.office.name
+
+        return type + " (" + office + ") " + str(self.id)
 
 
 class AssertionPerson(TimeStampedModel):

@@ -174,15 +174,15 @@ class Person(TimeStampedModel):
 
     def get_name(self):
 
-        name_parts = [self.nomen, self.cognomen_first,
-                      self.cognomen_other]
+        name_parts = [self.nomen, self.filiation,
+                      self.cognomen_first, self.cognomen_other]
 
         if self.praenomen:
-            name = self.praenomen.abbrev + ' '.join(name_parts)
+            name = self.praenomen.abbrev + ' '
         else:
-            name = ' '.join(name_parts)
+            name = ''
 
-        return name
+        return name + ' '.join(name_parts)
 
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (self._meta.app_label,

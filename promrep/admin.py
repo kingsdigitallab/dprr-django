@@ -57,7 +57,6 @@ class PersonAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'url_to_edit_person',
-        'filiation',
         'sex',
         'get_dates',
         'is_noble',

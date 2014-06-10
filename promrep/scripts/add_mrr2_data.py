@@ -130,21 +130,21 @@ def parse_person_name(text):
             cognomen_first=cognomen_first,
             cognomen_other=cognomen_other,
             is_patrician=is_patrician,
-            is_noble = False,
+            is_noble=False,
             )
 
         # before saving, need to test if the person exists...
-        identic_persons = Person.objects.filter(
-            real_number=real,
-            nomen=nomen,
-            )
+
+        identic_persons = Person.objects.filter(real_number=real,
+                nomen=nomen)
 
         if identic_persons.count() == 1:
             person = identic_persons[0]
             print
-            print "[HITS], id", person.id, person.get_name()
+            print '[HITS], id', person.id, person.get_name()
         elif identic_persons.count() > 1:
-            print "[ERROR]: more than one person matches query for", text
+            print '[ERROR]: more than one person matches query for', \
+                text
             person = None
         else:
             try:
@@ -166,7 +166,7 @@ def processXML(ifile):
 
     years = soup.findAll('year')
 
-    for year in years[0:4]:
+    for year in years:
         print 'YEAR ' + year.find('name').get_text()
 
         for office_tag in year.findAll('office'):
@@ -189,26 +189,38 @@ def processXML(ifile):
                 print 'Added ', office, office.id
 
             # TODO: should test for notes...
+
             for p in office_tag.find_all('person'):
-                text = p.find('name').get_text()
-                print 'PERSON ' + text
+                text = p.find('name')
 
-                person = parse_person_name(text)
-                if person != None:
+                try:
+                    text = text.get_text()
 
-                    # create both the assertion and the assertionperson objects
+                    print 'PERSON ' + text.encode('utf')
 
-                    assertion_type = AssertionType.objects.get(name='Office')
-                    source = SecondarySource.objects.get(abbrev_name='Broughton MRR II')
+                    person = parse_person_name(text)
 
-                    assertion = Assertion(office=office,
-                            assertion_type=assertion_type,
-                            secondary_source=source)
+                    if person != None:
 
-                    assertion.save()
+                        # create both the assertion and the assertionperson objects
 
-                    assertion_person = \
-                        AssertionPerson(role=RoleType.objects.get(name='Holder'
-                            ), assertion=assertion, person=person)
+                        assertion_type = \
+                            AssertionType.objects.get(name='Office')
+                        source = \
+                            SecondarySource.objects.get(abbrev_name='Broughton MRR II'
+                                )
 
-                    assertion_person.save()
+                        assertion = Assertion(office=office,
+                                assertion_type=assertion_type,
+                                secondary_source=source)
+
+                        assertion.save()
+
+                        assertion_person = \
+                            AssertionPerson(role=RoleType.objects.get(name='Holder'
+                                ), assertion=assertion, person=person)
+
+                        assertion_person.save()
+                except Exception:
+
+                    pass

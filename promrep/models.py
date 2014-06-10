@@ -37,6 +37,49 @@ from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^promrep\.models\.IntegerRangeField"])
 
 
+class DateType(models.Model):
+
+    name = models.CharField(max_length=32)
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    modified = models.DateTimeField(auto_now=True, auto_now_add=True,
+                                    editable=False)
+
+    class Meta:
+
+        ordering = ['name']
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+
+class Date(models.Model):
+
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = generic.GenericForeignKey()
+    date_type = models.ForeignKey(DateType, blank=True, null=True)
+    interval = \
+        models.SmallIntegerField(choices=settings.DATE_INTERVAL_CHOICES)
+    year = IntegerRangeField(min_value=-500, max_value=500, blank=True,
+                             null=True)
+    year_uncertain = models.BooleanField(verbose_name='uncertain')
+    month = IntegerRangeField(min_value=1, max_value=12, blank=True,
+                              null=True)
+    month_uncertain = models.BooleanField(verbose_name='uncertain')
+    day = IntegerRangeField(min_value=1, max_value=31, blank=True,
+                            null=True)
+    day_uncertain = models.BooleanField(verbose_name='uncertain')
+    circa = models.BooleanField()
+    notes = models.TextField(blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    modified = models.DateTimeField(auto_now=True, auto_now_add=True,
+                                    editable=False)
+
+    def __unicode__(self):
+        return u'%s %s-%s-%s'.strip() % (self.date_type or '',
+                self.year, self.month, self.day)
+
+
 class Praenomen(models.Model):
 
     abbrev = models.CharField(max_length=32, unique=True)
@@ -90,9 +133,12 @@ class Person(TimeStampedModel):
 
     sex = models.ForeignKey(Sex, blank=True, null=True)
 
+    dates = generic.GenericRelation(Date)
+
     tribe = models.CharField(max_length=128, blank=True)
 
-    is_patrician = models.BooleanField(blank=True, verbose_name='Patrician')
+    is_patrician = models.BooleanField(blank=True,
+            verbose_name='Patrician')
     patrician_certainty = models.ForeignKey(Certainty,
             related_name='person_patrician_certainty', null=True,
             blank=True)
@@ -151,6 +197,12 @@ class Person(TimeStampedModel):
         # TODO: add praenomen, Re number
 
         return self.get_name() + ' (' + self.real_id() + ')'
+
+    def get_dates(self):
+        dates = ' '.join([unicode(date) for date in self.dates.all()])
+        return dates
+
+    get_dates.short_description = 'Dates'
 
 
 # Broughton, Rupke, etc
@@ -212,11 +264,11 @@ class Assertion(TimeStampedModel):
     persons = models.ManyToManyField(Person, through='AssertionPerson')
     assertion_type = models.ForeignKey(AssertionType)
     office = models.ForeignKey(Office)
+    dates = generic.GenericRelation(Date)
 
     secondary_source = models.ForeignKey(SecondarySource)
 
     display_text = models.CharField(max_length=1024, blank=True)
-    date_year = models.CharField(max_length=64, blank=True)
 
     notes = models.CharField(max_length=1024, blank=True)
 
@@ -230,7 +282,7 @@ class Assertion(TimeStampedModel):
         if office != None:
             office = self.office.name
 
-        return type + " (" + office + ")"
+        return type + ' (' + office + ')'
 
 
 class AssertionPerson(TimeStampedModel):
@@ -240,46 +292,3 @@ class AssertionPerson(TimeStampedModel):
 
     role = models.ForeignKey(RoleType)
     original_text = models.CharField(max_length=1024, blank=True)
-
-
-class DateType(models.Model):
-
-    name = models.CharField(max_length=32)
-    created = models.DateTimeField(auto_now_add=True, editable=False)
-    modified = models.DateTimeField(auto_now=True, auto_now_add=True,
-                                    editable=False)
-
-    class Meta:
-
-        ordering = ['name']
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-
-class Date(models.Model):
-
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey()
-    date_type = models.ForeignKey(DateType, blank=True, null=True)
-    interval = \
-        models.SmallIntegerField(choices=settings.DATE_INTERVAL_CHOICES)
-    year = IntegerRangeField(min_value=-500, max_value=500, blank=True,
-                             null=True)
-    year_uncertain = models.BooleanField(verbose_name='uncertain')
-    month = IntegerRangeField(min_value=1, max_value=12, blank=True,
-                              null=True)
-    month_uncertain = models.BooleanField(verbose_name='uncertain')
-    day = IntegerRangeField(min_value=1, max_value=31, blank=True,
-                            null=True)
-    day_uncertain = models.BooleanField(verbose_name='uncertain')
-    circa = models.BooleanField()
-    notes = models.TextField(blank=True, null=True)
-    created = models.DateTimeField(auto_now_add=True, editable=False)
-    modified = models.DateTimeField(auto_now=True, auto_now_add=True,
-                                    editable=False)
-
-    def __unicode__(self):
-        return u'%s %s-%s-%s'.strip() % (self.date_type or '',
-                self.year, self.month, self.day)

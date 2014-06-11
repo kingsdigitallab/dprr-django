@@ -73,28 +73,31 @@ def run():
                 else:
                     cognomen_first = cognomen_list[0]
 
-            # TODO: fix...
-            if praenomen_str != '':
-                print praenomen_str
+            if praenomen_str == '':
+                praenomen = None
+            else:
 
-                if praenomen_str.find("?") != -1:
+                # TODO: fix...
+
+                if praenomen_str.find('?') != -1:
                     praenomen = None
                 elif praenomen_str.find('.') == -1:
+
                     try:
-                        praenomen = Praenomen.objects.get(abbrev=praenomen_str + '.')
+                        praenomen = \
+                            Praenomen.objects.get(abbrev=praenomen_str
+                                + '.')
                     except:
                         praenomen = None
 
-            else:
-                praenomen = None
-
-            if patrician == "Patrician":
+            if patrician == 'Patrician':
                 is_patrician = True
             else:
                 is_patricia = False
 
             person = Person(
-                original_text = praenomen_str + ' ' + nomen + ' ' + filiation + ' ' + cognomen,
+                original_text=praenomen_str + ' ' + nomen + ' '
+                    + filiation + ' ' + cognomen,
                 sex=Sex.objects.get(name='Male'),
                 praenomen=praenomen,
                 real_number=real_number,
@@ -102,8 +105,8 @@ def run():
                 filiation=filiation,
                 cognomen_first=cognomen_first,
                 cognomen_other=cognomen_other,
-                is_patrician = is_patrician,
-                is_noble = False
+                is_patrician=is_patrician,
+                is_noble=False,
                 )
 
                 # is_patrician=is_patrician,
@@ -120,13 +123,36 @@ def run():
             else:
                 error = error + 1
 
+            if res != False:
+                add_brennan_praetor_assertion(person)
+
         i = i + 1
 
     print
-    print "Total: ", i-1, "Added: ", added, "Existing: ", exist, "Errors: ", error
+    print 'Total: ', i - 1, 'Added: ', added, 'Existing: ', exist, \
+        'Errors: ', error
 
 
-def add_brennan_assertion():
+def add_brennan_praetor_assertion(person):
 
     source = SecondarySource.objects.get(abbrev_name='Brennan Praetors')
     assertion_type = AssertionType.objects.get(name='Office')
+    office = Office.objects.get(name='Praetors')
+
+    assertion = Assertion(office=office, assertion_type=assertion_type,
+                          secondary_source=source)
+
+    try:
+        assertion.save()
+
+        assertion_person = \
+            AssertionPerson(role=RoleType.objects.get(name='Holder'),
+                            assertion=assertion, person=person)
+
+        try:
+            assertion_person.save()
+        except:
+            print '[ERROR SAVING ASSERTION PERSON OBJECT]'
+    except:
+
+        print '[ERROR SAVING ASSERTION]'

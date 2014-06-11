@@ -134,24 +134,9 @@ def parse_person_name(text):
             is_noble=False,
             )
 
-        person_exists = data_import_aux.is_new_person(person)
+        data_import_aux.add_new_person_to_db(person)
 
-        # before saving, need to test if the person exists...
-
-        if person_exists == True:
-            print '[HITS DATABASE] ' + text
-            try:
-                person.save()
-                print '[OK] Saved person ' + str(person) + ' with id: ' \
-                    + str(person.id)
-            except Exception, e:
-                raise e
-        elif person_exists == False:
-            print '[NEW] ' + text
-        else:
-            print '[ERROR] More than one person with the same identifier in the database...'
     else:
-
         print '[ERROR] Could not parse the person:', text
         person = None
 

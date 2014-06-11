@@ -30,9 +30,9 @@
     "pk": 4,
     "model": "promrep.secondarysource",
     "fields": {
-        "biblio": "no need for this",
-        "name": "Rupke Priester ...",
-        "abbrev_name": "Rupke"
+        "biblio": "T. Corey Brennan, The Praetorship in the Roman Republic. 2 Vols.   Oxford:  Oxford University Press, 2000.  ISBN 0-19-511459-0.  ISBN 0-19-511460-4.",
+        "name": "Brennan Praetors",
+        "abbrev_name": "Brennan Praetors"
     }
 }
 ]

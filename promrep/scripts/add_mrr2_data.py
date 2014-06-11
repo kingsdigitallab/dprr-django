@@ -8,9 +8,9 @@ from promrep.models import Assertion, AssertionPerson, AssertionType, \
     Certainty, Date, DateType, Office, Person, Praenomen, \
     PrimarySource, RoleType, SecondarySource, Sex
 
+import data_import_aux
 
 def run():
-
     # this is the file exported by OpenOffice
 
     ifile = 'promrep/scripts/data/output-tidy-v4-MR-v1.xml'
@@ -21,6 +21,7 @@ def run():
 def parse_person_name(text):
     """ Will return a person object """
 
+    print
     print 'Will parse person: ', text
 
     # TODO: this should come from the database...
@@ -85,8 +86,8 @@ def parse_person_name(text):
     captured = person_re.match(text)
 
     if captured:
-        real = captured.captures('real')[0].strip()
 
+        real = captured.captures('real')[0].strip()
         sex = Sex.objects.get(name='Male')
 
         if len(captured.captures('praenomen')):
@@ -133,27 +134,24 @@ def parse_person_name(text):
             is_noble=False,
             )
 
+        person_exists = data_import_aux.is_new_person(person)
+
         # before saving, need to test if the person exists...
 
-        identic_persons = Person.objects.filter(real_number=real,
-                nomen=nomen)
-
-        if identic_persons.count() == 1:
-            person = identic_persons[0]
-            print
-            print '[HITS], id', person.id, person.get_name()
-        elif identic_persons.count() > 1:
-            print '[ERROR]: more than one person matches query for', \
-                text
-            person = None
-        else:
+        if person_exists == True:
+            print '[HITS DATABASE] ' + text
             try:
                 person.save()
-                print '      [OK] Saved person ' + str(person) \
-                    + ' with id: ' + str(person.id)
+                print '[OK] Saved person ' + str(person) + ' with id: ' \
+                    + str(person.id)
             except Exception, e:
                 raise e
+        elif person_exists == False:
+            print '[NEW] ' + text
+        else:
+            print '[ERROR] More than one person with the same identifier in the database...'
     else:
+
         print '[ERROR] Could not parse the person:', text
         person = None
 
@@ -166,7 +164,7 @@ def processXML(ifile):
 
     years = soup.findAll('year')
 
-    for year in years:
+    for year in years[0:2]:
         print 'YEAR ' + year.find('name').get_text()
 
         for office_tag in year.findAll('office'):
@@ -195,9 +193,6 @@ def processXML(ifile):
 
                 try:
                     text = text.get_text()
-
-                    print 'PERSON ' + text.encode('utf')
-
                     person = parse_person_name(text)
 
                     if person != None:

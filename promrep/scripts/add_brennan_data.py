@@ -12,6 +12,7 @@ import data_import_aux
 
 def run():
 
+    # TODO: create stats class
     added = 0
     error = 0
     exist = 0
@@ -21,107 +22,109 @@ def run():
     ifile = open('promrep/scripts/data/BrennanExportv6.csv', 'rU')
     reader = csv.reader(ifile, delimiter=',', skipinitialspace=True)
 
-    i = 0
+    i = 1
+    next(reader, None)  # skip the headers
 
-    for row in reader:
-        # print i
-        # drop first row (header)
-        if i == 0:
-            pass
+    for original_row in reader:
+
+        row = [a.strip() for a in original_row]
+
+        (
+            date,
+            page,
+            note_ref,
+            assertion_type,
+            praenomen_str,
+            nomen,
+            real_number,
+            filiation,
+            cognomen,
+            patrician,
+            patrician_certainty,
+            consular_ancestor,
+            consular_ancestor_certainty,
+            calculated_father,
+            suggested_father,
+            suggested_father_certainty,
+            calculated_grandfather,
+            suggested_grandfather,
+            suggested_grandfather_certainty,
+            brother,
+            brother_certainty,
+            more_remote,
+            more_remote_certainty,
+            novus,
+            novus_certainty,
+            province,
+            blank,
+            ) = row
+
+        cognomen_first = ''
+        cognomen_other = ''
+
+        if cognomen != '':
+            cognomen_list = cognomen.split()
+            cognomen_first = cognomen_list[0]
+
+            if len(cognomen) > 1:
+                cognomen_other = ' '.join(cognomen_list[1:])
+
+        if praenomen_str == '':
+            praenomen = None
         else:
-            (
-                date,
-                page,
-                note_ref,
-                assertion_type,
-                praenomen_str,
-                nomen,
-                real_number,
-                filiation,
-                cognomen,
-                patrician,
-                patrician_certainty,
-                consular_ancestor,
-                consular_ancestor_certainty,
-                calculated_father,
-                suggested_father,
-                suggested_father_certainty,
-                calculated_grandfather,
-                suggested_grandfather,
-                suggested_grandfather_certainty,
-                brother,
-                brother_certainty,
-                more_remote,
-                more_remote_certainty,
-                novus,
-                novus_certainty,
-                province,
-                blank,
-                ) = row
 
-            cognomen_first = ''
-            cognomen_other = ''
+            # TODO: should attempt to parse the question mark
 
-            if cognomen != '':
-                cognomen_list = cognomen.split()
-
-                if len(cognomen) > 1:
-                    cognomen_first = cognomen_list[0]
-                    cognomen_other = ' '.join(cognomen_list[1:])
-                else:
-                    cognomen_first = cognomen_list[0]
-
-            if praenomen_str == '':
+            if praenomen_str.find('?') != -1:
                 praenomen = None
             else:
-
-                if praenomen_str.find('?') != -1:
-                    praenomen = None
-                else:
+                try:
+                    praenomen = \
+                        Praenomen.objects.get(abbrev=praenomen_str)
+                except:
                     try:
-                        praenomen = Praenomen.objects.get(abbrev=praenomen_str)
+                        praenomen = \
+                            Praenomen.objects.get(abbrev=praenomen_str
+                                + '.')
                     except:
-                        try:
-                            praenomen = Praenomen.objects.get(abbrev=praenomen_str + '.')
-                        except:
-                            print "ERROR: praenomen not found..."
-                            praenomen = None
+                        print '[ERROR]: Praenomen "' \
+                            + praenomen_str + '" not found.'
+                        praenomen = None
 
-            if patrician == 'Patrician':
-                is_patrician = True
-            else:
-                is_patrician = False
+        person = Person(
+            original_text=praenomen_str + ' ' + nomen + ' '
+                + filiation + ' ' + cognomen,
+            sex=Sex.objects.get(name='Male'),
+            praenomen=praenomen,
+            real_number=real_number,
+            nomen=nomen,
+            filiation=filiation,
+            cognomen_first=cognomen_first,
+            cognomen_other=cognomen_other,
+            is_noble = False,
+            is_patrician = False
+            )
 
-            person = Person(
-                original_text=praenomen_str + ' ' + nomen + ' '
-                    + filiation + ' ' + cognomen,
-                sex=Sex.objects.get(name='Male'),
-                praenomen=praenomen,
-                real_number=real_number,
-                nomen=nomen,
-                filiation=filiation,
-                cognomen_first=cognomen_first,
-                cognomen_other=cognomen_other,
-                is_patrician=is_patrician,
-                is_noble=False,
-                )
+        if patrician == 'Patrician':
+            person.is_patrician = True
 
-                # is_patrician=is_patrician,
-                # is_noble=False,
+        print
+        print '[DEBUG] Parsing line', i, '"' + nomen + ' (' + real_number + ')"'
 
-            # test if person exists
 
-            res = data_import_aux.add_new_person_to_db(person)
+        # test if person exists
 
-            if res == True:
-                added = added + 1
-            elif res == None:
-                exist = exist + 1
-            else:
-                error = error + 1
+        res = data_import_aux.add_new_person_to_db(person)
 
-            if res != False:
-                add_brennan_praetor_assertion(person)
+        if res == True:
+            added = added + 1
+        elif res == None:
+            exist = exist + 1
+        else:
+            error = error + 1
+
+        if res != False:
+            add_brennan_praetor_assertion(person)
 
         i = i + 1
 
@@ -153,7 +156,7 @@ def add_brennan_praetor_assertion(person):
         try:
             assertion_person.save()
         except:
-            print '[ERROR SAVING ASSERTION PERSON OBJECT]'
+            print '[ERROR] Could not save AssertionPerson oject...'
     except:
 
-        print '[ERROR SAVING ASSERTION]'
+        print '[ERROR] Could not save assertion...'

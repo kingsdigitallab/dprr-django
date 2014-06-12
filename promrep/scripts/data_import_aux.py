@@ -9,37 +9,35 @@ from promrep.models import Assertion, AssertionPerson, AssertionType, \
 
 
 def is_new_person(person):
-
-    print 'is_new_person ',
-
     identic_persons = \
         Person.objects.filter(real_number=person.real_number,
                               nomen=person.nomen)
 
     if identic_persons.count() == 1:
 
+        existing_person = identic_persons[0]
         # should print the debug information
-        diffs = person.compare(identic_persons[0])
+        diffs = existing_person.compare(person)
         print "[SAME_PERSON] Parsing person already in database:",
 
         diff_keys = diffs[0].keys()
         if len(diff_keys) == 0:
             print "No new info."
         else:
-            print "Different information: printing diffs:"
+            print "printing diffs:"
 
         for key in diff_keys:
-            print key, '[SAME_PERSON]\tOld:', diffs[1][key], 'New:', diffs[0][key]
+            print '[SAME_PERSON]', key, 'Old:', diffs[0][key], 'New:', diffs[1][key]
 
-        person = identic_persons[0]
+        person = existing_person
         print '[SAME_PERSON] Keeping previous (id=' + str(person.id)  + ') in database... '
 
         return False
     elif identic_persons.count() > 1:
+        # todo: print a verbose error
         print 'MANY'
         return None
     else:
-        print 'None'
         return True
 
 

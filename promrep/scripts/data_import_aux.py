@@ -17,8 +17,23 @@ def is_new_person(person):
                               nomen=person.nomen)
 
     if identic_persons.count() == 1:
-        print 'ONE'
+
+        # should print the debug information
+        diffs = person.compare(identic_persons[0])
+        print "[SAME_PERSON] Parsing person already in database:",
+
+        diff_keys = diffs[0].keys()
+        if len(diff_keys) == 0:
+            print "No new info."
+        else:
+            print "Different information: printing diffs:"
+
+        for key in diff_keys:
+            print key, '[SAME_PERSON]\tOld:', diffs[1][key], 'New:', diffs[0][key]
+
         person = identic_persons[0]
+        print '[SAME_PERSON] Keeping previous (id=' + str(person.id)  + ') in database... '
+
         return False
     elif identic_persons.count() > 1:
         print 'MANY'

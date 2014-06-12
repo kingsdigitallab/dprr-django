@@ -24,13 +24,11 @@ def run():
     i = 0
 
     for row in reader:
-        print i
+        # print i
+        # drop first row (header)
         if i == 0:
             pass
         else:
-
-            # dealing with leading/trailing whitespaces
-
             (
                 date,
                 page,
@@ -77,23 +75,22 @@ def run():
                 praenomen = None
             else:
 
-                # TODO: fix...
-
                 if praenomen_str.find('?') != -1:
                     praenomen = None
-                elif praenomen_str.find('.') == -1:
-
+                else:
                     try:
-                        praenomen = \
-                            Praenomen.objects.get(abbrev=praenomen_str
-                                + '.')
+                        praenomen = Praenomen.objects.get(abbrev=praenomen_str)
                     except:
-                        praenomen = None
+                        try:
+                            praenomen = Praenomen.objects.get(abbrev=praenomen_str + '.')
+                        except:
+                            print "ERROR: praenomen not found..."
+                            praenomen = None
 
             if patrician == 'Patrician':
                 is_patrician = True
             else:
-                is_patricia = False
+                is_patrician = False
 
             person = Person(
                 original_text=praenomen_str + ' ' + nomen + ' '
@@ -129,8 +126,12 @@ def run():
         i = i + 1
 
     print
-    print 'Total: ', i - 1, 'Added: ', added, 'Existing: ', exist, \
-        'Errors: ', error
+    print 'Final Stats...'
+    print '\tTotal entries in file:', i - 1
+    print '\tNew persons (added to db):', added
+    print '\tNot Added (already existed):', exist
+    print '\tImport Errors:', error
+    print
 
 
 def add_brennan_praetor_assertion(person):

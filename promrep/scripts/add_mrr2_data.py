@@ -134,7 +134,9 @@ def parse_person_name(text):
             is_noble=False,
             )
 
-        data_import_aux.add_new_person_to_db(person)
+        res, person_id = data_import_aux.add_person_to_db(person)
+
+        person = Person.objects.get(pk = person_id)
 
     else:
         print '[ERROR] Could not parse the person:', text

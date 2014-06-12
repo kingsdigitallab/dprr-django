@@ -13,6 +13,7 @@ import data_import_aux
 def run():
 
     # TODO: create stats class
+
     added = 0
     error = 0
     exist = 0
@@ -87,13 +88,13 @@ def run():
                             Praenomen.objects.get(abbrev=praenomen_str
                                 + '.')
                     except:
-                        print '[ERROR]: Praenomen "' \
-                            + praenomen_str + '" not found.'
+                        print '[ERROR]: Praenomen "' + praenomen_str \
+                            + '" not found.'
                         praenomen = None
 
         person = Person(
-            original_text=praenomen_str + ' ' + nomen + ' '
-                + filiation + ' ' + cognomen,
+            original_text=praenomen_str + ' ' + nomen + ' ' + filiation
+                + ' ' + cognomen,
             sex=Sex.objects.get(name='Male'),
             praenomen=praenomen,
             real_number=real_number,
@@ -101,29 +102,32 @@ def run():
             filiation=filiation,
             cognomen_first=cognomen_first,
             cognomen_other=cognomen_other,
-            is_noble = False,
-            is_patrician = False
+            is_noble=False,
+            is_patrician=False,
             )
 
         if patrician == 'Patrician':
             person.is_patrician = True
 
         print
-        print '[DEBUG] Parsing line', i, '"' + nomen + ' (' + real_number + ')"'
-
+        print '[DEBUG] Parsing line', i, '"' + nomen + ' (' \
+            + real_number + ')"'
 
         # test if person exists
 
-        res = data_import_aux.add_new_person_to_db(person)
+        (res, person_id) = data_import_aux.add_person_to_db(person)
 
-        if res == True:
-            added = added + 1
-        elif res == None:
-            exist = exist + 1
+        if res != None:
+            person = Person.objects.get(pk=person_id)
+
+            if res == True:
+                added = added + 1
+            else:
+                exist = exist + 1
         else:
             error = error + 1
 
-        if res != False:
+        if res != None:
             add_brennan_praetor_assertion(person)
 
         i = i + 1
@@ -143,20 +147,19 @@ def add_brennan_praetor_assertion(person):
     assertion_type = AssertionType.objects.get(name='Office')
     office = Office.objects.get(name='Praetors')
 
-    assertion = Assertion(office=office, assertion_type=assertion_type,
+    try:
+        assertion = Assertion.objects.create(office=office, assertion_type=assertion_type,
                           secondary_source=source)
 
-    try:
-        assertion.save()
-
-        assertion_person = \
-            AssertionPerson(role=RoleType.objects.get(name='Holder'),
-                            assertion=assertion, person=person)
+        print "[DEBUG] Saved assertion with id", assertion.id
 
         try:
-            assertion_person.save()
+            ap = AssertionPerson.objects.create(role=RoleType.objects.get(name='Holder'), assertion=assertion, person=person)
+
+            print "[DEBUG] Correctly created the AssertionPerson object with id", ap.id
+
         except:
             print '[ERROR] Could not save AssertionPerson oject...'
-    except:
 
+    except:
         print '[ERROR] Could not save assertion...'

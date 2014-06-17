@@ -84,9 +84,9 @@ class Migration(SchemaMigration):
             ('tribe', self.gf('django.db.models.fields.CharField')(max_length=128, blank=True)),
             ('is_patrician', self.gf('django.db.models.fields.BooleanField')()),
             ('patrician_certainty', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='person_patrician_certainty', null=True, to=orm['promrep.Certainty'])),
-            ('is_noble', self.gf('django.db.models.fields.BooleanField')()),
-            ('noble_certainty', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='person_noble_certainty', null=True, to=orm['promrep.Certainty'])),
-            ('is_novus_homo', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('consular_ancestor', self.gf('django.db.models.fields.BooleanField')()),
+            ('consular_ancestor_certainty', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='person_noble_certainty', null=True, to=orm['promrep.Certainty'])),
+            ('novus_homo', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('novus_homo_certainty', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='person_novus_homo_certainty', null=True, to=orm['promrep.Certainty'])),
             ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
             ('filiation', self.gf('django.db.models.fields.CharField')(max_length=256, blank=True)),
@@ -129,6 +129,16 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'promrep', ['Office'])
 
+        # Adding model 'Relationship'
+        db.create_table(u'promrep_relationship', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
+            ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=256)),
+            ('description', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
+        ))
+        db.send_create_signal(u'promrep', ['Relationship'])
+
         # Adding model 'AssertionType'
         db.create_table(u'promrep_assertiontype', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -142,7 +152,8 @@ class Migration(SchemaMigration):
             ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
             ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
             ('assertion_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.AssertionType'])),
-            ('office', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Office'])),
+            ('office', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Office'], null=True, blank=True)),
+            ('relationship', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Relationship'], null=True, blank=True)),
             ('secondary_source', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.SecondarySource'])),
             ('display_text', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
             ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
@@ -193,6 +204,9 @@ class Migration(SchemaMigration):
         # Deleting model 'Office'
         db.delete_table(u'promrep_office')
 
+        # Deleting model 'Relationship'
+        db.delete_table(u'promrep_relationship')
+
         # Deleting model 'AssertionType'
         db.delete_table(u'promrep_assertiontype')
 
@@ -219,8 +233,9 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
-            'office': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Office']"}),
+            'office': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Office']", 'null': 'True', 'blank': 'True'}),
             'persons': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['promrep.Person']", 'through': u"orm['promrep.AssertionPerson']", 'symmetrical': 'False'}),
+            'relationship': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Relationship']", 'null': 'True', 'blank': 'True'}),
             'secondary_source': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.SecondarySource']"})
         },
         u'promrep.assertionperson': {
@@ -286,16 +301,16 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Person'},
             'cognomen_first': ('django.db.models.fields.CharField', [], {'max_length': '64', 'blank': 'True'}),
             'cognomen_other': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
+            'consular_ancestor': ('django.db.models.fields.BooleanField', [], {}),
+            'consular_ancestor_certainty': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'person_noble_certainty'", 'null': 'True', 'to': u"orm['promrep.Certainty']"}),
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             'filiation': ('django.db.models.fields.CharField', [], {'max_length': '256', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_noble': ('django.db.models.fields.BooleanField', [], {}),
-            'is_novus_homo': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_patrician': ('django.db.models.fields.BooleanField', [], {}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
-            'noble_certainty': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'person_noble_certainty'", 'null': 'True', 'to': u"orm['promrep.Certainty']"}),
             'nomen': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
             'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
+            'novus_homo': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'novus_homo_certainty': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'person_novus_homo_certainty'", 'null': 'True', 'to': u"orm['promrep.Certainty']"}),
             'original_text': ('django.db.models.fields.CharField', [], {'max_length': '256', 'blank': 'True'}),
             'patrician_certainty': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'person_patrician_certainty'", 'null': 'True', 'to': u"orm['promrep.Certainty']"}),
@@ -315,6 +330,14 @@ class Migration(SchemaMigration):
         u'promrep.primarysource': {
             'Meta': {'object_name': 'PrimarySource'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'})
+        },
+        u'promrep.relationship': {
+            'Meta': {'object_name': 'Relationship'},
+            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'})
         },
         u'promrep.roletype': {

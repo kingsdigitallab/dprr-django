@@ -6,5 +6,22 @@
         "name": "Holder",
         "description": ""
     }
+},
+{
+    "pk": 2,
+    "model": "promrep.roletype",
+    "fields": {
+        "name": "Father",
+        "description": ""
+    }
+},
+{
+    "pk": 3,
+    "model": "promrep.roletype",
+    "fields": {
+        "name": "Son",
+        "description": ""
+    }
 }
 ]
+

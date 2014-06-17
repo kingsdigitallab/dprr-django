@@ -29,3 +29,6 @@ def run():
 
     print 'Loading Secondary Sources...'
     call_command('loaddata', 'promrep/fixtures/promrep_secondarysource.json')
+
+    print 'Loading Relationship Data...'
+    call_command('loaddata', 'promrep/fixtures/promrep_relationship.json')

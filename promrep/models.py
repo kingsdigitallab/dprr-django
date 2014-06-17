@@ -143,13 +143,13 @@ class Person(TimeStampedModel):
             related_name='person_patrician_certainty', null=True,
             blank=True)
 
-    is_noble = models.BooleanField(blank=True, verbose_name='Noble')
-    noble_certainty = models.ForeignKey(Certainty,
+    consular_ancestor = models.BooleanField(blank=True, verbose_name='Consular Ancestor?')
+    consular_ancestor_certainty = models.ForeignKey(Certainty,
             related_name='person_noble_certainty', null=True,
             blank=True)
 
-    is_novus_homo = models.BooleanField(default=False, blank=True,
-            verbose_name='Novus Homo')
+    novus_homo = models.BooleanField(default=False, blank=True,
+            verbose_name='Novus Homo?')
     novus_homo_certainty = models.ForeignKey(Certainty,
             related_name='person_novus_homo_certainty', null=True,
             blank=True)
@@ -270,6 +270,16 @@ class Office(MPTTModel, TimeStampedModel):
         return self.name
 
 
+
+class Relationship(TimeStampedModel):
+    name = models.CharField(max_length=256, unique=True)
+    description = models.CharField(max_length=1024, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+
 class AssertionType(models.Model):
 
     name = models.CharField(max_length=128, unique=True)
@@ -282,7 +292,11 @@ class Assertion(TimeStampedModel):
 
     persons = models.ManyToManyField(Person, through='AssertionPerson')
     assertion_type = models.ForeignKey(AssertionType)
-    office = models.ForeignKey(Office)
+
+    # should these be combined into a single tree
+    office = models.ForeignKey(Office, blank=True, null=True)
+    relationship = models.ForeignKey(Relationship, blank=True, null=True)
+
     dates = generic.GenericRelation(Date)
 
     secondary_source = models.ForeignKey(SecondarySource)
@@ -296,12 +310,12 @@ class Assertion(TimeStampedModel):
 
     def __unicode__(self):
         type = self.assertion_type.name
-        office = self.office.name
+        # office = self.office.name
 
-        if office != None:
-            office = self.office.name
+        # if office != None:
+        #     office = self.office.name
 
-        return type + ' (' + office + ')'
+        return type
 
 
 class AssertionPerson(TimeStampedModel):

@@ -5,10 +5,9 @@ import csv
 
 from promrep.models import Assertion, AssertionPerson, AssertionType, \
     Certainty, Date, DateType, Office, Person, Praenomen, RoleType, \
-    SecondarySource, Sex
+    SecondarySource, Sex, Relationship
 
 import data_import_aux
-
 
 def run():
 
@@ -102,7 +101,7 @@ def run():
             filiation=filiation,
             cognomen_first=cognomen_first,
             cognomen_other=cognomen_other,
-            is_noble=False,
+            consular_ancestor=False,
             is_patrician=False,
             )
 
@@ -113,22 +112,58 @@ def run():
         print '[DEBUG] Parsing line', i, '"' + nomen + ' (' \
             + real_number + ')"'
 
+        person_exists = data_import_aux.person_exists(person)
+
         # test if person exists
+        if person_exists == None:
+            # TODO: how to handle this case?
+            error = error + 1
+        else:
+            # no errors: the person either exists or will be created
+            if person_exists == False:
 
-        (res, person_id) = data_import_aux.add_person_to_db(person)
+                try:
+                    person.save()
+                    added = added + 1
+                    print "[DEBUG] saved person with id", person.id
 
-        if res != None:
-            person = Person.objects.get(pk=person_id)
+                except:
+                    print '[ERROR] Unable to save person in the database.'
 
-            if res == True:
-                added = added + 1
             else:
                 exist = exist + 1
-        else:
-            error = error + 1
+                person = Person.objects.get(pk=person_exists)
 
-        if res != None:
-            add_brennan_praetor_assertion(person)
+            add_office_assertion(person, 'Brennan Praetors', 'Praetors')
+
+            # parsing the father
+            if suggested_father != '':
+
+                print "[suggested_father]" + suggested_father
+
+                father = data_import_aux.parse_person_name(suggested_father)
+
+                if father != None:
+                    father.save()
+
+                    fs_assertion = Assertion(
+                        assertion_type = AssertionType.objects.get(name="Relationship"),
+                        relationship = Relationship.objects.get(name="Father"),
+                        secondary_source = SecondarySource.objects.get(abbrev_name= "Brennan Praetors"),
+                        )
+                    fs_assertion.save()
+
+                    father = AssertionPerson(assertion = fs_assertion,
+                        person = father,
+                        role = RoleType.objects.get(name="Father") )
+                    father.save()
+
+                    son = AssertionPerson( assertion = fs_assertion,
+                        person = person,
+                        role = RoleType.objects.get(name="Son") )
+                    son.save()
+
+
 
         i = i + 1
 
@@ -141,25 +176,56 @@ def run():
     print
 
 
-def add_brennan_praetor_assertion(person):
+def add_office_assertion(person, source_abbrev, office_name):
 
-    source = SecondarySource.objects.get(abbrev_name='Brennan Praetors')
     assertion_type = AssertionType.objects.get(name='Office')
-    office = Office.objects.get(name='Praetors')
+    source = SecondarySource.objects.get(abbrev_name=source_abbrev)
+    office = Office.objects.get(name=office_name)
 
     try:
-        assertion = Assertion.objects.create(office=office, assertion_type=assertion_type,
-                          secondary_source=source)
+        assertion = Assertion.objects.create(office=office,
+                assertion_type=assertion_type, secondary_source=source)
 
-        print "[DEBUG] Saved assertion with id", assertion.id
+        print '[DEBUG] Saved assertion with id', assertion.id
 
         try:
-            ap = AssertionPerson.objects.create(role=RoleType.objects.get(name='Holder'), assertion=assertion, person=person)
+            ap = \
+                AssertionPerson.objects.create(role=RoleType.objects.get(name='Holder'
+                    ), assertion=assertion, person=person)
 
-            print "[DEBUG] Correctly created the AssertionPerson object with id", ap.id
-
+            print '[DEBUG] Correctly created the AssertionPerson object with id', \
+                ap.id
         except:
-            print '[ERROR] Could not save AssertionPerson oject...'
 
+            print '[ERROR] Could not save AssertionPerson object...'
     except:
+
+        print '[ERROR] Could not save assertion...'
+
+
+def add_relationship_assertion(person1, person2, source_abbrev,
+                               relationship_name):
+
+    assertion_type = AssertionType.objects.get(name='Relationship')
+    source = SecondarySource.objects.get(abbrev_name=source_abbrev)
+    relationship = Relationship.objects.get(name=relationship_name)
+
+    try:
+        assertion = Assertion.objects.create(relationship=relationship,
+                assertion_type=assertion_type, secondary_source=source)
+
+        print '[DEBUG] Saved assertion with id', assertion.id
+
+        try:
+            ap = \
+                AssertionPerson.objects.create(role=RoleType.objects.get(name='Holder'
+                    ), assertion=assertion, person=person)
+
+            print '[DEBUG] Correctly created the AssertionPerson object with id', \
+                ap.id
+        except:
+
+            print '[ERROR] Could not save AssertionPerson oject...'
+    except:
+
         print '[ERROR] Could not save assertion...'

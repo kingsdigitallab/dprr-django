@@ -1,0 +1,16 @@
+[
+{
+    "pk": 1,
+    "model": "promrep.relationship",
+    "fields": {
+        "name": "Father"
+    }
+},
+{
+    "pk": 2,
+    "model": "promrep.relationship",
+    "fields": {
+        "name": "Grandfather"
+    }
+}
+]

@@ -189,7 +189,7 @@ def add_office_assertion(
     person,
     source_abbrev,
     office_name,
-    date,
+    date_str,
     ):
 
     assertion_type = AssertionType.objects.get(name='Office')
@@ -201,6 +201,18 @@ def add_office_assertion(
                 assertion_type=assertion_type, secondary_source=source)
 
         print '[DEBUG] Saved assertion with id', assertion.id
+
+        date = parse_brennan_date(date_str)
+        # print date
+
+        if date:
+            date.content_object = assertion
+
+            try:
+                date.save()
+            except e:
+                print e
+                print '[ERROR] Could not save date...' + date_str
 
         try:
             ap = \
@@ -252,7 +264,14 @@ def add_relationship_assertion(
 def parse_brennan_date(text):
     """Returns a Date object or None"""
 
-    date = Date(content_type=ContentType.objects.get(name='assertion'))
+    date = Date(
+        content_type=ContentType.objects.get(name='assertion'),
+        interval=Date.DATE_SINGLE,
+        year_uncertain=False,
+        month_uncertain=False,
+        day_uncertain=False,
+        circa=False,
+        )
 
     if '?' in text:
         text = text.replace('?', '')
@@ -261,8 +280,8 @@ def parse_brennan_date(text):
     try:
         date.year = int(text)
         return date
-
     except ValueError, e:
+
         if 'before' in text:
             parts = text.split('before')
             date.interval = Date.DATE_MAX

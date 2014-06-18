@@ -80,20 +80,6 @@ INSTALLED_APPS += (
 
 INTERNAL_IPS = ('127.0.0.1',)
 
-# Promrep settings
-DATE_SINGLE = 0
-DATE_MIN = 1
-DATE_MAX = 2
-DATE_INTERVAL_CHOICES = (
-       (DATE_SINGLE, 'single'),
-       (DATE_MIN, 'min'),
-       (DATE_MAX, 'max')
-       )
-
-
-
-
-
 # https://docs.djangoproject.com/en/1.6/topics/logging/
 LOGGING_ROOT = os.path.join(BASE_DIR, 'logs')
 LOGGING_LEVEL = 'WARN'

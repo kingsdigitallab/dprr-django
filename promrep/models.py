@@ -54,12 +54,20 @@ class DateType(models.Model):
 
 class Date(models.Model):
 
+    # Promrep settings
+
+    DATE_SINGLE = 0
+    DATE_MIN = 1
+    DATE_MAX = 2
+    DATE_INTERVAL_CHOICES = ((DATE_SINGLE, 'single'), (DATE_MIN, 'min'
+                             ), (DATE_MAX, 'max'))
+
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey()
     date_type = models.ForeignKey(DateType, blank=True, null=True)
     interval = \
-        models.SmallIntegerField(choices=settings.DATE_INTERVAL_CHOICES)
+        models.SmallIntegerField(choices=DATE_INTERVAL_CHOICES)
     year = IntegerRangeField(min_value=-500, max_value=500, blank=True,
                              null=True)
     year_uncertain = models.BooleanField(verbose_name='uncertain')
@@ -143,7 +151,8 @@ class Person(TimeStampedModel):
             related_name='person_patrician_certainty', null=True,
             blank=True)
 
-    consular_ancestor = models.BooleanField(blank=True, verbose_name='Consular Ancestor?')
+    consular_ancestor = models.BooleanField(blank=True,
+            verbose_name='Consular Ancestor?')
     consular_ancestor_certainty = models.ForeignKey(Certainty,
             related_name='person_noble_certainty', null=True,
             blank=True)
@@ -174,8 +183,8 @@ class Person(TimeStampedModel):
 
     def get_name(self):
 
-        name_parts = [self.nomen, self.filiation,
-                      self.cognomen_first, self.cognomen_other]
+        name_parts = [self.nomen, self.filiation, self.cognomen_first,
+                      self.cognomen_other]
 
         if self.praenomen:
             name = self.praenomen.abbrev + ' '
@@ -205,13 +214,25 @@ class Person(TimeStampedModel):
     get_dates.short_description = 'Dates'
 
     def compare(self, obj):
-        excluded_keys = 'created', '_state', 'modified', '_praenomen_cache', '_sex_cache', 'id'
+        excluded_keys = (
+            'created',
+            '_state',
+            'modified',
+            '_praenomen_cache',
+            '_sex_cache',
+            'id',
+            )
         return self._compare(self, obj, excluded_keys)
 
-    def _compare(self, obj1, obj2, excluded_keys):
-        d1, d2 = obj1.__dict__, obj2.__dict__
-        old, new = {}, {}
-        for k,v in d1.items():
+    def _compare(
+        self,
+        obj1,
+        obj2,
+        excluded_keys,
+        ):
+        (d1, d2) = (obj1.__dict__, obj2.__dict__)
+        (old, new) = ({}, {})
+        for (k, v) in d1.items():
             if k in excluded_keys:
                 continue
             try:
@@ -221,7 +242,7 @@ class Person(TimeStampedModel):
             except KeyError:
                 old.update({k: v})
 
-        return old, new
+        return (old, new)
 
 
 # Broughton, Rupke, etc
@@ -270,14 +291,13 @@ class Office(MPTTModel, TimeStampedModel):
         return self.name
 
 
-
 class Relationship(TimeStampedModel):
+
     name = models.CharField(max_length=256, unique=True)
     description = models.CharField(max_length=1024, blank=True)
 
     def __unicode__(self):
         return self.name
-
 
 
 class AssertionType(models.Model):
@@ -294,8 +314,10 @@ class Assertion(TimeStampedModel):
     assertion_type = models.ForeignKey(AssertionType)
 
     # should these be combined into a single tree
+
     office = models.ForeignKey(Office, blank=True, null=True)
-    relationship = models.ForeignKey(Relationship, blank=True, null=True)
+    relationship = models.ForeignKey(Relationship, blank=True,
+            null=True)
 
     dates = generic.GenericRelation(Date)
 
@@ -310,6 +332,7 @@ class Assertion(TimeStampedModel):
 
     def __unicode__(self):
         type = self.assertion_type.name
+
         # office = self.office.name
 
         # if office != None:

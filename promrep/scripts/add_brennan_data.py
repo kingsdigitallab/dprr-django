@@ -3,11 +3,12 @@
 
 import csv
 
-from promrep.models import Assertion, AssertionPerson, AssertionType, \
-    Certainty, Date, DateType, Office, Person, Praenomen, RoleType, \
-    SecondarySource, Sex, Relationship
+from promrep.models import ContentType, Assertion, AssertionPerson, \
+    AssertionType, Certainty, Date, DateType, Office, Person, \
+    Praenomen, RoleType, SecondarySource, Sex, Relationship
 
 import data_import_aux
+
 
 def run():
 
@@ -115,55 +116,63 @@ def run():
         person_exists = data_import_aux.person_exists(person)
 
         # test if person exists
+
         if person_exists == None:
+
             # TODO: how to handle this case?
+
             error = error + 1
         else:
+
             # no errors: the person either exists or will be created
+
             if person_exists == False:
 
                 try:
                     person.save()
                     added = added + 1
-                    print "[DEBUG] saved person with id", person.id
-
+                    print '[DEBUG] saved person with id', person.id
                 except:
-                    print '[ERROR] Unable to save person in the database.'
 
+                    print '[ERROR] Unable to save person in the database.'
             else:
+
                 exist = exist + 1
                 person = Person.objects.get(pk=person_exists)
 
-            add_office_assertion(person, 'Brennan Praetors', 'Praetors')
+            add_office_assertion(person, 'Brennan Praetors', 'Praetors'
+                                 , date)
 
             # parsing the father
+
             if suggested_father != '':
 
-                print "[suggested_father]" + suggested_father
+                print '[suggested_father]' + suggested_father
 
-                father = data_import_aux.parse_person_name(suggested_father)
+                father = \
+                    data_import_aux.parse_person_name(suggested_father)
 
                 if father != None:
                     father.save()
 
-                    fs_assertion = Assertion(
-                        assertion_type = AssertionType.objects.get(name="Relationship"),
-                        relationship = Relationship.objects.get(name="Father"),
-                        secondary_source = SecondarySource.objects.get(abbrev_name= "Brennan Praetors"),
-                        )
+                    fs_assertion = \
+                        Assertion(assertion_type=AssertionType.objects.get(name='Relationship'
+                                  ),
+                                  relationship=Relationship.objects.get(name='Father'
+                                  ),
+                                  secondary_source=SecondarySource.objects.get(abbrev_name='Brennan Praetors'
+                                  ))
                     fs_assertion.save()
 
-                    father = AssertionPerson(assertion = fs_assertion,
-                        person = father,
-                        role = RoleType.objects.get(name="Father") )
+                    father = AssertionPerson(assertion=fs_assertion,
+                            person=father,
+                            role=RoleType.objects.get(name='Father'))
                     father.save()
 
-                    son = AssertionPerson( assertion = fs_assertion,
-                        person = person,
-                        role = RoleType.objects.get(name="Son") )
+                    son = AssertionPerson(assertion=fs_assertion,
+                            person=person,
+                            role=RoleType.objects.get(name='Son'))
                     son.save()
-
-
 
         i = i + 1
 
@@ -176,7 +185,12 @@ def run():
     print
 
 
-def add_office_assertion(person, source_abbrev, office_name):
+def add_office_assertion(
+    person,
+    source_abbrev,
+    office_name,
+    date,
+    ):
 
     assertion_type = AssertionType.objects.get(name='Office')
     source = SecondarySource.objects.get(abbrev_name=source_abbrev)
@@ -203,8 +217,12 @@ def add_office_assertion(person, source_abbrev, office_name):
         print '[ERROR] Could not save assertion...'
 
 
-def add_relationship_assertion(person1, person2, source_abbrev,
-                               relationship_name):
+def add_relationship_assertion(
+    person1,
+    person2,
+    source_abbrev,
+    relationship_name,
+    ):
 
     assertion_type = AssertionType.objects.get(name='Relationship')
     source = SecondarySource.objects.get(abbrev_name=source_abbrev)
@@ -229,3 +247,35 @@ def add_relationship_assertion(person1, person2, source_abbrev,
     except:
 
         print '[ERROR] Could not save assertion...'
+
+
+def parse_brennan_date(text):
+    """Returns a Date object or None"""
+
+    date = Date(content_type=ContentType.objects.get(name='assertion'))
+
+    if '?' in text:
+        text = text.replace('?', '')
+        date.year_uncertain = True
+
+    try:
+        date.year = int(text)
+        return date
+
+    except ValueError, e:
+        if 'before' in text:
+            parts = text.split('before')
+            date.interval = Date.DATE_MAX
+        elif 'by' in text:
+            parts = text.split('by')
+            date.circa = True
+        elif 'ca.' in text:
+            parts = text.split('ca.')
+            date.circa = True
+        else:
+            return None
+        try:
+            date.year = int(parts[1])
+            return date
+        except:
+            return None

@@ -47,8 +47,8 @@ class PersonAdmin(admin.ModelAdmin):
         ('cognomen_first', 'cognomen_other'),
         'filiation',
         ]}), ('Real', {'fields': ['real_number', 'real_number_old',
-              'real_attribute']}), ('Other', {'fields': [('is_noble',
-                                    'noble_certainty'), ('is_novus_homo'
+              'real_attribute']}), ('Other', {'fields': [('consular_ancestor',
+                                    'consular_ancestor_certainty'), ('is_novus_homo'
                                     , 'novus_homo_certainty'),
                                     ('is_patrician',
                                     'patrician_certainty')]})]
@@ -59,8 +59,8 @@ class PersonAdmin(admin.ModelAdmin):
         'url_to_edit_person',
         'sex',
         'get_dates',
-        'is_noble',
-        'is_novus_homo',
+        'consular_ancestor',
+        'novus_homo',
         'is_patrician',
         'notes',
         'modified',

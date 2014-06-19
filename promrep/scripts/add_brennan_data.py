@@ -31,7 +31,7 @@ def run():
         row = [a.strip() for a in original_row]
 
         (
-            date,
+            date_str,
             page,
             note_ref,
             assertion_type,
@@ -141,7 +141,7 @@ def run():
                 person = Person.objects.get(pk=person_exists)
 
             add_office_assertion(person, 'Brennan Praetors', 'Praetors'
-                                 , date)
+                                 , date_str)
 
             # parsing the father
 
@@ -202,17 +202,22 @@ def add_office_assertion(
 
         print '[DEBUG] Saved assertion with id', assertion.id
 
-        date = parse_brennan_date(date_str)
-        # print date
+        date_list = parse_brennan_date(date_str)
 
-        if date:
-            date.content_object = assertion
+        if date_list:
 
-            try:
-                date.save()
-            except e:
-                print e
-                print '[ERROR] Could not save date...' + date_str
+            for date in date_list:
+
+                date.content_object = assertion
+
+                try:
+                    date.save()
+
+                except e:
+                    print e
+                    print '[ERROR] Could not save date...' + date_str
+        else:
+            print '[ERROR][DATE_PARSING]: ' + date_str
 
         try:
             ap = \
@@ -262,7 +267,7 @@ def add_relationship_assertion(
 
 
 def parse_brennan_date(text):
-    """Returns a Date object or None"""
+    """Returns a list of Date objects or None"""
 
     date = Date(
         content_type=ContentType.objects.get(name='assertion'),
@@ -273,28 +278,42 @@ def parse_brennan_date(text):
         circa=False,
         )
 
+    if 'before' in text:
+        text = text.replace('before', '')
+        date.interval = Date.DATE_MAX
+
     if '?' in text:
         text = text.replace('?', '')
         date.year_uncertain = True
 
+    if 'ca.' in text:
+        text = text.replace('ca.', '')
+        date.circa = True
+
+    if 'by' in text:
+        text = text.replace('by', '')
+        date.circa = True
+
     try:
         date.year = int(text)
-        return date
+        return [date]
     except ValueError, e:
 
-        if 'before' in text:
-            parts = text.split('before')
-            date.interval = Date.DATE_MAX
-        elif 'by' in text:
-            parts = text.split('by')
-            date.circa = True
-        elif 'ca.' in text:
-            parts = text.split('ca.')
-            date.circa = True
-        else:
-            return None
-        try:
-            date.year = int(parts[1])
-            return date
-        except:
-            return None
+        if 'c' in text:
+            century_str = text.replace('c', '')
+
+            try:
+                date1 = date
+                date1.year = int(century_str * 100)
+                date1.interval = Date.DATE_MIN
+
+                date2 = date
+                date2.year = int(century_str * 100 - 99)
+                date2.interval = Date.DATE_MAX
+
+                return [date1, date2]
+            except:
+
+                return None
+
+        return None

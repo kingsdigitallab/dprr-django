@@ -208,14 +208,15 @@ def add_office_assertion(
 
             for date in date_list:
 
-                date.content_object = assertion
+                # need to test if date is not None
+                if date:
+                    date.content_object = assertion
+                    try:
+                        date.save()
 
-                try:
-                    date.save()
-
-                except e:
-                    print e
-                    print '[ERROR] Could not save date...' + date_str
+                    except e:
+                        print e
+                        print '[ERROR] Could not save date...' + date_str
         else:
             print '[ERROR][DATE_PARSING]: ' + date_str
 
@@ -296,6 +297,16 @@ def parse_brennan_date(text):
 
     if 'before' in text:
         text = text.replace('before', '')
+
+        # will add the offset to the year
+        #   before means that the year isn't included...
+        offset = -1
+
+        date1.interval = Date.DATE_MAX
+        date2 = None
+
+    if '<' in text:
+        text = text.replace('<', '')
 
         # will add the offset to the year
         #   before means that the year isn't included...

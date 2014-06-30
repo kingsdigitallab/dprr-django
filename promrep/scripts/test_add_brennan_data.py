@@ -26,6 +26,12 @@ class AddBrennanDataTestCase(TestCase):
         self.assertEqual(mydate[0].year, -61)
         self.assertEqual(mydate[0].year_uncertain, True)
 
+        mydate = brennan.parse_brennan_date('??<94')
+        self.assertEqual(mydate[1], None)
+        self.assertEqual(mydate[0].interval, Date.DATE_MAX)
+        self.assertEqual(mydate[0].year, -95)
+        self.assertEqual(mydate[0].year_uncertain, True)
+
         mydate = brennan.parse_brennan_date('??before 60')
         self.assertEqual(mydate[1], None)
         self.assertEqual(mydate[0].interval, Date.DATE_MAX)

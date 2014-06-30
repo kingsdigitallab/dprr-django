@@ -267,36 +267,75 @@ def add_relationship_assertion(
 
 
 def parse_brennan_date(text):
-    """Returns a list of Date objects or None"""
+    """Returns a tuple of Date with two objects
+    If a date is not valid, it returns None on that tuple element
+    If there any parsing issues, simply returns None """
 
-    date = Date(
+    # we should always create two date objects
+    date1 = Date(
         content_type=ContentType.objects.get(name='assertion'),
-        interval=Date.DATE_SINGLE,
+        interval=Date.DATE_MIN,
         year_uncertain=False,
         month_uncertain=False,
         day_uncertain=False,
         circa=False,
         )
 
+    date2 = Date(
+        content_type=ContentType.objects.get(name='assertion'),
+        interval=Date.DATE_MAX,
+        year_uncertain=False,
+        month_uncertain=False,
+        day_uncertain=False,
+        circa=False,
+        )
+
+    # default office lenght
+    duration = 1
+    offset = 0
+
     if 'before' in text:
         text = text.replace('before', '')
-        date.interval = Date.DATE_MAX
 
-    if '?' in text:
-        text = text.replace('?', '')
-        date.year_uncertain = True
+        # will add the offset to the year
+        #   before means that the year isn't included...
+        offset = -1
+
+        date1.interval = Date.DATE_MAX
+        date2 = None
 
     if 'ca.' in text:
         text = text.replace('ca.', '')
-        date.circa = True
+        date1.circa = True
+        date2 = None
+
+    if '?' in text:
+        # TODO: should also deal with ??/very uncertain
+        text = text.replace('?', '')
+        date1.year_uncertain = True
+
+        if date2:
+            date2.year_uncertain = True
 
     if 'by' in text:
         text = text.replace('by', '')
-        date.circa = True
+
+        date1.interval = Date.DATE_MAX
+        date2 = None
 
     try:
-        date.year = int(text)
-        return [date]
+        # all years are BC...
+        year = int(text)
+        if year > 0:
+            year = -year
+
+        date1.year = year + offset
+
+        if date2:
+            date2.year = date1.year + duration
+
+        return [date1, date2]
+
     except ValueError, e:
 
         if 'c' in text:
@@ -311,9 +350,8 @@ def parse_brennan_date(text):
                 date2.year = int(century_str * 100 - 99)
                 date2.interval = Date.DATE_MAX
 
-                return [date1, date2]
+                return (date1, date2)
             except:
-
                 return None
 
         return None

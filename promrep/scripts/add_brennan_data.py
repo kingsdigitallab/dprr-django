@@ -339,16 +339,23 @@ def parse_brennan_date(text):
     except ValueError, e:
 
         if 'c' in text:
-            century_str = text.replace('c', '')
+            text = text.replace('c', '')
+
+            # either ' or ' or '/'
+            if '/' in text:
+                century_parts = [-int(i)*100 for i in text.split('/')]
+
+            elif ' or ' in text:
+                century_parts = [-int(i)*100 for i in text.split(' or ')]
+            else:
+                # single value
+                century_parts = [-int(text)*100, -int(text)*100]
+
+            century_parts[1] = century_parts[1] + 99
 
             try:
-                date1 = date
-                date1.year = int(century_str * 100)
-                date1.interval = Date.DATE_MIN
-
-                date2 = date
-                date2.year = int(century_str * 100 - 99)
-                date2.interval = Date.DATE_MAX
+                date1.year = century_parts[0]
+                date2.year = century_parts[1]
 
                 return (date1, date2)
             except:

@@ -54,4 +54,22 @@ class AddBrennanDataTestCase(TestCase):
         self.assertEqual(mydate[0].interval, Date.DATE_MAX)
 
 
+        mydate = brennan.parse_brennan_date('3c')
+        self.assertEqual(mydate[0].year, -300)
+        self.assertEqual(mydate[1].year, -201)
+        self.assertEqual(mydate[0].interval, Date.DATE_MIN)
+        self.assertEqual(mydate[1].interval, Date.DATE_MAX)
 
+
+        mydate = brennan.parse_brennan_date('3 or 2c')
+        self.assertEqual(mydate[0].year, -300)
+        self.assertEqual(mydate[1].year, -101)
+        self.assertEqual(mydate[0].interval, Date.DATE_MIN)
+        self.assertEqual(mydate[1].interval, Date.DATE_MAX)
+
+
+        mydate = brennan.parse_brennan_date('3/2c')
+        self.assertEqual(mydate[0].year, -300)
+        self.assertEqual(mydate[1].year, -101)
+        self.assertEqual(mydate[0].interval, Date.DATE_MIN)
+        self.assertEqual(mydate[1].interval, Date.DATE_MAX)

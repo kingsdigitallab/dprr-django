@@ -84,8 +84,14 @@ class Date(models.Model):
                                     editable=False)
 
     def __unicode__(self):
-        return u'%s %s-%s-%s'.strip() % (self.date_type or '',
-                self.year, self.month, self.day)
+
+        if self.year < 0:
+            bc_ad = "BC"
+        else:
+            bc_ad = "AD"
+
+        return u'%s %s %s'.strip() % (self.date_type or '',
+                abs(self.year), bc_ad)
 
 
 class Praenomen(models.Model):

@@ -90,8 +90,9 @@ class Date(models.Model):
         else:
             bc_ad = "AD"
 
-        return u'%s %s %s'.strip() % (self.date_type or '',
-                abs(self.year), bc_ad)
+        date_str = u'%s %s %s'.strip() % (self.date_type or '', abs(self.year), bc_ad)
+
+        return date_str
 
 
 class Praenomen(models.Model):

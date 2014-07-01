@@ -49,7 +49,7 @@ def parse_person_name(text):
     """Will return a person object or None if unable to parse the person"""
 
     print
-    print 'Will parse person: ', text
+    print '[DEBUG] Will parse person: ', text
 
     # TODO: this should come from the database...
 

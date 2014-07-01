@@ -2,13 +2,22 @@
 # -*- coding: utf-8 -*-
 
 from bs4 import BeautifulSoup
-import regex
 
-from promrep.models import Assertion, AssertionPerson, AssertionType, \
+from promrep.models import ContentType, Assertion, AssertionPerson, AssertionType, \
     Certainty, Date, DateType, Office, Person, Praenomen, \
     PrimarySource, RoleType, SecondarySource, Sex
 
 import data_import_aux
+
+
+# create dictionary with name mapping
+OFFICE_NAMES_DIC = {
+
+
+
+}
+
+
 
 def run():
     # this is the file exported by OpenOffice
@@ -17,192 +26,120 @@ def run():
     print 'Will process input file', ifile
     processXML(ifile)
 
-
-def parse_person_name(text):
-    """ Will return a person object """
-
-    print
-    print 'Will parse person: ', text
-
-    # TODO: this should come from the database...
-
-    praenomen_list = [
-        'Agr\.',
-        'Ap\.',
-        'A\.',
-        'K\.',
-        'D\.',
-        'F\.',
-        'C\.',
-        'Cn\.',
-        'Hostus',
-        'Lars',
-        'L\.',
-        'Mam\.',
-        "M'\.",
-        'M\.',
-        'N\.',
-        'Oct\.',
-        'Opet\.',
-        'Pacuvius',
-        'Post\.',
-        'Proc\.',
-        'P\.',
-        'Q\.',
-        'Ser\.',
-        'Sex\.',
-        'Sp\.',
-        'St\.',
-        'Ti\.',
-        'T\.',
-        '\?',
-        'V\.',
-        'Vol\.',
-        'Vop\.',
-        ]
-    praenomen_abbrev = r'(?:%s)' % '|'.join(praenomen_list)
-
-    person_re = \
-        regex.compile(r"""^
-        (?P<date_certainty>\?[\s\-])?    # question mark followed by either a space or a dash in the start of line
-        (?P<praenomen>%s\s)?
-        (?P<nomen>\(?\w+?\)?\s)?
-        (?P<filiation>(%s|-)\s[fn-]?\.?\s){0,6}?
-        (?P<cognomen>\(?[\?\w]+?\)?\s){0,8}
-        (?<patrician>Pat\.\s)?
-         \(\*?(?P<real>
-             \d+                 | # either it's a number
-             (RE\s)[\w\.]*?      | # or starts with RE
-             \?                  | # or questino mark
-             [A-Z\d\.]+?         | # or uppercase letters with numbers and dots (no spaces)
-             [\d]+,\s\w+\.?\s\d+ | # or cases like (14, Supb. 6)
-             not\sin\sRE                # or says "not in RE"
-         )\)
-         .*                         # in parenthesis (can have an asterisk)
-         """
-                       % (praenomen_abbrev, praenomen_abbrev),
-                      regex.VERBOSE)
-
-    captured = person_re.match(text)
-
-    if captured:
-
-        real = captured.captures('real')[0].strip()
-        sex = Sex.objects.get(name='Male')
-
-        if len(captured.captures('praenomen')):
-            praenomen = captured.captures('praenomen')[0].strip()
-            praenomen = Praenomen.objects.get(abbrev=praenomen)
-        else:
-            praenomen = None
-
-        nomen = captured.captures('nomen')[0].strip()
-
-        if len(captured.captures('patrician')):
-            is_patrician = True
-        else:
-            is_patrician = False
-
-        cog_list = captured.captures('cognomen')
-
-        cognomen_first = ''
-        cognomen_other = ''
-
-        if len(cog_list):
-            cognomen_first = cog_list[0].strip()
-
-        if len(cog_list) > 1:
-            cognomen_other = ' '.join(cog_list[1:]).strip().replace('  '
-                    , ' ')
-
-        # if len(captured.captures('date_certainty')):
-        #    if captured.captures('date_certainty')[0].strip() == '?':
-        #        person.date_certainty = 'Uncertain'
-
-        filiation = ''.join(captured.captures('filiation')).strip()
-
-        person = Person(
-            original_text=text,
-            sex=sex,
-            real_number=real,
-            nomen=nomen,
-            praenomen=praenomen,
-            filiation=filiation,
-            cognomen_first=cognomen_first,
-            cognomen_other=cognomen_other,
-            is_patrician=is_patrician,
-            is_noble=False,
-            )
-
-        res, person_id = data_import_aux.add_person_to_db(person)
-
-        person = Person.objects.get(pk = person_id)
-
-    else:
-        print '[ERROR] Could not parse the person:', text
-        person = None
-
-    return person
-
-
 def processXML(ifile):
     page = file(ifile)
     soup = BeautifulSoup(page, features='xml')
 
     years = soup.findAll('year')
 
-    for year in years[0:2]:
-        print 'YEAR ' + year.find('name').get_text()
+    error = 0
+    exist = 0
+
+    for year in years:
+        year_str = year.find('name').get_text().split()[0]
+        print "[DEBUG]Parsing year %s" %(year_str)
 
         for office_tag in year.findAll('office'):
             office_name = office_tag.find('name').get_text()
-            print '[mrr2-add]: Processing OFFICE ' + office_name
 
+            # some office names are sometimes added as plural
             try:
                 office = Office.objects.get(name=office_name)
-                print 'Found', office
-            except Office.DoesNotExist:
 
-                # in MRR2 all offices are "civil"
+            except Office.DoesNotExist:
+                # Adding new office
+                # in MRR2 all offices are "civic" except for Vestal Virgin
 
                 parent = Office.objects.get(name='Civic Offices')
-
                 office = Office(name=office_name)
                 office.parent = parent
                 office.save()
 
-                print 'Added ', office, office.id
+                print '[DEBUG][NEW_OFFICE] ', office, office.id
 
-            # TODO: should test for notes...
 
             for p in office_tag.find_all('person'):
                 text = p.find('name')
 
                 try:
                     text = text.get_text()
-                    person = parse_person_name(text)
 
-                    if person != None:
+                    print "[DEBUG][FIND PERSON] ", text
+                    person = data_import_aux.parse_person_name(text)
 
-                        # create both the assertion and the assertionperson objects
+                    if person == None:
+                        print "[ERROR]: Could not parse person: ", text
+                    else:
+                        person_exists = data_import_aux.person_exists(person)
 
-                        assertion_type = \
-                            AssertionType.objects.get(name='Office')
-                        source = \
-                            SecondarySource.objects.get(abbrev_name='Broughton MRR II'
+                        # test if person exists
+                        if person_exists == None:
+                            # TODO: how to handle this case?
+                            error = error + 1
+                        else:
+                            # no errors: the person either exists or will be created
+                            if person_exists == False:
+                                try:
+                                    person.save()
+                                    added = added + 1
+                                    print '[DEBUG][NEW_PERSON] saved person with id', person.id
+                                except:
+                                    print '[ERROR] Unable to save person in the database.'
+                            else:
+                                print '[DEBUG][PERSON_EXISTS] person already in database with id=', person_exists
+                                exist = exist + 1
+                                person = Person.objects.get(pk=person_exists)
+
+
+                        if person != None:
+
+                            # create both the assertion and the assertionperson objects
+                            assertion_type = \
+                                AssertionType.objects.get(name='Office')
+                            source = \
+                                SecondarySource.objects.get(abbrev_name='Broughton MRR II'
+                                    )
+                            assertion = Assertion(office=office,
+                                    assertion_type=assertion_type,
+                                    secondary_source=source)
+
+                            try:
+                                assertion.save()
+
+                                # adding the start date
+                                #  end date depends on office??
+                                date_start = Date(
+                                    content_type=ContentType.objects.get(name='assertion'),
+                                    interval=Date.DATE_MIN,
+                                    year = -int(year_str),
+                                    year_uncertain=False,
+                                    month_uncertain=False,
+                                    day_uncertain=False,
+                                    circa=False,
                                 )
 
-                        assertion = Assertion(office=office,
-                                assertion_type=assertion_type,
-                                secondary_source=source)
+                                date_start.content_object = assertion
 
-                        assertion.save()
+                                try:
+                                    date_start.save()
 
-                        assertion_person = \
-                            AssertionPerson(role=RoleType.objects.get(name='Holder'
-                                ), assertion=assertion, person=person)
+                                except e:
+                                    print e
+                                    print '[ERROR] Could not save date...' + year_str
 
-                        assertion_person.save()
+                                assertion_person = AssertionPerson(role=RoleType.objects.get(name='Holder'),
+                                    assertion=assertion, person=person)
+
+                                try:
+                                    assertion_person.save()
+
+                                except:
+                                    print "[ERROR][ASSERTION_PERSON] Could not save assertion person..."
+
+                            except e:
+                                print e
+                                print "[ERROR][ASSERTION] Could not save assertion..."
+
                 except Exception:
 
                     pass

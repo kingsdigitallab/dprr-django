@@ -48,7 +48,7 @@ class PersonAdmin(admin.ModelAdmin):
         'filiation',
         ]}), ('Real', {'fields': ['real_number', 'real_number_old',
               'real_attribute']}), ('Other', {'fields': [('consular_ancestor',
-                                    'consular_ancestor_certainty'), ('is_novus_homo'
+                                    'consular_ancestor_certainty'), ('novus_homo'
                                     , 'novus_homo_certainty'),
                                     ('is_patrician',
                                     'patrician_certainty')]})]

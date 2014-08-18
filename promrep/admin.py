@@ -15,14 +15,15 @@ admin.site.register(DateType)
 admin.site.register(RoleType)
 
 
-class PersonInline(admin.TabularInline):
+class AssertionPersonInline(admin.TabularInline):
 
     model = Assertion.persons.through
 
-    fields = ('id', 'person', 'role', 'assertion', 'original_text')
-    readonly_fields = ('id', 'assertion', 'person')
-    extra = 0
+    fields = ('id', 'person', 'role', 'assertion','original_text')
+    readonly_fields = ('id', )
 
+    raw_id_fields = ('person', 'assertion', )
+    extra = 0
 
 class PersonDateInline(generic.GenericStackedInline):
 
@@ -67,7 +68,7 @@ class PersonAdmin(admin.ModelAdmin):
         'created',
         )
 
-    inlines = (PersonInline, PersonDateInline)
+    inlines = (AssertionPersonInline, PersonDateInline,)
 
 
 admin.site.register(Person, PersonAdmin)
@@ -106,7 +107,7 @@ class AssertionAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'display_text')
     readonly_fields = ('id', )
 
-    inlines = [PersonInline, AssertionDateInline]
+    inlines = [AssertionPersonInline, AssertionDateInline, ]
     exclude = ('persons', )
 
 
@@ -141,3 +142,5 @@ class SecondarySourceAdmin(admin.ModelAdmin):
 
 
 admin.site.register(SecondarySource, SecondarySourceAdmin)
+
+

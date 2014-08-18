@@ -337,14 +337,15 @@ class Assertion(TimeStampedModel):
         return '\n'.join([str(a) for a in self.persons.all()])
 
     def __unicode__(self):
-        type = self.assertion_type.name
+        name = self.assertion_type.name
 
-        # office = self.office.name
+        if self.office != None:
+            name = name + " (" + self.office.name + ")"
+        if self.relationship != None:
+            name = name + " (" + self.relationship.name + ")"
+            # should add the other person's name as well
 
-        # if office != None:
-        #     office = self.office.name
-
-        return type
+        return name
 
 
 class AssertionPerson(TimeStampedModel):

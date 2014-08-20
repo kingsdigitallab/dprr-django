@@ -34,3 +34,5 @@ sqlparse==0.1.10
 tzlocal==1.0
 wagtail==0.2
 wsgiref==0.1.2
+psycopg2
+django-auth-ldap

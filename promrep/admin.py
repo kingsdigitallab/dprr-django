@@ -99,12 +99,13 @@ class AssertionAdmin(admin.ModelAdmin):
         'assertion_type',
         'office',
         'display_text',
+        'notes',
         'secondary_source',
         'modified',
         'created',
         )
 
-    list_display_links = ('id', 'display_text')
+    list_display_links = ('id', 'get_persons', 'display_text', 'notes')
     readonly_fields = ('id', )
 
     inlines = [AssertionPersonInline, AssertionDateInline, ]

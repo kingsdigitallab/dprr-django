@@ -8,6 +8,9 @@ from promrep.models import ContentType, Assertion, AssertionPerson, AssertionTyp
     PrimarySource, RoleType, SecondarySource, Sex
 
 import data_import_aux
+import logging
+
+
 
 
 # create dictionary with name mapping
@@ -22,7 +25,9 @@ OFFICE_NAMES_DIC = {
 def run():
     # this is the file exported by OpenOffice
 
-    ifile = 'promrep/scripts/data/output-tidy-v4-MR-v1.xml'
+    logger = logging.getLogger(__name__)
+
+    ifile = 'promrep/scripts/data/output-tidy-v4-MR-v1-noref.xml'
     print 'Will process input file', ifile
     processXML(ifile)
 
@@ -60,6 +65,9 @@ def processXML(ifile):
 
             for p in office_tag.find_all('person'):
                 text = p.find('name')
+
+                # get the next references block
+                references = p.findNext('references').get_text()
 
                 try:
                     text = text.get_text()
@@ -101,7 +109,8 @@ def processXML(ifile):
                                     )
                             assertion = Assertion(office=office,
                                     assertion_type=assertion_type,
-                                    secondary_source=source)
+                                    secondary_source=source,
+                                    notes = references)
 
                             try:
                                 assertion.save()

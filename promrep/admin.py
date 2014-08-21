@@ -1,9 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from django.db import models
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
 from django.contrib.contenttypes import generic
+from django.forms import TextInput, Textarea
 
 from models import Person, Office, Praenomen, AssertionPerson, \
     Assertion, AssertionType, RoleType, Date, DateType, Certainty, \
@@ -15,11 +17,13 @@ admin.site.register(DateType)
 admin.site.register(RoleType)
 
 
-class AssertionPersonInline(admin.TabularInline):
+class AssertionPersonInline(admin.StackedInline):
+    verbose_name = ''
+    verbose_name_plural = 'Assertions on this person'
 
     model = Assertion.persons.through
 
-    fields = ('id', 'person', 'role', 'assertion','original_text')
+    fields = ('id', 'person', 'role', 'assertion', 'original_text')
     readonly_fields = ('id', )
 
     raw_id_fields = ('person', 'assertion', )

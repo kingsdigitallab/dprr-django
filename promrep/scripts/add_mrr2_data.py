@@ -110,7 +110,7 @@ def processXML(ifile):
                             assertion = Assertion(office=office,
                                     assertion_type=assertion_type,
                                     secondary_source=source,
-                                    notes = references)
+                                    )
 
                             try:
                                 assertion.save()
@@ -136,8 +136,12 @@ def processXML(ifile):
                                     print e
                                     print '[ERROR] Could not save date...' + year_str
 
-                                assertion_person = AssertionPerson(role=RoleType.objects.get(name='Holder'),
-                                    assertion=assertion, person=person)
+                                assertion_person = AssertionPerson(
+                                    role=RoleType.objects.get(name='Holder'),
+                                    assertion=assertion,
+                                    person=person,
+                                    original_text=references,
+                                    )
 
                                 try:
                                     assertion_person.save()

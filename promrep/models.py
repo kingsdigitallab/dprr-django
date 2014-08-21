@@ -349,9 +349,11 @@ class Assertion(TimeStampedModel):
 
 
 class AssertionPerson(TimeStampedModel):
-
     person = models.ForeignKey(Person)
     assertion = models.ForeignKey(Assertion)
 
     role = models.ForeignKey(RoleType)
     original_text = models.CharField(max_length=1024, blank=True)
+
+    def __unicode__(self):
+        return str(self.person.__unicode__()) + ": " + str(self.assertion.__unicode__())

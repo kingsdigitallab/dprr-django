@@ -334,7 +334,12 @@ class Assertion(TimeStampedModel):
     notes = models.CharField(max_length=1024, blank=True)
 
     def get_persons(self):
-        return '\n'.join([str(a) for a in self.persons.all()])
+        s = []
+        for ap in self.assertionperson_set.all():
+            s.append(ap.person.__unicode__() + ' [' + ap.role.name + ']')
+
+        return '; '.join(s)
+
     get_persons.short_description = "Persons"
 
     def __unicode__(self):

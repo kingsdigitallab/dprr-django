@@ -96,11 +96,13 @@ admin.site.register(Office, OfficeAdmin)
 
 class AssertionAdmin(admin.ModelAdmin):
 
+    search_fields = ['assertionperson__person__nomen', 'assertionperson__person__cognomen_first', ]
+    list_filter = ('secondary_source', 'assertion_type', )
+
     list_display = (
         'id',
         'assertion_type',
         'get_persons',
-        'assertion_type',
         'office',
         'display_text',
         'notes',

@@ -335,6 +335,7 @@ class Assertion(TimeStampedModel):
 
     def get_persons(self):
         return '\n'.join([str(a) for a in self.persons.all()])
+    get_persons.short_description = "Persons"
 
     def __unicode__(self):
         name = self.assertion_type.name

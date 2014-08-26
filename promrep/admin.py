@@ -3,6 +3,7 @@
 
 from django.db import models
 from django.contrib import admin
+from django.contrib.admin import SimpleListFilter
 from mptt.admin import MPTTModelAdmin
 from django.contrib.contenttypes import generic
 from django.forms import TextInput, Textarea
@@ -39,6 +40,24 @@ class AssertionDateInline(generic.GenericStackedInline):
 
     model = Date
     extra = 0
+
+
+class AssertionYearListFilter(SimpleListFilter):
+    title = 'assertion year'
+    parameter_name = 'year'
+
+    def lookups(self, request, model_admin):
+        lookup = []
+        years = Assertion.objects.all().values('dates__year').distinct()
+
+        for year in years:
+            lookup.append((year['dates__year'], year['dates__year']))
+
+        return sorted(lookup)
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(dates__year__exact=self.value())
 
 
 class PersonAdmin(admin.ModelAdmin):
@@ -101,7 +120,7 @@ admin.site.register(Office, OfficeAdmin)
 class AssertionAdmin(admin.ModelAdmin):
 
     search_fields = ['assertionperson__person__nomen', 'assertionperson__person__cognomen_first', ]
-    list_filter = ('secondary_source', 'assertion_type', )
+    list_filter = ('secondary_source', 'assertion_type', AssertionYearListFilter)
 
     list_display = (
         'id',

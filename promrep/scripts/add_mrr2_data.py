@@ -4,8 +4,7 @@
 from bs4 import BeautifulSoup
 
 from promrep.models import ContentType, Assertion, AssertionPerson, AssertionType, \
-    Certainty, Date, DateType, Office, Person, Praenomen, \
-    PrimarySource, RoleType, SecondarySource, Sex
+    Certainty, Date, DateType, Office, Person, Praenomen, RoleType, SecondarySource, Sex
 
 import data_import_aux
 import logging
@@ -27,7 +26,7 @@ def run():
 
     logger = logging.getLogger(__name__)
 
-    ifile = 'promrep/scripts/data/output-tidy-v4-MR-v1-noref.xml'
+    ifile = 'promrep/scripts/data/output-tidy-norefs.xml'
     print 'Will process input file', ifile
     processXML(ifile)
 
@@ -125,6 +124,7 @@ def processXML(ifile):
                                     month_uncertain=False,
                                     day_uncertain=False,
                                     circa=False,
+                                    date_type = "start"
                                 )
 
                                 date_start.content_object = assertion

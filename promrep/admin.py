@@ -51,7 +51,8 @@ class PersonAdmin(admin.ModelAdmin):
         'nomen',
         ('cognomen_first', 'cognomen_other'),
         'filiation',
-        ]}), ('Real', {'fields': ['real_number', 'real_number_old',
+        ]}),
+        ('Real', {'fields': ['real_number', 'real_number_old',
               'real_attribute']}), ('Other', {'fields': [('consular_ancestor',
                                     'consular_ancestor_certainty'), ('novus_homo'
                                     , 'novus_homo_certainty'),
@@ -71,6 +72,9 @@ class PersonAdmin(admin.ModelAdmin):
         'modified',
         'created',
         )
+
+    search_fields = ['nomen', 'cognomen_first', ]
+    list_filter = ('assertionperson__role', 'assertionperson__assertion__office',)
 
     inlines = (AssertionPersonInline, PersonDateInline,)
 
@@ -102,16 +106,15 @@ class AssertionAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'assertion_type',
-        'get_persons',
         'office',
+        'get_persons',
+        'get_dates',
         'display_text',
         'notes',
         'secondary_source',
-        'modified',
-        'created',
         )
 
-    list_display_links = ('id', 'get_persons', 'display_text', 'notes')
+    list_display_links = ('id', 'get_persons', 'get_dates', 'display_text', 'notes')
     readonly_fields = ('id', )
 
     inlines = [AssertionPersonInline, AssertionDateInline, ]

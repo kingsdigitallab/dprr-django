@@ -179,6 +179,9 @@ class Person(TimeStampedModel):
 
     real_attribute = models.CharField(max_length=128, blank=True)
 
+    class Meta:
+        ordering = ['id',]
+
     def cognomen(self):
         return self.cognomen_first + self.cognomen_other
 
@@ -333,6 +336,9 @@ class Assertion(TimeStampedModel):
 
     notes = models.CharField(max_length=1024, blank=True)
 
+    class Meta:
+        ordering = ['id',]
+
     def get_persons(self):
         s = []
         for ap in self.assertionperson_set.all():
@@ -341,6 +347,12 @@ class Assertion(TimeStampedModel):
         return '; '.join(s)
 
     get_persons.short_description = "Persons"
+
+    def get_dates(self):
+        dates = ' '.join([unicode(date) for date in self.dates.all()])
+        return dates
+
+    get_dates.short_description = 'Dates'
 
     def __unicode__(self):
         name = self.assertion_type.name

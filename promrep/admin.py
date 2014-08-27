@@ -18,7 +18,7 @@ admin.site.register(DateType)
 admin.site.register(RoleType)
 
 
-class AssertionPersonInline(admin.StackedInline):
+class AssertionPersonInline(admin.TabularInline):
     verbose_name = ''
     verbose_name_plural = 'Assertions on this person'
 
@@ -29,6 +29,10 @@ class AssertionPersonInline(admin.StackedInline):
 
     raw_id_fields = ('person', 'assertion', )
     extra = 0
+
+    formfield_overrides = {
+        models.CharField: {'widget': Textarea(attrs={'rows':8, 'cols': 10})},
+    }
 
 class PersonDateInline(generic.GenericStackedInline):
 
@@ -133,7 +137,7 @@ class AssertionAdmin(admin.ModelAdmin):
         'secondary_source',
         )
 
-    list_display_links = ('id', 'get_persons', 'get_dates', 'display_text', 'notes')
+    list_display_links = ('id', 'get_persons', 'get_dates', 'display_text', 'notes', 'assertion_type', 'office', 'secondary_source')
     readonly_fields = ('id', )
 
     inlines = [AssertionPersonInline, AssertionDateInline, ]

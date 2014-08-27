@@ -124,7 +124,6 @@ def processXML(ifile):
                                     month_uncertain=False,
                                     day_uncertain=False,
                                     circa=False,
-                                    date_type = "start"
                                 )
 
                                 date_start.content_object = assertion

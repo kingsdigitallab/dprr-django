@@ -68,15 +68,20 @@ class PersonAdmin(admin.ModelAdmin):
 
     fieldsets = [('Database Info', {'fields': ['id']}), ('Person',
                  {'fields': [
-        'original_text',
-        'sex',
-        'praenomen',
-        'nomen',
-        ('cognomen_first', 'cognomen_other'),
-        'filiation',
+            ('praenomen', 'filiation', ),
+            ('nomen',),
+            ('cognomen_first', 'cognomen_other'),
+            ('sex',),
+            ('notes',),
         ]}),
-        ('Real', {'fields': ['real_number', 'real_number_old',
-              'real_attribute']}), ('Other', {'fields': [('consular_ancestor',
+
+        ('Real',
+            {'fields': [
+                ('real_number', 'real_number_old', ),
+                 'real_attribute',
+            ]}
+        ),
+        ('Other', {'fields': [('consular_ancestor',
                                     'consular_ancestor_certainty'), ('novus_homo'
                                     , 'novus_homo_certainty'),
                                     ('is_patrician',

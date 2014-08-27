@@ -165,15 +165,19 @@ class Person(TimeStampedModel):
 
     novus_homo = models.BooleanField(default=False, blank=True,
             verbose_name='Novus Homo?')
+
     novus_homo_certainty = models.ForeignKey(Certainty,
             related_name='person_novus_homo_certainty', null=True,
             blank=True)
 
     notes = models.CharField(max_length=1024, blank=True)
+    notes.help_text = "Extra notes about the person."
+
     filiation = models.CharField(max_length=256, blank=True)
 
     real_number = models.CharField(max_length=32, blank=True,
                                    verbose_name='RE Number')
+
     real_number_old = models.CharField(max_length=32, blank=True,
             verbose_name='RE Number (Starred)')
 

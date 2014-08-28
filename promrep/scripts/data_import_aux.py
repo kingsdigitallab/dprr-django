@@ -116,7 +116,6 @@ def parse_person_name(text):
     if captured:
 
         real = captured.captures('real')[0].strip()
-        print real
         sex = Sex.objects.get(name='Male')
 
         if len(captured.captures('praenomen')):

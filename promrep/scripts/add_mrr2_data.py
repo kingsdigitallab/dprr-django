@@ -4,7 +4,7 @@
 from bs4 import BeautifulSoup
 
 from promrep.models import ContentType, Assertion, AssertionPerson, AssertionType, \
-    Date, Office, Person, RoleType, SecondarySource
+    Date, Office, Person, RoleType, SecondarySource, Note
 
 import data_import_aux
 import logging
@@ -72,19 +72,20 @@ def processXML(ifile):
 
 
             for p in office_tag.find_all('person'):
-                text = p.find('name')
+                name_el = p.find('name')
 
                 # get the next references block
+                #### TODO.... sequential??
                 references = p.findNext('references').get_text()
 
                 try:
-                    text = text.get_text()
+                    name_str = name_el.get_text()
 
-                    logger.info("find_person" + text)
-                    person = data_import_aux.parse_person_name(text)
+                    logger.info("find_person %s" %(name_str))
+                    person = data_import_aux.parse_person_name(name_str)
 
                     if person == None:
-                        logger.error("Could not parse person: " + text)
+                        logger.error("Could not parse person: %s" %(name_str))
                     else:
                         person_exists = data_import_aux.person_exists(person)
 
@@ -97,16 +98,15 @@ def processXML(ifile):
                             if person_exists == False:
                                 try:
                                     person.save()
-                                    logger.info('Saved person with id', str(person.id))
+                                    logger.info('Saved person %s with id %i' %(name_str, person.id))
                                 except:
-                                    logger.error("Unable to save person", text, "in the database.")
+                                    logger.error("Unable to save person %s in the database." %(name_str))
                             else:
-                                print logger.info('Person already in database with id=' + person_exists)
+                                print logger.info('Person %s already in database with id=%s' %(name_str, person_exists))
                                 person = Person.objects.get(pk=person_exists)
 
 
                         if person != None:
-
                             # create both the assertion and the assertionperson objects
                             assertion_type = \
                                 AssertionType.objects.get(name='Office')
@@ -118,11 +118,18 @@ def processXML(ifile):
                                     secondary_source=source,
                                     )
 
+                            ### NoteType?
+                            ### extra_info???
+                            note = Note(text = references)
+
+                            note.save()
+
                             try:
                                 assertion.save()
 
-                                # adding the start date
-                                #  end date depends on office??
+                                if assertion:
+                                    assertion.notes.add(note)
+
                                 date_start = Date(
                                     content_type=ContentType.objects.get(name='assertion'),
                                     interval=Date.DATE_MIN,
@@ -139,24 +146,23 @@ def processXML(ifile):
                                     date_start.save()
 
                                 except Exception as e:
-                                    print e
-                                    logger.error('[ERROR] Could not save date...' + year_str)
+                                    logger.error('Unable to save date...' + year_str)
 
                                 assertion_person = AssertionPerson(
                                     role=RoleType.objects.get(name='Holder'),
                                     assertion=assertion,
                                     person=person,
-                                    original_text=references,
+                                    original_text = name_str,
                                     )
 
                                 try:
                                     assertion_person.save()
 
                                 except:
-                                    print logger.error("[ERROR][ASSERTION_PERSON] Could not save assertion person...")
+                                    logger.error("[ERROR][ASSERTION_PERSON] Could not save assertion person...")
 
-                            except e:
-                                print e
+                            except Exception as e:
+                                print '%s (%s)' % (e.message, type(e))
                                 logger.error("[ERROR][ASSERTION] Could not save assertion...")
 
                 except Exception:

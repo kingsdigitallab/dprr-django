@@ -152,8 +152,19 @@ class AssertionAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'get_persons', 'get_dates', 'display_text', 'assertion_type', 'office', 'secondary_source')
     readonly_fields = ('id', )
 
+
+    fieldsets = [('Database Info', {'fields': ['id']}),
+    ('Assertion', {'fields': [
+            ('assertion_type', ),
+            ('secondary_source', )
+            ]}),]
+
+
     inlines = [AssertionPersonInline, AssertionNoteInline, AssertionDateInline, ]
     exclude = ('persons', )
+
+
+
 
 
 admin.site.register(Assertion, AssertionAdmin)

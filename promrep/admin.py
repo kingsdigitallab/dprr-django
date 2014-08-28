@@ -71,6 +71,7 @@ class PersonAdmin(admin.ModelAdmin):
             ('praenomen', 'filiation', ),
             ('nomen',),
             ('cognomen', 'other_names'),
+            ('gens', 'tribe', 'origin'),
             ('sex',),
             ('notes',),
         ]}),
@@ -81,9 +82,7 @@ class PersonAdmin(admin.ModelAdmin):
                  'real_attribute',
             ]}
         ),
-        ('Other', {'fields': [('tribe', 'origin'),
-                                    ('patrician',
-                                    'patrician_certainty')]})]
+        ('Other', {'fields': [('patrician', 'patrician_certainty')]})]
 
     readonly_fields = ('id', )
     list_display = (

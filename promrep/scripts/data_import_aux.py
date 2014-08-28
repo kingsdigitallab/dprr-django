@@ -98,10 +98,11 @@ def parse_person_name(text):
         (?P<filiation>(%s|-)\s[fn-]?\.?\s){0,6}?
         (?P<cognomen>\(?[\?\w]+?\)?\s){0,8}
         (?<patrician>Pat\.\s)?
-         \(\*?(?P<real>
-             \d+                 | # either it's a number
+         \((?P<real>
+            \*?
+             \d+?                 | # either it's a number
              (RE\s)[\w\.]*?      | # or starts with RE
-             \?                  | # or questino mark
+             \?                  | # or question mark
              [A-Z\d\.]+?         | # or uppercase letters with numbers and dots (no spaces)
              [\d]+,\s\w+\.?\s\d+ | # or cases like (14, Supb. 6)
              not\sin\sRE                # or says "not in RE"
@@ -116,6 +117,7 @@ def parse_person_name(text):
     if captured:
 
         real = captured.captures('real')[0].strip()
+        print real
         sex = Sex.objects.get(name='Male')
 
         if len(captured.captures('praenomen')):
@@ -163,9 +165,9 @@ def parse_person_name(text):
                     )
 
                 if person:
-                    print "OKAPA"
+                    print "Added " + person.get_name()
                 else:
-                    print "KABUUUM"
+                    print "Failed to add " + text
 
             return person
 

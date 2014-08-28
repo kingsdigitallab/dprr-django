@@ -168,13 +168,14 @@ class Person(TimeStampedModel):
 
     sex = models.ForeignKey(Sex, blank=True, null=True)
 
-    real_number = models.CharField(max_length=32, blank=True,
-                                   verbose_name='RE Number')
+    real_number = models.CharField(max_length=32, blank=True, verbose_name='RE Number')
+    real_number.help_text = "RE number"
 
-    real_number_old = models.CharField(max_length=32, blank=True,
-            verbose_name='RE Number (Starred)')
+    real_number_old = models.CharField(max_length=32, blank=True, verbose_name='RE (old)')
+    real_number_old.help_text = "RE number before revising"
 
     real_attribute = models.CharField(max_length=128, blank=True)
+    real_attribute.help_text = "Original RE entry (from source)"
 
     tribe = models.ForeignKey(Tribe, blank=True, null=True)
 

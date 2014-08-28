@@ -4,13 +4,10 @@
 from bs4 import BeautifulSoup
 
 from promrep.models import ContentType, Assertion, AssertionPerson, AssertionType, \
-    Certainty, Date, DateType, Office, Person, Praenomen, RoleType, SecondarySource, Sex
+    Date, Office, Person, RoleType, SecondarySource
 
 import data_import_aux
 import logging
-
-
-
 
 # create dictionary with name mapping
 OFFICE_NAMES_DIC = {

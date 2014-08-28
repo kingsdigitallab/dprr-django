@@ -1,0 +1,29 @@
+[
+{
+    "pk": 1,
+    "model": "promrep.tribe",
+    "fields": {
+        "name": "Aemilia",
+        "abbrev": "AEM",
+        "notes": ""
+    }
+},
+{
+    "pk": 2,
+    "model": "promrep.tribe",
+    "fields": {
+        "name": "Aniensis",
+        "abbrev": "ANI",
+        "notes": ""
+    }
+},
+{
+    "pk": 3,
+    "model": "promrep.tribe",
+    "fields": {
+        "name": "Arnensis",
+        "abbrev": "ARN",
+        "notes": ""
+    }
+}
+]

@@ -9,8 +9,8 @@ from django.contrib.contenttypes import generic
 from django.forms import TextInput, Textarea
 
 from models import Person, Office, Praenomen, AssertionPerson, \
-    Assertion, AssertionType, RoleType, Date, DateType, Certainty, \
-    SecondarySource
+    Assertion, AssertionType, RoleType, Date, DateType, \
+    SecondarySource, Gens
 
 admin.site.register(AssertionType)
 admin.site.register(Date)
@@ -24,7 +24,7 @@ class AssertionPersonInline(admin.TabularInline):
 
     model = Assertion.persons.through
 
-    fields = ('id', 'person', 'role', 'assertion', 'original_text')
+    fields = ('id', 'person', 'role', 'assertion', )
     readonly_fields = ('id', )
 
     raw_id_fields = ('person', 'assertion', )
@@ -70,7 +70,7 @@ class PersonAdmin(admin.ModelAdmin):
                  {'fields': [
             ('praenomen', 'filiation', ),
             ('nomen',),
-            ('cognomen_first', 'cognomen_other'),
+            ('cognomen', 'other_names'),
             ('sex',),
             ('notes',),
         ]}),
@@ -81,27 +81,26 @@ class PersonAdmin(admin.ModelAdmin):
                  'real_attribute',
             ]}
         ),
-        ('Other', {'fields': [('consular_ancestor',
-                                    'consular_ancestor_certainty'), ('novus_homo'
-                                    , 'novus_homo_certainty'),
-                                    ('is_patrician',
+        ('Other', {'fields': [('tribe', 'origin'),
+                                    ('patrician',
                                     'patrician_certainty')]})]
 
-    readonly_fields = ('id', 'original_text')
+    readonly_fields = ('id', )
     list_display = (
         'id',
         'url_to_edit_person',
+        'tribe',
+        'gens',
+        'origin',
         'sex',
         'get_dates',
-        'consular_ancestor',
-        'novus_homo',
-        'is_patrician',
+        'patrician',
         'notes',
         'modified',
         'created',
         )
 
-    search_fields = ['nomen', 'cognomen_first', ]
+    search_fields = ['nomen', 'cognomen', ]
     list_filter = ('assertionperson__role', 'assertionperson__assertion__office',)
 
     inlines = (AssertionPersonInline, PersonDateInline,)
@@ -128,7 +127,7 @@ admin.site.register(Office, OfficeAdmin)
 
 class AssertionAdmin(admin.ModelAdmin):
 
-    search_fields = ['assertionperson__person__nomen', 'assertionperson__person__cognomen_first', ]
+    search_fields = ['assertionperson__person__nomen', 'assertionperson__person__cognomen', ]
     list_filter = ('secondary_source', 'assertion_type', AssertionYearListFilter)
 
     list_display = (
@@ -152,14 +151,14 @@ class AssertionAdmin(admin.ModelAdmin):
 admin.site.register(Assertion, AssertionAdmin)
 
 
-class CertaintyAdmin(admin.ModelAdmin):
+class GensAdmin(admin.ModelAdmin):
 
-    list_display = ('id', 'name', 'description')
+    list_display = ('id', 'name', 'notes',)
     readonly_fields = ('id', )
-    list_display_links = ('id', 'name', 'description')
+    list_display_links = ('id', 'name', 'notes',)
 
 
-admin.site.register(Certainty, CertaintyAdmin)
+admin.site.register(Gens, GensAdmin)
 
 
 class PraenomenAdmin(admin.ModelAdmin):

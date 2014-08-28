@@ -12,5 +12,12 @@
     "fields": {
         "name": "Relationship"
     }
+},
+{
+    "pk": 3,
+    "model": "promrep.assertiontype",
+    "fields": {
+        "name": "Identity"
+    }
 }
 ]

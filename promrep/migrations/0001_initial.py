@@ -48,9 +48,34 @@ class Migration(SchemaMigration):
         # Adding model 'Sex'
         db.create_table(u'promrep_sex', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=64)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=32)),
         ))
         db.send_create_signal(u'promrep', ['Sex'])
+
+        # Adding model 'Gens'
+        db.create_table(u'promrep_gens', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=128)),
+            ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
+        ))
+        db.send_create_signal(u'promrep', ['Gens'])
+
+        # Adding model 'Tribe'
+        db.create_table(u'promrep_tribe', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('abbrev', self.gf('django.db.models.fields.CharField')(unique=True, max_length=32)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=128)),
+            ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
+        ))
+        db.send_create_signal(u'promrep', ['Tribe'])
+
+        # Adding model 'Origin'
+        db.create_table(u'promrep_origin', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=128)),
+            ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
+        ))
+        db.send_create_signal(u'promrep', ['Origin'])
 
         # Adding model 'RoleType'
         db.create_table(u'promrep_roletype', (
@@ -62,37 +87,26 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'promrep', ['RoleType'])
 
-        # Adding model 'Certainty'
-        db.create_table(u'promrep_certainty', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=64)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=256, blank=True)),
-        ))
-        db.send_create_signal(u'promrep', ['Certainty'])
-
         # Adding model 'Person'
         db.create_table(u'promrep_person', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
             ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
-            ('original_text', self.gf('django.db.models.fields.CharField')(max_length=256, blank=True)),
             ('praenomen', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Praenomen'], null=True, blank=True)),
             ('nomen', self.gf('django.db.models.fields.CharField')(max_length=128, blank=True)),
-            ('cognomen_first', self.gf('django.db.models.fields.CharField')(max_length=64, blank=True)),
-            ('cognomen_other', self.gf('django.db.models.fields.CharField')(max_length=128, blank=True)),
-            ('sex', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Sex'], null=True, blank=True)),
-            ('tribe', self.gf('django.db.models.fields.CharField')(max_length=128, blank=True)),
-            ('is_patrician', self.gf('django.db.models.fields.BooleanField')()),
-            ('patrician_certainty', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='person_patrician_certainty', null=True, to=orm['promrep.Certainty'])),
-            ('consular_ancestor', self.gf('django.db.models.fields.BooleanField')()),
-            ('consular_ancestor_certainty', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='person_noble_certainty', null=True, to=orm['promrep.Certainty'])),
-            ('novus_homo', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('novus_homo_certainty', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='person_novus_homo_certainty', null=True, to=orm['promrep.Certainty'])),
-            ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
+            ('cognomen', self.gf('django.db.models.fields.CharField')(max_length=64, blank=True)),
+            ('other_names', self.gf('django.db.models.fields.CharField')(max_length=128, blank=True)),
             ('filiation', self.gf('django.db.models.fields.CharField')(max_length=256, blank=True)),
+            ('gens', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Gens'], null=True, blank=True)),
+            ('sex', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Sex'], null=True, blank=True)),
             ('real_number', self.gf('django.db.models.fields.CharField')(max_length=32, blank=True)),
             ('real_number_old', self.gf('django.db.models.fields.CharField')(max_length=32, blank=True)),
             ('real_attribute', self.gf('django.db.models.fields.CharField')(max_length=128, blank=True)),
+            ('tribe', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Tribe'], null=True, blank=True)),
+            ('origin', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Origin'], null=True, blank=True)),
+            ('patrician', self.gf('django.db.models.fields.BooleanField')()),
+            ('patrician_certainty', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
         ))
         db.send_create_signal(u'promrep', ['Person'])
 
@@ -186,11 +200,17 @@ class Migration(SchemaMigration):
         # Deleting model 'Sex'
         db.delete_table(u'promrep_sex')
 
+        # Deleting model 'Gens'
+        db.delete_table(u'promrep_gens')
+
+        # Deleting model 'Tribe'
+        db.delete_table(u'promrep_tribe')
+
+        # Deleting model 'Origin'
+        db.delete_table(u'promrep_origin')
+
         # Deleting model 'RoleType'
         db.delete_table(u'promrep_roletype')
-
-        # Deleting model 'Certainty'
-        db.delete_table(u'promrep_certainty')
 
         # Deleting model 'Person'
         db.delete_table(u'promrep_person')
@@ -226,7 +246,7 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         u'promrep.assertion': {
-            'Meta': {'object_name': 'Assertion'},
+            'Meta': {'ordering': "['id']", 'object_name': 'Assertion'},
             'assertion_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.AssertionType']"}),
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             'display_text': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
@@ -253,12 +273,6 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'})
         },
-        u'promrep.certainty': {
-            'Meta': {'object_name': 'Certainty'},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '256', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '64'})
-        },
         u'promrep.date': {
             'Meta': {'object_name': 'Date'},
             'circa': ('django.db.models.fields.BooleanField', [], {}),
@@ -284,6 +298,12 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'auto_now_add': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '32'})
         },
+        u'promrep.gens': {
+            'Meta': {'object_name': 'Gens'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'}),
+            'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'})
+        },
         u'promrep.office': {
             'Meta': {'ordering': "['tree_id', 'lft', 'name']", 'object_name': 'Office'},
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
@@ -297,29 +317,32 @@ class Migration(SchemaMigration):
             u'rght': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
             u'tree_id': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'})
         },
+        u'promrep.origin': {
+            'Meta': {'object_name': 'Origin'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'}),
+            'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'})
+        },
         u'promrep.person': {
-            'Meta': {'object_name': 'Person'},
-            'cognomen_first': ('django.db.models.fields.CharField', [], {'max_length': '64', 'blank': 'True'}),
-            'cognomen_other': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
-            'consular_ancestor': ('django.db.models.fields.BooleanField', [], {}),
-            'consular_ancestor_certainty': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'person_noble_certainty'", 'null': 'True', 'to': u"orm['promrep.Certainty']"}),
+            'Meta': {'ordering': "['id']", 'object_name': 'Person'},
+            'cognomen': ('django.db.models.fields.CharField', [], {'max_length': '64', 'blank': 'True'}),
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             'filiation': ('django.db.models.fields.CharField', [], {'max_length': '256', 'blank': 'True'}),
+            'gens': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Gens']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_patrician': ('django.db.models.fields.BooleanField', [], {}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'nomen': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
             'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
-            'novus_homo': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'novus_homo_certainty': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'person_novus_homo_certainty'", 'null': 'True', 'to': u"orm['promrep.Certainty']"}),
-            'original_text': ('django.db.models.fields.CharField', [], {'max_length': '256', 'blank': 'True'}),
-            'patrician_certainty': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'person_patrician_certainty'", 'null': 'True', 'to': u"orm['promrep.Certainty']"}),
+            'origin': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Origin']", 'null': 'True', 'blank': 'True'}),
+            'other_names': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
+            'patrician': ('django.db.models.fields.BooleanField', [], {}),
+            'patrician_certainty': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'praenomen': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Praenomen']", 'null': 'True', 'blank': 'True'}),
             'real_attribute': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
             'real_number': ('django.db.models.fields.CharField', [], {'max_length': '32', 'blank': 'True'}),
             'real_number_old': ('django.db.models.fields.CharField', [], {'max_length': '32', 'blank': 'True'}),
             'sex': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Sex']", 'null': 'True', 'blank': 'True'}),
-            'tribe': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'})
+            'tribe': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Tribe']", 'null': 'True', 'blank': 'True'})
         },
         u'promrep.praenomen': {
             'Meta': {'ordering': "['name']", 'object_name': 'Praenomen'},
@@ -360,7 +383,14 @@ class Migration(SchemaMigration):
         u'promrep.sex': {
             'Meta': {'object_name': 'Sex'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '64'})
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '32'})
+        },
+        u'promrep.tribe': {
+            'Meta': {'object_name': 'Tribe'},
+            'abbrev': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '32'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'}),
+            'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'})
         }
     }
 

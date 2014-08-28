@@ -110,7 +110,34 @@ class Praenomen(models.Model):
 
 class Sex(models.Model):
 
-    name = models.CharField(max_length=64, unique=True)
+    name = models.CharField(max_length=32, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Gens(models.Model):
+
+    name = models.CharField(max_length=128, unique=True)
+    notes = models.CharField(max_length=1024, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Tribe(models.Model):
+    abbrev = models.CharField(max_length=32, unique=True)
+    name = models.CharField(max_length=128, unique=True)
+    notes = models.CharField(max_length=1024, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Origin(models.Model):
+
+    name = models.CharField(max_length=128, unique=True)
+    notes = models.CharField(max_length=1024, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -119,17 +146,7 @@ class Sex(models.Model):
 class RoleType(TimeStampedModel):
 
     name = models.CharField(max_length=128, unique=True)
-
     description = models.CharField(max_length=1024, blank=True)
-
-    def __unicode__(self):
-        return self.name
-
-
-class Certainty(models.Model):
-
-    name = models.CharField(max_length=64, unique=True)
-    description = models.CharField(max_length=256, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -137,43 +154,19 @@ class Certainty(models.Model):
 
 class Person(TimeStampedModel):
 
-    original_text = models.CharField(max_length=256, blank=True)
-
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
     nomen = models.CharField(max_length=128, blank=True)
 
-    cognomen_first = models.CharField(max_length=64, blank=True)
-    cognomen_other = models.CharField(max_length=128, blank=True)
-
-    sex = models.ForeignKey(Sex, blank=True, null=True)
-
-    dates = generic.GenericRelation(Date)
-
-    tribe = models.CharField(max_length=128, blank=True)
-
-    is_patrician = models.BooleanField(blank=True,
-            verbose_name='Patrician')
-    patrician_certainty = models.ForeignKey(Certainty,
-            related_name='person_patrician_certainty', null=True,
-            blank=True)
-
-    consular_ancestor = models.BooleanField(blank=True,
-            verbose_name='Consular Ancestor?')
-    consular_ancestor_certainty = models.ForeignKey(Certainty,
-            related_name='person_noble_certainty', null=True,
-            blank=True)
-
-    novus_homo = models.BooleanField(default=False, blank=True,
-            verbose_name='Novus Homo?')
-
-    novus_homo_certainty = models.ForeignKey(Certainty,
-            related_name='person_novus_homo_certainty', null=True,
-            blank=True)
-
-    notes = models.CharField(max_length=1024, blank=True)
-    notes.help_text = "Extra notes about the person."
+    cognomen = models.CharField(max_length=64, blank=True)
+    other_names = models.CharField(max_length=128, blank=True)
 
     filiation = models.CharField(max_length=256, blank=True)
+
+    gens = models.ForeignKey(Gens, blank=True, null=True)
+
+    tribe = models.ForeignKey(Gens, blank=True, null=True)
+
+    sex = models.ForeignKey(Sex, blank=True, null=True)
 
     real_number = models.CharField(max_length=32, blank=True,
                                    verbose_name='RE Number')
@@ -183,11 +176,21 @@ class Person(TimeStampedModel):
 
     real_attribute = models.CharField(max_length=128, blank=True)
 
+    tribe = models.ForeignKey(Tribe, blank=True, null=True)
+
+    origin = models.ForeignKey(Origin, blank=True, null=True)
+
+    patrician = models.BooleanField(blank=True, verbose_name='Patrician?')
+    patrician_certainty = models.BooleanField(blank=True, verbose_name='Patrician Certainty?', default=True)
+
+    notes = models.CharField(max_length=1024, blank=True)
+    notes.help_text = "Extra notes about the person."
+
+    dates = generic.GenericRelation(Date)
+
+
     class Meta:
         ordering = ['id',]
-
-    def cognomen(self):
-        return self.cognomen_first + self.cognomen_other
 
     def real_id(self):
         r_id = ' '.join([self.real_number, self.real_attribute])
@@ -195,9 +198,8 @@ class Person(TimeStampedModel):
         return r_id.strip()
 
     def get_name(self):
-
-        name_parts = [self.nomen, self.filiation, self.cognomen_first,
-                      self.cognomen_other]
+        name_parts = [self.nomen, self.filiation, self.cognomen,
+                      self.other_names]
 
         if self.praenomen:
             name = self.praenomen.abbrev + ' '

@@ -1,0 +1,18 @@
+[
+{
+    "pk": 1,
+    "model": "promrep.gens",
+    "fields": {
+        "name": "Aemilia",
+        "notes": ""
+    }
+},
+{
+    "pk": 2,
+    "model": "promrep.gens",
+    "fields": {
+        "name": "Cornelia",
+        "notes": ""
+    }
+}
+]

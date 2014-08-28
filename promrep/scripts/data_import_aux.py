@@ -3,9 +3,10 @@
 
 # data import auxiliary functions
 
-from promrep.models import Assertion, AssertionPerson, AssertionType, \
-    Certainty, Date, DateType, Office, Person, Praenomen, \
-    PrimarySource, RoleType, SecondarySource, Sex
+from django.db import transaction
+from promrep.models import Assertion, AssertionPerson, \
+    Date, DateType, Office, Person, Praenomen, \
+    PrimarySource, SecondarySource, Sex
 
 import regex
 
@@ -133,13 +134,13 @@ def parse_person_name(text):
         cog_list = captured.captures('cognomen')
 
         cognomen_first = ''
-        cognomen_other = ''
+        other_names = ''
 
         if len(cog_list):
             cognomen_first = cog_list[0].strip()
 
         if len(cog_list) > 1:
-            cognomen_other = ' '.join(cog_list[1:]).strip().replace('  '
+            other_names = ' '.join(cog_list[1:]).strip().replace('  '
                     , ' ')
 
         # if len(captured.captures('date_certainty')):
@@ -148,20 +149,29 @@ def parse_person_name(text):
 
         filiation = ''.join(captured.captures('filiation')).strip()
 
-        person = Person(
-            original_text=text,
-            sex=sex,
-            real_number=real,
-            nomen=nomen,
-            praenomen=praenomen,
-            filiation=filiation,
-            cognomen_first=cognomen_first,
-            cognomen_other=cognomen_other,
-            is_patrician=is_patrician,
-            consular_ancestor=False,
-            )
+        try:
+            with transaction.atomic():
+                person = Person(
+                    sex=sex,
+                    real_number=real,
+                    nomen=nomen,
+                    praenomen=praenomen,
+                    filiation=filiation,
+                    cognomen=cognomen_first,
+                    other_names=other_names,
+                    patrician=is_patrician,
+                    )
 
-        return person
+                if person:
+                    print "OKAPA"
+                else:
+                    print "KABUUUM"
+
+            return person
+
+        except Exception as e:
+            print '%s (%s)' % (e.message, type(e))
+
 
     else:
         print '[ERROR] Could not parse the person:', text

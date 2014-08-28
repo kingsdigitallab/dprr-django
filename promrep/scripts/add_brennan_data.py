@@ -60,15 +60,15 @@ def run():
             blank,
             ) = row
 
-        cognomen_first = ''
-        cognomen_other = ''
+        cognomen = ''
+        other_names = ''
 
         if cognomen != '':
             cognomen_list = cognomen.split()
-            cognomen_first = cognomen_list[0]
+            cognomen = cognomen_list[0]
 
             if len(cognomen) > 1:
-                cognomen_other = ' '.join(cognomen_list[1:])
+                other_names = ' '.join(cognomen_list[1:])
 
         if praenomen_str == '':
             praenomen = None
@@ -100,8 +100,8 @@ def run():
             real_number=real_number,
             nomen=nomen,
             filiation=filiation,
-            cognomen_first=cognomen_first,
-            cognomen_other=cognomen_other,
+            cognomen=cognomen,
+            other_names=other_names,
             consular_ancestor=False,
             is_patrician=False,
             )

@@ -152,6 +152,24 @@ class RoleType(TimeStampedModel):
         return self.name
 
 
+class NoteType(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Note(TimeStampedModel):
+    note_type = models.ForeignKey(NoteType, blank=True, null=True)
+
+    # useful to store the bookmark number, for instance
+    extra_info = models.CharField(max_length=128, blank=True)
+    text = models.CharField(max_length=1024, blank=True)
+
+    def __unicode__(self):
+        return self.text
+
+
 class Person(TimeStampedModel):
 
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
@@ -335,13 +353,14 @@ class Assertion(TimeStampedModel):
     relationship = models.ForeignKey(Relationship, blank=True,
             null=True)
 
+    notes = models.ManyToManyField(Note)
+
     dates = generic.GenericRelation(Date)
 
     secondary_source = models.ForeignKey(SecondarySource)
 
     display_text = models.CharField(max_length=1024, blank=True)
 
-    notes = models.CharField(max_length=1024, blank=True)
 
     class Meta:
         ordering = ['id',]

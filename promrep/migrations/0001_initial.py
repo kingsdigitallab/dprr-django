@@ -87,6 +87,24 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'promrep', ['RoleType'])
 
+        # Adding model 'NoteType'
+        db.create_table(u'promrep_notetype', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=128)),
+        ))
+        db.send_create_signal(u'promrep', ['NoteType'])
+
+        # Adding model 'Note'
+        db.create_table(u'promrep_note', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('created', self.gf('model_utils.fields.AutoCreatedField')(default=datetime.datetime.now)),
+            ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
+            ('note_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.NoteType'], null=True, blank=True)),
+            ('extra_info', self.gf('django.db.models.fields.CharField')(max_length=128, blank=True)),
+            ('text', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
+        ))
+        db.send_create_signal(u'promrep', ['Note'])
+
         # Adding model 'Person'
         db.create_table(u'promrep_person', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -170,9 +188,17 @@ class Migration(SchemaMigration):
             ('relationship', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Relationship'], null=True, blank=True)),
             ('secondary_source', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.SecondarySource'])),
             ('display_text', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
-            ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
         ))
         db.send_create_signal(u'promrep', ['Assertion'])
+
+        # Adding M2M table for field notes on 'Assertion'
+        m2m_table_name = db.shorten_name(u'promrep_assertion_notes')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('assertion', models.ForeignKey(orm[u'promrep.assertion'], null=False)),
+            ('note', models.ForeignKey(orm[u'promrep.note'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['assertion_id', 'note_id'])
 
         # Adding model 'AssertionPerson'
         db.create_table(u'promrep_assertionperson', (
@@ -212,6 +238,12 @@ class Migration(SchemaMigration):
         # Deleting model 'RoleType'
         db.delete_table(u'promrep_roletype')
 
+        # Deleting model 'NoteType'
+        db.delete_table(u'promrep_notetype')
+
+        # Deleting model 'Note'
+        db.delete_table(u'promrep_note')
+
         # Deleting model 'Person'
         db.delete_table(u'promrep_person')
 
@@ -233,6 +265,9 @@ class Migration(SchemaMigration):
         # Deleting model 'Assertion'
         db.delete_table(u'promrep_assertion')
 
+        # Removing M2M table for field notes on 'Assertion'
+        db.delete_table(db.shorten_name(u'promrep_assertion_notes'))
+
         # Deleting model 'AssertionPerson'
         db.delete_table(u'promrep_assertionperson')
 
@@ -252,7 +287,7 @@ class Migration(SchemaMigration):
             'display_text': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
-            'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
+            'notes': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['promrep.Note']", 'symmetrical': 'False'}),
             'office': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Office']", 'null': 'True', 'blank': 'True'}),
             'persons': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['promrep.Person']", 'through': u"orm['promrep.AssertionPerson']", 'symmetrical': 'False'}),
             'relationship': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Relationship']", 'null': 'True', 'blank': 'True'}),
@@ -303,6 +338,20 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'}),
             'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'})
+        },
+        u'promrep.note': {
+            'Meta': {'object_name': 'Note'},
+            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
+            'extra_info': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
+            'note_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.NoteType']", 'null': 'True', 'blank': 'True'}),
+            'text': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'})
+        },
+        u'promrep.notetype': {
+            'Meta': {'object_name': 'NoteType'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'})
         },
         u'promrep.office': {
             'Meta': {'ordering': "['tree_id', 'lft', 'name']", 'object_name': 'Office'},

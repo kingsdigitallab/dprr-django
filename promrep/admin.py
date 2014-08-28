@@ -10,13 +10,22 @@ from django.forms import TextInput, Textarea
 
 from models import Person, Office, Praenomen, AssertionPerson, \
     Assertion, AssertionType, RoleType, Date, DateType, \
-    SecondarySource, Gens
+    SecondarySource, Gens, Note, NoteType
 
 admin.site.register(AssertionType)
 admin.site.register(Date)
 admin.site.register(DateType)
 admin.site.register(RoleType)
+admin.site.register(Note)
+admin.site.register(NoteType)
 
+class AssertionNoteInline(admin.TabularInline):
+    verbose_name = ''
+    verbose_name_plural = 'Assertion Notes'
+
+    model = Assertion.notes.through
+    raw_id_fields = ('note', 'assertion', )
+    extra = 1
 
 class AssertionPersonInline(admin.TabularInline):
     verbose_name = ''
@@ -135,15 +144,15 @@ class AssertionAdmin(admin.ModelAdmin):
         'office',
         'get_persons',
         'get_dates',
+        # 'get_notes',
         'display_text',
-        'notes',
         'secondary_source',
         )
 
-    list_display_links = ('id', 'get_persons', 'get_dates', 'display_text', 'notes', 'assertion_type', 'office', 'secondary_source')
+    list_display_links = ('id', 'get_persons', 'get_dates', 'display_text', 'assertion_type', 'office', 'secondary_source')
     readonly_fields = ('id', )
 
-    inlines = [AssertionPersonInline, AssertionDateInline, ]
+    inlines = [AssertionPersonInline, AssertionNoteInline, AssertionDateInline, ]
     exclude = ('persons', )
 
 

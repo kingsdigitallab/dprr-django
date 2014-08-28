@@ -16,12 +16,27 @@ OFFICE_NAMES_DIC = {
 
 }
 
+# TODO: configure in settings
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+# add a file handler
+fh = logging.FileHandler( 'data_import.log')
+fh.setLevel(logging.DEBUG)
+# create a formatter and set the formatter for the handler.
+frmt = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+fh.setFormatter(frmt)
+# add the Handler to the logger
+logger.addHandler(fh)
 
+logger.debug('debug message')
+logger.info('info message')
+logger.warn('Checkout this warning.')
+logger.error('An error goes here.')
+logger.critical('Something critical happened.')
 
 def run():
     # this is the file exported by OpenOffice
 
-    logger = logging.getLogger(__name__)
 
     ifile = 'promrep/scripts/data/output-tidy-norefs.xml'
     print 'Will process input file', ifile
@@ -33,12 +48,9 @@ def processXML(ifile):
 
     years = soup.findAll('year')
 
-    error = 0
-    exist = 0
-
     for year in years:
         year_str = year.find('name').get_text().split()[0]
-        print "[DEBUG]Parsing year %s" %(year_str)
+        logger.debug("Parsing year %s" %(year_str))
 
         for office_tag in year.findAll('office'):
             office_name = office_tag.find('name').get_text()
@@ -56,7 +68,7 @@ def processXML(ifile):
                 office.parent = parent
                 office.save()
 
-                print '[DEBUG][NEW_OFFICE] ', office, office.id
+                logger.info('Added new office:', office.name, office.id)
 
 
             for p in office_tag.find_all('person'):
@@ -68,30 +80,28 @@ def processXML(ifile):
                 try:
                     text = text.get_text()
 
-                    print "[DEBUG][FIND PERSON] ", text
+                    logger.info("find_person" + text)
                     person = data_import_aux.parse_person_name(text)
 
                     if person == None:
-                        print "[ERROR]: Could not parse person: ", text
+                        logger.error("Could not parse person: " + text)
                     else:
                         person_exists = data_import_aux.person_exists(person)
 
                         # test if person exists
                         if person_exists == None:
                             # TODO: how to handle this case?
-                            error = error + 1
+                            logger.error("Person exists returned None")
                         else:
                             # no errors: the person either exists or will be created
                             if person_exists == False:
                                 try:
                                     person.save()
-                                    added = added + 1
-                                    print '[DEBUG][NEW_PERSON] saved person with id', person.id
+                                    logger.info('Saved person with id', str(person.id))
                                 except:
-                                    print '[ERROR] Unable to save person in the database.'
+                                    logger.error("Unable to save person", text, "in the database.")
                             else:
-                                print '[DEBUG][PERSON_EXISTS] person already in database with id=', person_exists
-                                exist = exist + 1
+                                print logger.info('Person already in database with id=' + person_exists)
                                 person = Person.objects.get(pk=person_exists)
 
 
@@ -128,9 +138,9 @@ def processXML(ifile):
                                 try:
                                     date_start.save()
 
-                                except e:
+                                except Exception as e:
                                     print e
-                                    print '[ERROR] Could not save date...' + year_str
+                                    logger.error('[ERROR] Could not save date...' + year_str)
 
                                 assertion_person = AssertionPerson(
                                     role=RoleType.objects.get(name='Holder'),
@@ -143,11 +153,11 @@ def processXML(ifile):
                                     assertion_person.save()
 
                                 except:
-                                    print "[ERROR][ASSERTION_PERSON] Could not save assertion person..."
+                                    print logger.error("[ERROR][ASSERTION_PERSON] Could not save assertion person...")
 
                             except e:
                                 print e
-                                print "[ERROR][ASSERTION] Could not save assertion..."
+                                logger.error("[ERROR][ASSERTION] Could not save assertion...")
 
                 except Exception:
 

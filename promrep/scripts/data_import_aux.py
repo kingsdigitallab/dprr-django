@@ -10,7 +10,6 @@ from promrep.models import Assertion, AssertionPerson, \
 
 import regex
 
-
 def person_exists(person):
     """Returns False if the person doesn't exist, None if there are more than one or id if it exists"""
 

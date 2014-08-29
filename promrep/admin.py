@@ -103,6 +103,7 @@ class PersonAdmin(admin.ModelAdmin):
         'sex',
         'get_dates',
         'patrician',
+        'patrician_certainty',
         'notes',
         'modified',
         'created',

@@ -75,11 +75,14 @@ def processXML(ifile):
                     name_str = name_el.get_text()
                     person = data_import_aux.parse_person_name(name_str)
 
+
                     try:
                         person.save()
                         logger.info('Saved person %s with id %i' %(person.name, person.id))
                     except Exception as e:
-                        logger.error("Unable to save person %s" %(e.__cause__))
+                        logger.error("Unable to save person %s %s" %(name_str, e))
+
+
                         person = Person.objects.get(nomen = person.nomen, cognomen = person.cognomen, real_number = person.real_number)
 
                     if person != None:

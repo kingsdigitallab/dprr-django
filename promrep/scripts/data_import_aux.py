@@ -27,8 +27,7 @@ logger.addHandler(fh)
 def parse_person_name(text):
     """Will return a person object or None if unable to parse the person"""
 
-    print
-    print '[DEBUG] Will parse person: ', text
+    logger.info("ParsePersonName: %s" %(text))
 
     # TODO: this should come from the database...
 
@@ -65,6 +64,7 @@ def parse_person_name(text):
         'V\.',
         'Vol\.',
         'Vop\.',
+        '-',
         ]
     praenomen_abbrev = r'(?:%s)' % '|'.join(praenomen_list)
 
@@ -75,7 +75,7 @@ def parse_person_name(text):
         (?P<nomen>\(?\w+?\)?\s)?
         (?P<filiation>(%s|-)\s[fn-]?\.?\s){0,6}?
         (?P<cognomen>\(?[\?\w]+?\)?\s){0,8}
-        (?<patrician>Pat\.\s)?
+        (?<patrician>Pat\.\??\s)?
          \((?P<real>
             \*?
              \d+?                 | # either it's a number
@@ -105,10 +105,16 @@ def parse_person_name(text):
 
         nomen = captured.captures('nomen')[0].strip()
 
-        if len(captured.captures('patrician')):
-            is_patrician = True
-        else:
-            is_patrician = False
+        # parse patrician and patrician certainty
+
+        pat_str = captured.captures('patrician')
+        pat_certain = True
+        is_pat = False
+
+        if len(pat_str):
+            if "?" in pat_str[0]:
+                pat_certain = False
+            is_pat = True
 
         cog_list = captured.captures('cognomen')
 
@@ -138,7 +144,8 @@ def parse_person_name(text):
                     filiation=filiation,
                     cognomen=cognomen_first,
                     other_names=other_names,
-                    patrician=is_patrician,
+                    patrician=is_pat,
+                    patrician_certainty=pat_certain,
                     )
 
                 if person:

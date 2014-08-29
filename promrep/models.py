@@ -173,6 +173,8 @@ class Note(TimeStampedModel):
 class Person(TimeStampedModel):
 
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
+    praenomen_certainty = models.BooleanField(verbose_name='Praenomen Certainty?', default=True)
+
     nomen = models.CharField(max_length=128, blank=True)
 
     cognomen = models.CharField(max_length=64, blank=True)

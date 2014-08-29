@@ -36,7 +36,7 @@ def parse_person(text):
     person_re = \
         regex.compile(r"""^
         (?P<date_certainty>\?[\s\-])?    # question mark followed by either a space or a dash in the start of line
-        (?P<praenomen>%s\s)?
+        (?P<praenomen>%s\??\s)?
         (?P<nomen>\(?\w+?\)?\s)?
         (?P<filiation>(%s|-)\s[fn-]?\.?\s){0,6}?
         (?P<cognomen>\(?[\?\w]+?\)?\s){0,8}
@@ -62,9 +62,16 @@ def parse_person(text):
         real = captured.captures('real')[0].strip()
         sex = Sex.objects.get(name='Male')
 
+        praen_cert = True
         if len(captured.captures('praenomen')):
-            praenomen = captured.captures('praenomen')[0].strip()
-            praenomen = Praenomen.objects.get(abbrev=praenomen)
+            praenomen_str = captured.captures('praenomen')[0].strip()
+
+            if "?" in praenomen_str:
+                praen_cert = False
+                praenomen_str = praenomen_str.replace("?", "")
+
+            praenomen = Praenomen.objects.get(abbrev=praenomen_str)
+
         else:
             praenomen = None
 
@@ -106,6 +113,7 @@ def parse_person(text):
                     real_number=real,
                     nomen=nomen,
                     praenomen=praenomen,
+                    praenomen_certainty = praen_cert,
                     filiation=filiation,
                     cognomen=cognomen_first,
                     other_names=other_names,

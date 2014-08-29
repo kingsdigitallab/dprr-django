@@ -30,8 +30,32 @@ class AddParsingAuxTestCase(TestCase):
         self.assertTrue(p.patrician_certainty)
         self.assertEqual(p.real_number, "302")
 
-        p = aux.parse_person("C. M[amilius? - f. Limetanus?] (7)")
-        self.assertEqual(p.nomen, "M[amilius?")
+        # uncertain praenomen, patrician
+        p= aux.parse_person("A.? Manlius Torquatus Pat. (76)")
+        self.assertEqual(p.nomen, "Manlius")
+        self.assertTrue(p.patrician)
+        self.assertTrue(p.patrician_certainty)
+        self.assertEqual(p.real_number, "76")
+
+        # uncertain praenomen
+        p= aux.parse_person("C.? Memmius (7)")
+        self.assertEqual(p.nomen, "Memmius")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="C."))
+        self.assertFalse(p.praenomen_certainty)
         self.assertEqual(p.real_number, "7")
+
+        ### TODO:
+        p= aux.parse_person("? C. Memmius (7)")
+        self.assertEqual(p.nomen, "Memmius")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="C."))
+        self.assertTrue(p.praenomen_certainty)
+        self.assertEqual(p.real_number, "7")
+
+
+
+        # p = aux.parse_person("L.? Novius Niger (12, cf. 7)")
+        # p = aux.parse_person("C. M[amilius? - f. Limetanus?] (7)")
+        # self.assertEqual(p.nomen, "M[amilius?")
+        # self.assertEqual(p.real_number, "7")
 
 

@@ -40,7 +40,7 @@ def parse_person(text):
         (?P<nomen>\(?\w+?\)?\s)?
         (?P<filiation>%s\s[fn-]?\.?\s){0,6}
         (?P<cognomen>\(?[\?\w]+?\.?\)?\s){0,8}?
-        (?<patrician>Pat\.\??\s)?
+        (?<patrician>Pat\.{1,2}\??\s)? # outlier cases w/ 2 dots...
          \((?P<real>
             \*?         # can have an asterisk followed by...
                 [\d\.]+?            | # either a number or cases like (*2.100)

@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from promrep.models import ContentType, Assertion, AssertionPerson, AssertionType, \
     Date, Office, Person, RoleType, SecondarySource, Note
 
-import data_import_aux
+import parsing_aux as aux
 import logging
 
 # create dictionary with name mapping
@@ -73,12 +73,11 @@ def processXML(ifile):
                 ### TODO: wrap in transaction
                 try:
                     name_str = name_el.get_text()
-                    person = data_import_aux.parse_person_name(name_str)
-
+                    person = aux.parse_person(name_str)
 
                     try:
                         person.save()
-                        logger.info('Saved person %s with id %i' %(person.name, person.id))
+                        logger.info('Saved person %s with id %i' %(person.get_name(), person.id))
                     except Exception as e:
                         logger.error("Unable to save person %s %s" %(name_str, e))
 

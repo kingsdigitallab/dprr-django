@@ -24,48 +24,13 @@ fh.setFormatter(frmt)
 logger.addHandler(fh)
 
 
-def parse_person_name(text):
+def parse_person(text):
     """Will return a person object or None if unable to parse the person"""
 
     logger.info("ParsePersonName: %s" %(text))
 
-    # TODO: this should come from the database...
-
-    praenomen_list = [
-        'Agr\.',
-        'Ap\.',
-        'A\.',
-        'K\.',
-        'D\.',
-        'F\.',
-        'C\.',
-        'Cn\.',
-        'Hostus',
-        'Lars',
-        'L\.',
-        'Mam\.',
-        "M'\.",
-        'M\.',
-        'N\.',
-        'Oct\.',
-        'Opet\.',
-        'Pacuvius',
-        'Post\.',
-        'Proc\.',
-        'P\.',
-        'Q\.',
-        'Ser\.',
-        'Sex\.',
-        'Sp\.',
-        'St\.',
-        'Ti\.',
-        'T\.',
-        '\?',
-        'V\.',
-        'Vol\.',
-        'Vop\.',
-        '-',
-        ]
+    praenomen_list = [regex.escape(p.abbrev) for p in Praenomen.objects.all()]
+    praenomen_list.append(regex.escape('-'))
     praenomen_abbrev = r'(?:%s)' % '|'.join(praenomen_list)
 
     person_re = \

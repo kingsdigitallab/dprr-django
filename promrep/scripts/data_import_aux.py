@@ -9,40 +9,19 @@ from promrep.models import Assertion, AssertionPerson, \
     PrimarySource, SecondarySource, Sex
 
 import regex
+import logging
 
-def person_exists(person):
-    """Returns False if the person doesn't exist, None if there are more than one or id if it exists"""
-
-    # tests if there are more persons with the same identifier (nomen + real)
-    identic = \
-        Person.objects.filter(real_number=person.real_number,
-                              nomen=person.nomen)
-
-    if identic.count() == 1:
-        existing_person = identic[0]
-        # should print the debug information
-        diffs = existing_person.compare(person)
-        print "[SAME_PERSON] Parsing person already in database:",
-
-        diff_keys = diffs[0].keys()
-        if len(diff_keys) == 0:
-            print "No new info."
-        else:
-            print "printing diffs:"
-
-        for key in diff_keys:
-            print '[SAME_PERSON]', key, 'Old:', diffs[0][key], 'New:', diffs[1][key]
-
-        print '[SAME_PERSON] Keeping previous (id=' + str(existing_person.id)  + ') in database... '
-
-        return existing_person.id
-
-    elif identic.count() > 1:
-        # todo: print a verbose error
-        print '[ERROR] More than one person matches query... not adding person to db.'
-        return None
-    else:
-        return False
+# TODO: configure in settings
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+# add a file handler
+fh = logging.FileHandler( 'data_import.log')
+fh.setLevel(logging.DEBUG)
+# create a formatter and set the formatter for the handler.
+frmt = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+fh.setFormatter(frmt)
+# add the Handler to the logger
+logger.addHandler(fh)
 
 
 def parse_person_name(text):

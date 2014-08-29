@@ -122,11 +122,14 @@ class Migration(SchemaMigration):
             ('real_attribute', self.gf('django.db.models.fields.CharField')(max_length=128, blank=True)),
             ('tribe', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Tribe'], null=True, blank=True)),
             ('origin', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Origin'], null=True, blank=True)),
-            ('patrician', self.gf('django.db.models.fields.BooleanField')()),
+            ('patrician', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('patrician_certainty', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
         ))
         db.send_create_signal(u'promrep', ['Person'])
+
+        # Adding unique constraint on 'Person', fields ['nomen', 'cognomen', 'real_number']
+        db.create_unique(u'promrep_person', ['nomen', 'cognomen', 'real_number'])
 
         # Adding model 'SecondarySource'
         db.create_table(u'promrep_secondarysource', (
@@ -214,6 +217,9 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
+        # Removing unique constraint on 'Person', fields ['nomen', 'cognomen', 'real_number']
+        db.delete_unique(u'promrep_person', ['nomen', 'cognomen', 'real_number'])
+
         # Deleting model 'DateType'
         db.delete_table(u'promrep_datetype')
 
@@ -373,7 +379,7 @@ class Migration(SchemaMigration):
             'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'})
         },
         u'promrep.person': {
-            'Meta': {'ordering': "['id']", 'object_name': 'Person'},
+            'Meta': {'ordering': "['id']", 'unique_together': "(('nomen', 'cognomen', 'real_number'),)", 'object_name': 'Person'},
             'cognomen': ('django.db.models.fields.CharField', [], {'max_length': '64', 'blank': 'True'}),
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             'filiation': ('django.db.models.fields.CharField', [], {'max_length': '256', 'blank': 'True'}),
@@ -384,7 +390,7 @@ class Migration(SchemaMigration):
             'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
             'origin': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Origin']", 'null': 'True', 'blank': 'True'}),
             'other_names': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
-            'patrician': ('django.db.models.fields.BooleanField', [], {}),
+            'patrician': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'patrician_certainty': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'praenomen': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Praenomen']", 'null': 'True', 'blank': 'True'}),
             'real_attribute': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),

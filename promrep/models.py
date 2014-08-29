@@ -199,17 +199,17 @@ class Person(TimeStampedModel):
 
     origin = models.ForeignKey(Origin, blank=True, null=True)
 
-    patrician = models.BooleanField(blank=True, verbose_name='Patrician?')
-    patrician_certainty = models.BooleanField(blank=True, verbose_name='Patrician Certainty?', default=True)
+    patrician = models.BooleanField(verbose_name='Patrician?', default = False)
+    patrician_certainty = models.BooleanField(verbose_name='Patrician Certainty?', default=True)
 
     notes = models.CharField(max_length=1024, blank=True)
     notes.help_text = "Extra notes about the person."
 
     dates = generic.GenericRelation(Date)
 
-
     class Meta:
         ordering = ['id',]
+        unique_together = (("nomen", "cognomen", "real_number"),)
 
     def real_id(self):
         r_id = ' '.join([self.real_number, self.real_attribute])

@@ -38,8 +38,8 @@ def parse_person(text):
         (?P<date_certainty>\?[\s\-])?    # question mark followed by either a space or a dash in the start of line
         (?P<praenomen>%s\??\s)?
         (?P<nomen>\(?\w+?\)?\s)?
-        (?P<filiation>(%s|-)\s[fn-]?\.?\s){0,6}?
-        (?P<cognomen>\(?[\?\w]+?\)?\s){0,8}
+        (?P<filiation>%s\s[fn-]?\.?\s){0,6}
+        (?P<cognomen>\(?[\?\w]+?\.?\)?\s){0,8}?
         (?<patrician>Pat\.\??\s)?
          \((?P<real>
             \*?

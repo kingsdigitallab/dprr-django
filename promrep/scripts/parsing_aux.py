@@ -42,13 +42,13 @@ def parse_person(text):
         (?P<cognomen>\(?[\?\w]+?\.?\)?\s){0,8}?
         (?<patrician>Pat\.\??\s)?
          \((?P<real>
-            \*?
-             \d+?                 | # either it's a number
-             (RE\s)[\w\.]*?      | # or starts with RE
-             \?                  | # or question mark
-             [A-Z\d\.]+?         | # or uppercase letters with numbers and dots (no spaces)
-             [\d]+,\s\w+\.?\s\d+ | # or cases like (14, Supb. 6)
-             not\sin\sRE                # or says "not in RE"
+            \*?         # can have an asterisk followed by...
+                [\d\.]+?            | # either a number or cases like (*2.100)
+                (RE\s)[\w\.]*?      | # or starts with RE
+                \?                  | # or question mark
+                [A-Z\d\.]+?         | # or uppercase letters with numbers and dots (no spaces)
+                [\d]+,\s\w+\.?\s\d+ | # or cases like (14, Supb. 6)
+                not\sin\sRE           # or says "not in RE"
          )\)
          .*                         # in parenthesis (can have an asterisk)
          """

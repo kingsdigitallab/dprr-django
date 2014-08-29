@@ -71,6 +71,12 @@ class AddParsingAuxTestCase(TestCase):
         self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="C."))
         self.assertEqual(p.real_number, "165")
 
+        p = aux.parse_person("M. Pupius Piso Frugi Calpurnianus (*2.100)")
+        self.assertEqual(p.nomen, "Pupius")
+        self.assertEqual(p.cognomen, "Piso")
+        self.assertEqual(p.other_names, "Frugi Calpurnianus")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="M."))
+        self.assertEqual(p.real_number, "*2.100")
 
 
         # p = aux.parse_person("C. M[amilius? - f. Limetanus?] (7)")

@@ -78,6 +78,31 @@ class AddParsingAuxTestCase(TestCase):
         self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="M."))
         self.assertEqual(p.real_number, "*2.100")
 
+        # TODO: extra date info...
+        p = aux.parse_person("88 or 80-40: L. Iulius Caesar Pat. (143)")
+        self.assertEqual(p.nomen, "Iulius")
+        self.assertEqual(p.cognomen, "Caesar")
+        self.assertEqual(p.other_names, "")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="L."))
+        self.assertEqual(p.real_number, "143")
+        self.assertTrue(p.patrician)
+
+        p = aux.parse_person("Before 47-ca. 40: P. Servilius Isauricus (67)")
+        self.assertEqual(p.nomen, "Servilius")
+        self.assertEqual(p.cognomen, "Isauricus")
+        self.assertEqual(p.other_names, "")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="P."))
+        self.assertEqual(p.real_number, "67")
+        self.assertFalse(p.patrician)
+
+        p = aux.parse_person("Ca. 45-43: A. Hirtius (2)")
+        self.assertEqual(p.nomen, "Hirtius")
+        self.assertEqual(p.cognomen, "")
+        self.assertEqual(p.other_names, "")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="A."))
+        self.assertEqual(p.real_number, "2")
+        self.assertFalse(p.patrician)
+
 
         # p = aux.parse_person("C. M[amilius? - f. Limetanus?] (7)")
         # self.assertEqual(p.nomen, "M[amilius?")

@@ -35,7 +35,10 @@ def parse_person(text):
 
     person_re = \
         regex.compile(r"""^
-        (?P<date_certainty>\?[\s\-])?    # question mark followed by either a space or a dash in the start of line
+        (?P<date_certainty>
+            \?[\s\-]    | # question mark followed by either a space or a dash in the start of line
+            .*?\:\s     | # or something followed by colon AND space
+            )?
         (?P<praenomen>%s\??\s)?
         (?P<nomen>\(?\w+?\)?\s)?
         (?P<filiation>%s\s[fn-]?\.?\s){0,6}

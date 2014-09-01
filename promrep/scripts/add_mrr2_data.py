@@ -4,7 +4,7 @@
 from bs4 import BeautifulSoup
 
 from promrep.models import ContentType, Assertion, AssertionPerson, AssertionType, \
-    Date, Office, Person, RoleType, SecondarySource, Note
+    Date, Office, Person, RoleType, SecondarySource, Note, NoteType
 
 import parsing_aux as aux
 import logging
@@ -156,7 +156,6 @@ def processXML(ifile):
             for p in office_tag.find_all('person'):
                 name_el = p.find('name')
 
-
                 ### TODO: wrap in transaction
                 try:
                     name_str = name_el.get_text()
@@ -218,20 +217,48 @@ def processXML(ifile):
                             logger.error('Error saving assertion: %s (%s)' % (e.message, type(e)))
 
 
-                        # if the next element is a note
-                        #  we're adding it to all the assertions in the assertion queue
-                        if p.findNextSibling().name == "references":
-                            references = p.findNextSibling().get_text()
+                        try:
+                            # if the next element is a note
+                            #  we're adding it to all the assertions in the assertion queue
+                            if p.findNextSibling().name == "references":
+                                references = p.findNextSibling().get_text()
 
-                            note = Note(text = references,
-                                notetype = Notetype.objects.get(name="Reference"))
-                            note.save()
+                                note = Note(
+                                    text = references,
+                                    note_type = NoteType.objects.get(name="Reference"),
+                                    )
 
-                            for a in assertion_ref_queue:
-                                a.notes.add(note)
+                                note.save()
 
-                            # resets the ref queue
-                            assertion_ref_queue = []
+                                for a in assertion_ref_queue:
+                                    a.notes.add(note)
+
+                                # resets the ref queue
+                                assertion_ref_queue = []
+
+                        except Exception as e:
+                            logger.error('Error saving reference notes: %s (%s)' % (e.message, type(e)))
+
+                        try:
+                            # tests if person has a bookmark/noteref
+                            if p.find('noteref'):
+                                endnote_name = p.noteref.get_text().strip('#')
+                                endnote_text = year.find('note', bookmarks=endnote_name).get_text()
+
+
+                                if endnote_text:
+                                    endnote = Note(
+                                        text = endnote_text,
+                                        note_type = NoteType.objects.get(name="Endnote"),
+                                        extra_info = endnote_name
+                                        )
+                                    endnote.save()
+                                    assertion.notes.add(endnote)
+                                else:
+                                    logger.error("Endnote error: %s" %(endnote_name))
+
+                        except Exception as e:
+                            logger.error('Error saving endnote: %s (%s)' % (e.message, type(e)))
 
 
                 except Exception as e:

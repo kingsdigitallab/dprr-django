@@ -16,8 +16,9 @@ admin.site.register(AssertionType)
 admin.site.register(Date)
 admin.site.register(DateType)
 admin.site.register(RoleType)
-admin.site.register(Note)
 admin.site.register(NoteType)
+
+
 
 class AssertionNoteInline(admin.TabularInline):
     verbose_name = ''
@@ -26,6 +27,7 @@ class AssertionNoteInline(admin.TabularInline):
     model = Assertion.notes.through
     raw_id_fields = ('note', 'assertion', )
     extra = 1
+
 
 class AssertionPersonInline(admin.TabularInline):
     verbose_name = ''
@@ -71,6 +73,17 @@ class AssertionYearListFilter(SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(dates__year__exact=self.value())
+
+
+class NoteAdmin(admin.ModelAdmin):
+    list_display = ('id', 'text',)
+    list_display_links = ('id', 'text',)
+
+
+    inlines = (AssertionNoteInline, )
+
+
+admin.site.register(Note, NoteAdmin)
 
 
 class PersonAdmin(admin.ModelAdmin):
@@ -160,13 +173,8 @@ class AssertionAdmin(admin.ModelAdmin):
             ('secondary_source', )
             ]}),]
 
-
     inlines = [AssertionPersonInline, AssertionNoteInline, AssertionDateInline, ]
     exclude = ('persons', )
-
-
-
-
 
 admin.site.register(Assertion, AssertionAdmin)
 

@@ -183,6 +183,7 @@ def processXML(ifile):
                         ### extra_info???
                         note = Note(text = references)
                         note.save()
+
                         try:
                             assertion.save()
                             if assertion:

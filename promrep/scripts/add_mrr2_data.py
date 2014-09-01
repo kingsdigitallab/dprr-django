@@ -147,12 +147,15 @@ def processXML(ifile):
                 logger.info('Added Office: %s (id=%i)' %(office.name, office.id))
 
 
+            # empty list to hold the office's assertions
+            #  every time a note is found, it is associated with
+            #  all the people in this list
+            #  the list is then cleared...
+            assertion_ref_queue = []
+
             for p in office_tag.find_all('person'):
                 name_el = p.find('name')
 
-                # get the next references block
-                #### TODO.... sequential??
-                references = p.findNext('references').get_text()
 
                 ### TODO: wrap in transaction
                 try:
@@ -164,7 +167,6 @@ def processXML(ifile):
                         logger.info('Saved person %s with id %i' %(person.get_name(), person.id))
                     except Exception as e:
                         logger.error("Unable to save person %s %s" %(name_str, e))
-
 
                         person = Person.objects.get(nomen = person.nomen, cognomen = person.cognomen, real_number = person.real_number)
 
@@ -179,15 +181,13 @@ def processXML(ifile):
                                 assertion_type=assertion_type,
                                 secondary_source=source,
                                 )
-                        ### TODO: NoteType?
-                        ### extra_info???
-                        note = Note(text = references)
-                        note.save()
 
                         try:
                             assertion.save()
-                            if assertion:
-                                assertion.notes.add(note)
+
+                            ### adds the assertion to the refs queue
+                            assertion_ref_queue.append(assertion)
+
                             date_start = Date(
                                 content_type=ContentType.objects.get(name='assertion'),
                                 interval=Date.DATE_MIN,
@@ -198,6 +198,7 @@ def processXML(ifile):
                                 circa=False,
                             )
                             date_start.content_object = assertion
+
                             try:
                                 date_start.save()
                             except Exception as e:
@@ -212,8 +213,25 @@ def processXML(ifile):
                                 assertion_person.save()
                             except:
                                 logger.error("[ERROR][ASSERTION_PERSON] Could not save assertion person...")
+
                         except Exception as e:
                             logger.error('Error saving assertion: %s (%s)' % (e.message, type(e)))
 
+
+                        # if the next element is a note
+                        #  we're adding it to all the assertions in the assertion queue
+                        if p.findNextSibling().name == "references":
+                            references = p.findNextSibling().get_text()
+
+                            note = Note(text = references)
+                            note.save()
+
+                            for a in assertion_ref_queue:
+                                a.notes.add(note)
+
+                            # resets the ref queue
+                            assertion_ref_queue = []
+
+
                 except Exception as e:
-                    logger.error('%s (%s)' % (e.message, type(e)))
+                    logger.error('%s' %(e.message))

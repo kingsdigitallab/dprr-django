@@ -129,8 +129,8 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'promrep', ['Person'])
 
-        # Adding unique constraint on 'Person', fields ['nomen', 'cognomen', 'real_number']
-        db.create_unique(u'promrep_person', ['nomen', 'cognomen', 'real_number'])
+        # Adding unique constraint on 'Person', fields ['praenomen', 'nomen', 'cognomen', 'real_number']
+        db.create_unique(u'promrep_person', ['praenomen_id', 'nomen', 'cognomen', 'real_number'])
 
         # Adding model 'SecondarySource'
         db.create_table(u'promrep_secondarysource', (
@@ -218,8 +218,8 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        # Removing unique constraint on 'Person', fields ['nomen', 'cognomen', 'real_number']
-        db.delete_unique(u'promrep_person', ['nomen', 'cognomen', 'real_number'])
+        # Removing unique constraint on 'Person', fields ['praenomen', 'nomen', 'cognomen', 'real_number']
+        db.delete_unique(u'promrep_person', ['praenomen_id', 'nomen', 'cognomen', 'real_number'])
 
         # Deleting model 'DateType'
         db.delete_table(u'promrep_datetype')
@@ -380,7 +380,7 @@ class Migration(SchemaMigration):
             'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'})
         },
         u'promrep.person': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('nomen', 'cognomen', 'real_number'),)", 'object_name': 'Person'},
+            'Meta': {'ordering': "['id']", 'unique_together': "(('praenomen', 'nomen', 'cognomen', 'real_number'),)", 'object_name': 'Person'},
             'cognomen': ('django.db.models.fields.CharField', [], {'max_length': '64', 'blank': 'True'}),
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             'filiation': ('django.db.models.fields.CharField', [], {'max_length': '256', 'blank': 'True'}),

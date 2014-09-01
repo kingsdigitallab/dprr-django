@@ -211,7 +211,7 @@ class Person(TimeStampedModel):
 
     class Meta:
         ordering = ['id',]
-        unique_together = (("nomen", "cognomen", "real_number"),)
+        unique_together = (("praenomen", "nomen", "cognomen", "real_number"),)
 
     def real_id(self):
         r_id = ' '.join([self.real_number, self.real_attribute])

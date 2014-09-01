@@ -223,7 +223,8 @@ def processXML(ifile):
                         if p.findNextSibling().name == "references":
                             references = p.findNextSibling().get_text()
 
-                            note = Note(text = references)
+                            note = Note(text = references,
+                                notetype = Notetype.objects.get(name="Reference"))
                             note.save()
 
                             for a in assertion_ref_queue:

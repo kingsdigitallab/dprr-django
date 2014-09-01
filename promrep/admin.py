@@ -76,9 +76,8 @@ class AssertionYearListFilter(SimpleListFilter):
 
 
 class NoteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'text',)
-    list_display_links = ('id', 'text',)
-
+    list_display = ('id', 'note_type', 'text', )
+    list_display_links = ('id',  'note_type', 'text', )
 
     inlines = (AssertionNoteInline, )
 

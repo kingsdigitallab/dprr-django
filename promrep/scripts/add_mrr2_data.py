@@ -11,8 +11,86 @@ import logging
 
 # create dictionary with name mapping
 OFFICE_NAMES_DIC = {
-
+    'Sacerdotes': 'Sacerdos',
+    'Vestales': 'Vestalis',
+    'Augures': 'Augur',
+    'Civic Offices': 'Civic Office',
+    'Aedile or Iudex Quaestionis': 'Aedilis or Iudex Quaestionis',
+    'Aediles': 'Aedilis',
+    'Aediles, Curule': 'Aedilis, Curulis',
+    'Aediles of the Plebs': 'Aedilis, Plebis',
+    'Aedilicii?': 'Aedilicius',
+    'Augurs': 'Augur',
+    'Censors': 'Censor',
+    'Consules Designati': 'Consul Designatus', # should be beneath Consul?
+    'Consules Suffecti': 'Consul Suffectus',  # should be beneath Consul?
+    'Consuls': 'Consul',
+    'Consul Suffectus': '',  # should be beneath Consul?
+    'Decemviri Sacris Faciundis': 'Decemvir sacris faciundis',
+    'Duumviri Perduellionis': 'Duumvir Perduellionis', # a special commission
+    'Flamen Dialis': 'Flamen Dialis',
+    'Flamen Divi Iulii': 'Flamen Divi Iulii',
+    'Flamen Martialis': 'Flamen Martialis',
+    'Flamen Quirinalis': 'Flamen Quirinalis',
+    'Flamens': 'Flamen',
+    'Flamines': 'Flamen',
+    'Flaminica Martialis': 'Flaminica Martialis',
+    'Interreges': 'Interrex',
+    'Iudex Quaestionis': 'Iudex Quaestionis',
+    'Iudices Quaestionum': 'Iudex Quaestionis',
+    'Legates, Ambassadors': 'Legatus',
+    'Legates, Ambassadors (or Lieutenants?)': 'Legatus',
+    'Legates, Envoys': 'Legatus',
+    'Legates, Envoys Group 1': 'Legatus',
+    'Legates, Envoys Group 2': 'Legatus',
+    'Legates, Envoys Group 3': 'Legatus',
+    'Legates, Envoys Group 4': 'Legatus',
+    'Legates, Lieutenants': 'Legatus',
+    'Legates or Prefects': 'Legatus or Praefectus',
+    'Luperci': 'Lupercus',
+    'Master of Horse': 'Magister Equitum',
+    'Masters of Horse Designate': 'Magister Equitum Designatus',
+    'Pontifices': 'Pontifex',
+    'Pontifices Minores': 'Pontifex Minor',
+    'Praefectus Urbi': 'Praefectus Urbi',
+    'Praetores Suffecti': 'Praetor Suffectus',
+    'Praetorii': 'Praetorius',
+    'Praetor or Iudex': 'Praetor or Iudex',
+    'Praetor or Quaesitor': 'Praetor or Quaesitor',
+    'Praetors': 'Praetor',
+    'Praetor Suffectus': 'Praetor Suffectus',
+    'Prefect of Cavalry': 'Praefectus Equitum',
+    'Prefects': 'Praefectus',
+    'Prefects of the City': 'Praefectus Urbis',
+    'Prefects of the Fleet': 'Praefectus Classis',
+    'Prefects to assign land to veterans': 'Praefectus agris dandis assignandis',
+    'Promagistrates': '',
+    'Quaesitores': 'Quaesitor',
+    'Quaestorii': 'Quaestorius',
+    'Quaestors': 'Quaestor',
+    'Quindecimviri Sacris Faciundis': 'Quindecemvir Sacris Faciundis',
+    'Quindecimviri Sacris Fadundis': 'Quindecemvir Sacris Faciundis',
+    'Quindeciniviri Sacris Faciundis': 'Quindecemvir Sacris Faciundis',
+    'Quindecirnviri Sacris Faciundis': 'Quindecemvir Sacris Faciundis',
+    'Quinqueviri agris dandis assignandis': 'Quinquevir agris dandis assignandis',
+    'Rex Sacrorum': 'Rex Sacrorum',
+    'Salius': 'Salius', # not sure if a singular exists
+    'Septemviri Epulones': 'Septemvir Epulonum',
+    'Special Commission': '',
+    'Special Commissions': '',
+    'Special Commissions 1.': '',
+    'Special Commissions 2.': '',
+    'Special Commissions Curator viis sternendis': '',
+    'Special Commissions Triumviri coloniis deducendis': '',
+    'Tribunes of the Plebs': 'Tribunus Plebis',
+    'Tribunes of the Soldiers': 'Tribunus Militum',
+    'Triumvir Capitalis': 'Triumvir Capitalis',
+    'Triumviri Capitales?': 'Triumvir Capitalis',
+    'Triumviri Coloniis Ducendis': 'Triumvir Coloniis Ducendis', # a special commission
+    'Triumviri Rei Publicae Constituendae': 'Triumvir Rei Publicae Constituendae',
+    'Vestal Virgins': 'Vestalis'
 }
+
 
 # TODO: configure in settings
 logger = logging.getLogger(__name__)
@@ -47,16 +125,22 @@ def processXML(ifile):
         for office_tag in year.findAll('office'):
             office_name = office_tag.find('name').get_text()
 
-            # some office names are sometimes added as plural
+            # tries to get the normalized office name from the
             try:
-                office = Office.objects.get(name=office_name)
+                oname = OFFICE_NAMES_DIC[office_name]
+            except:
+                logger.warn("Unable to normalize office name: '%s'" %(office_name,))
+                oname = office_name
+
+            try:
+                office = Office.objects.get(name=oname)
 
             except Office.DoesNotExist:
                 # Adding new office
                 # in MRR2 all offices are "civic" except for Vestal Virgin
 
                 parent = Office.objects.get(name='Civic Offices')
-                office = Office(name=office_name)
+                office = Office(name=oname)
                 office.parent = parent
                 office.save()
 

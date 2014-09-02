@@ -118,6 +118,9 @@ class Sex(models.Model):
 
 class Gens(models.Model):
 
+    class Meta:
+        verbose_name_plural = "Gens"
+
     name = models.CharField(max_length=128, unique=True)
     notes = models.CharField(max_length=1024, blank=True)
 

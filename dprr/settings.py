@@ -69,6 +69,7 @@ INSTALLED_APPS = (
     'ddhldap',
     'south',
     'mptt',
+    'treeadmin',
 )
 
 INSTALLED_APPS += ws.INSTALLED_APPS

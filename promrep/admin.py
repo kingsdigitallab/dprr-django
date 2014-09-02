@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from mptt.admin import MPTTModelAdmin
+from treeadmin.admin import TreeAdmin
 from django.contrib.contenttypes import generic
 from django.forms import TextInput, Textarea
 
@@ -17,7 +18,6 @@ admin.site.register(Date)
 admin.site.register(DateType)
 admin.site.register(RoleType)
 admin.site.register(NoteType)
-
 
 
 class AssertionNoteInline(admin.TabularInline):
@@ -129,19 +129,15 @@ class PersonAdmin(admin.ModelAdmin):
 
 admin.site.register(Person, PersonAdmin)
 
-
-class OfficeAdmin(MPTTModelAdmin):
-
+class OfficeAdmin(TreeAdmin):
     readonly_fields = ('id', )
+    mptt_indent_field = "name"
+
     list_display = (
         'id',
         'name',
-        'parent',
         'description',
-        'modified',
-        'created',
         )
-
 
 admin.site.register(Office, OfficeAdmin)
 

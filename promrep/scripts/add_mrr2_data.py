@@ -10,6 +10,7 @@ import parsing_aux as aux
 import logging
 
 OFFICE_NAMES_DIC = {
+    'Dictator': 'dictator',
     'Sacerdotes': 'sacerdos',
     'Vestales': 'vestalis',
     'Augures': 'augur',

@@ -1,0 +1,13 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+from promrep.models import Person
+import collections
+
+def run():
+    nom_list = [p.nomen for p in Person.objects.all()]
+    counter=collections.Counter(nom_list)
+
+    for name, freq in counter.most_common():
+        print "%s,\t%s" %(freq, name)
+

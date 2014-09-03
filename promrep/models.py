@@ -134,7 +134,7 @@ class Tribe(models.Model):
     notes = models.CharField(max_length=1024, blank=True)
 
     def __unicode__(self):
-        return self.name
+        return self.abbrev
 
     class Meta:
         ordering = ['id',]
@@ -215,9 +215,6 @@ class Person(TimeStampedModel):
 
     dates = generic.GenericRelation(Date)
 
-    class Meta:
-        ordering = ['id',]
-        unique_together = (("praenomen", "nomen", "real_number"),)
 
     def real_id(self):
         r_id = ' '.join([self.real_number, self.real_attribute])
@@ -225,15 +222,20 @@ class Person(TimeStampedModel):
         return r_id.strip()
 
     def get_name(self):
-        name_parts = [self.nomen, self.filiation, self.cognomen,
-                      self.other_names]
 
+        tribe_abbrev = ''
+        if self.tribe:
+            tribe_abbrev = self.tribe.abbrev
+
+        prae_abbrev = ''
         if self.praenomen:
-            name = self.praenomen.abbrev + ' '
-        else:
-            name = ''
+            prae_abbrev = self.praenomen.abbrev
 
-        return name + ' '.join(name_parts)
+        name_parts = [prae_abbrev, self.nomen, self.filiation, tribe_abbrev, self.cognomen, self.other_names]
+
+        # remove empty strings and concatenate
+        return ' '.join(filter(None, name_parts))
+
 
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (self._meta.app_label,
@@ -285,6 +287,10 @@ class Person(TimeStampedModel):
                 old.update({k: v})
 
         return (old, new)
+
+    class Meta:
+        ordering = ['id',]
+        unique_together = (("praenomen", "nomen", "real_number"),)
 
 
 # Broughton, Rupke, etc

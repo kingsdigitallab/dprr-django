@@ -18,8 +18,6 @@ admin.site.register(Date)
 admin.site.register(DateType)
 admin.site.register(RoleType)
 admin.site.register(NoteType)
-admin.site.register(Tribe)
-
 
 
 class AssertionNoteInline(admin.TabularInline):
@@ -182,8 +180,16 @@ class GensAdmin(admin.ModelAdmin):
     readonly_fields = ('id', )
     list_display_links = ('id', 'name', 'notes',)
 
-
 admin.site.register(Gens, GensAdmin)
+
+
+class TribeAdmin(admin.ModelAdmin):
+
+    list_display = ('id', 'abbrev', 'name', 'notes',)
+    readonly_fields = ('id', )
+    list_display_links = ('id', 'abbrev', 'name', 'notes',)
+
+admin.site.register(Tribe, TribeAdmin)
 
 
 class PraenomenAdmin(admin.ModelAdmin):

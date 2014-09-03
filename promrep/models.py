@@ -136,6 +136,9 @@ class Tribe(models.Model):
     def __unicode__(self):
         return self.name
 
+    class Meta:
+        ordering = ['id',]
+
 
 class Origin(models.Model):
 

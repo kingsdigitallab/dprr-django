@@ -6,7 +6,7 @@
 from django.db import transaction
 from promrep.models import Assertion, AssertionPerson, \
     Date, DateType, Office, Person, Praenomen, \
-    PrimarySource, SecondarySource, Sex
+    PrimarySource, SecondarySource, Sex, Tribe
 
 import regex
 import logging
@@ -33,6 +33,10 @@ def parse_person(text):
     praenomen_list.append(regex.escape('-'))
     praenomen_abbrev = r'(?:%s)' % '|'.join(praenomen_list)
 
+    tribe_list = [regex.escape(t.abbrev) for t in Tribe.objects.all()]
+    tribe_abbrev = r'(?:%s)' % '|'.join(tribe_list)
+
+
     person_re = \
         regex.compile(r"""^
         (?P<date_certainty>
@@ -42,7 +46,8 @@ def parse_person(text):
         (?P<praenomen>%s\??\s)?
         (?P<nomen>\(?\w+?\)?\s)?
         (?P<filiation>%s\s[fn-]?\.?\s){0,6}
-        (?P<cognomen>\(?[\?\w]+?\.?\)?\s){0,8}?
+        (?P<tribe>%s\s)?               # only one tribe abbrev
+        (?P<cognomen>\(?[\?\w]+?\)?\s){0,8}?
         (?<patrician>Pat\.{1,2}\??\s)? # outlier cases w/ 2 dots...
          \((?P<real>
             \*?         # can have an asterisk followed by...
@@ -55,7 +60,7 @@ def parse_person(text):
          )\)
          .*                         # in parenthesis (can have an asterisk)
          """
-                       % (praenomen_abbrev, praenomen_abbrev),
+                       % (praenomen_abbrev, praenomen_abbrev, tribe_abbrev),
                       regex.VERBOSE)
 
     captured = person_re.match(text)
@@ -91,6 +96,12 @@ def parse_person(text):
                 pat_certain = False
             is_pat = True
 
+
+        tribe = None
+        if len(captured.captures('tribe')):
+            tribe_abbrev = captured.captures('tribe')[0].strip()
+            tribe = Tribe.objects.get(abbrev = tribe_abbrev)
+
         cog_list = captured.captures('cognomen')
 
         cognomen_first = ''
@@ -122,6 +133,7 @@ def parse_person(text):
                     other_names=other_names,
                     patrician=is_pat,
                     patrician_certainty=pat_certain,
+                    tribe = tribe,
                     )
 
                 if person:

@@ -1,10 +1,10 @@
-from promrep.models import Praenomen
+from promrep.models import Praenomen, Tribe
 from django.test import TestCase
 
 import parsing_aux as aux
 
 class AddParsingAuxTestCase(TestCase):
-    fixtures = ['promrep_sex.json', 'promrep_praenomina.json']
+    fixtures = ['promrep_sex.json', 'promrep_praenomina.json', 'promrep_tribe.json', ]
 
     def test_parse_date(self):
 
@@ -50,6 +50,8 @@ class AddParsingAuxTestCase(TestCase):
         self.assertEqual(p.real_number, "7")
 
         ### TODO: date/office uncertainty ??
+        ######### date (up to taht year, including)
+
         p= aux.parse_person("? C. Memmius (7)")
         self.assertEqual(p.nomen, "Memmius")
         self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="C."))
@@ -63,11 +65,11 @@ class AddParsingAuxTestCase(TestCase):
         self.assertFalse(p.praenomen_certainty)
         self.assertEqual(p.real_number, "12, cf. 7")
 
-        ### TODO: cognomen abbrev ??
+        ### tribe
         p = aux.parse_person("C. Claudius C. f. Arn. Glaber (165)")
         self.assertEqual(p.nomen, "Claudius")
-        self.assertEqual(p.cognomen, "Arn.")
-        self.assertEqual(p.other_names, "Glaber")
+        self.assertEqual(p.tribe, Tribe.objects.get(abbrev="Arn."))
+        self.assertEqual(p.cognomen, "Glaber")
         self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="C."))
         self.assertEqual(p.real_number, "165")
 

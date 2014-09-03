@@ -11,13 +11,15 @@ from django.forms import TextInput, Textarea
 
 from models import Person, Office, Praenomen, AssertionPerson, \
     Assertion, AssertionType, RoleType, Date, DateType, \
-    SecondarySource, Gens, Note, NoteType
+    SecondarySource, Gens, Note, NoteType, Tribe
 
 admin.site.register(AssertionType)
 admin.site.register(Date)
 admin.site.register(DateType)
 admin.site.register(RoleType)
 admin.site.register(NoteType)
+admin.site.register(Tribe)
+
 
 
 class AssertionNoteInline(admin.TabularInline):

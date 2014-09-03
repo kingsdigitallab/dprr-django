@@ -130,7 +130,7 @@ class Gens(models.Model):
 
 class Tribe(models.Model):
     abbrev = models.CharField(max_length=32, unique=True)
-    name = models.CharField(max_length=128, unique=True)
+    name = models.CharField(max_length=128 )
     notes = models.CharField(max_length=1024, blank=True)
 
     def __unicode__(self):
@@ -214,7 +214,7 @@ class Person(TimeStampedModel):
 
     class Meta:
         ordering = ['id',]
-        unique_together = (("praenomen", "nomen", "cognomen", "real_number"),)
+        unique_together = (("praenomen", "nomen", "real_number"),)
 
     def real_id(self):
         r_id = ' '.join([self.real_number, self.real_attribute])

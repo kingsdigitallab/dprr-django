@@ -64,7 +64,7 @@ class Migration(SchemaMigration):
         db.create_table(u'promrep_tribe', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('abbrev', self.gf('django.db.models.fields.CharField')(unique=True, max_length=32)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=128)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=128)),
             ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
         ))
         db.send_create_signal(u'promrep', ['Tribe'])
@@ -129,8 +129,8 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'promrep', ['Person'])
 
-        # Adding unique constraint on 'Person', fields ['praenomen', 'nomen', 'cognomen', 'real_number']
-        db.create_unique(u'promrep_person', ['praenomen_id', 'nomen', 'cognomen', 'real_number'])
+        # Adding unique constraint on 'Person', fields ['praenomen', 'nomen', 'real_number']
+        db.create_unique(u'promrep_person', ['praenomen_id', 'nomen', 'real_number'])
 
         # Adding model 'SecondarySource'
         db.create_table(u'promrep_secondarysource', (
@@ -218,8 +218,8 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        # Removing unique constraint on 'Person', fields ['praenomen', 'nomen', 'cognomen', 'real_number']
-        db.delete_unique(u'promrep_person', ['praenomen_id', 'nomen', 'cognomen', 'real_number'])
+        # Removing unique constraint on 'Person', fields ['praenomen', 'nomen', 'real_number']
+        db.delete_unique(u'promrep_person', ['praenomen_id', 'nomen', 'real_number'])
 
         # Deleting model 'DateType'
         db.delete_table(u'promrep_datetype')
@@ -380,7 +380,7 @@ class Migration(SchemaMigration):
             'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'})
         },
         u'promrep.person': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('praenomen', 'nomen', 'cognomen', 'real_number'),)", 'object_name': 'Person'},
+            'Meta': {'ordering': "['id']", 'unique_together': "(('praenomen', 'nomen', 'real_number'),)", 'object_name': 'Person'},
             'cognomen': ('django.db.models.fields.CharField', [], {'max_length': '64', 'blank': 'True'}),
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             'filiation': ('django.db.models.fields.CharField', [], {'max_length': '256', 'blank': 'True'}),
@@ -446,7 +446,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Tribe'},
             'abbrev': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '32'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '128'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'})
         }
     }

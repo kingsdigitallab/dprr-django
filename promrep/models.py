@@ -257,36 +257,41 @@ class Person(TimeStampedModel):
 
     get_dates.short_description = 'Dates'
 
-    def compare(self, obj):
-        excluded_keys = (
-            'created',
-            '_state',
-            'modified',
-            '_praenomen_cache',
-            '_sex_cache',
-            'id',
+
+    def update_empty_fields(self, obj):
+        """comapares two objects, updating the empty fields from the first object with the values from the second object"""
+
+        attrs = (
+            'patrician_certainty',
+            'patrician',
+            'cognomen',
+            'sex_id',
+            'origin_id',
+            'praenomen_certainty',
+            'filiation',
+            'gens_id',
+            'other_names',
+            'real_number_old',
+            'real_attribute',
+            'tribe_id',
             )
-        return self._compare(self, obj, excluded_keys)
 
-    def _compare(
-        self,
-        obj1,
-        obj2,
-        excluded_keys,
-        ):
+        return self._update_empty_fields(self, obj, attrs)
+
+    def _update_empty_fields( self, obj1, obj2, keys ):
         (d1, d2) = (obj1.__dict__, obj2.__dict__)
-        (old, new) = ({}, {})
-        for (k, v) in d1.items():
-            if k in excluded_keys:
-                continue
-            try:
-                if v != d2[k]:
-                    old.update({k: v})
-                    new.update({k: d2[k]})
-            except KeyError:
-                old.update({k: v})
 
-        return (old, new)
+        new_fields = []
+
+        for k in keys:
+            if d1[k] != d2[k]:
+                # tests if the first object's field is empty
+                if not d1[k] and d2[k]:
+                    new_fields.append(k)
+                    setattr(self, k, d2[k])
+
+        self.save( update_fields = new_fields )
+
 
     class Meta:
         ordering = ['id',]

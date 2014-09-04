@@ -17,7 +17,17 @@ class PersonTest(TestCase):
         self.assertTrue(isinstance(p, Person))
         self.assertEqual(p.__unicode__(), p.praenomen.abbrev + ' ' + p.nomen + ' (' + p.real_number + ')')
 
+    def test_person_update(self):
+        p1 = self.create_person()
+        p2 = Person(nomen=p1.nomen, real_number=p1.real_number, praenomen = p1.praenomen, cognomen="Arius")
+
+        p1.update_empty_fields(p2)
+
+        self.assertEqual(p1.cognomen, p2.cognomen)
 
 
-        # p2 = self.create_person(cognomen="Arius")
+
+
+
+
 

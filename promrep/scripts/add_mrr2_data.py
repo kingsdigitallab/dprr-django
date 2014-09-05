@@ -175,7 +175,8 @@ def processXML(ifile):
                         logger.info('Updated existing person %s with id %i' %(person.get_name(), person.id))
 
                     except Person.DoesNotExist:
-                        person = parsed_person.save()
+                        parsed_person.save()
+                        person = parsed_person
                         logger.info('Added new person %s with id %i' %(person.get_name(), person.id))
 
 

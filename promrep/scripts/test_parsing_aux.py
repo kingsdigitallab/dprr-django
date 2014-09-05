@@ -12,6 +12,13 @@ class AddParsingAuxTestCase(TestCase):
         p = aux.parse_person("Err. Antonius M. f. M. n. (28)")
         self.assertEqual(p, None)
 
+        # when the praenomen is "-"
+        p = aux.parse_person("- Antonius M. f. M. n. (28)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="-"))
+        self.assertEqual(p.nomen, "Antonius")
+        self.assertEqual(p.filiation, "M. f. M. n.")
+        self.assertEqual(p.real_number, "28")
+
         p = aux.parse_person("M. Antonius M. f. M. n. (28)")
         self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="M."))
         self.assertEqual(p.nomen, "Antonius")

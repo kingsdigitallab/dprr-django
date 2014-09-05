@@ -26,7 +26,6 @@ def parse_person(text):
     logger.info("ParsePersonName: %s" %(text))
 
     praenomen_list = [regex.escape(p.abbrev) for p in Praenomen.objects.all()]
-    praenomen_list.append(regex.escape('-'))
     praenomen_abbrev = r'(?:%s)' % '|'.join(praenomen_list)
 
     tribe_list = [regex.escape(t.abbrev) for t in Tribe.objects.all()]

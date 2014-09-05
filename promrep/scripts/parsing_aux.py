@@ -119,19 +119,18 @@ def parse_person(text):
 
     filiation = ''.join(captured.captures('filiation')).strip()
 
-    # chars to be stripped from the nomen when saving to the database...
-    # todo- these chars indicate uncertainty, etc...
-    strip_chars = "?()[]"
+    # TODO: chars to be stripped from the nomen when saving to the database...
+    # these chars indicate uncertainty, etc...
 
     try:
         person = Person(
             sex=sex,
             praenomen=praenomen,
-            nomen=nomen.strip(strip_chars),
+            nomen=nomen.translate(None, "?()[]"),
             praenomen_certainty = praen_cert,
-            filiation=filiation.strip(strip_chars),
+            filiation=filiation,
             tribe = tribe,
-            cognomen=cognomen_first.strip(strip_chars),
+            cognomen=cognomen_first,
             real_number=real,
             other_names=other_names.strip(strip_chars),
             patrician=is_pat,

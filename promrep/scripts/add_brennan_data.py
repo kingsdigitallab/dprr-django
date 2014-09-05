@@ -25,19 +25,11 @@ logger.addHandler(fh)
 
 def run():
 
-    # TODO: create stats class
-
-    added = 0
-    error = 0
-    exist = 0
-
     # U flag: universal new-line mode
-
     ifile = open('promrep/scripts/data/BrennanExportv6.csv', 'rU')
     reader = csv.reader(ifile, delimiter=',', skipinitialspace=True)
 
-    i = 1
-    next(reader, None)  # skip the headers
+    next(reader, None)
 
     for original_row in reader:
 
@@ -73,116 +65,112 @@ def run():
             blank,
             ) = row
 
+        original_text = ' '.join(filter(None, [praenomen_str, nomen, cognomen]))
+
+        if real_number:
+            original_text = "%s (%s)" %(original_text, real_number)
+
         cognomen = ''
         other_names = ''
 
         if cognomen != '':
             cognomen_list = cognomen.split()
+
             cognomen = cognomen_list[0]
 
             if len(cognomen) > 1:
                 other_names = ' '.join(cognomen_list[1:])
 
-        if praenomen_str == '':
-            praenomen = None
-        else:
+                # test for Tribe
 
-            # TODO: should attempt to parse the question mark
 
+        praenomen = None
+        if praenomen_str != '':
             if praenomen_str.find('?') != -1:
-                praenomen = None
-            else:
+                praenomen_str = praenomen_str.replace('?', '')
+
+            try:
+                praenomen = Praenomen.objects.get(abbrev=praenomen_str)
+
+            except:
                 try:
-                    praenomen = \
-                        Praenomen.objects.get(abbrev=praenomen_str)
+                    praenomen = Praenomen.objects.get(abbrev=praenomen_str + '.')
+
                 except:
-                    try:
-                        praenomen = \
-                            Praenomen.objects.get(abbrev=praenomen_str
-                                + '.')
-                    except:
-                        print '[ERROR]: Praenomen "' + praenomen_str \
-                            + '" not found.'
-                        praenomen = None
+                    print '[ERROR]: Praenomen "' + praenomen_str + '" not found.'
 
         print
-        print '[DEBUG] Parsing line', i, '"' + nomen + ' (' \
-            + real_number + ')"'
+        print '[DEBUG] ' + praenomen_str + ' ' + nomen + ' (' + real_number + ')'
 
-        person = Person(
-            original_text=praenomen_str + ' ' + nomen + ' ' + filiation
-                + ' ' + cognomen,
+        parsed_person = Person(
             sex=Sex.objects.get(name='Male'),
             praenomen=praenomen,
             real_number=real_number,
-            nomen=nomen,
+            nomen=nomen.translate(None, "?()[]"),
             filiation=filiation,
             cognomen=cognomen,
             other_names=other_names,
-            consular_ancestor=False,
             )
 
-        if patrician == 'Patrician':
-            person.patrician = True
+        print filiation
 
+        if patrician == 'Patrician':
+            parsed_person.patrician = True
 
         try:
-            person.save()
-            logger.info('Saved person %s with id %i' %(person.get_name(), person.id))
-        except Exception as e:
-            logger.error("Unable to save person %s %s" %(name_str, e))
+            person = Person.objects.get(
+                        praenomen = parsed_person.praenomen,
+                        nomen = parsed_person.nomen,
+                        real_number = parsed_person.real_number)
 
-            person = Person.objects.get(nomen = person.nomen, cognomen = person.cognomen, real_number = person.real_number)
+            person.update_empty_fields(parsed_person)
+            logger.info('Updated existing person %s with id %i' %(person.get_name(), person.id))
+
+        except Person.DoesNotExist:
+            parsed_person.save()
+            person = parsed_person
+            logger.info('Added new person %s with id %i' %(person.get_name(), person.id))
 
 
 
+#
+        #    add_office_assertion(person, 'Brennan Praetors', 'Praetors'
+        #                         , date_str)
+#
+#
+#
+#
+        #    # parsing the father
+        #    if suggested_father != '':
+#
+        #        print '[suggested_father]' + suggested_father
+#
+        #        father = \
+        #            parsing.parse_person_name(suggested_father)
+#
+        #        if father != None:
+        #            father.save()
+#
+        #            fs_assertion = \
+        #                Assertion(assertion_type=AssertionType.objects.get(name='Relationship'
+        #                          ),
+        #                          relationship=Relationship.objects.get(name='Father'
+        #                          ),
+        #                          secondary_source=SecondarySource.objects.get(abbrev_name='Brennan Praetors'
+        #                          ))
+        #            fs_assertion.save()
+#
+        #            father = AssertionPerson(assertion=fs_assertion,
+        #                    person=father,
+        #                    role=RoleType.objects.get(name='Father'))
+        #            father.save()
+#
+        #            son = AssertionPerson(assertion=fs_assertion,
+        #                    person=person,
+        #                    role=RoleType.objects.get(name='Son'))
+        #            son.save()
 
-                exist = exist + 1
-                person = Person.objects.get(pk=person_exists)
 
-            add_office_assertion(person, 'Brennan Praetors', 'Praetors'
-                                 , date_str)
-
-            # parsing the father
-
-            if suggested_father != '':
-
-                print '[suggested_father]' + suggested_father
-
-                father = \
-                    parsing.parse_person_name(suggested_father)
-
-                if father != None:
-                    father.save()
-
-                    fs_assertion = \
-                        Assertion(assertion_type=AssertionType.objects.get(name='Relationship'
-                                  ),
-                                  relationship=Relationship.objects.get(name='Father'
-                                  ),
-                                  secondary_source=SecondarySource.objects.get(abbrev_name='Brennan Praetors'
-                                  ))
-                    fs_assertion.save()
-
-                    father = AssertionPerson(assertion=fs_assertion,
-                            person=father,
-                            role=RoleType.objects.get(name='Father'))
-                    father.save()
-
-                    son = AssertionPerson(assertion=fs_assertion,
-                            person=person,
-                            role=RoleType.objects.get(name='Son'))
-                    son.save()
-
-        i = i + 1
-
-    print
-    print 'Final Stats...'
-    print '\tTotal entries in file:', i - 1
-    print '\tNew persons (added to db):', added
-    print '\tNot Added (already existed):', exist
-    print '\tImport Errors:', error
-    print
 
 
 def add_office_assertion(

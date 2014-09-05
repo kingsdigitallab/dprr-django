@@ -161,15 +161,23 @@ def processXML(ifile):
                 ### TODO: wrap in transaction
                 try:
                     name_str = name_el.get_text()
-                    person = aux.parse_person(name_str)
+
+                    # parses person from name
+                    parsed_person = aux.parse_person(name_str)
 
                     try:
-                        person.save()
-                        logger.info('Saved person %s with id %i' %(person.get_name(), person.id))
-                    except Exception as e:
-                        logger.error("Unable to save person %s %s" %(name_str, e))
+                        person = Person.objects.get(
+                                praenomen = parsed_person.praenomen,
+                                nomen= parsed_person.nomen,
+                                real_number=parsed_person.real_number)
 
-                        person = Person.objects.get(nomen = person.nomen, cognomen = person.cognomen, real_number = person.real_number)
+                        person.update_empty_fields(parsed_person)
+                        logger.info('Updated existing person %s with id %i' %(person.get_name(), person.id))
+
+                    except Person.DoesNotExist:
+                        person = parsed_person.save()
+                        logger.info('Added new person %s with id %i' %(person.get_name(), person.id))
+
 
                     if person != None:
                         # create both the assertion and the assertionperson objects

@@ -6,7 +6,11 @@ import parsing_aux as aux
 class AddParsingAuxTestCase(TestCase):
     fixtures = ['promrep_sex.json', 'promrep_praenomina.json', 'promrep_tribe.json', ]
 
-    def test_parse_date(self):
+    def test_parse_names(self):
+
+        # for now let's just expect a None
+        p = aux.parse_person("Err. Antonius M. f. M. n. (28)")
+        self.assertEqual(p, None)
 
         p = aux.parse_person("M. Antonius M. f. M. n. (28)")
         self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="M."))

@@ -121,8 +121,8 @@ class PersonAdmin(admin.ModelAdmin):
         'created',
         )
 
-    search_fields = ['nomen', 'cognomen', ]
-    list_filter = ('assertionperson__role', 'assertionperson__assertion__office',)
+    search_fields = ['nomen', 'cognomen', 'tribe']
+    list_filter = ('assertionperson__role', 'assertionperson__assertion__office', 'tribe__name', 'tribe__abbrev')
 
     inlines = (AssertionPersonInline, PersonDateInline,)
 

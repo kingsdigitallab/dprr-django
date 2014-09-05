@@ -5,7 +5,7 @@ from promrep.models import Person
 import collections
 
 def run():
-    nom_list = [p.nomen for p in Person.objects.all()]
+    nom_list = [p.cognomen for p in Person.objects.all()]
     counter=collections.Counter(nom_list)
 
     for name, freq in counter.most_common():

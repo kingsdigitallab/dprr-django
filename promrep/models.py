@@ -292,6 +292,8 @@ class Person(TimeStampedModel):
 
         self.save( update_fields = new_fields )
 
+        return new_fields
+
 
     class Meta:
         ordering = ['id',]

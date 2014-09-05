@@ -2,11 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # data import auxiliary functions
-
-from django.db import transaction
-from promrep.models import Assertion, AssertionPerson, \
-    Date, DateType, Office, Person, Praenomen, \
-    PrimarySource, SecondarySource, Sex, Tribe
+from promrep.models import Person, Praenomen, Sex, Tribe
 
 import regex
 import logging
@@ -36,7 +32,6 @@ def parse_person(text):
     tribe_list = [regex.escape(t.abbrev) for t in Tribe.objects.all()]
     tribe_abbrev = r'(?:%s)' % '|'.join(tribe_list)
 
-
     person_re = \
         regex.compile(r"""^
         (?P<date_certainty>
@@ -65,88 +60,87 @@ def parse_person(text):
 
     captured = person_re.match(text)
 
-    if captured:
+    if captured is None:
+        logger.error('Unable to parse the person: %s' %(text))
+        return None
 
-        real = captured.captures('real')[0].strip()
-        sex = Sex.objects.get(name='Male')
+    real = captured.captures('real')[0].strip()
+    sex = Sex.objects.get(name='Male')
 
-        praen_cert = True
-        if len(captured.captures('praenomen')):
-            praenomen_str = captured.captures('praenomen')[0].strip()
+    praen_cert = True
+    if len(captured.captures('praenomen')):
+        praenomen_str = captured.captures('praenomen')[0].strip()
 
-            if "?" in praenomen_str:
-                praen_cert = False
-                praenomen_str = praenomen_str.replace("?", "")
-
-            praenomen = Praenomen.objects.get(abbrev=praenomen_str)
-
-        else:
-            praenomen = None
-
-        nomen = captured.captures('nomen')[0].strip()
-
-        # parse patrician and patrician certainty
-
-        pat_str = captured.captures('patrician')
-        pat_certain = True
-        is_pat = False
-
-        if len(pat_str):
-            if "?" in pat_str[0]:
-                pat_certain = False
-            is_pat = True
-
-
-        tribe = None
-        if len(captured.captures('tribe')):
-            tribe_abbrev = captured.captures('tribe')[0].strip()
-            tribe = Tribe.objects.get(abbrev = tribe_abbrev)
-
-        cog_list = captured.captures('cognomen')
-
-        cognomen_first = ''
-        other_names = ''
-
-        if len(cog_list):
-            cognomen_first = cog_list[0].strip()
-
-        if len(cog_list) > 1:
-            other_names = ' '.join(cog_list[1:]).strip().replace('  '
-                    , ' ')
-
-        # if len(captured.captures('date_certainty')):
-        #    if captured.captures('date_certainty')[0].strip() == '?':
-        #        person.date_certainty = 'Uncertain'
-
-        filiation = ''.join(captured.captures('filiation')).strip()
+        if "?" in praenomen_str:
+            praen_cert = False
+            praenomen_str = praenomen_str.replace("?", "")
 
         try:
-            with transaction.atomic():
-                person = Person(
-                    sex=sex,
-                    real_number=real,
-                    nomen=nomen,
-                    praenomen=praenomen,
-                    praenomen_certainty = praen_cert,
-                    filiation=filiation,
-                    cognomen=cognomen_first,
-                    other_names=other_names,
-                    patrician=is_pat,
-                    patrician_certainty=pat_certain,
-                    tribe = tribe,
-                    )
-
-                if person:
-                    print "Added " + person.get_name()
-                else:
-                    print "Failed to add " + text
-
-            return person
-
-        except Exception as e:
-            print '%s (%s)' % (e.message, type(e))
-
+            praenomen = Praenomen.objects.get(abbrev=praenomen_str)
+        except:
+            logger.error('Praenomen lookup error: %s', praenomen_str)
+            return None
 
     else:
-        print '[ERROR] Could not parse the person:', text
+        praenomen = None
+
+    nomen = captured.captures('nomen')[0].strip()
+
+    # parse patrician and patrician certainty
+
+    pat_str = captured.captures('patrician')
+    pat_certain = True
+    is_pat = False
+
+    if len(pat_str):
+        if "?" in pat_str[0]:
+            pat_certain = False
+        is_pat = True
+
+
+    tribe = None
+    if len(captured.captures('tribe')):
+        tribe_abbrev = captured.captures('tribe')[0].strip()
+        tribe = Tribe.objects.get(abbrev = tribe_abbrev)
+
+    cog_list = captured.captures('cognomen')
+
+    cognomen_first = ''
+    other_names = ''
+
+    if len(cog_list):
+        cognomen_first = cog_list[0].strip()
+
+    if len(cog_list) > 1:
+        other_names = ' '.join(cog_list[1:]).strip().replace('  ', ' ')
+
+    # if len(captured.captures('date_certainty')):
+    #    if captured.captures('date_certainty')[0].strip() == '?':
+    #        person.date_certainty = 'Uncertain'
+
+    filiation = ''.join(captured.captures('filiation')).strip()
+
+    # chars to be stripped from the nomen when saving to the database...
+    # todo- these chars indicate uncertainty, etc...
+    strip_chars = "?()[]"
+
+    try:
+        person = Person(
+            sex=sex,
+            praenomen=praenomen,
+            nomen=nomen.strip(strip_chars),
+            praenomen_certainty = praen_cert,
+            filiation=filiation.strip(strip_chars),
+            tribe = tribe,
+            cognomen=cognomen_first.strip(strip_chars),
+            real_number=real,
+            other_names=other_names.strip(strip_chars),
+            patrician=is_pat,
+            patrician_certainty=pat_certain,
+            )
+
+    except Exception as e:
+        print 'Failed to create person %s (%s)' % (e.message, type(e))
         return None
+
+    return person

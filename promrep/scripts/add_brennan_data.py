@@ -4,10 +4,23 @@
 import csv
 
 from promrep.models import ContentType, Assertion, AssertionPerson, \
-    AssertionType, Certainty, Date, DateType, Office, Person, \
-    Praenomen, RoleType, SecondarySource, Sex, Relationship
+    AssertionType, Date, DateType, Office, Person, \
+    Praenomen, RoleType, SecondarySource, Sex, Relationship, Note, NoteType
 
-import data_import_aux
+import parsing_aux
+import logging
+
+# TODO: configure in settings
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+# add a file handler
+fh = logging.FileHandler( 'data_import.log')
+fh.setLevel(logging.DEBUG)
+# create a formatter and set the formatter for the handler.
+frmt = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+fh.setFormatter(frmt)
+# add the Handler to the logger
+logger.addHandler(fh)
 
 
 def run():
@@ -92,6 +105,10 @@ def run():
                             + '" not found.'
                         praenomen = None
 
+        print
+        print '[DEBUG] Parsing line', i, '"' + nomen + ' (' \
+            + real_number + ')"'
+
         person = Person(
             original_text=praenomen_str + ' ' + nomen + ' ' + filiation
                 + ' ' + cognomen,
@@ -103,39 +120,22 @@ def run():
             cognomen=cognomen,
             other_names=other_names,
             consular_ancestor=False,
-            is_patrician=False,
             )
 
         if patrician == 'Patrician':
-            person.is_patrician = True
+            person.patrician = True
 
-        print
-        print '[DEBUG] Parsing line', i, '"' + nomen + ' (' \
-            + real_number + ')"'
 
-        person_exists = data_import_aux.person_exists(person)
+        try:
+            person.save()
+            logger.info('Saved person %s with id %i' %(person.get_name(), person.id))
+        except Exception as e:
+            logger.error("Unable to save person %s %s" %(name_str, e))
 
-        # test if person exists
+            person = Person.objects.get(nomen = person.nomen, cognomen = person.cognomen, real_number = person.real_number)
 
-        if person_exists == None:
 
-            # TODO: how to handle this case?
 
-            error = error + 1
-        else:
-
-            # no errors: the person either exists or will be created
-
-            if person_exists == False:
-
-                try:
-                    person.save()
-                    added = added + 1
-                    print '[DEBUG] saved person with id', person.id
-                except:
-
-                    print '[ERROR] Unable to save person in the database.'
-            else:
 
                 exist = exist + 1
                 person = Person.objects.get(pk=person_exists)
@@ -150,7 +150,7 @@ def run():
                 print '[suggested_father]' + suggested_father
 
                 father = \
-                    data_import_aux.parse_person_name(suggested_father)
+                    parsing.parse_person_name(suggested_father)
 
                 if father != None:
                     father.save()

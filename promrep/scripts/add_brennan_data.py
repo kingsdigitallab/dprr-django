@@ -202,7 +202,8 @@ def add_relationship_assertion(person, ancestor_str, rel_name):
             assertion = rel_assertion,
             person=ancestor,
             role=RoleType.objects.get(name = relationships_dic[rel_name][1]),
-            certainty = certainty
+            certainty = certainty,
+            original_text=ancestor_str
             )
 
         ancestor_ap.save()

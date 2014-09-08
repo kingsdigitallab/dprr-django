@@ -35,7 +35,7 @@ class AssertionPersonInline(admin.TabularInline):
 
     model = Assertion.persons.through
 
-    fields = ('id', 'person', 'role', 'assertion', 'original_text', )
+    fields = ('id', 'person', 'role', 'certainty', 'assertion', 'original_text', )
     readonly_fields = ('id', )
 
     raw_id_fields = ('person', 'assertion', )

@@ -420,5 +420,7 @@ class AssertionPerson(TimeStampedModel):
     role = models.ForeignKey(RoleType)
     original_text = models.CharField(max_length=1024, blank=True)
 
+    certainty = models.BooleanField(verbose_name='Certainty?', default=True)
+
     def __unicode__(self):
         return str(self.person.__unicode__()) + ": " + str(self.assertion.__unicode__())

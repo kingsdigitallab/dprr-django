@@ -143,3 +143,49 @@ class AddParsingAuxTestCase(TestCase):
         self.assertEqual(p.real_number, "*19")
         self.assertEqual(p.cognomen, "Megellus")
 
+        p = aux.parse_brennan_person("M. Pomponius (*6) Matho")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="M."))
+        self.assertEqual(p.nomen, "Pomponius")
+        self.assertEqual(p.real_number, "*6")
+        self.assertEqual(p.cognomen, "Matho")
+
+        p = aux.parse_brennan_person("M'. Pomponius (*5) Matho")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="M'."))
+        self.assertEqual(p.nomen, "Pomponius")
+        self.assertEqual(p.real_number, "*5")
+        self.assertEqual(p.cognomen, "Matho")
+
+        p = aux.parse_brennan_person("M. Valerius (*31)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="M."))
+        self.assertEqual(p.nomen, "Valerius")
+        self.assertEqual(p.real_number, "*31")
+
+        p = aux.parse_brennan_person("T. Quinctius (Cin. *12) Crispinus")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="T."))
+        self.assertEqual(p.nomen, "Quinctius")
+        self.assertEqual(p.real_number, "Cin. *12")
+        self.assertEqual(p.cognomen, "Crispinus")
+
+        p = aux.parse_brennan_person("K. Quinctius (Claudius 151) Claudus Flamininus")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="K."))
+        self.assertEqual(p.nomen, "Quinctius")
+        self.assertEqual(p.real_number, "Claudius 151")
+        self.assertEqual(p.cognomen, "Claudus")
+        self.assertEqual(p.other_names, "Flamininus")
+
+        p = aux.parse_brennan_person("L. Acilius (Atilius 16 = Acilius 7) (Sapiens)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="L."))
+        self.assertEqual(p.nomen, "Acilius")
+        self.assertEqual(p.real_number, "Atilius 16 = Acilius 7")
+        self.assertEqual(p.cognomen, "(Sapiens)")
+
+        p = aux.parse_brennan_person("Sex. Iulius (148/149) Caesar")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="Sex."))
+        self.assertEqual(p.nomen, "Iulius")
+        self.assertEqual(p.real_number, "148/149")
+        self.assertEqual(p.cognomen, "Caesar")
+
+        p = aux.parse_brennan_person("Q. Marcius")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="Q."))
+        self.assertEqual(p.nomen, "Marcius")
+

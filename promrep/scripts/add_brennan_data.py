@@ -135,21 +135,6 @@ def run():
         if suggested_father != '':
             print '[suggested_father] ' + suggested_father
 
-            father = parsing_aux.parse_brennan_person(suggested_father)
-
-            try:
-                father = Person.objects.get(
-                    praenomen = father.praenomen,
-                    nomen = father.nomen,
-                    real_number = father.real_number)
-
-                logger.info('Found existing object (father) %s with id %i' %(father.get_name(), father.id))
-
-            except :
-                father.save()
-                logger.info('Saved father object %s with id %i' %(father.get_name(), father.id))
-
-
             fs_assertion = Assertion(assertion_type=AssertionType.objects.get(name='Relationship'
                           ),
                           relationship=Relationship.objects.get(name='Father'
@@ -159,16 +144,49 @@ def run():
 
             fs_assertion.save()
 
+            certainty = True
 
-            father = AssertionPerson(assertion=fs_assertion,
-                    person=father,
-                    role=RoleType.objects.get(name='Father'))
-            father.save()
-
-            son = AssertionPerson(assertion=fs_assertion,
+            # only one son
+            son_ap = AssertionPerson(assertion=fs_assertion,
                     person=person,
-                    role=RoleType.objects.get(name='Son'))
-            son.save()
+                    role=RoleType.objects.get(name='Son'),
+                    certainty = certainty)
+            son_ap.save()
+
+            # can have multiple fathers...
+            if " or " in suggested_father:
+                father_list = suggested_father.split(" or ")
+                certainty = False
+                son_ap.certainty = False
+                son_ap.save()
+
+            else:
+                father_list = [ suggested_father.strip() ]
+
+            for father_name in father_list:
+
+                father = parsing_aux.parse_brennan_person(father_name)
+
+                try:
+                    father = Person.objects.get(
+                        praenomen = father.praenomen,
+                        nomen = father.nomen,
+                        real_number = father.real_number)
+
+                    logger.info('Found existing object (father) %s with id %i' %(father.get_name(), father.id))
+
+                except :
+                    father.save()
+                    logger.info('Saved father object %s with id %i' %(father.get_name(), father.id))
+
+                father_ap = AssertionPerson(assertion=fs_assertion,
+                        person=father,
+                        role=RoleType.objects.get(name='Father'),
+                        certainty = certainty
+                        )
+                father_ap.save()
+
+
 
 
 

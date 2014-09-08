@@ -213,6 +213,7 @@ class Migration(SchemaMigration):
             ('assertion', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.Assertion'])),
             ('role', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['promrep.RoleType'])),
             ('original_text', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
+            ('certainty', self.gf('django.db.models.fields.BooleanField')(default=True)),
         ))
         db.send_create_signal(u'promrep', ['AssertionPerson'])
 
@@ -303,6 +304,7 @@ class Migration(SchemaMigration):
         u'promrep.assertionperson': {
             'Meta': {'object_name': 'AssertionPerson'},
             'assertion': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Assertion']"}),
+            'certainty': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
@@ -443,7 +445,7 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '32'})
         },
         u'promrep.tribe': {
-            'Meta': {'object_name': 'Tribe'},
+            'Meta': {'ordering': "['id']", 'object_name': 'Tribe'},
             'abbrev': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '32'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),

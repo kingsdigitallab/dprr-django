@@ -163,21 +163,24 @@ def parse_brennan_person(text):
     person_re = \
         regex.compile(r"""^
         (?P<praenomen>%s\??\s)?
-        (?P<nomen>\(?\w+?\)?\s)?
+        (?P<nomen>\(?[A-Z][a-z]{2,20}\)?)
+        \s?
         (?P<patrician>Pat\.\??\s)?
-        \((?P<real>
+        (\((?P<real>
             \*?                       # can have an asterisk followed by...
-                \d+,?\s?\d+?           | # or (14, 6)
-                [\d\.]+?            | # either a number or cases like (*2.100)
-                (RE\s)[\w\.]*?      | # or starts with RE
-                \?                  | # or question mark
-                [A-Z\d\.]+?         | # or uppercase letters with numbers and dots (no spaces)
-                [\d]+,\s\w+\.?\s\d+ | # or cases like (14, Supb. 6)
+                \d*?,?/?\s?\d*?                           | # (14, 6), 148/149
+                [\d\.]+?                                | # either a number or cases like (*2.100)
+                (RE\s)[\w\.]*?                          | # or starts with RE
+                \?                                      | # or question mark
+                [A-Z\d\.]+?                             | # or uppercase letters with numbers and dots (no spaces)
+                [\d]+,\s\w+\.?\s\d+                     | # or cases like (14, Supb. 6)
+                [A-Z][a-z]+\.?\s\*?\d*                  | # or cases like Cin. *12
+                [A-Z][a-z]+\s\d*\s\=\s[A-Z][a-z]+\s\d*  | # or cases like Atilius 16 = Acilius 7
                 not\sin\sRE           # or says "not in RE"
-        )\)\s+?
+        )\)\s*)?
         (?P<filiation>%s\s[fn-]?\.?\s){0,6}
         (?P<tribe>%s\s)?
-        (?P<cognomen>.*)
+        (?P<cognomen>.*)?
          """
                        % (praenomen_abbrev, praenomen_abbrev, tribe_abbrev),
                       regex.VERBOSE)
@@ -186,16 +189,17 @@ def parse_brennan_person(text):
 
     captured = person_re.match(text)
 
-    print text
-    print captured
-    print captured.groups()
-
+    ## print text
+    ## print captured.groups()
 
     if captured is None:
         logger.error('Unable to parse the person: %s' %(text))
         return None
 
-    real = captured.captures('real')[0].strip()
+    if len(captured.captures('real')):
+        real = captured.captures('real')[0].strip()
+    else:
+        real = ""
     sex = Sex.objects.get(name='Male')
 
     praen_cert = True
@@ -233,7 +237,7 @@ def parse_brennan_person(text):
         tribe_abbrev = captured.captures('tribe')[0].strip()
         tribe = Tribe.objects.get(abbrev = tribe_abbrev)
 
-    cog_list = captured.captures('cognomen')
+    cog_list = captured.captures('cognomen')[0].strip().split(' ')
 
     cognomen_first = ''
     other_names = ''

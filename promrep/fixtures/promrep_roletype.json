@@ -22,6 +22,22 @@
         "name": "Son",
         "description": ""
     }
+},
+{
+    "pk": 4,
+    "model": "promrep.roletype",
+    "fields": {
+        "name": "Grandson",
+        "description": ""
+    }
+},
+{
+    "pk": 5,
+    "model": "promrep.roletype",
+    "fields": {
+        "name": "Grandfather",
+        "description": ""
+    }
 }
 ]
 

@@ -23,8 +23,12 @@ fh.setFormatter(frmt)
 logger.addHandler(fh)
 
 
-def run():
 
+
+
+
+
+def run():
     # U flag: universal new-line mode
     ifile = open('promrep/scripts/data/BrennanExportv6.csv', 'rU')
     reader = csv.reader(ifile, delimiter=',', skipinitialspace=True)
@@ -133,58 +137,77 @@ def run():
 
         # parsing the father
         if suggested_father != '':
-            print '[suggested_father] ' + suggested_father
+            add_relationship_assertion(person, suggested_father, "Father")
 
-            fs_assertion = Assertion(assertion_type=AssertionType.objects.get(name='Relationship'
-                          ),
-                          relationship=Relationship.objects.get(name='Father'
-                          ),
-                          secondary_source=SecondarySource.objects.get(abbrev_name='Brennan Praetors'
-                          ))
+        if suggested_grandfather != '':
+            add_relationship_assertion(person, suggested_grandfather, "Grandfather")
 
-            fs_assertion.save()
 
-            certainty = True
 
-            # only one son
-            son_ap = AssertionPerson(assertion=fs_assertion,
-                    person=person,
-                    role=RoleType.objects.get(name='Son'),
-                    certainty = certainty)
-            son_ap.save()
 
-            # can have multiple fathers...
-            if " or " in suggested_father:
-                father_list = suggested_father.split(" or ")
-                certainty = False
-                son_ap.certainty = False
-                son_ap.save()
+def add_relationship_assertion(person, ancestor_str, rel_name):
+    """ one of Father, Grandfather or More remote"""
 
-            else:
-                father_list = [ suggested_father.strip() ]
+    relationships_dic = {
+        "Father": ["Son", "Father"],
+        "Grandfather": ["Grandson", "Grandfather"],
+        "More remote": ["Descendant", "Ancestor"]
+    }
 
-            for father_name in father_list:
+    print '[ancestor_str] ' + ancestor_str
 
-                father = parsing_aux.parse_brennan_person(father_name)
+    rel_assertion = Assertion(
+        assertion_type=AssertionType.objects.get(name='Relationship'),
+        relationship=Relationship.objects.get(name=rel_name),
+        secondary_source=SecondarySource.objects.get(abbrev_name='Brennan Praetors'))
+    rel_assertion.save()
 
-                try:
-                    father = Person.objects.get(
-                        praenomen = father.praenomen,
-                        nomen = father.nomen,
-                        real_number = father.real_number)
+    certainty = True
 
-                    logger.info('Found existing object (father) %s with id %i' %(father.get_name(), father.id))
+    # only one descendant - the current person
+    desc_ap = AssertionPerson(
+        assertion = rel_assertion,
+        person=person,
+        role=RoleType.objects.get(name = relationships_dic[rel_name][0]),
+        certainty = certainty)
+    desc_ap.save()
 
-                except :
-                    father.save()
-                    logger.info('Saved father object %s with id %i' %(father.get_name(), father.id))
+    # can have multiple ancestors...
+    if " or " in ancestor_str:
+        ancestor_list = ancestor_str.split(" or ")
+        certainty = False
+        desc_ap.certainty = False
+        desc_ap.save()
+    else:
+        ancestor_list = [ ancestor_str.strip() ]
 
-                father_ap = AssertionPerson(assertion=fs_assertion,
-                        person=father,
-                        role=RoleType.objects.get(name='Father'),
-                        certainty = certainty
-                        )
-                father_ap.save()
+
+    for ancestor_name in ancestor_list:
+        ancestor_obj = parsing_aux.parse_brennan_person(ancestor_name)
+
+        try:
+            ancestor = Person.objects.get(
+                praenomen = ancestor_obj.praenomen,
+                nomen = ancestor_obj.nomen,
+                real_number = ancestor_obj.real_number)
+
+            logger.info('Found existing object (ancestor) %s with id %i' %(ancestor.get_name(), ancestor.id))
+        except :
+            ancestor_obj.save()
+            ancestor = ancestor_obj
+
+            logger.info('Saved ancestor object %s with id %i' %(ancestor.get_name(), ancestor.id))
+
+        ancestor_ap = AssertionPerson(
+            assertion = rel_assertion,
+            person=ancestor,
+            role=RoleType.objects.get(name = relationships_dic[rel_name][1]),
+            certainty = certainty
+            )
+
+        ancestor_ap.save()
+
+
 
 
 
@@ -241,37 +264,6 @@ def add_office_assertion(person, date, original_text):
 
 
 
-def add_relationship_assertion(
-    person1,
-    person2,
-    source_abbrev,
-    relationship_name,
-    ):
-    """Adds a relationship assertion; always from person1 to person2 """
-
-    assertion_type = AssertionType.objects.get(name='Relationship')
-    source = SecondarySource.objects.get(abbrev_name=source_abbrev)
-    relationship = Relationship.objects.get(name=relationship_name)
-
-    try:
-        assertion = Assertion.objects.create(relationship=relationship,
-                assertion_type=assertion_type, secondary_source=source)
-
-        print '[DEBUG] Saved assertion with id', assertion.id
-
-        try:
-            ap = \
-                AssertionPerson.objects.create(role=RoleType.objects.get(name='Holder'
-                    ), assertion=assertion, person=person)
-
-            print '[DEBUG] Correctly created the AssertionPerson object with id', \
-                ap.id
-        except:
-
-            print '[ERROR] Could not save AssertionPerson oject...'
-    except:
-
-        print '[ERROR] Could not save assertion...'
 
 
 def parse_brennan_date(text):

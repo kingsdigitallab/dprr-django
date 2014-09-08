@@ -42,7 +42,7 @@ def parse_person(text):
         (?P<filiation>%s\s[fn-]?\.?\s){0,6}
         (?P<tribe>%s\s)?               # only one tribe abbrev
         (?P<cognomen>\(?[\?\w]+?\)?\s){0,8}?
-        (?<patrician>Pat\.{1,2}\??\s)? # outlier cases w/ 2 dots...
+        (?P<patrician>Pat\.{1,2}\??\s)? # outlier cases w/ 2 dots...
          \((?P<real>
             \*?         # can have an asterisk followed by...
                 [\d\.]+?            | # either a number or cases like (*2.100)
@@ -62,6 +62,7 @@ def parse_person(text):
     if captured is None:
         logger.error('Unable to parse the person: %s' %(text))
         return None
+
 
     real = captured.captures('real')[0].strip()
     sex = Sex.objects.get(name='Male')
@@ -132,7 +133,137 @@ def parse_person(text):
             tribe = tribe,
             cognomen=cognomen_first,
             real_number=real,
-            other_names=other_names.strip(strip_chars),
+            other_names=other_names,
+            patrician=is_pat,
+            patrician_certainty=pat_certain,
+            )
+
+    except Exception as e:
+        print 'Failed to create person %s (%s)' % (e.message, type(e))
+        return None
+
+    return person
+
+
+
+
+
+
+def parse_brennan_person(text):
+    """Will return a person object or None if unable to parse the person"""
+
+    logger.info("ParseBrennanPerson: %s" %(text))
+
+    praenomen_list = [regex.escape(p.abbrev) for p in Praenomen.objects.all()]
+    praenomen_abbrev = r'(?:%s)' % '|'.join(praenomen_list)
+
+    tribe_list = [regex.escape(t.abbrev) for t in Tribe.objects.all()]
+    tribe_abbrev = r'(?:%s)' % '|'.join(tribe_list)
+
+    person_re = \
+        regex.compile(r"""^
+        (?P<praenomen>%s\??\s)?
+        (?P<nomen>\(?\w+?\)?\s)?
+        (?P<patrician>Pat\.\??\s)?
+        \((?P<real>
+            \*?                       # can have an asterisk followed by...
+                \d+,?\s?\d+?           | # or (14, 6)
+                [\d\.]+?            | # either a number or cases like (*2.100)
+                (RE\s)[\w\.]*?      | # or starts with RE
+                \?                  | # or question mark
+                [A-Z\d\.]+?         | # or uppercase letters with numbers and dots (no spaces)
+                [\d]+,\s\w+\.?\s\d+ | # or cases like (14, Supb. 6)
+                not\sin\sRE           # or says "not in RE"
+        )\)\s+?
+        (?P<filiation>%s\s[fn-]?\.?\s){0,6}
+        (?P<tribe>%s\s)?
+        (?P<cognomen>.*)
+         """
+                       % (praenomen_abbrev, praenomen_abbrev, tribe_abbrev),
+                      regex.VERBOSE)
+
+
+
+    captured = person_re.match(text)
+
+    print text
+    print captured
+    print captured.groups()
+
+
+    if captured is None:
+        logger.error('Unable to parse the person: %s' %(text))
+        return None
+
+    real = captured.captures('real')[0].strip()
+    sex = Sex.objects.get(name='Male')
+
+    praen_cert = True
+    if len(captured.captures('praenomen')):
+        praenomen_str = captured.captures('praenomen')[0].strip()
+
+        if "?" in praenomen_str:
+            praen_cert = False
+            praenomen_str = praenomen_str.replace("?", "")
+
+        try:
+            praenomen = Praenomen.objects.get(abbrev=praenomen_str)
+        except:
+            logger.error('Praenomen lookup error: %s', praenomen_str)
+            return None
+
+    else:
+        praenomen = None
+
+    nomen = captured.captures('nomen')[0].strip()
+
+    # parse patrician and patrician certainty
+
+    pat_str = captured.captures('patrician')
+    pat_certain = True
+    is_pat = False
+
+    if len(pat_str):
+        if "?" in pat_str[0]:
+            pat_certain = False
+        is_pat = True
+
+    tribe = None
+    if len(captured.captures('tribe')):
+        tribe_abbrev = captured.captures('tribe')[0].strip()
+        tribe = Tribe.objects.get(abbrev = tribe_abbrev)
+
+    cog_list = captured.captures('cognomen')
+
+    cognomen_first = ''
+    other_names = ''
+
+    if len(cog_list):
+        cognomen_first = cog_list[0].strip()
+
+    if len(cog_list) > 1:
+        other_names = ' '.join(cog_list[1:]).strip().replace('  ', ' ')
+
+    # if len(captured.captures('date_certainty')):
+    #    if captured.captures('date_certainty')[0].strip() == '?':
+    #        person.date_certainty = 'Uncertain'
+
+    filiation = ''.join(captured.captures('filiation')).strip()
+
+    # TODO: chars to be stripped from the nomen when saving to the database...
+    # these chars indicate uncertainty, etc...
+
+    try:
+        person = Person(
+            sex=sex,
+            praenomen=praenomen,
+            nomen=nomen.translate(None, "?()[]"),
+            praenomen_certainty = praen_cert,
+            filiation=filiation,
+            tribe = tribe,
+            cognomen=cognomen_first,
+            real_number=real,
+            other_names=other_names,
             patrician=is_pat,
             patrician_certainty=pat_certain,
             )

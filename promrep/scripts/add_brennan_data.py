@@ -97,10 +97,9 @@ def run():
                     praenomen = Praenomen.objects.get(abbrev=praenomen_str + '.')
 
                 except:
-                    print '[ERROR]: Praenomen "' + praenomen_str + '" not found.'
+                    logger.error('Praenomen %s not found.' %(praenomen_str, ))
 
-        print
-        print '[DEBUG] ' + praenomen_str + ' ' + nomen + ' (' + real_number + ')'
+        print original_text
 
         parsed_person = Person(
             sex=Sex.objects.get(name='Male'),
@@ -111,8 +110,6 @@ def run():
             cognomen=cognomen,
             other_names=other_names,
             )
-
-        print filiation
 
         if patrician == 'Patrician':
             parsed_person.patrician = True
@@ -131,96 +128,99 @@ def run():
             person = parsed_person
             logger.info('Added new person %s with id %i' %(person.get_name(), person.id))
 
+        # TODO: test result
+        add_office_assertion(person, date_str, original_text)
+
+        # parsing the father
+        if suggested_father != '':
+            print '[suggested_father] ' + suggested_father
+
+            father = parsing_aux.parse_brennan_person(suggested_father)
+
+            try:
+                father = Person.objects.get(
+                    praenomen = father.praenomen,
+                    nomen = father.nomen,
+                    real_number = father.real_number)
+
+                logger.info('Found existing object (father) %s with id %i' %(father.get_name(), father.id))
+
+            except :
+                father.save()
+                logger.info('Saved father object %s with id %i' %(father.get_name(), father.id))
 
 
-#
-        #    add_office_assertion(person, 'Brennan Praetors', 'Praetors'
-        #                         , date_str)
-#
-#
-#
-#
-        #    # parsing the father
-        #    if suggested_father != '':
-#
-        #        print '[suggested_father]' + suggested_father
-#
-        #        father = \
-        #            parsing.parse_person_name(suggested_father)
-#
-        #        if father != None:
-        #            father.save()
-#
-        #            fs_assertion = \
-        #                Assertion(assertion_type=AssertionType.objects.get(name='Relationship'
-        #                          ),
-        #                          relationship=Relationship.objects.get(name='Father'
-        #                          ),
-        #                          secondary_source=SecondarySource.objects.get(abbrev_name='Brennan Praetors'
-        #                          ))
-        #            fs_assertion.save()
-#
-        #            father = AssertionPerson(assertion=fs_assertion,
-        #                    person=father,
-        #                    role=RoleType.objects.get(name='Father'))
-        #            father.save()
-#
-        #            son = AssertionPerson(assertion=fs_assertion,
-        #                    person=person,
-        #                    role=RoleType.objects.get(name='Son'))
-        #            son.save()
+            fs_assertion = Assertion(assertion_type=AssertionType.objects.get(name='Relationship'
+                          ),
+                          relationship=Relationship.objects.get(name='Father'
+                          ),
+                          secondary_source=SecondarySource.objects.get(abbrev_name='Brennan Praetors'
+                          ))
+
+            fs_assertion.save()
+
+
+            father = AssertionPerson(assertion=fs_assertion,
+                    person=father,
+                    role=RoleType.objects.get(name='Father'))
+            father.save()
+
+            son = AssertionPerson(assertion=fs_assertion,
+                    person=person,
+                    role=RoleType.objects.get(name='Son'))
+            son.save()
 
 
 
+def add_office_assertion(person, date, original_text):
 
-def add_office_assertion(
-    person,
-    source_abbrev,
-    office_name,
-    date_str,
-    ):
-
+    source = SecondarySource.objects.get(abbrev_name='Brennan Praetors')
+    office = Office.objects.get(name='praetor')
     assertion_type = AssertionType.objects.get(name='Office')
-    source = SecondarySource.objects.get(abbrev_name=source_abbrev)
-    office = Office.objects.get(name=office_name)
+    praetor_role = RoleType.objects.get(name='Holder')
+
+    ## TODO: wrap in a transaction
+    try:
+        assertion = Assertion(office=office,
+                assertion_type=assertion_type,
+                secondary_source=source)
+        assertion.save()
+
+        logger.info('Added new assertion id=%s' %(assertion.id))
+
+    except:
+        logger.error('Unable to save assertion.')
 
     try:
-        assertion = Assertion.objects.create(office=office,
-                assertion_type=assertion_type, secondary_source=source)
+        ap = AssertionPerson(
+                role = praetor_role,
+                assertion = assertion,
+                person = person,
+                original_text = original_text)
+        ap.save()
+        logger.info('Added new AssertionPerson: %s' %(ap.id))
 
-        print '[DEBUG] Saved assertion with id', assertion.id
-
-        date_list = parse_brennan_date(date_str)
-
-        if date_list:
-
-            for date in date_list:
-
-                # need to test if date is not None
-                if date:
-                    date.content_object = assertion
-                    try:
-                        date.save()
-
-                    except e:
-                        print e
-                        print '[ERROR] Could not save date...' + date_str
-        else:
-            print '[ERROR][DATE_PARSING]: ' + date_str
-
-        try:
-            ap = \
-                AssertionPerson.objects.create(role=RoleType.objects.get(name='Holder'
-                    ), assertion=assertion, person=person)
-
-            print '[DEBUG] Correctly created the AssertionPerson object with id', \
-                ap.id
-        except:
-
-            print '[ERROR] Could not save AssertionPerson object...'
     except:
+        logger.error('Unable to add new AssertionPerson object.')
 
-        print '[ERROR] Could not save assertion...'
+        # date_list = parse_brennan_date(date)
+        # if date_list:
+        #     for date in date_list:
+
+        #         # need to test if date is not None
+        #         if date:
+        #             date.content_object = assertion
+        #             try:
+        #                 date.save()
+
+        #             except e:
+        #                 print e
+        #                 print '[ERROR] Could not save date...' + date_str
+        # else:
+        #     print '[ERROR][DATE_PARSING]: ' + date_str
+
+
+
 
 
 def add_relationship_assertion(
@@ -229,6 +229,7 @@ def add_relationship_assertion(
     source_abbrev,
     relationship_name,
     ):
+    """Adds a relationship assertion; always from person1 to person2 """
 
     assertion_type = AssertionType.objects.get(name='Relationship')
     source = SecondarySource.objects.get(abbrev_name=source_abbrev)

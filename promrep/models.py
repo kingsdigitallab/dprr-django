@@ -124,6 +124,8 @@ class Gens(models.Model):
     name = models.CharField(max_length=128, unique=True)
     notes = models.CharField(max_length=1024, blank=True)
 
+
+
     def __unicode__(self):
         return self.name
 
@@ -175,6 +177,11 @@ class Note(TimeStampedModel):
     def __unicode__(self):
         return self.text
 
+    @staticmethod
+    def autocomplete_search_fields():
+        return ("id__iexact", "text__icontains", )
+
+
 
 class Person(TimeStampedModel):
 
@@ -214,6 +221,10 @@ class Person(TimeStampedModel):
     notes.help_text = "Extra notes about the person."
 
     dates = generic.GenericRelation(Date)
+
+    @staticmethod
+    def autocomplete_search_fields():
+        return ("id__iexact", "nomen__icontains", )
 
 
     def real_id(self):
@@ -313,6 +324,10 @@ class SecondarySource(TimeStampedModel):
     def __unicode__(self):
         return self.abbrev_name
 
+    @staticmethod
+    def autocomplete_search_fields():
+        return ("id__iexact", "name__icontains", "abbrev__icontains")
+
 
 #
 
@@ -333,17 +348,19 @@ class Office(MPTTModel, TimeStampedModel):
                             related_name='children')
 
     class Meta:
-
         verbose_name_plural = 'Offices'
         verbose_name = 'Office List'
         ordering = ['tree_id', 'lft', 'name']
 
     class MPTTMeta:
-
         order_insertion_by = ['name']
 
     def __unicode__(self):
         return self.name
+
+    @staticmethod
+    def autocomplete_search_fields():
+        return ("id__iexact", "name__icontains",)
 
 
 class Relationship(TimeStampedModel):
@@ -361,6 +378,10 @@ class AssertionType(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @staticmethod
+    def autocomplete_search_fields():
+        return ("id__iexact", "name__icontains", )
 
 
 class Assertion(TimeStampedModel):

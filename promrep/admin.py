@@ -29,21 +29,42 @@ class AssertionNoteInline(admin.TabularInline):
     extra = 1
 
 
-class AssertionPersonInline(admin.TabularInline):
-    verbose_name = ''
-    verbose_name_plural = 'Assertions on this person'
+# these two classes are separated to allow better field configuration
+class AssertionInline(admin.TabularInline):
+    verbose_name = 'Assertion'
+    verbose_name_plural = 'Assertions'
 
     model = Assertion.persons.through
 
-    fields = ('id', 'person', 'role', 'certainty', 'assertion', 'original_text', )
-    readonly_fields = ('id', )
+    fields = ('assertion', 'role', 'certainty',  'original_text', )
 
-    raw_id_fields = ('person', 'assertion', )
+    raw_id_fields = ('assertion', )
     extra = 0
 
-    formfield_overrides = {
-        models.CharField: {'widget': Textarea(attrs={'rows':8, 'cols': 10})},
-    }
+    # autocomplete_lookup_fields = {
+    #     'm2m': ['assertion', ],
+    # }
+
+
+class PersonInline(admin.TabularInline):
+    verbose_name = 'Person'
+    verbose_name_plural = 'Persons'
+
+    show_change_link = True
+
+    model = Assertion.persons.through
+
+    fields = ('person', 'role', 'certainty', 'original_text', )
+    readonly_fields = ('id', )
+
+    raw_id_fields = ('person', )
+    extra = 0
+
+    # autocomplete_lookup_fields = {
+    #     'm2m': ['person', 'assertion', ],
+    # }
+
+
 
 class PersonDateInline(generic.GenericStackedInline):
 
@@ -124,7 +145,7 @@ class PersonAdmin(admin.ModelAdmin):
     search_fields = ['nomen', 'cognomen', 'tribe']
     list_filter = ('assertionperson__role', 'assertionperson__assertion__office', 'tribe__name', 'tribe__abbrev')
 
-    inlines = (AssertionPersonInline, PersonDateInline,)
+    inlines = (AssertionInline, PersonDateInline,)
 
 
 admin.site.register(Person, PersonAdmin)
@@ -161,14 +182,20 @@ class AssertionAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'get_persons', 'get_dates', 'display_text', 'assertion_type', 'office', 'secondary_source')
     readonly_fields = ('id', )
 
+    raw_id_fields = ('office', 'notes', 'secondary_source', 'assertion_type', )
+
+    autocomplete_lookup_fields = {
+        'fk': ['office', 'secondary_source', 'notes', 'assertion_type', ],
+    }
+
 
     fieldsets = [('Database Info', {'fields': ['id']}),
     ('Assertion', {'fields': [
-            ('assertion_type', ),
-            ('secondary_source', )
+            ('secondary_source', ),
+            ('assertion_type', 'office',),
             ]}),]
 
-    inlines = [AssertionPersonInline, AssertionNoteInline, AssertionDateInline, ]
+    inlines = [PersonInline, AssertionNoteInline, AssertionDateInline, ]
     exclude = ('persons', )
 
 admin.site.register(Assertion, AssertionAdmin)

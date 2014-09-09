@@ -127,7 +127,7 @@ def parse_person(text):
         person = Person(
             sex=sex,
             praenomen=praenomen,
-            nomen=nomen.translate(None, "?()[]"),
+            nomen= nomen.strip("?()[]"),
             praenomen_certainty = praen_cert,
             filiation=filiation,
             tribe = tribe,
@@ -261,7 +261,7 @@ def parse_brennan_person(text):
         person = Person(
             sex=sex,
             praenomen=praenomen,
-            nomen=nomen.translate(None, "?()[]"),
+            nomen= nomen.strip("?()[]"),
             praenomen_certainty = praen_cert,
             filiation=filiation,
             tribe = tribe,

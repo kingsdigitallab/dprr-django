@@ -118,7 +118,7 @@ class PersonAdmin(admin.ModelAdmin):
             ('notes',),
         ]}),
 
-        ('Real',
+        ('RE',
             {'fields': [
                 ('real_number', 'real_number_old', ),
                  'real_attribute',

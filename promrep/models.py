@@ -207,7 +207,7 @@ class Person(TimeStampedModel):
     real_number_old = models.CharField(max_length=32, blank=True, verbose_name='RE (old)')
     real_number_old.help_text = "RE number before revising"
 
-    real_attribute = models.CharField(max_length=128, blank=True)
+    real_attribute = models.CharField(max_length=128, blank=True, verbose_name='RE attribute')
     real_attribute.help_text = "Original RE entry (from source)"
 
     tribe = models.ForeignKey(Tribe, blank=True, null=True)

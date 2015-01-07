@@ -61,7 +61,8 @@ OFFICE_NAMES_DIC = {
     'Prefects': 'praefectus',
     'Prefects of the City': 'praefectus urbis',
     'Prefects of the Fleet': 'praefectus classis',
-    'Prefects to assign land to veterans': 'praefectus agris dandis assignandis',
+    'Prefects to assign land to veterans':
+    'praefectus agris dandis assignandis',
     'Promagistrates': 'Promagistrates', # check this - are there sub categories
     'Quaesitores': 'quaesitor',
     'Quaestorii': 'quaestorius',
@@ -70,7 +71,8 @@ OFFICE_NAMES_DIC = {
     'Quindecimviri Sacris Fadundis': 'quindecemvir sacris faciundis',
     'Quindeciniviri Sacris Faciundis': 'quindecemvir sacris faciundis',
     'Quindecirnviri Sacris Faciundis': 'quindecemvir sacris faciundis',
-    'Quinqueviri agris dandis assignandis': 'quinquevir agris dandis assignandis',
+    'Quinqueviri agris dandis assignandis':
+    'quinquevir agris dandis assignandis',
     'Rex Sacrorum': 'rex sacrorum',
     'Salius': 'salius',
     'Septemviri Epulones': 'septemvir epulonum',

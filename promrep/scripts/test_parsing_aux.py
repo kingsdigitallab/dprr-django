@@ -22,6 +22,13 @@ class AddParsingAuxTestCase(TestCase):
         # self.assertTrue(p.patrician)
 
         p = aux.parse_person(
+            "T. Siccius Pat. (2, cf. Sicinius 13)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="T."))
+        self.assertEqual(p.nomen, "Siccius")
+        self.assertEqual(p.real_number, "2, cf. Sicinius 13")
+        self.assertTrue(p.patrician)
+
+        p = aux.parse_person(
             "C. Servilius Pat. ? (12, cf. 11)")
         self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="C."))
         self.assertEqual(p.nomen, "Servilius")

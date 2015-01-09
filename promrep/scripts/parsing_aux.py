@@ -49,7 +49,7 @@ def parse_person(text):
                 (RE\s)[\w\.]*?      | # or starts with RE
                 \?                  | # or question mark
                 [A-Z\d\.]+?         | # or uppercase letters with numbers and dots (no spaces)
-                [\d]+,\s\w+\.?\s\d+ | # or cases like (14, Supb. 6)
+                [\d]+,\s(cf.\s)?\w+\.?\s\d+ | # or cases like (14, Supb. 6)
                 [\d]+[a-z]+,\s\w+\.\s\d+\.\d+[a-z]+\. | # or cases like (46a, Supb. 5.356ff.)
                 [\d]+[a-z]*?,\scf\.\s\w+\.\s\d+\.\d+ | # or cases like (88, cf. Supb. 1.271)
                 \w+\s\*?\d+ | # or cases like Veturius *18

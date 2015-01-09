@@ -33,6 +33,7 @@ def parse_person(text):
 
     person_re = \
         regex.compile(r"""^
+        ([abc123]\.\s)?    # TODO: what to do with these???
         (?P<date_certainty>
             \[?\?[\s\-]    | # question mark followed by a space or a dash in the start of line
             .*?\:\s     | # or something followed by colon AND space

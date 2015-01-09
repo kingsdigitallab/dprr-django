@@ -22,6 +22,24 @@ class AddParsingAuxTestCase(TestCase):
         # self.assertTrue(p.patrician)
 
         p = aux.parse_person(
+            "? Poetilius (not in *RE)")
+        self.assertEqual(p.nomen, "Poetilius")
+        self.assertEqual(p.real_number, "not in *RE")
+
+        # p = aux.parse_person(
+        #     "[? Catlus Verus")
+        # self.assertEqual(p.nomen, "Catlus")
+        # self.assertEqual(p.cognomen, "Verus")
+
+        p = aux.parse_person(
+            "? Q. Fabius Labeo Pat. (cf. 92)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="Q."))
+        self.assertEqual(p.nomen, "Fabius")
+        self.assertEqual(p.cognomen, "Labeo")
+        self.assertEqual(p.real_number, "cf. 92")
+        self.assertTrue(p.patrician)
+
+        p = aux.parse_person(
             "T. Siccius Pat. (2, cf. Sicinius 13)")
         self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="T."))
         self.assertEqual(p.nomen, "Siccius")
@@ -162,6 +180,21 @@ class AddParsingAuxTestCase(TestCase):
         # p = aux.parse_person("C. M[amilius? - f. Limetanus?] (7)")
         # self.assertEqual(p.nomen, "M[amilius?")
         # self.assertEqual(p.real_number, "7")
+
+        # TODO: what happens to the praenomen
+        p = aux.parse_person("(Ti.) Antistius (21)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="Ti."))
+        self.assertEqual(p.nomen, "Antistius")
+        self.assertEqual(p.real_number, "21")
+
+        p = aux.parse_person("L. Papirius - f. - n. Crassus Pat. (10, 43)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="L."))
+        self.assertEqual(p.nomen, "Papirius")
+        self.assertEqual(p.filiation, "- f. - n.")
+        self.assertTrue(p.patrician)
+        self.assertEqual(p.real_number, "10, 43")
+
+
 
     def test_parse_brennan_persons(self):
 

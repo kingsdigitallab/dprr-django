@@ -34,7 +34,7 @@ def parse_person(text):
     person_re = \
         regex.compile(r"""^
         (?P<date_certainty>
-            \?[\s\-]    | # question mark followed by either a space or a dash in the start of line
+            \?[\s\-]    | # question mark followed by a space or a dash in the start of line
             .*?\:\s     | # or something followed by colon AND space
             )?
         (?P<praenomen>%s\??\s)?
@@ -42,7 +42,7 @@ def parse_person(text):
         (?P<filiation>%s\s[fn-]?\.?\s){0,6}
         (?P<tribe>%s\s)?               # only one tribe abbrev
         (?P<cognomen>\(?[\?\w]+?\)?\s){0,8}?
-        (?P<patrician>Pat\.{1,2}\??\s)? # outlier cases w/ 2 dots...
+        (?P<patrician>Pat\.{1,2}\s?\??\s)? # outliers: 1/2 dots, space?
          \((?P<real>
             \*?         # can have an asterisk followed by...
                 [\d\.]+?            | # either a number or cases like (*2.100)
@@ -50,6 +50,9 @@ def parse_person(text):
                 \?                  | # or question mark
                 [A-Z\d\.]+?         | # or uppercase letters with numbers and dots (no spaces)
                 [\d]+,\s\w+\.?\s\d+ | # or cases like (14, Supb. 6)
+                [\d]+[a-z]+,\s\w+\.\s\d+\.\d+[a-z]+\. | # or cases like (46a, Supb. 5.356ff.)
+                [\d]+[a-z]*?,\scf\.\s\w+\.\s\d+\.\d+ | # or cases like (88, cf. Supb. 1.271)
+                \w+\s\*?\d+ | # or cases like Veturius *18
                 not\sin\sRE           # or says "not in RE"
          )\)
          .*                         # in parenthesis (can have an asterisk)
@@ -60,7 +63,8 @@ def parse_person(text):
     captured = person_re.match(text)
 
     if captured is None:
-        logger.error('Unable to parse the person: %s' %(text))
+        logger.error('Unable to parse the name: %s' % (text))
+        print "ERROR Parsing:" + text
         return None
 
 
@@ -127,10 +131,10 @@ def parse_person(text):
         person = Person(
             sex=sex,
             praenomen=praenomen,
-            nomen= nomen.strip("?()[]"),
-            praenomen_certainty = praen_cert,
+            nomen=nomen.strip("?()[]"),
+            praenomen_certainty=praen_cert,
             filiation=filiation,
-            tribe = tribe,
+            tribe=tribe,
             cognomen=cognomen_first,
             real_number=real,
             other_names=other_names,

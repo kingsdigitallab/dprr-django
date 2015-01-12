@@ -43,11 +43,11 @@ def parse_person(text):
          %s\??\s |
          \(%s\)\s
          )?
-        (\?\s)? # TODO - question mark after praenomen...
+        (\?\s)? # TODO - question mark after praenomen??...
         (?P<nomen>\(?\w+?\)?\s)?
-        (\?\s)? # TODO - question mark after nomen...
+        (\?\s)? # TODO - question mark after nomen??...
         (?P<filiation>%s\s[fn-]?\.?\s |
-         \(?[-\w]+[\.\)]?\sf.\s[-\w]+[\.\)]?\sn.\)?\s
+         \(?[-\w]+[\.\)]?(\s\?)?\sf.\s[-\w]+[\.\)]?\sn.\)?\s
          ){0,6}
         (?P<tribe>%s\s)?               # only one tribe abbrev
         (?P<cognomen>\(?[\?\w-]+?\)?\s){0,8}?

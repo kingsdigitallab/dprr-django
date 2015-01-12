@@ -249,6 +249,26 @@ class AddParsingAuxTestCase(TestCase):
         self.assertEqual(p.cognomen, "Esquilinus")
         self.assertEqual(p.real_number, "24")
 
+        p = aux.parse_person(
+            "Sp. Nautius Sp. ? f. - n. Rutilus Pat. (8)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="Sp."))
+        self.assertEqual(p.nomen, "Nautius")
+        self.assertEqual(p.filiation, "Sp. ? f. - n.")
+        self.assertTrue(p.patrician)
+        self.assertEqual(p.cognomen, "Rutilus")
+        self.assertEqual(p.real_number, "8")
+
+        p = aux.parse_person(
+            "Sp. Nautius Sp. ? f. - n. Rutilus Pat. (8)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="Sp."))
+        self.assertEqual(p.nomen, "Nautius")
+        self.assertEqual(p.filiation, "Sp. ? f. - n.")
+        self.assertTrue(p.patrician)
+        self.assertEqual(p.cognomen, "Rutilus")
+        self.assertEqual(p.real_number, "8")
+
+
+
     def test_parse_brennan_persons(self):
 
         p = aux.parse_brennan_person("M. Furius (44) Camillus")

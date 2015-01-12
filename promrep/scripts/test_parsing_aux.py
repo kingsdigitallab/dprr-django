@@ -267,6 +267,43 @@ class AddParsingAuxTestCase(TestCase):
         self.assertEqual(p.cognomen, "Rutilus")
         self.assertEqual(p.real_number, "8")
 
+        p = aux.parse_person("L. Pupius (*4 ?)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="L."))
+        self.assertEqual(p.nomen, "Pupius")
+        self.assertEqual(p.real_number, "*4 ?")
+
+        p = aux.parse_person("L. Mummius (7a, 16.1195ff.)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="L."))
+        self.assertEqual(p.nomen, "Mummius")
+        self.assertEqual(p.real_number, "7a, 16.1195ff.")
+
+        p = aux.parse_person("? Cn. Aufidius (6 and 7)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="Cn."))
+        self.assertEqual(p.nomen, "Aufidius")
+        self.assertEqual(p.real_number, "6 and 7")
+
+        p = aux.parse_person("L. Tarquinius Egeri f. Collatinus Pat. (8)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="L."))
+        self.assertEqual(p.nomen, "Tarquinius")
+        self.assertEqual(p.filiation, "Egeri f.")
+        self.assertEqual(p.cognomen, "Collatinus")
+        self.assertTrue(p.patrician)
+        self.assertEqual(p.real_number, "8")
+
+        p = aux.parse_person("Postumus Cominius - f. - n. Auruncus Pat. (16)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(name="Postumus"))
+        self.assertEqual(p.nomen, "Cominius")
+        self.assertEqual(p.filiation, "- f. - n.")
+        self.assertEqual(p.cognomen, "Auruncus")
+        self.assertTrue(p.patrician)
+        self.assertEqual(p.real_number, "16")
+
+        # p = aux.parse_person("(M. ?) Popillius Laenas (*9 ?)")
+        # self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="M."))
+        # self.assertEqual(p.nomen, "Popillius")
+        # self.assertEqual(p.cognomen, "Laenas")
+        # self.assertEqual(p.real_number, "*9 ?")
+
 
 
     def test_parse_brennan_persons(self):

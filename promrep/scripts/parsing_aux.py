@@ -27,6 +27,8 @@ def parse_person(text):
 
     praenomen_list = [regex.escape(p.abbrev) for p in Praenomen.objects.all()]
     praenomen_abbrev = r'(?:%s)' % '|'.join(praenomen_list)
+    full_prae_list = [regex.escape(p.name) for p in Praenomen.objects.all()]
+    praenomen_full = r'(?:%s)' % '|'.join(full_prae_list)
 
     tribe_list = [regex.escape(t.abbrev) for t in Tribe.objects.all()]
     tribe_abbrev = r'(?:%s)' % '|'.join(tribe_list)
@@ -41,34 +43,38 @@ def parse_person(text):
             )?
         (?P<praenomen>
          %s\??\s |
-         \(%s\)\s
+         \(%s\)\s |
+         %s\??\s
          )?
         (\?\s)? # TODO - question mark after praenomen??...
         (?P<nomen>\(?\w+?\)?\s)?
         (\?\s)? # TODO - question mark after nomen??...
         (?P<filiation>%s\s[fn-]?\.?\s |
-         \(?[-\w]+[\.\)]?(\s\?)?\sf.\s[-\w]+[\.\)]?\sn.\)?\s
+         \(?[-\w]+[\.\)]?(\s\?)?\sf.\s[-\w]+[\.\)]?\sn.\)?\s |
+         \(?[-\w]+[\.\)]?(\s\?)?\sf.\)?\s |
+         \(?[-\w]+[\.\)]?\sn.\)?\s
          ){0,6}
         (?P<tribe>%s\s)?               # only one tribe abbrev
         (?P<cognomen>\(?[\?\w-]+?\)?\s){0,8}?
         (?P<patrician>Pat\.{1,2}\s?\??\s)? # outliers: 1/2 dots, space?
          \((?P<real>
             \*?         # can have an asterisk followed by...
-                [\d\.]+?            | # either a number or cases like (*2.100)
-                (RE\s)[\w\.]*?      | # or starts with RE
-                \?                  | # or question mark
+                [\d\. \?]+?            | # either a number or cases like (*2.100)
+                (RE\s)[\w\.]*?         | # or starts with RE
+                \?                     | # or question mark
                 \*?\d+,\s\d+           | # or 2 numbers
-                [A-Z\d\.]+?         | # or uppercase letters with numbers and dots (no spaces)
+                [A-Z\d\.]+?            | # or uppercase letters with numbers and dots (no spaces)
                 [\d]+,\s(cf.\s)?\w+\.?\s\d+ | # or cases like (14, Supb. 6)
-                (\d+\s,\s)?cf.\s?\d+ | # or cases like (cf. 92)
-                [\d]+[a-z]*?,\s\w+\.\s\d+\.\d+[a-z]*\.? | # or cases like (46a, Supb. 5.356ff.)
+                (\d+\s,\s)?cf.\s?\d+        | # or cases like (cf. 92)
+                [\d]+[a-z]*?,( RE)?\s[\d\w]*?\.\s?\d+?\.?\d*?\w*?\.? | # or cases like (46a, Supb. 5.356ff.)
                 [\d]+[a-z]*?,\scf\.\s\w+\.\s\d+\.\d+ | # or cases like (88, cf. Supb. 1.271)
                 \w+\.?\s\*?\d+ | # or cases like Veturius *18, or Cin. *1
+                \d+?\sand\s\d+? |
                 not\sin\s\*?RE           # or says "not in RE"
          )\)
          .*                         # in parenthesis (can have an asterisk)
          """
-                       % (praenomen_abbrev, praenomen_abbrev, praenomen_abbrev, tribe_abbrev),
+                       % (praenomen_abbrev, praenomen_abbrev, praenomen_full, praenomen_abbrev, tribe_abbrev),
                       regex.VERBOSE)
 
     captured = person_re.match(text)
@@ -93,7 +99,10 @@ def parse_person(text):
             praenomen_str = praenomen_str.replace("?", "")
 
         try:
-            praenomen = Praenomen.objects.get(abbrev=praenomen_str)
+            if "." in praenomen_str:
+                praenomen = Praenomen.objects.get(abbrev=praenomen_str)
+            else:
+                praenomen = Praenomen.objects.get(name=praenomen_str)
         except:
             logger.error('Praenomen lookup error: %s', praenomen_str)
             return None

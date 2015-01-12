@@ -215,13 +215,39 @@ class AddParsingAuxTestCase(TestCase):
         self.assertEqual(p.cognomen, "-")
         self.assertEqual(p.real_number, "11")
 
-        p = aux.parse_person("L. Quinctius L. f. L. n. Cincinnatus Pat. (Cin. *1)")
+        p = aux.parse_person(
+            "L. Quinctius L. f. L. n. Cincinnatus Pat. (Cin. *1)")
         self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="L."))
         self.assertEqual(p.nomen, "Quinctius")
         self.assertEqual(p.filiation, "L. f. L. n.")
         self.assertTrue(p.patrician)
         self.assertEqual(p.cognomen, "Cincinnatus")
         self.assertEqual(p.real_number, "Cin. *1")
+
+        p = aux.parse_person(
+            "Cn. Domitius Cn. f. (Ahenobarbus) (20, Supb. 3.349)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="Cn."))
+        self.assertEqual(p.nomen, "Domitius")
+        self.assertEqual(p.filiation, "Cn. f.")
+        self.assertEqual(p.cognomen, "(Ahenobarbus)")
+        self.assertEqual(p.real_number, "20, Supb. 3.349")
+
+        p = aux.parse_person(
+            "?M'. Valerius M. f. Volesi n. Pat. (65)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="M'."))
+        self.assertEqual(p.nomen, "Valerius")
+        self.assertEqual(p.filiation, "M. f. Volesi n.")
+        self.assertTrue(p.patrician)
+        self.assertEqual(p.real_number, "65")
+
+        p = aux.parse_person(
+            "M. ? Sergius - f. - n. Esquilinus Pat. (24)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="M."))
+        self.assertEqual(p.nomen, "Sergius")
+        self.assertEqual(p.filiation, "- f. - n.")
+        self.assertTrue(p.patrician)
+        self.assertEqual(p.cognomen, "Esquilinus")
+        self.assertEqual(p.real_number, "24")
 
     def test_parse_brennan_persons(self):
 

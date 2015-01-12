@@ -35,14 +35,17 @@ def parse_person(text):
         regex.compile(r"""^
         ([abc123]\.\s)?    # TODO: what to do with these???
         (?P<date_certainty>
-            \[?\?[\s\-]    | # question mark followed by a space or a dash in the start of line
-            .*?\:\s     | # or something followed by colon AND space
+            \[?\?[\s\-]     | # question mark followed by a space or a dash in the start of line
+            .*?\:\s         | # or something followed by colon AND space
+            \? | # or question mark...
             )?
         (?P<praenomen>
          %s\??\s |
          \(%s\)\s
          )?
+        (\?\s)? # TODO - question mark after praenomen...
         (?P<nomen>\(?\w+?\)?\s)?
+        (\?\s)? # TODO - question mark after nomen...
         (?P<filiation>%s\s[fn-]?\.?\s |
          \(?[-\w]+[\.\)]?\sf.\s[-\w]+[\.\)]?\sn.\)?\s
          ){0,6}
@@ -58,9 +61,9 @@ def parse_person(text):
                 [A-Z\d\.]+?         | # or uppercase letters with numbers and dots (no spaces)
                 [\d]+,\s(cf.\s)?\w+\.?\s\d+ | # or cases like (14, Supb. 6)
                 (\d+\s,\s)?cf.\s?\d+ | # or cases like (cf. 92)
-                [\d]+[a-z]+,\s\w+\.\s\d+\.\d+[a-z]+\. | # or cases like (46a, Supb. 5.356ff.)
+                [\d]+[a-z]*?,\s\w+\.\s\d+\.\d+[a-z]*\.? | # or cases like (46a, Supb. 5.356ff.)
                 [\d]+[a-z]*?,\scf\.\s\w+\.\s\d+\.\d+ | # or cases like (88, cf. Supb. 1.271)
-                \w+\.?\s\*?\d+ | # or cases like Veturius *18
+                \w+\.?\s\*?\d+ | # or cases like Veturius *18, or Cin. *1
                 not\sin\s\*?RE           # or says "not in RE"
          )\)
          .*                         # in parenthesis (can have an asterisk)

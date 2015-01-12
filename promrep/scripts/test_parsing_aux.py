@@ -194,7 +194,14 @@ class AddParsingAuxTestCase(TestCase):
         self.assertTrue(p.patrician)
         self.assertEqual(p.real_number, "10, 43")
 
-
+        p = aux.parse_person(
+            "M'. Valerius Volesi f. - n. Maximus Pat. (243)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="M'."))
+        self.assertEqual(p.nomen, "Valerius")
+        self.assertEqual(p.filiation, "Volesi f. - n.")
+        self.assertTrue(p.patrician)
+        self.assertEqual(p.cognomen, "Maximus")
+        self.assertEqual(p.real_number, "243")
 
     def test_parse_brennan_persons(self):
 

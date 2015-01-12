@@ -43,7 +43,9 @@ def parse_person(text):
          \(%s\)\s
          )?
         (?P<nomen>\(?\w+?\)?\s)?
-        (?P<filiation>%s\s[fn-]?\.?\s){0,6}
+        (?P<filiation>%s\s[fn-]?\.?\s |
+         \(?[-\w]+[\.\)]?\sf.\s[-\w]+[\.\)]?\sn.\)?\s
+         ){0,6}
         (?P<tribe>%s\s)?               # only one tribe abbrev
         (?P<cognomen>\(?[\?\w]+?\)?\s){0,8}?
         (?P<patrician>Pat\.{1,2}\s?\??\s)? # outliers: 1/2 dots, space?

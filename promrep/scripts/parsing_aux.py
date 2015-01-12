@@ -62,7 +62,7 @@ def parse_person(text):
                 [\d\. \?]+?            | # either a number or cases like (*2.100)
                 (RE\s)[\w\.]*?         | # or starts with RE
                 \?                     | # or question mark
-                \*?\d+,\s\d+           | # or 2 numbers
+                (\*?\d+,?\s?){1,8}          | # or 2 or more numbers
                 [A-Z\d\.]+?            | # or uppercase letters with numbers and dots (no spaces)
                 [\d]+,\s(cf.\s)?\w+\.?\s\d+ | # or cases like (14, Supb. 6)
                 (\d+\s,\s)?cf.\s?\d+        | # or cases like (cf. 92)

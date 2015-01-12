@@ -47,20 +47,20 @@ def parse_person(text):
          \(?[-\w]+[\.\)]?\sf.\s[-\w]+[\.\)]?\sn.\)?\s
          ){0,6}
         (?P<tribe>%s\s)?               # only one tribe abbrev
-        (?P<cognomen>\(?[\?\w]+?\)?\s){0,8}?
+        (?P<cognomen>\(?[\?\w-]+?\)?\s){0,8}?
         (?P<patrician>Pat\.{1,2}\s?\??\s)? # outliers: 1/2 dots, space?
          \((?P<real>
             \*?         # can have an asterisk followed by...
                 [\d\.]+?            | # either a number or cases like (*2.100)
                 (RE\s)[\w\.]*?      | # or starts with RE
                 \?                  | # or question mark
-                \d+,\s\d+           | # or 2 numbers
+                \*?\d+,\s\d+           | # or 2 numbers
                 [A-Z\d\.]+?         | # or uppercase letters with numbers and dots (no spaces)
                 [\d]+,\s(cf.\s)?\w+\.?\s\d+ | # or cases like (14, Supb. 6)
                 (\d+\s,\s)?cf.\s?\d+ | # or cases like (cf. 92)
                 [\d]+[a-z]+,\s\w+\.\s\d+\.\d+[a-z]+\. | # or cases like (46a, Supb. 5.356ff.)
                 [\d]+[a-z]*?,\scf\.\s\w+\.\s\d+\.\d+ | # or cases like (88, cf. Supb. 1.271)
-                \w+\s\*?\d+ | # or cases like Veturius *18
+                \w+\.?\s\*?\d+ | # or cases like Veturius *18
                 not\sin\s\*?RE           # or says "not in RE"
          )\)
          .*                         # in parenthesis (can have an asterisk)

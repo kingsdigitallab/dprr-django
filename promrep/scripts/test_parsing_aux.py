@@ -298,13 +298,17 @@ class AddParsingAuxTestCase(TestCase):
         self.assertTrue(p.patrician)
         self.assertEqual(p.real_number, "16")
 
+        p = aux.parse_person("C. Terentilius Harsa (RE 5A. 591f.)")
+        self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="C."))
+        self.assertEqual(p.nomen, "Terentilius")
+        self.assertEqual(p.cognomen, "Harsa")
+        self.assertEqual(p.real_number, "RE 5A. 591f.")
+
         # p = aux.parse_person("(M. ?) Popillius Laenas (*9 ?)")
         # self.assertEqual(p.praenomen, Praenomen.objects.get(abbrev="M."))
         # self.assertEqual(p.nomen, "Popillius")
         # self.assertEqual(p.cognomen, "Laenas")
         # self.assertEqual(p.real_number, "*9 ?")
-
-
 
     def test_parse_brennan_persons(self):
 

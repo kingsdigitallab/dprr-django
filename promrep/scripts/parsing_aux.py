@@ -62,7 +62,7 @@ def parse_person(text):
                 [\d\. \?]+?            | # either a number or cases like (*2.100)
                 (RE\s)[\w\.]*?         | # or starts with RE
                 \?                     | # or question mark
-                (\*?\d+,?\s?){1,8}          | # or 2 or more numbers
+                (\*?\d+,?\s?){1,8}     | # or 2 or more numbers
                 [A-Z\d\.]+?            | # or uppercase letters with numbers and dots (no spaces)
                 [\d]+,\s(cf.\s)?\w+\.?\s\d+ | # or cases like (14, Supb. 6)
                 (\d+\s,\s)?cf.\s?\d+        | # or cases like (cf. 92)
@@ -70,7 +70,8 @@ def parse_person(text):
                 [\d]+[a-z]*?,\scf\.\s\w+\.\s\d+\.\d+ | # or cases like (88, cf. Supb. 1.271)
                 \w+\.?\s\*?\d+ | # or cases like Veturius *18, or Cin. *1
                 \d+?\sand\s\d+? |
-                not\sin\s\*?RE           # or says "not in RE"
+                not\sin\s\*?RE  |         # or says "not in RE"
+                RE.*
          )\)
          .*                         # in parenthesis (can have an asterisk)
          """

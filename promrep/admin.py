@@ -139,7 +139,9 @@ class PersonAdmin(admin.ModelAdmin):
         'patrician_certainty',
         'notes',
         'modified',
+        'modified_by',
         'created',
+        'created_by',
         )
 
     search_fields = ['nomen', 'cognomen', 'tribe']

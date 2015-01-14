@@ -5,22 +5,19 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey
 
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from django.core.urlresolvers import reverse
 
-
 class IntegerRangeField(models.IntegerField):
-
-    def __init__(
-        self,
-        verbose_name=None,
-        name=None,
-        min_value=None,
-        max_value=None,
-        **kwargs
-        ):
+    def __init__(self,
+                 verbose_name=None,
+                 name=None,
+                 min_value=None,
+                 max_value=None,
+                 **kwargs):
 
         (self.min_value, self.max_value) = (min_value, max_value)
         models.IntegerField.__init__(self, verbose_name, name, **kwargs)
@@ -124,22 +121,20 @@ class Gens(models.Model):
     name = models.CharField(max_length=128, unique=True)
     notes = models.CharField(max_length=1024, blank=True)
 
-
-
     def __unicode__(self):
         return self.name
 
 
 class Tribe(models.Model):
     abbrev = models.CharField(max_length=32, unique=True)
-    name = models.CharField(max_length=128 )
+    name = models.CharField(max_length=128)
     notes = models.CharField(max_length=1024, blank=True)
 
     def __unicode__(self):
         return self.abbrev
 
     class Meta:
-        ordering = ['id',]
+        ordering = ['id', ]
 
 
 class Origin(models.Model):
@@ -185,18 +180,17 @@ class Note(TimeStampedModel):
 
 class Person(TimeStampedModel):
 
+    # TODO: should be string instead?
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
     praenomen_certainty = models.BooleanField(verbose_name='Praenomen Certainty?', default=True)
 
     nomen = models.CharField(max_length=128, blank=True)
-
     cognomen = models.CharField(max_length=64, blank=True)
+
     other_names = models.CharField(max_length=128, blank=True)
 
     filiation = models.CharField(max_length=256, blank=True)
-
     gens = models.ForeignKey(Gens, blank=True, null=True)
-
     tribe = models.ForeignKey(Gens, blank=True, null=True)
 
     sex = models.ForeignKey(Sex, blank=True, null=True)
@@ -220,7 +214,26 @@ class Person(TimeStampedModel):
     notes = models.CharField(max_length=1024, blank=True)
     notes.help_text = "Extra notes about the person."
 
+    review_flag = models.BooleanField(verbose_name="Review needed", default = False)
+    review_flag.help_text = "Person needs manual revision."
+
     dates = generic.GenericRelation(Date)
+
+    created_by = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        related_name='created_%(class)s',
+        editable=True,
+        help_text='No need to edit: automatically set when saving',)
+
+    modified_by = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        related_name='modified_%(class)s',
+        editable=True,
+        help_text='No need to edit: automatically set when saving',)
 
     @staticmethod
     def autocomplete_search_fields():
@@ -257,9 +270,7 @@ class Person(TimeStampedModel):
     url_to_edit_person.short_description = 'Person'
 
     def __unicode__(self):
-
         # TODO: add praenomen, Re number
-
         return self.get_name() + ' (' + self.real_id() + ')'
 
     def get_dates(self):
@@ -268,9 +279,9 @@ class Person(TimeStampedModel):
 
     get_dates.short_description = 'Dates'
 
-
     def update_empty_fields(self, obj):
-        """comapares two objects, updating the empty fields from the first object with the values from the second object"""
+        """comapares two objects, updating the empty fields from the first
+        object with the values from the second object"""
 
         attrs = (
             'patrician_certainty',
@@ -308,6 +319,7 @@ class Person(TimeStampedModel):
 
     class Meta:
         ordering = ['id',]
+        # TODO:
         unique_together = (("praenomen", "nomen", "real_number"),)
 
 

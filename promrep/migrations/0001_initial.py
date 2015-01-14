@@ -126,6 +126,9 @@ class Migration(SchemaMigration):
             ('patrician', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('patrician_certainty', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('notes', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
+            ('review_flag', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('created_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='created_person', null=True, to=orm['auth.User'])),
+            ('modified_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='modified_person', null=True, to=orm['auth.User'])),
         ))
         db.send_create_signal(u'promrep', ['Person'])
 
@@ -281,6 +284,35 @@ class Migration(SchemaMigration):
 
 
     models = {
+        u'auth.group': {
+            'Meta': {'object_name': 'Group'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
+            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
+        },
+        u'auth.permission': {
+            'Meta': {'ordering': "(u'content_type__app_label', u'content_type__model', u'codename')", 'unique_together': "((u'content_type', u'codename'),)", 'object_name': 'Permission'},
+            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        },
+        u'auth.user': {
+            'Meta': {'object_name': 'User'},
+            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
+            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
+            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
+            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
+            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
+        },
         u'contenttypes.contenttype': {
             'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
@@ -385,10 +417,12 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['id']", 'unique_together': "(('praenomen', 'nomen', 'real_number'),)", 'object_name': 'Person'},
             'cognomen': ('django.db.models.fields.CharField', [], {'max_length': '64', 'blank': 'True'}),
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
+            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'created_person'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'filiation': ('django.db.models.fields.CharField', [], {'max_length': '256', 'blank': 'True'}),
             'gens': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Gens']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
+            'modified_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'modified_person'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'nomen': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
             'notes': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
             'origin': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Origin']", 'null': 'True', 'blank': 'True'}),
@@ -400,6 +434,7 @@ class Migration(SchemaMigration):
             'real_attribute': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
             'real_number': ('django.db.models.fields.CharField', [], {'max_length': '32', 'blank': 'True'}),
             'real_number_old': ('django.db.models.fields.CharField', [], {'max_length': '32', 'blank': 'True'}),
+            'review_flag': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'sex': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Sex']", 'null': 'True', 'blank': 'True'}),
             'tribe': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['promrep.Tribe']", 'null': 'True', 'blank': 'True'})
         },

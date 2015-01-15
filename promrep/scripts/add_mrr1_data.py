@@ -169,6 +169,10 @@ def processXML(ifile):
                     # parses person from name
                     parsed_person = aux.parse_person(name_str)
 
+                    # TODO: error handling???
+                    if parsed_person is None:
+                        print name_str
+
                     try:
                         person = Person.objects.get(
                             praenomen=parsed_person.praenomen,

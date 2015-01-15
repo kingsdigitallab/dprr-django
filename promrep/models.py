@@ -299,7 +299,6 @@ class Person(TimeStampedModel):
 
         return new_fields
 
-
     class Meta:
         ordering = ['id',]
         # TODO:

@@ -105,7 +105,6 @@ class NoteAdmin(admin.ModelAdmin):
 
 admin.site.register(Note, NoteAdmin)
 
-
 class PersonAdmin(admin.ModelAdmin):
 
     fieldsets = [('Database Info', {'fields': ['id']}), ('Person',
@@ -139,9 +138,7 @@ class PersonAdmin(admin.ModelAdmin):
         'patrician_certainty',
         'notes',
         'modified',
-        'modified_by',
         'created',
-        'created_by',
         )
 
     search_fields = ['nomen', 'cognomen', 'tribe']

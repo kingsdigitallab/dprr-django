@@ -219,26 +219,9 @@ class Person(TimeStampedModel):
 
     dates = generic.GenericRelation(Date)
 
-    created_by = models.ForeignKey(
-        User,
-        blank=True,
-        null=True,
-        related_name='created_%(class)s',
-        editable=True,
-        help_text='No need to edit: automatically set when saving',)
-
-    modified_by = models.ForeignKey(
-        User,
-        blank=True,
-        null=True,
-        related_name='modified_%(class)s',
-        editable=True,
-        help_text='No need to edit: automatically set when saving',)
-
     @staticmethod
     def autocomplete_search_fields():
         return ("id__iexact", "nomen__icontains", )
-
 
     def real_id(self):
         r_id = ' '.join([self.real_number, self.real_attribute])

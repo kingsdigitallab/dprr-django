@@ -69,10 +69,9 @@ class Date(models.Model):
     year_uncertain = models.BooleanField(verbose_name='uncertain', default=None)
 
     circa = models.BooleanField(default=None)
-    notes = models.TextField(blank=True, null=True)
+    extra_info = models.TextField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True, editable=False)
-    modified = models.DateTimeField(auto_now=True, auto_now_add=True,
-                                    editable=False)
+    modified = models.DateTimeField(auto_now=True, auto_now_add=True, editable=False)
 
     def __unicode__(self):
 
@@ -95,7 +94,6 @@ class Praenomen(models.Model):
         return self.name
 
     class Meta:
-
         verbose_name_plural = 'Praenomina'
         ordering = ['name']
 
@@ -114,7 +112,7 @@ class Gens(models.Model):
         verbose_name_plural = "Gens"
 
     name = models.CharField(max_length=128, unique=True)
-    notes = models.CharField(max_length=1024, blank=True)
+    extra_info = models.CharField(max_length=1024, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -123,7 +121,7 @@ class Gens(models.Model):
 class Tribe(models.Model):
     abbrev = models.CharField(max_length=32, unique=True)
     name = models.CharField(max_length=128)
-    notes = models.CharField(max_length=1024, blank=True)
+    extra_info = models.CharField(max_length=1024, blank=True)
 
     def __unicode__(self):
         return self.abbrev
@@ -135,7 +133,7 @@ class Tribe(models.Model):
 class Origin(models.Model):
 
     name = models.CharField(max_length=128, unique=True)
-    notes = models.CharField(max_length=1024, blank=True)
+    extra_info = models.CharField(max_length=1024, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -149,20 +147,13 @@ class RoleType(TimeStampedModel):
     def __unicode__(self):
         return self.name
 
-
 NOTE_TYPES = (
-    ('a', 'Assertion'),
-    ('p', 'AssertionPerson'),
-)
-
-NOTE_ORIGINS = (
     ('r', 'Reference (Body of text)'),
     ('e', 'Endnote (Broughton only)'),
 )
 
 class Note(TimeStampedModel):
     note_type = models.CharField(max_length=1, choices=NOTE_TYPES)
-    origin = models.CharField(max_length=1, choices=NOTE_ORIGINS)
 
     # useful to store the bookmark number, for instance
     extra_info = models.CharField(max_length=128, blank=True)
@@ -215,13 +206,13 @@ class Person(TimeStampedModel):
 
     origin = models.ForeignKey(Origin, blank=True, null=True)
 
-    patrician = models.BooleanField(verbose_name='Patrician?', default = False)
+    patrician = models.BooleanField(verbose_name='Patrician?', default=False)
     patrician_certainty = models.BooleanField(verbose_name='Patrician Certainty?', default=True)
 
-    extra_notes = models.CharField(max_length=1024, blank=True)
-    extra_notes.help_text = "Extra notes about the person."
+    extra_info = models.CharField(max_length=1024, blank=True)
+    extra_info.help_text = "Extra info about the person."
 
-    review_flag = models.BooleanField(verbose_name="Review needed", default = False)
+    review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Person needs manual revision."
 
     dates = generic.GenericRelation(Date)

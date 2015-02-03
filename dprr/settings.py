@@ -11,7 +11,7 @@ For production settings see
 https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 """
 
-from wagtailbase import settings as ws
+# from wagtailbase import settings as ws
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
@@ -66,17 +66,16 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'ddhldap',
-    'south',
+#    'ddhldap',
     'mptt',
     'treeadmin',
 )
 
-INSTALLED_APPS += ws.INSTALLED_APPS
+# INSTALLED_APPS += ws.INSTALLED_APPS
 
 INSTALLED_APPS += (
     'promrep',
-    'wagtailbase',
+    # 'wagtailbase',
 )
 
 INTERNAL_IPS = ('127.0.0.1',)
@@ -123,7 +122,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-MIDDLEWARE_CLASSES += ws.MIDDLEWARE_CLASSES
+# MIDDLEWARE_CLASSES += ws.MIDDLEWARE_CLASSES
 
 ROOT_URLCONF = PROJECT_NAME + '.urls'
 
@@ -158,13 +157,13 @@ WSGI_APPLICATION = PROJECT_NAME + '.wsgi.application'
 # https://scm.cch.kcl.ac.uk/hg/ddhldap-django
 #------------------------------------------------------------------------------
 
-from ddhldap.settings import *
-
-AUTH_LDAP_REQUIRE_GROUP = 'cn=dprr,' + LDAP_BASE_OU
-AUTH_LDAP_USER_FLAGS_BY_GROUP['is_staff'] = 'cn=dprr,' + LDAP_BASE_OU
-
-LOGIN_URL = 'django.contrib.auth.views.login'
-LOGIN_REDIRECT_URL = 'wagtailadmin_home'
+# from ddhldap.settings import *
+#
+# AUTH_LDAP_REQUIRE_GROUP = 'cn=dprr,' + LDAP_BASE_OU
+# AUTH_LDAP_USER_FLAGS_BY_GROUP['is_staff'] = 'cn=dprr,' + LDAP_BASE_OU
+#
+# LOGIN_URL = 'django.contrib.auth.views.login'
+# LOGIN_REDIRECT_URL = 'wagtailadmin_home'
 
 
 
@@ -187,7 +186,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
 )
 
-STATICFILES_FINDERS += ws.STATICFILES_FINDERS
+# STATICFILES_FINDERS += ws.STATICFILES_FINDERS
 
 MEDIA_URL = STATIC_URL + 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL.strip('/'))
@@ -204,7 +203,7 @@ if not os.path.exists(MEDIA_ROOT):
 # CMS
 #------------------------------------------------------------------------------
 
-ITEMS_PER_PAGE = ws.ITEMS_PER_PAGE
+# ITEMS_PER_PAGE = ws.ITEMS_PER_PAGE
 
 
 #------------------------------------------------------------------------------
@@ -212,14 +211,14 @@ ITEMS_PER_PAGE = ws.ITEMS_PER_PAGE
 # http://django-compressor.readthedocs.org/en/latest/
 #------------------------------------------------------------------------------
 
-COMPRESS_PRECOMPILERS = ws.COMPRESS_PRECOMPILERS
+# COMPRESS_PRECOMPILERS = ws.COMPRESS_PRECOMPILERS
 
 #------------------------------------------------------------------------------
 # Wagtail
 # http://wagtail.readthedocs.org/en/latest/
 #------------------------------------------------------------------------------
 
-WAGTAIL_SITE_NAME = PROJECT_TITLE
+# WAGTAIL_SITE_NAME = PROJECT_TITLE
 
 #------------------------------------------------------------------------------
 # Django Grappelli

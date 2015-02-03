@@ -11,22 +11,12 @@ from django.forms import TextInput, Textarea
 
 from models import Person, Office, Praenomen, AssertionPerson, \
     Assertion, AssertionType, RoleType, Date, DateType, \
-    SecondarySource, Gens, Note, NoteType, Tribe
+    SecondarySource, Gens, AssertionNote, PersonNote, Tribe
 
 admin.site.register(AssertionType)
 admin.site.register(Date)
 admin.site.register(DateType)
 admin.site.register(RoleType)
-admin.site.register(NoteType)
-
-
-class AssertionNoteInline(admin.TabularInline):
-    verbose_name = ''
-    verbose_name_plural = 'Assertion Notes'
-
-    model = Assertion.notes.through
-    raw_id_fields = ('note', 'assertion', )
-    extra = 1
 
 
 # these two classes are separated to allow better field configuration
@@ -96,15 +86,6 @@ class AssertionYearListFilter(SimpleListFilter):
             return queryset.filter(dates__year__exact=self.value())
 
 
-class NoteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'note_type', 'text', )
-    list_display_links = ('id',  'note_type', 'text', )
-
-    inlines = (AssertionNoteInline, )
-
-
-admin.site.register(Note, NoteAdmin)
-
 class PersonAdmin(admin.ModelAdmin):
 
     fieldsets = [('Database Info', {'fields': ['id']}), ('Person',
@@ -114,7 +95,6 @@ class PersonAdmin(admin.ModelAdmin):
             ('cognomen', 'other_names'),
             ('gens', 'tribe', 'origin'),
             ('sex',),
-            ('notes',),
         ]}),
 
         ('RE',
@@ -136,7 +116,6 @@ class PersonAdmin(admin.ModelAdmin):
         'get_dates',
         'patrician',
         'patrician_certainty',
-        'notes',
         'modified',
         'created',
         )
@@ -173,7 +152,6 @@ class AssertionAdmin(admin.ModelAdmin):
         'office',
         'get_persons',
         'get_dates',
-        # 'get_notes',
         'display_text',
         'secondary_source',
         )
@@ -181,10 +159,10 @@ class AssertionAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'get_persons', 'get_dates', 'display_text', 'assertion_type', 'office', 'secondary_source')
     readonly_fields = ('id', )
 
-    raw_id_fields = ('office', 'notes', 'secondary_source', 'assertion_type', )
+    raw_id_fields = ('office', 'secondary_source', 'assertion_type', )
 
     autocomplete_lookup_fields = {
-        'fk': ['office', 'secondary_source', 'notes', 'assertion_type', ],
+        'fk': ['office', 'secondary_source', 'assertion_type', ],
     }
 
 
@@ -194,7 +172,7 @@ class AssertionAdmin(admin.ModelAdmin):
             ('assertion_type', 'office',),
             ]}),]
 
-    inlines = [PersonInline, AssertionNoteInline, AssertionDateInline, ]
+    inlines = [PersonInline, AssertionDateInline, ]
     exclude = ('persons', )
 
 admin.site.register(Assertion, AssertionAdmin)
@@ -202,18 +180,18 @@ admin.site.register(Assertion, AssertionAdmin)
 
 class GensAdmin(admin.ModelAdmin):
 
-    list_display = ('id', 'name', 'notes',)
+    list_display = ('id', 'name', )
     readonly_fields = ('id', )
-    list_display_links = ('id', 'name', 'notes',)
+    list_display_links = ('id', 'name', )
 
 admin.site.register(Gens, GensAdmin)
 
 
 class TribeAdmin(admin.ModelAdmin):
 
-    list_display = ('id', 'abbrev', 'name', 'notes',)
+    list_display = ('id', 'abbrev', 'name', )
     readonly_fields = ('id', )
-    list_display_links = ('id', 'abbrev', 'name', 'notes',)
+    list_display_links = ('id', 'abbrev', 'name', )
 
 admin.site.register(Tribe, TribeAdmin)
 

@@ -61,19 +61,14 @@ class Date(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey()
+
     date_type = models.ForeignKey(DateType, blank=True, null=True)
-    interval = \
-        models.SmallIntegerField(choices=DATE_INTERVAL_CHOICES)
-    year = IntegerRangeField(min_value=-500, max_value=500, blank=True,
-                             null=True)
-    year_uncertain = models.BooleanField(verbose_name='uncertain')
-    month = IntegerRangeField(min_value=1, max_value=12, blank=True,
-                              null=True)
-    month_uncertain = models.BooleanField(verbose_name='uncertain')
-    day = IntegerRangeField(min_value=1, max_value=31, blank=True,
-                            null=True)
-    day_uncertain = models.BooleanField(verbose_name='uncertain')
-    circa = models.BooleanField()
+    interval = models.SmallIntegerField(choices=DATE_INTERVAL_CHOICES)
+
+    year = IntegerRangeField(min_value=-500, max_value=500, blank=True, null=True)
+    year_uncertain = models.BooleanField(verbose_name='uncertain', default=None)
+
+    circa = models.BooleanField(default=None)
     notes = models.TextField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True, editable=False)
     modified = models.DateTimeField(auto_now=True, auto_now_add=True,
@@ -155,19 +150,26 @@ class RoleType(TimeStampedModel):
         return self.name
 
 
-class NoteType(models.Model):
-    name = models.CharField(max_length=128, unique=True)
+NOTE_TYPES = (
+    ('a', 'Assertion'),
+    ('p', 'AssertionPerson'),
+)
 
-    def __unicode__(self):
-        return self.name
-
+NOTE_ORIGINS = (
+    ('r', 'Reference (Body of text)'),
+    ('e', 'Endnote (Broughton only)'),
+)
 
 class Note(TimeStampedModel):
-    note_type = models.ForeignKey(NoteType, blank=True, null=True)
+    note_type = models.CharField(max_length=1, choices=NOTE_TYPES)
+    origin = models.CharField(max_length=1, choices=NOTE_ORIGINS)
 
     # useful to store the bookmark number, for instance
     extra_info = models.CharField(max_length=128, blank=True)
     text = models.CharField(max_length=1024, blank=True)
+
+    class Meta:
+        abstract = True
 
     def __unicode__(self):
         return self.text
@@ -177,6 +179,11 @@ class Note(TimeStampedModel):
         return ("id__iexact", "text__icontains", )
 
 
+class AssertionNote(Note):
+    pass
+
+class PersonNote(Note):
+    pass
 
 class Person(TimeStampedModel):
 
@@ -211,8 +218,8 @@ class Person(TimeStampedModel):
     patrician = models.BooleanField(verbose_name='Patrician?', default = False)
     patrician_certainty = models.BooleanField(verbose_name='Patrician Certainty?', default=True)
 
-    notes = models.CharField(max_length=1024, blank=True)
-    notes.help_text = "Extra notes about the person."
+    extra_notes = models.CharField(max_length=1024, blank=True)
+    extra_notes.help_text = "Extra notes about the person."
 
     review_flag = models.BooleanField(verbose_name="Review needed", default = False)
     review_flag.help_text = "Person needs manual revision."
@@ -386,17 +393,13 @@ class Assertion(TimeStampedModel):
     # should these be combined into a single tree
 
     office = models.ForeignKey(Office, blank=True, null=True)
-    relationship = models.ForeignKey(Relationship, blank=True,
-            null=True)
+    relationship = models.ForeignKey(Relationship, blank=True, null=True)
 
-    notes = models.ManyToManyField(Note)
+    notes = models.ManyToManyField(AssertionNote)
 
     dates = generic.GenericRelation(Date)
-
     secondary_source = models.ForeignKey(SecondarySource)
-
     display_text = models.CharField(max_length=1024, blank=True)
-
 
     class Meta:
         ordering = ['id',]
@@ -436,6 +439,8 @@ class AssertionPerson(TimeStampedModel):
     original_text = models.CharField(max_length=1024, blank=True)
 
     certainty = models.BooleanField(verbose_name='Certainty?', default=True)
+
+    notes = models.ManyToManyField(PersonNote)
 
     def __unicode__(self):
         return str(self.person.__unicode__()) + ": " + str(self.assertion.__unicode__())

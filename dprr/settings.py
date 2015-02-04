@@ -69,6 +69,7 @@ INSTALLED_APPS = (
 #    'ddhldap',
     'mptt',
     'treeadmin',
+    'author',
 )
 
 # INSTALLED_APPS += ws.INSTALLED_APPS
@@ -227,6 +228,14 @@ if not os.path.exists(MEDIA_ROOT):
 
 GRAPPELLI_ADMIN_TITLE = PROJECT_TITLE
 
+#------------------------------------------------------------------------------
+# Django Author
+# https://github.com/lambdalisue/django-author/
+#------------------------------------------------------------------------------
+
+MIDDLEWARE_CLASSES += ('author.middlewares.AuthorDefaultBackendMiddleware', )
+
+AUTHOR_CREATED_BY_FIELD_NAME = 'created_by'
 
 #------------------------------------------------------------------------------
 # Development Installed Applications Settings

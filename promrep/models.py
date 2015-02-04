@@ -11,6 +11,9 @@ from django.contrib.contenttypes import generic
 
 from django.core.urlresolvers import reverse
 
+from author.decorators import with_author
+
+
 class IntegerRangeField(models.IntegerField):
     def __init__(self,
                  verbose_name=None,
@@ -47,7 +50,7 @@ class DateType(models.Model):
     def __unicode__(self):
         return u'%s' % self.name
 
-
+@with_author
 class Date(models.Model):
 
     # Promrep settings
@@ -170,12 +173,16 @@ class Note(TimeStampedModel):
         return ("id__iexact", "text__icontains", )
 
 
+@with_author
 class AssertionNote(Note):
     pass
 
+@with_author
 class PersonNote(Note):
     pass
 
+
+@with_author
 class Person(TimeStampedModel):
 
     # TODO: should be string instead?

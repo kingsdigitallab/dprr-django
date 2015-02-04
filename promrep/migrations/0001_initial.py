@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 import mptt.fields
 import django.utils.timezone
+from django.conf import settings
 import model_utils.fields
 import promrep.models
 
@@ -11,6 +12,7 @@ import promrep.models
 class Migration(migrations.Migration):
 
     dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('contenttypes', '0001_initial'),
     ]
 
@@ -37,6 +39,8 @@ class Migration(migrations.Migration):
                 ('note_type', models.CharField(max_length=1, choices=[(b'r', b'Reference (Body of text)'), (b'e', b'Endnote (Broughton only)')])),
                 ('extra_info', models.CharField(max_length=128, blank=True)),
                 ('text', models.CharField(max_length=1024, blank=True)),
+                ('created_by', models.ForeignKey(related_name='assertionnote_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('updated_by', models.ForeignKey(related_name='assertionnote_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
                 'abstract': False,
@@ -81,6 +85,7 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True, auto_now_add=True)),
                 ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
+                ('created_by', models.ForeignKey(related_name='date_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
             },
@@ -161,6 +166,7 @@ class Migration(migrations.Migration):
                 ('patrician_certainty', models.BooleanField(default=True, verbose_name=b'Patrician Certainty?')),
                 ('extra_info', models.CharField(help_text=b'Extra info about the person.', max_length=1024, blank=True)),
                 ('review_flag', models.BooleanField(default=False, help_text=b'Person needs manual revision.', verbose_name=b'Review needed')),
+                ('created_by', models.ForeignKey(related_name='person_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
                 ('gens', models.ForeignKey(blank=True, to='promrep.Gens', null=True)),
                 ('origin', models.ForeignKey(blank=True, to='promrep.Origin', null=True)),
             ],
@@ -178,6 +184,8 @@ class Migration(migrations.Migration):
                 ('note_type', models.CharField(max_length=1, choices=[(b'r', b'Reference (Body of text)'), (b'e', b'Endnote (Broughton only)')])),
                 ('extra_info', models.CharField(max_length=128, blank=True)),
                 ('text', models.CharField(max_length=1024, blank=True)),
+                ('created_by', models.ForeignKey(related_name='personnote_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('updated_by', models.ForeignKey(related_name='personnote_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
                 'abstract': False,
@@ -291,6 +299,12 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(blank=True, to='promrep.Tribe', null=True),
             preserve_default=True,
         ),
+        migrations.AddField(
+            model_name='person',
+            name='updated_by',
+            field=models.ForeignKey(related_name='person_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            preserve_default=True,
+        ),
         migrations.AlterUniqueTogether(
             name='person',
             unique_together=set([('praenomen', 'nomen', 'real_number')]),
@@ -299,6 +313,12 @@ class Migration(migrations.Migration):
             model_name='date',
             name='date_type',
             field=models.ForeignKey(blank=True, to='promrep.DateType', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='date',
+            name='updated_by',
+            field=models.ForeignKey(related_name='date_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
             preserve_default=True,
         ),
         migrations.AddField(

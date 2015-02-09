@@ -95,7 +95,6 @@ OFFICE_NAMES_DIC = {
     'Vestal Virgins': 'vestalis'
 }
 
-
 # TODO: configure in settings
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

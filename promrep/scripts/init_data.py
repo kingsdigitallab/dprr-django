@@ -35,5 +35,3 @@ def run():
     print '  Tribe Data...'
     call_command('loaddata', 'promrep/fixtures/promrep_tribe.json')
 
-    print '  NoteType Data...'
-    call_command('loaddata', 'promrep/fixtures/promrep_notetype.json')

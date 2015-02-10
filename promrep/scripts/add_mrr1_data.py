@@ -1,11 +1,22 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+"""Adds the MRR1 data
+
+
+Usage:
+
+Activate the virtual environment;
+
+python manage.py runscript add_mrr1_data
+
+"""
+
 from bs4 import BeautifulSoup
 
 from promrep.models import ContentType, Assertion, AssertionPerson, \
-    AssertionType, Date, Office, Person, RoleType, \
-    SecondarySource, Note, NoteType
+  AssertionType, AssertionNote, PersonNote, Date, Office, Person, \
+  RoleType, SecondarySource, PersonNote, AssertionNote
 
 import parsing_aux as aux
 import logging
@@ -96,7 +107,6 @@ OFFICE_NAMES_DIC = {
     'Vestal Virgins': 'vestalis'
 }
 
-
 # TODO: configure in settings
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -113,7 +123,7 @@ logger.addHandler(fh)
 def run():
     # this is the file exported by OpenOffice
 
-    ifile = 'promrep/scripts/data/mrr1_all_MR_Officesv2.docx.html_.xml'
+    ifile = 'promrep/scripts/data/mrr1_all_MR_Officesv12.docx.html_.xml'
     print 'Will process input file', ifile
     processXML(ifile)
 
@@ -131,6 +141,7 @@ def processXML(ifile):
 
         for office_tag in year.findAll('office'):
             office_name = office_tag['name']
+            print office_name
 
             # tries to get the normalized office name from the
             try:
@@ -150,8 +161,7 @@ def processXML(ifile):
                 office.parent = parent
                 office.save()
 
-                logger.info('Added Office: %s (id=%i)' %
-                            (office.name, office.id))
+                logger.info('Added Office: %s (id=%i)' % (office.name, office.id))
 
             # empty list to hold the office's assertions
             #  every time a note is found, it is associated with
@@ -159,7 +169,9 @@ def processXML(ifile):
             #  the list is then cleared...
             assertion_ref_queue = []
 
+            # Assertion: Office + Year + Person
             for p in office_tag.find_all('person'):
+
                 name_el = p['name']
 
                 ### TODO: wrap in transaction
@@ -248,8 +260,8 @@ def processXML(ifile):
                                 references = p.findNextSibling().get_text()
 
                                 note = Note(
-                                    text = references,
-                                    note_type = NoteType.objects.get(name="Reference"),
+                                    text=references,
+                                    note_type=NoteType.objects.get(name="Reference"),
                                     )
 
                                 note.save()
@@ -283,7 +295,6 @@ def processXML(ifile):
 
                         except Exception as e:
                             logger.error('Error saving endnote: %s (%s)' % (e.message, type(e)))
-
 
                 except Exception as e:
                     logger.error('%s' %(e.message))

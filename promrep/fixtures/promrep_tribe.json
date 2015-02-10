@@ -1,379 +1,337 @@
 [
 {
-    "pk": 1, 
-    "model": "promrep.tribe", 
+    "pk": 1,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Aem.", 
+        "abbrev": "Aem.",
         "name": "Aemilia"
     }
 },
 {
-    "pk": 2, 
-    "model": "promrep.tribe", 
+    "pk": 2,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Ani.", 
+        "abbrev": "Ani.",
         "name": "Aniensis"
     }
 },
 {
-    "pk": 3, 
-    "model": "promrep.tribe", 
+    "pk": 3,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Arn.", 
+        "abbrev": "Arn.",
         "name": "Arnensis"
     }
 },
 {
-    "pk": 4, 
-    "model": "promrep.tribe", 
+    "pk": 4,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Cam.", 
+        "abbrev": "Cam.",
         "name": "Camilia"
     }
 },
 {
-    "pk": 5, 
-    "model": "promrep.tribe", 
+    "pk": 5,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Claud.", 
+        "abbrev": "Claud.",
         "name": "Claudia"
     }
 },
 {
-    "pk": 6, 
-    "model": "promrep.tribe", 
+    "pk": 6,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Clu.", 
+        "abbrev": "Clu.",
         "name": "Clustumina"
     }
 },
 {
-    "pk": 7, 
-    "model": "promrep.tribe", 
+    "pk": 7,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Coll.", 
+        "abbrev": "Coll.",
         "name": "Collina"
     }
 },
 {
-    "pk": 8, 
-    "model": "promrep.tribe", 
+    "pk": 8,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Cor.", 
+        "abbrev": "Cor.",
         "name": "Cornelia"
     }
 },
 {
-    "pk": 9, 
-    "model": "promrep.tribe", 
+    "pk": 9,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Corn.", 
+        "abbrev": "Corn.",
         "name": "Cornelia"
     }
 },
 {
-    "pk": 10, 
-    "model": "promrep.tribe", 
+    "pk": 10,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Crust.", 
+        "abbrev": "Crust.",
         "name": "Clustumina"
     }
 },
 {
-    "pk": 11, 
-    "model": "promrep.tribe", 
+    "pk": 11,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Esq.", 
+        "abbrev": "Esq.",
         "name": "Esquilina"
     }
 },
 {
-    "pk": 12, 
-    "model": "promrep.tribe", 
+    "pk": 12,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Fab.", 
+        "abbrev": "Fab.",
         "name": "Fabia"
     }
 },
 {
-    "pk": 13, 
-    "model": "promrep.tribe", 
+    "pk": 13,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Fal.", 
+        "abbrev": "Fal.",
         "name": "Falerna"
     }
 },
 {
-    "pk": 14, 
-    "model": "promrep.tribe", 
+    "pk": 14,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Gal.", 
+        "abbrev": "Gal.",
         "name": "Galeria"
     }
 },
 {
-    "pk": 15, 
-    "model": "promrep.tribe", 
+    "pk": 15,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Hor.", 
+        "abbrev": "Hor.",
         "name": "Horatia"
     }
 },
 {
-    "pk": 16, 
-    "model": "promrep.tribe", 
+    "pk": 16,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Lem.", 
+        "abbrev": "Lem.",
         "name": "Lemonia"
     }
 },
 {
-    "pk": 17, 
-    "model": "promrep.tribe", 
+    "pk": 17,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Mae.", 
+        "abbrev": "Mae.",
         "name": "Maecia"
     }
 },
 {
-    "pk": 18, 
-    "model": "promrep.tribe", 
+    "pk": 18,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Maec.", 
+        "abbrev": "Maec.",
         "name": "Maecia"
     }
 },
 {
-    "pk": 19, 
-    "model": "promrep.tribe", 
+    "pk": 19,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Men.", 
+        "abbrev": "Men.",
         "name": "Menenia"
     }
 },
 {
-    "pk": 20, 
-    "model": "promrep.tribe", 
+    "pk": 20,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Ouf.", 
+        "abbrev": "Ouf.",
         "name": "Oufentina"
     }
 },
 {
-    "pk": 21, 
-    "model": "promrep.tribe", 
+    "pk": 21,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Pal.", 
+        "abbrev": "Pal.",
         "name": "Palatina"
     }
 },
 {
-    "pk": 22, 
-    "model": "promrep.tribe", 
+    "pk": 22,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Pap.", 
+        "abbrev": "Pap.",
         "name": "Papiria"
     }
 },
 {
-    "pk": 23, 
-    "model": "promrep.tribe", 
+    "pk": 23,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Pob.", 
+        "abbrev": "Pob.",
         "name": "Poblilia"
     }
 },
 {
-    "pk": 24, 
-    "model": "promrep.tribe", 
+    "pk": 24,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Pol.", 
+        "abbrev": "Pol.",
         "name": "Pollia"
     }
 },
 {
-    "pk": 25, 
-    "model": "promrep.tribe", 
+    "pk": 25,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Poll.", 
+        "abbrev": "Poll.",
         "name": "Pollia"
     }
 },
 {
-    "pk": 26, 
-    "model": "promrep.tribe", 
+    "pk": 26,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Pom.", 
+        "abbrev": "Pom.",
         "name": "Pomptina"
     }
 },
 {
-    "pk": 27, 
-    "model": "promrep.tribe", 
+    "pk": 27,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Pompt.", 
+        "abbrev": "Pompt.",
         "name": "Pomptina"
     }
 },
 {
-    "pk": 28, 
-    "model": "promrep.tribe", 
+    "pk": 28,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Pup.", 
+        "abbrev": "Pup.",
         "name": "Pupinia"
     }
 },
 {
-    "pk": 29, 
-    "model": "promrep.tribe", 
+    "pk": 29,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Pupl.", 
+        "abbrev": "Pupl.",
         "name": "Pupinia"
     }
 },
 {
-    "pk": 30, 
-    "model": "promrep.tribe", 
+    "pk": 30,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Quir.", 
+        "abbrev": "Quir.",
         "name": "Quirina"
     }
 },
 {
-    "pk": 31, 
-    "model": "promrep.tribe", 
+    "pk": 31,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Rom.", 
+        "abbrev": "Rom.",
         "name": "Romilia"
     }
 },
 {
-    "pk": 32, 
-    "model": "promrep.tribe", 
+    "pk": 32,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Sab.", 
+        "abbrev": "Sab.",
         "name": "Sabatina"
     }
 },
 {
-    "pk": 33, 
-    "model": "promrep.tribe", 
+    "pk": 33,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Scapt.", 
+        "abbrev": "Scapt.",
         "name": "Scaptia"
     }
 },
 {
-    "pk": 34, 
-    "model": "promrep.tribe", 
+    "pk": 34,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Serg.", 
+        "abbrev": "Serg.",
         "name": "Sergia"
     }
 },
 {
-    "pk": 35, 
-    "model": "promrep.tribe", 
+    "pk": 35,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Stell.", 
+        "abbrev": "Stell.",
         "name": "Stellatina"
     }
 },
 {
-    "pk": 36, 
-    "model": "promrep.tribe", 
+    "pk": 36,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Sub.", 
+        "abbrev": "Sub.",
         "name": "Suburana"
     }
 },
 {
-    "pk": 37, 
-    "model": "promrep.tribe", 
+    "pk": 37,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Ter.", 
+        "abbrev": "Ter.",
         "name": "Teretina"
     }
 },
 {
-    "pk": 38, 
-    "model": "promrep.tribe", 
+    "pk": 38,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Tro.", 
+        "abbrev": "Tro.",
         "name": "Tromentina"
     }
 },
 {
-    "pk": 39, 
-    "model": "promrep.tribe", 
+    "pk": 39,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Vel.", 
+        "abbrev": "Vel.",
         "name": "Velina"
     }
 },
 {
-    "pk": 40, 
-    "model": "promrep.tribe", 
+    "pk": 40,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Vol.", 
+        "abbrev": "Vol.",
         "name": "Voltinia"
     }
 },
 {
-    "pk": 41, 
-    "model": "promrep.tribe", 
+    "pk": 41,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Vet.", 
+        "abbrev": "Vet.",
         "name": "Voturia"
     }
 },
 {
-    "pk": 42, 
-    "model": "promrep.tribe", 
+    "pk": 42,
+    "model": "promrep.tribe",
     "fields": {
-        "notes": "", 
-        "abbrev": "Vot.", 
+        "abbrev": "Vot.",
         "name": "Voturia"
     }
 }

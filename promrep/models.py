@@ -50,7 +50,7 @@ class DateType(models.Model):
     def __unicode__(self):
         return u'%s' % self.name
 
-@with_author
+
 class Date(models.Model):
 
     # Promrep settings
@@ -58,15 +58,10 @@ class Date(models.Model):
     DATE_SINGLE = 0
     DATE_MIN = 1
     DATE_MAX = 2
-    DATE_INTERVAL_CHOICES = ((DATE_SINGLE, 'single'), (DATE_MIN, 'min'
-                             ), (DATE_MAX, 'max'))
-
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey()
+    DATE_INTERVAL_CHOICES = ((DATE_SINGLE, 'single'), (DATE_MIN, 'min'), (DATE_MAX, 'max'))
 
     date_type = models.ForeignKey(DateType, blank=True, null=True)
-    interval = models.SmallIntegerField(choices=DATE_INTERVAL_CHOICES)
+    interval = models.SmallIntegerField(choices=DATE_INTERVAL_CHOICES, default=DATE_SINGLE)
 
     year = IntegerRangeField(min_value=-500, max_value=500, blank=True, null=True)
     year_uncertain = models.BooleanField(verbose_name='uncertain', default=None)
@@ -87,6 +82,21 @@ class Date(models.Model):
 
         return date_str
 
+    class Meta:
+        abstract = True
+
+
+@with_author
+class AssertionDate(Date):
+    pass
+
+@with_author
+class AssertionPersonDate(Date):
+    pass
+
+@with_author
+class PersonDate(Date):
+    pass
 
 class Praenomen(models.Model):
 
@@ -222,7 +232,8 @@ class Person(TimeStampedModel):
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Person needs manual revision."
 
-    dates = generic.GenericRelation(Date)
+    dates = models.ManyToManyField(PersonDate)
+
 
     @staticmethod
     def autocomplete_search_fields():
@@ -328,8 +339,6 @@ class SecondarySource(TimeStampedModel):
         return ("id__iexact", "name__icontains", "abbrev__icontains")
 
 
-#
-
 class PrimarySource(models.Model):
 
     name = models.CharField(max_length=256, unique=True)
@@ -394,8 +403,8 @@ class Assertion(TimeStampedModel):
     relationship = models.ForeignKey(Relationship, blank=True, null=True)
 
     notes = models.ManyToManyField(AssertionNote)
+    dates = models.ManyToManyField(AssertionDate)
 
-    dates = generic.GenericRelation(Date)
     secondary_source = models.ForeignKey(SecondarySource)
     display_text = models.CharField(max_length=1024, blank=True)
 
@@ -439,6 +448,7 @@ class AssertionPerson(TimeStampedModel):
     certainty = models.BooleanField(verbose_name='Certainty?', default=True)
 
     notes = models.ManyToManyField(PersonNote)
+    dates = models.ManyToManyField(AssertionPersonDate)
 
     def __unicode__(self):
         return str(self.person.__unicode__()) + ": " + str(self.assertion.__unicode__())

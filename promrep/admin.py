@@ -10,11 +10,11 @@ from django.contrib.contenttypes import generic
 from django.forms import TextInput, Textarea
 
 from models import Person, Office, Praenomen, AssertionPerson, \
-    Assertion, AssertionType, RoleType, Date, DateType, \
-    SecondarySource, Gens, AssertionNote, PersonNote, Tribe
+    Assertion, AssertionType, RoleType, DateType, \
+    SecondarySource, Gens, AssertionNote, PersonNote, Tribe, AssertionDate, \
+    PersonDate, AssertionPersonDate
 
 admin.site.register(AssertionType)
-admin.site.register(Date)
 admin.site.register(DateType)
 admin.site.register(RoleType)
 admin.site.register(AssertionNote)
@@ -55,18 +55,6 @@ class PersonInline(admin.TabularInline):
     #     'm2m': ['person', 'assertion', ],
     # }
 
-
-
-class PersonDateInline(generic.GenericStackedInline):
-
-    model = Date
-    extra = 0
-
-
-class AssertionDateInline(generic.GenericStackedInline):
-
-    model = Date
-    extra = 0
 
 
 class AssertionYearListFilter(SimpleListFilter):
@@ -124,7 +112,7 @@ class PersonAdmin(admin.ModelAdmin):
     search_fields = ['nomen', 'cognomen', 'tribe']
     list_filter = ('assertionperson__role', 'assertionperson__assertion__office', 'tribe__name', 'tribe__abbrev')
 
-    inlines = (AssertionInline, PersonDateInline,)
+    inlines = (AssertionInline, )
 
 
 admin.site.register(Person, PersonAdmin)
@@ -140,7 +128,6 @@ class OfficeAdmin(TreeAdmin):
         )
 
 admin.site.register(Office, OfficeAdmin)
-
 
 class AssertionAdmin(admin.ModelAdmin):
 
@@ -166,17 +153,17 @@ class AssertionAdmin(admin.ModelAdmin):
         'fk': ['office', 'secondary_source', 'assertion_type', ],
     }
 
-
     fieldsets = [('Database Info', {'fields': ['id']}),
     ('Assertion', {'fields': [
             ('secondary_source', ),
             ('assertion_type', 'office',),
             ]}),]
 
-    inlines = [PersonInline, AssertionDateInline, ]
+    inlines = [PersonInline, ]
     exclude = ('persons', )
 
 admin.site.register(Assertion, AssertionAdmin)
+
 
 
 class GensAdmin(admin.ModelAdmin):

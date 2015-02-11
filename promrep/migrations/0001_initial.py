@@ -13,7 +13,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('contenttypes', '0001_initial'),
     ]
 
     operations = [
@@ -27,6 +26,24 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['id'],
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='AssertionDate',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('interval', models.SmallIntegerField(default=0, choices=[(0, b'single'), (1, b'min'), (2, b'max')])),
+                ('year', promrep.models.IntegerRangeField(null=True, blank=True)),
+                ('year_uncertain', models.BooleanField(default=None, verbose_name=b'uncertain')),
+                ('circa', models.BooleanField(default=None)),
+                ('extra_info', models.TextField(null=True, blank=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('modified', models.DateTimeField(auto_now=True, auto_now_add=True)),
+                ('created_by', models.ForeignKey(related_name='assertiondate_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'abstract': False,
             },
             bases=(models.Model,),
         ),
@@ -63,29 +80,28 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='AssertionType',
+            name='AssertionPersonDate',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=128)),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Date',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('object_id', models.PositiveIntegerField()),
-                ('interval', models.SmallIntegerField(choices=[(0, b'single'), (1, b'min'), (2, b'max')])),
+                ('interval', models.SmallIntegerField(default=0, choices=[(0, b'single'), (1, b'min'), (2, b'max')])),
                 ('year', promrep.models.IntegerRangeField(null=True, blank=True)),
                 ('year_uncertain', models.BooleanField(default=None, verbose_name=b'uncertain')),
                 ('circa', models.BooleanField(default=None)),
                 ('extra_info', models.TextField(null=True, blank=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True, auto_now_add=True)),
-                ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
-                ('created_by', models.ForeignKey(related_name='date_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('created_by', models.ForeignKey(related_name='assertionpersondate_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='AssertionType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=128)),
             ],
             options={
             },
@@ -167,11 +183,29 @@ class Migration(migrations.Migration):
                 ('extra_info', models.CharField(help_text=b'Extra info about the person.', max_length=1024, blank=True)),
                 ('review_flag', models.BooleanField(default=False, help_text=b'Person needs manual revision.', verbose_name=b'Review needed')),
                 ('created_by', models.ForeignKey(related_name='person_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('gens', models.ForeignKey(blank=True, to='promrep.Gens', null=True)),
-                ('origin', models.ForeignKey(blank=True, to='promrep.Origin', null=True)),
             ],
             options={
                 'ordering': ['id'],
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='PersonDate',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('interval', models.SmallIntegerField(default=0, choices=[(0, b'single'), (1, b'min'), (2, b'max')])),
+                ('year', promrep.models.IntegerRangeField(null=True, blank=True)),
+                ('year_uncertain', models.BooleanField(default=None, verbose_name=b'uncertain')),
+                ('circa', models.BooleanField(default=None)),
+                ('extra_info', models.TextField(null=True, blank=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('modified', models.DateTimeField(auto_now=True, auto_now_add=True)),
+                ('created_by', models.ForeignKey(related_name='persondate_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('date_type', models.ForeignKey(blank=True, to='promrep.DateType', null=True)),
+                ('updated_by', models.ForeignKey(related_name='persondate_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'abstract': False,
             },
             bases=(models.Model,),
         ),
@@ -283,6 +317,24 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='person',
+            name='dates',
+            field=models.ManyToManyField(to='promrep.PersonDate'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='person',
+            name='gens',
+            field=models.ForeignKey(blank=True, to='promrep.Gens', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='person',
+            name='origin',
+            field=models.ForeignKey(blank=True, to='promrep.Origin', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='person',
             name='praenomen',
             field=models.ForeignKey(blank=True, to='promrep.Praenomen', null=True),
             preserve_default=True,
@@ -310,15 +362,21 @@ class Migration(migrations.Migration):
             unique_together=set([('praenomen', 'nomen', 'real_number')]),
         ),
         migrations.AddField(
-            model_name='date',
+            model_name='assertionpersondate',
             name='date_type',
             field=models.ForeignKey(blank=True, to='promrep.DateType', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='date',
+            model_name='assertionpersondate',
             name='updated_by',
-            field=models.ForeignKey(related_name='date_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(related_name='assertionpersondate_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='assertionperson',
+            name='dates',
+            field=models.ManyToManyField(to='promrep.AssertionPersonDate'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -340,9 +398,27 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AddField(
+            model_name='assertiondate',
+            name='date_type',
+            field=models.ForeignKey(blank=True, to='promrep.DateType', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='assertiondate',
+            name='updated_by',
+            field=models.ForeignKey(related_name='assertiondate_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
             model_name='assertion',
             name='assertion_type',
             field=models.ForeignKey(to='promrep.AssertionType'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='assertion',
+            name='dates',
+            field=models.ManyToManyField(to='promrep.AssertionDate'),
             preserve_default=True,
         ),
         migrations.AddField(

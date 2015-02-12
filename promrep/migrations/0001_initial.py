@@ -357,10 +357,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(related_name='person_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
             preserve_default=True,
         ),
-        migrations.AlterUniqueTogether(
-            name='person',
-            unique_together=set([('praenomen', 'nomen', 'real_number')]),
-        ),
         migrations.AddField(
             model_name='assertionpersondate',
             name='date_type',

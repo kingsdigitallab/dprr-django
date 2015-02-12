@@ -279,7 +279,7 @@ class Person(TimeStampedModel):
     get_dates.short_description = 'Dates'
 
     def update_empty_fields(self, obj):
-        """comapares two objects, updating the empty fields from the first
+        """compares two objects, updating the empty fields from the first
         object with the values from the second object"""
 
         attrs = (
@@ -317,8 +317,6 @@ class Person(TimeStampedModel):
 
     class Meta:
         ordering = ['id',]
-        # TODO:
-        unique_together = (("praenomen", "nomen", "real_number"),)
 
 
 # Broughton, Rupke, etc

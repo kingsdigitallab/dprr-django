@@ -63,10 +63,10 @@ class Date(models.Model):
     date_type = models.ForeignKey(DateType, blank=True, null=True)
     interval = models.SmallIntegerField(choices=DATE_INTERVAL_CHOICES, default=DATE_SINGLE)
 
-    year = IntegerRangeField(min_value=-500, max_value=500, blank=True, null=True)
-    year_uncertain = models.BooleanField(verbose_name='uncertain', default=None)
+    year = IntegerRangeField(min_value=-500, max_value=500, blank=True, null=False)
+    year_uncertain = models.BooleanField(verbose_name='uncertain', default=False)
 
-    circa = models.BooleanField(default=None)
+    circa = models.BooleanField(default=False)
     extra_info = models.TextField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True, editable=False)
     modified = models.DateTimeField(auto_now=True, auto_now_add=True, editable=False)

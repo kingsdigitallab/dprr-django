@@ -1,22 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-"""Adds the MRR1 data
-
+"""Adds the MRR1 data to the database
 
 Usage:
-
-Activate the virtual environment;
-
-python manage.py runscript add_mrr1_data
+  * Activate the virtual environment;
+  * Run: python manage.py runscript promrep.add_mrr1_data
 
 """
 
 from bs4 import BeautifulSoup
 
 from promrep.models import ContentType, Assertion, AssertionPerson, \
-  AssertionType, AssertionNote, PersonNote, Date, Office, Person, \
-  RoleType, SecondarySource, PersonNote, AssertionNote
+  AssertionType, AssertionNote, PersonNote, AssertionDate, Office, Person, \
+  RoleType, SecondarySource, PersonNote
 
 import parsing_aux as aux
 import logging
@@ -120,6 +117,32 @@ fh.setFormatter(frmt)
 logger.addHandler(fh)
 
 
+def get_office_obj(office_name):
+    """given a string, returns an office object"""
+
+    # tries to get the normalized office name from the
+    try:
+        oname = OFFICE_NAMES_DIC[office_name]
+    except:
+        logger.warn("Unable to normalize office name: '%s'" %(office_name,))
+        oname = office_name
+
+    try:
+        office = Office.objects.get(name=oname)
+    except Office.DoesNotExist:
+
+        # Adding new office
+        #    in MRR all the offices are "civic" except for Vestal Virgin
+        parent = Office.objects.get(name='Civic Offices')
+        office = Office(name=oname, parent = parent)
+        office.save()
+
+        logger.info('Added Office: %s (id=%i)' % (office.name, office.id))
+
+    return office
+
+
+
 def run():
     # this is the file exported by OpenOffice
 
@@ -134,47 +157,71 @@ def processXML(ifile):
 
     years = soup.findAll('year')
 
-    for year in years:
+    # process year
+
+    for year in years[60:61]:
 
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
 
+        print
+        print
+        print ">>>>>", year_str
+        print
+
+        # an assertion is defined by year, office, persons
+        #   it can have associated notes
+        #   and footnotes
         for office_tag in year.findAll('office'):
+
             office_name = office_tag['name']
-            print office_name
+            print ">>", office_name
 
-            # tries to get the normalized office name from the
-            try:
-                oname = OFFICE_NAMES_DIC[office_name]
-            except:
-                logger.warn("Unable to normalize office name: '%s'" %(office_name,))
-                oname = office_name
-
-            try:
-                office = Office.objects.get(name=oname)
-            except Office.DoesNotExist:
-                # Adding new office
-                # in MRR2 all offices are "civic" except for Vestal Virgin
-
-                parent = Office.objects.get(name='Civic Offices')
-                office = Office(name=oname)
-                office.parent = parent
-                office.save()
-
-                logger.info('Added Office: %s (id=%i)' % (office.name, office.id))
+            # get office using office name
+            office_obj = get_office_obj(office_name)
 
             # empty list to hold the office's assertions
             #  every time a note is found, it is associated with
             #  all the people in this list
-            #  the list is then cleared...
             assertion_ref_queue = []
+            assertion_type = AssertionType.objects.get(name='Office')
+
+            source = SecondarySource.objects.get(abbrev_name='Broughton MRR I')
+
+            # get_or_create...
+            assertion_date, created = AssertionDate.objects.get_or_create(
+                        year = -int(year_str),
+                    )
+
+            # tests if assertion already exists
+            assertion_list = Assertion.objects.filter(office=office_obj,
+                                                      assertion_type=assertion_type,
+                                                      secondary_source=source,
+                                                      dates__in = [assertion_date])
+
+            # if it doesn't exist, creates a new assertion
+            if len(assertion_list) == 0:
+                assertion = Assertion.objects.create(office=office_obj, assertion_type=assertion_type, secondary_source=source, )
+            elif len(assertion_list) == 1:
+                assertion = assertion_list[0]
+            else:
+                # TODO: throw an Exception
+                print "ERROR HERE! Multiple assertions with same basic info..."
+
+            # add any existing notes to the assertion
+            for onote in office_tag.find_all('office-note'):
+                # NoteType is Reference (Body of text)
+                note = AssertionNote(note_type = "r", text=onote['name'])
+
+                # TODO: catch exceptions...
+                note.save()
+                assertion.notes.add(note)
 
             # Assertion: Office + Year + Person
             for p in office_tag.find_all('person'):
-
                 name_el = p['name']
 
-                ### TODO: wrap in transaction
+                # TODO: wrap in transaction
                 try:
                     name_str = name_el
 
@@ -183,7 +230,7 @@ def processXML(ifile):
 
                     # TODO: error handling???
                     if parsed_person is None:
-                        print name_str
+                        pass #print name_str
 
                     try:
                         person = Person.objects.get(
@@ -200,26 +247,13 @@ def processXML(ifile):
                         parsed_person.save()
                         person = parsed_person
 
-                        logger.info('Added new person %s with id %i' %
-                                    (person.get_name(), person.id))
+                        logger.info('Added new person %s with id %i' % (person.get_name(), person.id))
 
                     if person is not None:
 
                         # create both the assertion and assertionperson objects
-                        assertion_type = AssertionType.objects.get(
-                            name='Office')
-
-                        source = SecondarySource.objects.get(
-                            abbrev_name='Broughton MRR I')
-
-                        assertion = Assertion(
-                            office=office,
-                            assertion_type=assertion_type,
-                            secondary_source=source,)
 
                         try:
-                            assertion.save()
-
                             ### adds the assertion to the refs queue
                             assertion_ref_queue.append(assertion)
 
@@ -228,8 +262,6 @@ def processXML(ifile):
                                 interval=Date.DATE_MIN,
                                 year = -int(year_str),
                                 year_uncertain=False,
-                                month_uncertain=False,
-                                day_uncertain=False,
                                 circa=False,
                             )
                             date_start.content_object = assertion

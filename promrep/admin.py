@@ -11,14 +11,14 @@ from django.forms import TextInput, Textarea
 
 from models import Person, Office, Praenomen, AssertionPerson, \
     Assertion, AssertionType, RoleType, DateType, \
-    SecondarySource, Gens, AssertionNote, PersonNote, Tribe, AssertionDate, \
-    PersonDate, AssertionPersonDate
+    SecondarySource, Gens, AssertionNote, AssertionPersonNote, \
+    Tribe, AssertionDate, PersonDate, AssertionPersonDate
 
 admin.site.register(AssertionType)
 admin.site.register(DateType)
 admin.site.register(RoleType)
 admin.site.register(AssertionNote)
-admin.site.register(PersonNote)
+admin.site.register(AssertionPersonNote)
 
 # these two classes are separated to allow better field configuration
 class AssertionInline(admin.TabularInline):

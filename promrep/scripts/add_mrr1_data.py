@@ -12,8 +12,8 @@ Usage:
 from bs4 import BeautifulSoup
 
 from promrep.models import ContentType, Assertion, AssertionPerson, \
-  AssertionType, AssertionNote, PersonNote, AssertionDate, Office, Person, \
-  RoleType, SecondarySource, PersonNote
+  AssertionType, AssertionNote, AssertionDate, Office, Person, \
+  RoleType, SecondarySource, AssertionPersonNote, AssertionPersonDate
 
 import parsing_aux as aux
 import logging
@@ -159,8 +159,8 @@ def processXML(ifile):
 
     # process year
 
-    for year in years[60:61]:
-
+    for year in years[0:1]:
+    # for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
 
@@ -180,15 +180,14 @@ def processXML(ifile):
             # get office using office name
             office_obj = get_office_obj(office_name)
 
-            # empty list to hold the office's assertions
             #  every time a note is found, it is associated with
-            #  all the people in this list
-            assertion_ref_queue = []
+            #  all the assertion_persons in the list
+            person_ref_queue = []
+
             assertion_type = AssertionType.objects.get(name='Office')
 
             source = SecondarySource.objects.get(abbrev_name='Broughton MRR I')
 
-            # get_or_create...
             assertion_date, created = AssertionDate.objects.get_or_create(
                         year = -int(year_str),
                     )
@@ -228,81 +227,64 @@ def processXML(ifile):
                     # parses person from name
                     parsed_person = aux.parse_person(name_str)
 
+                    ######
                     # TODO: error handling???
+                    ######
                     if parsed_person is None:
                         pass #print name_str
 
-                    try:
-                        person = Person.objects.get(
-                            praenomen=parsed_person.praenomen,
-                            nomen=parsed_person.nomen,
-                            real_number=parsed_person.real_number)
+                    person, created = Person.objects.get_or_create(
+                        praenomen=parsed_person.praenomen,
+                        nomen=parsed_person.nomen,
+                        real_number=parsed_person.real_number)
 
-                        person.update_empty_fields(parsed_person)
-
-                        logger.info('Updated existing person %s with id %i' %
-                                    (person.get_name(), person.id))
-
-                    except Person.DoesNotExist:
-                        parsed_person.save()
-                        person = parsed_person
-
+                    if created:
                         logger.info('Added new person %s with id %i' % (person.get_name(), person.id))
 
+                    # person.update_empty_fields(parsed_person)
+                    # logger.info('Updated existing person %s with id %i' % (person.get_name(), person.id))
+                    # person = parsed_person
+
+
                     if person is not None:
+                        # creates the AssertionPerson
 
-                        # create both the assertion and assertionperson objects
+                        date_start = AssertionPersonDate.objects.get_or_create(
+                            year = -int(year_str)
+                        )
 
-                        try:
-                            ### adds the assertion to the refs queue
-                            assertion_ref_queue.append(assertion)
+                        # TODO: special case for Successor?
+                        assertion_person, created = AssertionPerson.objects.get_or_create(
+                            role=RoleType.objects.get(name='Holder'),
+                            assertion=assertion,
+                            person=person,
+                            original_text = name_str,
+                        )
 
-                            date_start = Date(
-                                content_type=ContentType.objects.get(name='assertion'),
-                                interval=Date.DATE_MIN,
-                                year = -int(year_str),
-                                year_uncertain=False,
-                                circa=False,
-                            )
-                            date_start.content_object = assertion
-
-                            try:
-                                date_start.save()
-                            except Exception as e:
-                                logger.error('Unable to save date...' + year_str)
-                            assertion_person = AssertionPerson(
-                                role=RoleType.objects.get(name='Holder'),
-                                assertion=assertion,
-                                person=person,
-                                original_text = name_str,
-                                )
-                            try:
-                                assertion_person.save()
-                            except:
-                                logger.error("[ERROR][ASSERTION_PERSON] Could not save assertion person...")
-
-                        except Exception as e:
-                            logger.error('Error saving assertion: %s (%s)' % (e.message, type(e)))
+                        # adds the person to the refs queue
+                        person_ref_queue.append(assertion_person)
 
 
                         try:
-                            # if the next element is a note
+                            # if the next element is an AssertionPerson
                             #  we're adding it to all the assertions in the assertion queue
                             if p.findNextSibling().name == "references":
-                                references = p.findNextSibling().get_text()
+                                references = p.findNextSibling()
 
-                                note = Note(
-                                    text=references,
-                                    note_type=NoteType.objects.get(name="Reference"),
-                                    )
+                                # TODO: test footnotes
+                                ref_text = ""
+                                for r in references.findAll('ref'):
+                                    ref_text = ref_text + " " + r.get_text()
 
-                                note.save()
+                                note, created = AssertionPersonNote.objects.get_or_create(
+                                    text=ref_text
+                                )
 
-                                for a in assertion_ref_queue:
-                                    a.notes.add(note)
+                                for ap in person_ref_queue:
+                                    ap.notes.add(note)
 
                                 # resets the ref queue
-                                assertion_ref_queue = []
+                                person_ref_queue = []
 
                         except Exception as e:
                             logger.error('Error saving reference notes: %s (%s)' % (e.message, type(e)))
@@ -315,7 +297,7 @@ def processXML(ifile):
 
 
                                 if endnote_text:
-                                    endnote = Note(
+                                    endnote = AssertionPersonNote(
                                         text = endnote_text,
                                         note_type = NoteType.objects.get(name="Endnote"),
                                         extra_info = endnote_name

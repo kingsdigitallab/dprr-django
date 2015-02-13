@@ -160,13 +160,16 @@ class RoleType(TimeStampedModel):
     def __unicode__(self):
         return self.name
 
+REFERENCE_NOTE = 0
+FOOTNOTE = 1
+
 NOTE_TYPES = (
-    ('r', 'Reference (Body of text)'),
-    ('e', 'Endnote (Broughton only)'),
+    (REFERENCE_NOTE, 'Reference (Body of text)'),
+    (FOOTNOTE, 'Footnote (Broughton only)'),
 )
 
 class Note(TimeStampedModel):
-    note_type = models.CharField(max_length=1, choices=NOTE_TYPES)
+    note_type = models.CharField(max_length=1, choices=NOTE_TYPES, default=REFERENCE_NOTE)
 
     # useful to store the bookmark number, for instance
     extra_info = models.CharField(max_length=128, blank=True)
@@ -188,7 +191,7 @@ class AssertionNote(Note):
     pass
 
 @with_author
-class PersonNote(Note):
+class AssertionPersonNote(Note):
     pass
 
 
@@ -445,7 +448,7 @@ class AssertionPerson(TimeStampedModel):
 
     certainty = models.BooleanField(verbose_name='Certainty?', default=True)
 
-    notes = models.ManyToManyField(PersonNote)
+    notes = models.ManyToManyField(AssertionPersonNote)
     dates = models.ManyToManyField(AssertionPersonDate)
 
     def __unicode__(self):

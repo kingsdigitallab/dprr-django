@@ -159,14 +159,14 @@ def processXML(ifile):
 
     # process year
 
-    for year in years[0:1]:
-    # for year in years:
+#    for year in years[60:61]:
+    for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
 
         print
         print
-        print ">>>>>", year_str
+        print ">>>>>", year_str, years.index(year)
         print
 
         # an assertion is defined by year, office, persons
@@ -209,8 +209,10 @@ def processXML(ifile):
 
             # add any existing notes to the assertion
             for onote in office_tag.find_all('office-note'):
-                note = AssertionNote.objects.get_or_create(text=onote['name'])
-                assertion.notes.add(note)
+                # print onote.get_text()
+                a_note, created = AssertionNote.objects.get_or_create(text=onote.get_text())
+                print a_note
+                assertion.notes.add(a_note)
 
             # Assertion: Office + Year + Person
             for p in office_tag.find_all('person'):

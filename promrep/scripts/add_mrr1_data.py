@@ -209,11 +209,7 @@ def processXML(ifile):
 
             # add any existing notes to the assertion
             for onote in office_tag.find_all('office-note'):
-                # NoteType is Reference (Body of text)
-                note = AssertionNote(note_type = "r", text=onote['name'])
-
-                # TODO: catch exceptions...
-                note.save()
+                note = AssertionNote.objects.get_or_create(text=onote['name'])
                 assertion.notes.add(note)
 
             # Assertion: Office + Year + Person
@@ -236,15 +232,24 @@ def processXML(ifile):
                     person, created = Person.objects.get_or_create(
                         praenomen=parsed_person.praenomen,
                         nomen=parsed_person.nomen,
-                        real_number=parsed_person.real_number)
+                        real_number=parsed_person.real_number,
+                        )
+
+                    # TODO: use kwargs...
+                    # updates all other relevant fields....
+                    person.patrician = parsed_person.patrician
+                    person.sex = parsed_person.sex
+                    person.praenomen_certainty = parsed_person.praenomen_certainty
+                    person.filiation = parsed_person.filiation
+                    person.tribe = parsed_person.tribe
+                    person.cognomen = parsed_person.cognomen
+                    person.other_names = parsed_person.other_names
+                    person.patrician_certainty = parsed_person.patrician_certainty
+
+                    person.save()
 
                     if created:
                         logger.info('Added new person %s with id %i' % (person.get_name(), person.id))
-
-                    # person.update_empty_fields(parsed_person)
-                    # logger.info('Updated existing person %s with id %i' % (person.get_name(), person.id))
-                    # person = parsed_person
-
 
                     if person is not None:
                         # creates the AssertionPerson
@@ -254,6 +259,7 @@ def processXML(ifile):
                         )
 
                         # TODO: special case for Successor?
+                        # TODO: stop creating repeated assertions
                         assertion_person, created = AssertionPerson.objects.get_or_create(
                             role=RoleType.objects.get(name='Holder'),
                             assertion=assertion,
@@ -261,33 +267,30 @@ def processXML(ifile):
                             original_text = name_str,
                         )
 
-                        # adds the person to the refs queue
+                        # adds the assertion_person to the refs queue
                         person_ref_queue.append(assertion_person)
 
+                        # if the next element is an AssertionPerson
+                        #  we're adding it to all the assertions in the assertion queue
+                        if p.findNextSibling().name == "references":
+                            references = p.findNextSibling()
 
-                        try:
-                            # if the next element is an AssertionPerson
-                            #  we're adding it to all the assertions in the assertion queue
-                            if p.findNextSibling().name == "references":
-                                references = p.findNextSibling()
+                            # TODO: test footnotes
+                            ref_text = ""
+                            for r in references.findAll('ref'):
+                                ref_text = ref_text + " " + r.get_text()
 
-                                # TODO: test footnotes
-                                ref_text = ""
-                                for r in references.findAll('ref'):
-                                    ref_text = ref_text + " " + r.get_text()
+                            note, created = AssertionPersonNote.objects.get_or_create(
+                                text=ref_text
+                            )
 
-                                note, created = AssertionPersonNote.objects.get_or_create(
-                                    text=ref_text
-                                )
 
-                                for ap in person_ref_queue:
-                                    ap.notes.add(note)
+                            for ap in person_ref_queue:
+                                ap.notes.add(note)
 
-                                # resets the ref queue
-                                person_ref_queue = []
+                            # resets the ref queue
+                            person_ref_queue = []
 
-                        except Exception as e:
-                            logger.error('Error saving reference notes: %s (%s)' % (e.message, type(e)))
 
                         try:
                             # tests if person has a bookmark/noteref

@@ -5,7 +5,6 @@ from django.db import models
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from django_mptt_admin.admin import DjangoMpttAdmin
-from treeadmin.admin import TreeAdmin
 from django.contrib.contenttypes import generic
 from django.forms import TextInput, Textarea
 

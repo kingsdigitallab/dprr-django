@@ -159,8 +159,8 @@ def processXML(ifile):
 
     # process year
 
-#    for year in years[60:61]:
-    for year in years:
+    for year in years[0:3]:
+    #for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
 
@@ -223,42 +223,62 @@ def processXML(ifile):
                     name_str = name_el
 
                     # parses person from name
-                    parsed_person = aux.parse_person(name_str)
+                    person_info = aux.parse_person(name_str)
 
                     ######
                     # TODO: error handling???
                     ######
-                    if parsed_person is None:
+                    if person_info is None:
                         pass #print name_str
 
+                    # removes the date_certainty info from the dictionary
+                    if 'date_certainty' in person_info:
+                        ap_date_info = person_info.pop('date_certainty')
+                    else:
+                        ap_date_info = None
+
+                    # creates the person object from the dictionary directly
                     person, created = Person.objects.get_or_create(
-                        praenomen=parsed_person.praenomen,
-                        nomen=parsed_person.nomen,
-                        real_number=parsed_person.real_number,
-                        )
+                                                            praenomen = person_info['praenomen'],
+                                                            nomen = person_info['nomen'],
+                                                            real_number = person_info['real_number'],
+                                                            )
 
-                    # TODO: use kwargs...
+                    # update the person's information
                     # updates all other relevant fields....
-                    person.patrician = parsed_person.patrician
-                    person.sex = parsed_person.sex
-                    person.praenomen_certainty = parsed_person.praenomen_certainty
-                    person.filiation = parsed_person.filiation
-                    person.tribe = parsed_person.tribe
-                    person.cognomen = parsed_person.cognomen
-                    person.other_names = parsed_person.other_names
-                    person.patrician_certainty = parsed_person.patrician_certainty
-
-                    person.save()
-
                     if created:
+                        person.patrician = person_info.get('patrician', False)
+                        person.praenomen_certainty = person_info.get('praenomen_certainty', True)
+                        person.filiation = person_info.get('filiation', "")
+
+                        if 'tribe' in person_info:
+                            person.tribe = person_info['tribe']
+
+                        person.cognomen = person_info.get('cognomen', "")
+                        person.other_names = person_info.get('other_names', "")
+                        person.patrician_certainty = person_info.get('patrician_certainty', False)
+
+                        person.save()
                         logger.info('Added new person %s with id %i' % (person.get_name(), person.id))
 
                     if person is not None:
                         # creates the AssertionPerson
 
-                        date_start = AssertionPersonDate.objects.get_or_create(
-                            year = -int(year_str)
+                        yuncertain = False
+
+                        if ap_date_info is not None:
+
+                            if '?' in ap_date_info:
+                                yuncertain = True
+                            else:
+                                print ap_date_info
+
+
+                        date_start, created = AssertionPersonDate.objects.get_or_create(
+                            year = -int(year_str),
+                            year_uncertain = yuncertain
                         )
+
 
                         # TODO: special case for Successor?
                         # TODO: stop creating repeated assertions
@@ -268,6 +288,9 @@ def processXML(ifile):
                             person=person,
                             original_text = name_str,
                         )
+
+                        assertion_person.dates.add(date_start)
+
 
                         # adds the assertion_person to the refs queue
                         person_ref_queue.append(assertion_person)

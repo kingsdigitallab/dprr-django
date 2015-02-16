@@ -21,7 +21,10 @@ logger.addHandler(fh)
 
 
 def parse_person(text):
-    """Will return a person object or None if unable to parse the person"""
+    """ Will return a dictionary with all the parsed attributes"""
+
+    # returnable dictionary
+    person_data = {}
 
     logger.info("ParsePersonName: %s" %(text))
 
@@ -86,9 +89,8 @@ def parse_person(text):
         return None
 
     real = captured.captures('real')[0].strip()
-    sex = Sex.objects.get(name='Male')
+    person_data['real_number'] = real
 
-    praen_cert = True
     if len(captured.captures('praenomen')):
         praenomen_str = captured.captures('praenomen')[0].strip()
 
@@ -96,7 +98,7 @@ def parse_person(text):
         praenomen_str = praenomen_str.strip("()")
 
         if "?" in praenomen_str:
-            praen_cert = False
+            person_data['praenomen_certainty'] = False
             praenomen_str = praenomen_str.replace("?", "")
 
         try:
@@ -108,72 +110,43 @@ def parse_person(text):
             logger.error('Praenomen lookup error: %s', praenomen_str)
             return None
 
-    else:
-        praenomen = None
+        person_data['praenomen'] = praenomen
+
 
     nomen = captured.captures('nomen')[0].strip()
+    person_data['nomen'] = nomen.strip("?()[]")
 
     # parse patrician and patrician certainty
 
     pat_str = captured.captures('patrician')
-    pat_certain = True
-    is_pat = False
 
     if len(pat_str):
+        person_data['patrician'] = True
+
         if "?" in pat_str[0]:
-            pat_certain = False
-        is_pat = True
+            person_data['patrician_certainty'] = False
 
-
-    tribe = None
     if len(captured.captures('tribe')):
         tribe_abbrev = captured.captures('tribe')[0].strip()
         tribe = Tribe.objects.get(abbrev = tribe_abbrev)
+        person_data['tribe'] = tribe
 
     cog_list = captured.captures('cognomen')
 
-    cognomen_first = ''
-    other_names = ''
-
     if len(cog_list):
         cognomen_first = cog_list[0].strip()
+        person_data['cognomen'] = cognomen_first
 
     if len(cog_list) > 1:
         other_names = ' '.join(cog_list[1:]).strip().replace('  ', ' ')
+        person_data['other_names'] = other_names
 
-    # if len(captured.captures('date_certainty')):
-    #    if captured.captures('date_certainty')[0].strip() == '?':
-    #        person.date_certainty = 'Uncertain'
+    if len(captured.captures('date_certainty')):
+        person_data['date_certainty'] = captured.captures('date_certainty')[0].strip()
 
-    filiation = ''.join(captured.captures('filiation')).strip()
+    person_data['filiation'] = ''.join(captured.captures('filiation')).strip()
 
-    # TODO: chars to be stripped from the nomen when saving to the database...
-    # these chars indicate uncertainty, etc...
-
-    try:
-        person = Person(
-            sex=sex,
-            praenomen=praenomen,
-            nomen=nomen.strip("?()[]"),
-            praenomen_certainty=praen_cert,
-            filiation=filiation,
-            tribe=tribe,
-            cognomen=cognomen_first,
-            real_number=real,
-            other_names=other_names,
-            patrician=is_pat,
-            patrician_certainty=pat_certain,
-            )
-
-    except Exception as e:
-        print 'Failed to create person %s (%s)' % (e.message, type(e))
-        return None
-
-    return person
-
-
-
-
+    return person_data
 
 
 def parse_brennan_person(text):

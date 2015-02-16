@@ -4,7 +4,7 @@
 from django.db import models
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
-from mptt.admin import MPTTModelAdmin
+from django_mptt_admin.admin import DjangoMpttAdmin
 from treeadmin.admin import TreeAdmin
 from django.contrib.contenttypes import generic
 from django.forms import TextInput, Textarea
@@ -117,7 +117,7 @@ class PersonAdmin(admin.ModelAdmin):
 
 admin.site.register(Person, PersonAdmin)
 
-class OfficeAdmin(TreeAdmin):
+class OfficeAdmin(DjangoMpttAdmin):
     readonly_fields = ('id', )
     mptt_indent_field = "name"
 

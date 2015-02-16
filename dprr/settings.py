@@ -68,7 +68,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 #    'ddhldap',
     'mptt',
-    'treeadmin',
+    'django_mptt_admin',
     'author',
 )
 

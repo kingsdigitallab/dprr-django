@@ -192,15 +192,20 @@ def processXML(ifile):
                         year = -int(year_str),
                     )
 
+            assertion_dates_list = []
+            assertion_dates_list.append(assertion_date)
+
             # tests if assertion already exists
             assertion_list = Assertion.objects.filter(office=office_obj,
                                                       assertion_type=assertion_type,
                                                       secondary_source=source,
-                                                      dates__in = [assertion_date])
+                                                      dates__in = assertion_dates_list)
 
             # if it doesn't exist, creates a new assertion
             if len(assertion_list) == 0:
                 assertion = Assertion.objects.create(office=office_obj, assertion_type=assertion_type, secondary_source=source, )
+                for date in assertion_dates_list:
+                    assertion.dates.add(date)
             elif len(assertion_list) == 1:
                 assertion = assertion_list[0]
             else:
@@ -291,7 +296,6 @@ def processXML(ifile):
 
                         assertion_person.dates.add(date_start)
 
-
                         # adds the assertion_person to the refs queue
                         person_ref_queue.append(assertion_person)
 
@@ -322,7 +326,6 @@ def processXML(ifile):
                             if p.find('noteref'):
                                 endnote_name = p.noteref.get_text().strip('#')
                                 endnote_text = year.find('note', bookmarks=endnote_name).get_text()
-
 
                                 if endnote_text:
                                     endnote = AssertionPersonNote(

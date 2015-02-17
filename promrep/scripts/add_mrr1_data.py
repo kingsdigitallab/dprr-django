@@ -159,15 +159,33 @@ def processXML(ifile):
 
     # process year
 
-    for year in years[0:3]:
+    for year in years[-2:]:
     #for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
 
         print
         print
-        print ">>>>>", year_str, years.index(year)
+        print ">>>>>FNOTES", year_str, years.index(year)
         print
+
+
+        # TODO: create a year note...
+
+        # the footnotes can be added to a list
+        # ... right at the "start" of the year
+
+        # TODO:
+        # ... we need to make sure all the refs agree with the footnotes
+        # per ref we should:
+        #  a) convert reference superscripts to lowercase/parentesis
+        #  b) double-check if we have any other superscript
+
+        fnote_dict = {}
+        for fnote in year.findAll('footnote'):
+            fnote_dict[fnote['ref']] = fnote
+
+        print fnote_dict
 
         # an assertion is defined by year, office, persons
         #   it can have associated notes
@@ -216,8 +234,13 @@ def processXML(ifile):
             for onote in office_tag.find_all('office-note'):
                 # print onote.get_text()
                 a_note, created = AssertionNote.objects.get_or_create(text=onote.get_text())
-                print a_note
+                # print a_note
                 assertion.notes.add(a_note)
+
+            if office_tag.has_attr('footnote'):
+                ofnote = fnote_dict[office_tag['footnote'].lstrip('#')]
+                AssertionNote(note_type=1, text = ofnote.get_text())
+
 
             # Assertion: Office + Year + Person
             for p in office_tag.find_all('person'):

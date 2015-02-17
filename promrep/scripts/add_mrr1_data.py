@@ -159,8 +159,8 @@ def processXML(ifile):
 
     # process year
 
-    for year in years[-2:]:
-    #for year in years:
+    #for year in years[-2:]:
+    for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
 
@@ -185,7 +185,7 @@ def processXML(ifile):
         for fnote in year.findAll('footnote'):
             fnote_dict[fnote['ref']] = fnote
 
-        print fnote_dict
+        # print fnote_dict
 
         # an assertion is defined by year, office, persons
         #   it can have associated notes
@@ -238,8 +238,17 @@ def processXML(ifile):
                 assertion.notes.add(a_note)
 
             if office_tag.has_attr('footnote'):
-                ofnote = fnote_dict[office_tag['footnote'].lstrip('#')]
-                AssertionNote(note_type=1, text = ofnote.get_text())
+                fnote_id = office_tag['footnote'].lstrip('#')
+
+                if fnote_id in fnote_dict:
+                    ofnote = fnote_dict[fnote_id]
+
+                    afnote = AssertionNote(note_type=1, text = ofnote.get_text())
+                    afnote.save()
+                    assertion.notes.add(afnote)
+                else:
+                    print "ERROR adding office fnote" + fnote_id
+
 
 
             # Assertion: Office + Year + Person
@@ -257,7 +266,8 @@ def processXML(ifile):
                     # TODO: error handling???
                     ######
                     if person_info is None:
-                        pass #print name_str
+                        # will create a flagged person...
+                        pass
 
                     # removes the date_certainty info from the dictionary
                     if 'date_certainty' in person_info:
@@ -318,6 +328,18 @@ def processXML(ifile):
                         )
 
                         assertion_person.dates.add(date_start)
+
+                        # add any footnotes the person might have
+                        if p.has_attr('footnote'):
+                            fnote_id = p['footnote'].lstrip('#')
+
+                            if fnote_id in fnote_dict:
+                                pnote = fnote_dict[fnote_id]
+                                ap_fnote = AssertionPersonNote(note_type=1, text = ofnote.get_text())
+                                ap_fnote.save()
+                                assertion_person.notes.add(ap_fnote)
+                            else:
+                                print "ERROR adding person footnote with id", fnote_id
 
                         # adds the assertion_person to the refs queue
                         person_ref_queue.append(assertion_person)

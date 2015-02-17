@@ -159,8 +159,8 @@ def processXML(ifile):
 
     # process year
 
-    #for year in years[-2:]:
-    for year in years:
+    for year in years[0:20]:
+    # for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
 
@@ -281,6 +281,10 @@ def processXML(ifile):
                                                             nomen = person_info['nomen'],
                                                             real_number = person_info['real_number'],
                                                             )
+
+                    if 'tribe' in person_info:
+                        print "TRIBO", person_info['tribe']
+
 
                     # update the person's information
                     # updates all other relevant fields....

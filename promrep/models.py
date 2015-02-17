@@ -211,7 +211,7 @@ class Person(TimeStampedModel):
     gens = models.ForeignKey(Gens, blank=True, null=True)
     tribe = models.ForeignKey(Gens, blank=True, null=True)
 
-    sex = models.ForeignKey(Sex, blank=True, null=True)
+    sex = models.ForeignKey(Sex, blank=True, null=True, default=1)
 
     real_number = models.CharField(max_length=32, blank=True, verbose_name='RE Number')
     real_number.help_text = "RE number"

@@ -18,6 +18,7 @@ admin.site.register(DateType)
 admin.site.register(RoleType)
 admin.site.register(AssertionNote)
 admin.site.register(AssertionPersonNote)
+admin.site.register(AssertionPerson)
 
 # these two classes are separated to allow better field configuration
 class AssertionInline(admin.TabularInline):

@@ -342,7 +342,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='person',
             name='sex',
-            field=models.ForeignKey(blank=True, to='promrep.Sex', null=True),
+            field=models.ForeignKey(default=1, blank=True, to='promrep.Sex', null=True),
             preserve_default=True,
         ),
         migrations.AddField(

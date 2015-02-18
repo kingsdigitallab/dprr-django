@@ -173,7 +173,7 @@ class Note(TimeStampedModel):
 
     # useful to store the bookmark number, for instance
     extra_info = models.CharField(max_length=128, blank=True)
-    text = models.CharField(max_length=1024, blank=True)
+    text = models.CharField(max_length=2048, blank=True)
 
     class Meta:
         abstract = True
@@ -445,6 +445,7 @@ class AssertionPerson(TimeStampedModel):
 
     role = models.ForeignKey(RoleType)
     original_text = models.CharField(max_length=1024, blank=True)
+    office_xref = models.CharField(max_length=1024, blank=True)
 
     certainty = models.BooleanField(verbose_name='Certainty?', default=True)
 

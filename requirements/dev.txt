@@ -31,8 +31,6 @@ libsass==0.6.2
 lxml==3.3.4
 oauthlib==0.7.2
 psycopg2==2.5.4
-pydot==1.0.28
-pygraphviz==1.2
 pyparsing==1.5.7
 python-ldap==2.4.15
 pytz==2013.9

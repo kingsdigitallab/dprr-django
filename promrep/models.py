@@ -78,7 +78,12 @@ class Date(models.Model):
         else:
             bc_ad = "AD"
 
-        date_str = u'%s %s %s'.strip() % (self.date_type or '', abs(self.year), bc_ad)
+        if self.year_uncertain:
+            uncertain = "?"
+        else:
+            uncertain = ""
+
+        date_str = u'%s %s%s %s'.strip() % (self.date_type or '', abs(self.year), uncertain, bc_ad)
 
         return date_str
 
@@ -198,7 +203,6 @@ class AssertionPersonNote(Note):
 @with_author
 class Person(TimeStampedModel):
 
-    # TODO: should be string instead?
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
     praenomen_certainty = models.BooleanField(verbose_name='Praenomen Certainty?', default=True)
 
@@ -209,7 +213,7 @@ class Person(TimeStampedModel):
 
     filiation = models.CharField(max_length=256, blank=True)
     gens = models.ForeignKey(Gens, blank=True, null=True)
-    tribe = models.ForeignKey(Gens, blank=True, null=True)
+    tribe = models.ForeignKey(Tribe, blank=True, null=True)
 
     sex = models.ForeignKey(Sex, blank=True, null=True, default=1)
 
@@ -218,11 +222,6 @@ class Person(TimeStampedModel):
 
     real_number_old = models.CharField(max_length=32, blank=True, verbose_name='RE (old)')
     real_number_old.help_text = "RE number before revising"
-
-    real_attribute = models.CharField(max_length=128, blank=True, verbose_name='RE attribute')
-    real_attribute.help_text = "Original RE entry (from source)"
-
-    tribe = models.ForeignKey(Tribe, blank=True, null=True)
 
     origin = models.ForeignKey(Origin, blank=True, null=True)
 
@@ -237,15 +236,12 @@ class Person(TimeStampedModel):
 
     dates = models.ManyToManyField(PersonDate)
 
-
     @staticmethod
     def autocomplete_search_fields():
         return ("id__iexact", "nomen__icontains", )
 
     def real_id(self):
-        r_id = ' '.join([self.real_number, self.real_attribute])
-
-        return r_id.strip()
+        return self.real_number
 
     def get_name(self):
 
@@ -296,7 +292,6 @@ class Person(TimeStampedModel):
             'gens_id',
             'other_names',
             'real_number_old',
-            'real_attribute',
             'tribe_id',
             )
 
@@ -408,6 +403,8 @@ class Assertion(TimeStampedModel):
 
     secondary_source = models.ForeignKey(SecondarySource)
     display_text = models.CharField(max_length=1024, blank=True)
+
+    certainty = models.BooleanField(verbose_name='Certainty?', default=True)
 
     class Meta:
         ordering = ['id',]

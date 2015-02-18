@@ -162,12 +162,13 @@ class AssertionAdmin(admin.ModelAdmin):
         'id',
         'assertion_type',
         'office',
+        'certainty',
         'get_dates',
         'display_text',
         'secondary_source',
-        )
+    )
 
-    list_display_links = ('id', 'get_dates', 'display_text', 'assertion_type', 'office', 'secondary_source')
+    list_display_links = ('id', 'certainty', 'get_dates', 'display_text', 'assertion_type', 'office', 'secondary_source')
     readonly_fields = ('id', )
 
     raw_id_fields = ('office', 'secondary_source', 'assertion_type', )
@@ -178,7 +179,7 @@ class AssertionAdmin(admin.ModelAdmin):
 
     fieldsets = [('Database Info', {'fields': ['id']}),
     ('Assertion', {'fields': [
-            ('secondary_source', ),
+            ('secondary_source', 'certainty', ),
             ('assertion_type', 'office',),
             ]}),]
 

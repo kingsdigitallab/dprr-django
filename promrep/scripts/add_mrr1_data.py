@@ -48,10 +48,6 @@ OFFICE_NAMES_DIC = {
     'Legates, Ambassadors': 'legatus',
     'Legates, Ambassadors (or Lieutenants?)': 'legatus',
     'Legates, Envoys': 'legatus',
-    'Legates, Envoys Group 1': 'legatus',
-    'Legates, Envoys Group 2': 'legatus',
-    'Legates, Envoys Group 3': 'legatus',
-    'Legates, Envoys Group 4': 'legatus',
     'Legates, Lieutenants': 'legatus',
     'Legates or Prefects': 'legatus or praefectus',
     'Luperci': 'lupercus',
@@ -72,7 +68,7 @@ OFFICE_NAMES_DIC = {
     'Prefects of the Fleet': 'praefectus classis',
     'Prefects to assign land to veterans':
     'praefectus agris dandis assignandis',
-    'Promagistrates': 'Promagistrates', # check this - are there sub categories
+    'Promagistrates': 'promagistrates',
     'Quaesitores': 'quaesitor',
     'Quaestorii': 'quaestorius',
     'Quaestors': 'quaestor',
@@ -192,8 +188,16 @@ def processXML(ifile):
         #   and footnotes
         for office_tag in year.findAll('office'):
 
-            office_name = office_tag['name']
+            # removes the spaces from the office name
+            office_name = office_tag['name'].strip()
+
             print ">>", office_name
+
+            assertion_certainty = True
+            if "?" in office_name:
+                # removes questionmark, marks assertion as uncertain
+                office_name = office_name.strip('? ')
+                assertion_certainty = False
 
             # get office using office name
             office_obj = get_office_obj(office_name)
@@ -217,11 +221,13 @@ def processXML(ifile):
             assertion_list = Assertion.objects.filter(office=office_obj,
                                                       assertion_type=assertion_type,
                                                       secondary_source=source,
-                                                      dates__in = assertion_dates_list)
+                                                      dates__in = assertion_dates_list,
+                                                      certainty = assertion_certainty)
 
             # if it doesn't exist, creates a new assertion
             if len(assertion_list) == 0:
-                assertion = Assertion.objects.create(office=office_obj, assertion_type=assertion_type, secondary_source=source, )
+                assertion = Assertion.objects.create(office=office_obj, assertion_type=assertion_type, secondary_source=source, certainty=assertion_certainty)
+
                 for date in assertion_dates_list:
                     assertion.dates.add(date)
             elif len(assertion_list) == 1:

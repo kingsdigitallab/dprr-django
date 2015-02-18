@@ -23,6 +23,7 @@ class Migration(migrations.Migration):
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
                 ('display_text', models.CharField(max_length=1024, blank=True)),
+                ('certainty', models.BooleanField(default=True, verbose_name=b'Certainty?')),
             ],
             options={
                 'ordering': ['id'],
@@ -195,7 +196,6 @@ class Migration(migrations.Migration):
                 ('filiation', models.CharField(max_length=256, blank=True)),
                 ('real_number', models.CharField(help_text=b'RE number', max_length=32, verbose_name=b'RE Number', blank=True)),
                 ('real_number_old', models.CharField(help_text=b'RE number before revising', max_length=32, verbose_name=b'RE (old)', blank=True)),
-                ('real_attribute', models.CharField(help_text=b'Original RE entry (from source)', max_length=128, verbose_name=b'RE attribute', blank=True)),
                 ('patrician', models.BooleanField(default=False, verbose_name=b'Patrician?')),
                 ('patrician_certainty', models.BooleanField(default=True, verbose_name=b'Patrician Certainty?')),
                 ('extra_info', models.CharField(help_text=b'Extra info about the person.', max_length=1024, blank=True)),

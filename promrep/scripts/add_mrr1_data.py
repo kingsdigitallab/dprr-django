@@ -146,7 +146,7 @@ def get_office_obj(office_name):
 def run():
     # this is the file exported by OpenOffice
 
-    ifile = 'promrep/scripts/data/mrr1_all_MR_Officesv12.docx.html_.xml'
+    ifile = 'promrep/scripts/data/mrr1_all_LF_Officesv14.docx.html.xml'
     print 'Will process input file', ifile
     processXML(ifile)
 
@@ -159,8 +159,8 @@ def processXML(ifile):
 
     # process year
 
-    for year in years[0:20]:
-    # for year in years:
+    # for year in years[0:20]:
+    for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
 
@@ -353,18 +353,45 @@ def processXML(ifile):
                         if p.findNextSibling().name == "references":
                             references = p.findNextSibling()
 
-                            # TODO: test footnotes
+                            footnotes = []
+                            notes_queue = []
+
                             ref_text = ""
+
+                            # glues the ref parts together; mines footnotes
                             for r in references.findAll('ref'):
                                 ref_text = ref_text + " " + r.get_text()
 
+                                if r.has_attr('footnote'):
+                                    footnotes.append(r['footnote'].lstrip('#'))
+
+                            # creates the note
                             note, created = AssertionPersonNote.objects.get_or_create(
                                 text=ref_text
                             )
 
+                            notes_queue.append(note)
+
+                            print "FOOTNOTES", footnotes
+
+                            for fnote_id in footnotes:
+
+                                if fnote_id in fnote_dict:
+                                    apfnote_obj = fnote_dict[fnote_id]
+
+                                    apfnote = AssertionPersonNote(note_type=1, text = apfnote_obj.get_text())
+                                    apfnote.save()
+
+                                    notes_queue.append(apfnote)
+
+                                else:
+                                    print "ERROR adding person footnote with id", fnote_id
+
 
                             for ap in person_ref_queue:
-                                ap.notes.add(note)
+                                for n in notes_queue:
+                                    ap.notes.add(n)
+                                    print n.type, n.text
 
                             # resets the ref queue
                             person_ref_queue = []

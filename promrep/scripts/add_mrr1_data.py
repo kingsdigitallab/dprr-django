@@ -316,7 +316,7 @@ def processXML(ifile):
 
                         # only adds this the first time the assertion is created
                         if created:
-                            if p['office-xref'] != "":
+                            if p.has_attr('office-xref'):
                                 assertion_person.office_xref=p['office-xref']
                                 assertion_person.save()
 

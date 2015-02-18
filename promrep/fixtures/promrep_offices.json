@@ -1,947 +1,812 @@
 [
 {
-    "pk": 1, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 6, 
-        "description": "", 
-        "parent": null, 
-        "created": "2014-09-02T10:49:28.906Z", 
-        "level": 0, 
-        "modified": "2014-09-02T10:49:28.906Z", 
-        "lft": 1, 
-        "tree_id": 1, 
+        "rght": 6,
+        "description": "",
+        "parent": null,
+        "created": "2014-09-02T10:49:28.906Z",
+        "level": 0,
+        "modified": "2014-09-02T10:49:28.906Z",
+        "lft": 1,
+        "tree_id": 2,
         "name": "Sacerdotes"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 1
 },
 {
-    "pk": 2, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 5, 
-        "description": "", 
-        "parent": 1, 
-        "created": "2014-09-02T10:49:28.913Z", 
-        "level": 1, 
-        "modified": "2014-09-02T16:36:26.181Z", 
-        "lft": 4, 
-        "tree_id": 1, 
-        "name": "vestales"
-    }
-},
-{
-    "pk": 3, 
-    "model": "promrep.office", 
-    "fields": {
-        "rght": 3, 
-        "description": "", 
-        "parent": 1, 
-        "created": "2014-09-02T10:49:28.916Z", 
-        "level": 1, 
-        "modified": "2014-09-02T16:36:32.676Z", 
-        "lft": 2, 
-        "tree_id": 1, 
+        "rght": 3,
+        "description": "",
+        "parent": 1,
+        "created": "2014-09-02T10:49:28.916Z",
+        "level": 1,
+        "modified": "2014-09-02T16:36:32.676Z",
+        "lft": 2,
+        "tree_id": 2,
         "name": "augures"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 3
 },
 {
-    "pk": 4, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 120, 
-        "description": "", 
-        "parent": null, 
-        "created": "2014-09-02T10:49:28.919Z", 
-        "level": 0, 
-        "modified": "2014-09-02T10:49:28.919Z", 
-        "lft": 1, 
-        "tree_id": 2, 
+        "rght": 102,
+        "description": "",
+        "parent": null,
+        "created": "2014-09-02T10:49:28.919Z",
+        "level": 0,
+        "modified": "2014-09-02T10:49:28.919Z",
+        "lft": 1,
+        "tree_id": 1,
         "name": "Civic Offices"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 4
 },
 {
-    "pk": 7, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 17, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:34.353Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:34.395Z", 
-        "lft": 16, 
-        "tree_id": 2, 
+        "rght": 19,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:34.353Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:34.395Z",
+        "lft": 14,
+        "tree_id": 1,
         "name": "consul"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 7
 },
 {
-    "pk": 8, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 73, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:34.532Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:34.542Z", 
-        "lft": 72, 
-        "tree_id": 2, 
+        "rght": 67,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:34.532Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:34.542Z",
+        "lft": 66,
+        "tree_id": 1,
         "name": "praetor"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 8
 },
 {
-    "pk": 9, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 6, 
-        "description": "", 
-        "parent": 19, 
-        "created": "2014-09-02T10:49:34.659Z", 
-        "level": 2, 
-        "modified": "2014-09-02T14:30:55.660Z", 
-        "lft": 5, 
-        "tree_id": 2, 
+        "rght": 6,
+        "description": "",
+        "parent": 19,
+        "created": "2014-09-02T10:49:34.659Z",
+        "level": 2,
+        "modified": "2014-09-02T14:30:55.660Z",
+        "lft": 5,
+        "tree_id": 1,
         "name": "aedilis curulis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 9
 },
 {
-    "pk": 10, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 107, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:34.793Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:34.798Z", 
-        "lft": 106, 
-        "tree_id": 2, 
+        "rght": 93,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:34.793Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:34.798Z",
+        "lft": 92,
+        "tree_id": 1,
         "name": "tribunus plebis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 10
 },
 {
-    "pk": 11, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 89, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:35.154Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:35.162Z", 
-        "lft": 88, 
-        "tree_id": 2, 
+        "rght": 77,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:35.154Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:35.162Z",
+        "lft": 76,
+        "tree_id": 1,
         "name": "quaestor"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 11
 },
 {
-    "pk": 12, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 83, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:35.366Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:35.373Z", 
-        "lft": 82, 
-        "tree_id": 2, 
-        "name": "Promagistrates"
-    }
+        "rght": 73,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:35.366Z",
+        "level": 1,
+        "modified": "2015-02-18T18:56:31.218Z",
+        "lft": 72,
+        "tree_id": 1,
+        "name": "promagistrates"
+    },
+    "model": "promrep.office",
+    "pk": 12
 },
 {
-    "pk": 13, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 59, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:35.562Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:35.571Z", 
-        "lft": 58, 
-        "tree_id": 2, 
+        "rght": 53,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:35.562Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:35.571Z",
+        "lft": 52,
+        "tree_id": 1,
         "name": "pontifex"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 13
 },
 {
-    "pk": 14, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 45, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:35.822Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:35.831Z", 
-        "lft": 44, 
-        "tree_id": 2, 
+        "rght": 41,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:35.822Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:35.831Z",
+        "lft": 40,
+        "tree_id": 1,
         "name": "iudex quaestionis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 14
 },
 {
-    "pk": 15, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 15, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:36.363Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:36.371Z", 
-        "lft": 14, 
-        "tree_id": 2, 
+        "rght": 13,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:36.363Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:36.371Z",
+        "lft": 12,
+        "tree_id": 1,
         "name": "censor"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 15
 },
 {
-    "pk": 16, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 105, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:36.599Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:36.605Z", 
-        "lft": 104, 
-        "tree_id": 2, 
+        "rght": 91,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:36.599Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:36.605Z",
+        "lft": 90,
+        "tree_id": 1,
         "name": "tribunus militum"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 16
 },
 {
-    "pk": 17, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 47, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:36.658Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:36.669Z", 
-        "lft": 46, 
-        "tree_id": 2, 
+        "rght": 43,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:36.658Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:36.669Z",
+        "lft": 42,
+        "tree_id": 1,
         "name": "legatus"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 17
 },
 {
-    "pk": 18, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 13, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:36.788Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:36.796Z", 
-        "lft": 12, 
-        "tree_id": 2, 
+        "rght": 11,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:36.788Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:36.796Z",
+        "lft": 10,
+        "tree_id": 1,
         "name": "augur"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 18
 },
 {
-    "pk": 19, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 9, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:37.184Z", 
-        "level": 1, 
-        "modified": "2014-09-02T14:31:29.775Z", 
-        "lft": 4, 
-        "tree_id": 2, 
+        "rght": 9,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:37.184Z",
+        "level": 1,
+        "modified": "2014-09-02T14:31:29.775Z",
+        "lft": 4,
+        "tree_id": 1,
         "name": "aedilis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 19
 },
 {
-    "pk": 20, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 23, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:39.290Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:39.297Z", 
-        "lft": 22, 
-        "tree_id": 2, 
+        "rght": 21,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:39.290Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:39.297Z",
+        "lft": 20,
+        "tree_id": 1,
         "name": "curator viis sternendis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 20
 },
 {
-    "pk": 21, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 109, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:41.249Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:41.254Z", 
-        "lft": 108, 
-        "tree_id": 2, 
+        "rght": 95,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:41.249Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:41.254Z",
+        "lft": 94,
+        "tree_id": 1,
         "name": "triumvir agris dividendis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 21
 },
 {
-    "pk": 22, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 95, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:41.318Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:41.327Z", 
-        "lft": 94, 
-        "tree_id": 2, 
+        "rght": 83,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:41.318Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:41.327Z",
+        "lft": 82,
+        "tree_id": 1,
         "name": "quinquevir agris dandis assignandis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 22
 },
 {
-    "pk": 23, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 67, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:48.257Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:48.265Z", 
-        "lft": 66, 
-        "tree_id": 2, 
+        "rght": 60,
+        "description": "",
+        "parent": 26,
+        "created": "2014-09-02T10:49:48.257Z",
+        "level": 2,
+        "modified": "2014-09-02T10:49:48.265Z",
+        "lft": 59,
+        "tree_id": 1,
         "name": "praefectus classis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 23
 },
 {
-    "pk": 24, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 25, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:48.579Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:48.586Z", 
-        "lft": 24, 
-        "tree_id": 2, 
+        "rght": 23,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:48.579Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:48.586Z",
+        "lft": 22,
+        "tree_id": 1,
         "name": "decemvir sacris faciundis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 24
 },
 {
-    "pk": 25, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 21, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:48.704Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:48.711Z", 
-        "lft": 20, 
-        "tree_id": 2, 
+        "rght": 16,
+        "description": "",
+        "parent": 7,
+        "created": "2014-09-02T10:49:48.704Z",
+        "level": 2,
+        "modified": "2014-09-02T10:49:48.711Z",
+        "lft": 15,
+        "tree_id": 1,
         "name": "consul suffectus"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 25
 },
 {
-    "pk": 26, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 63, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:50.247Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:50.254Z", 
-        "lft": 62, 
-        "tree_id": 2, 
+        "rght": 65,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:50.247Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:50.254Z",
+        "lft": 56,
+        "tree_id": 1,
         "name": "praefectus"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 26
 },
 {
-    "pk": 27, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 30, 
-        "description": "", 
-        "parent": 47, 
-        "created": "2014-09-02T10:49:50.391Z", 
-        "level": 2, 
-        "modified": "2014-09-02T14:34:33.419Z", 
-        "lft": 29, 
-        "tree_id": 2, 
+        "rght": 28,
+        "description": "",
+        "parent": 47,
+        "created": "2014-09-02T10:49:50.391Z",
+        "level": 2,
+        "modified": "2014-09-02T14:34:33.419Z",
+        "lft": 27,
+        "tree_id": 1,
         "name": "flamen dialis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 27
 },
 {
-    "pk": 28, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 11, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:50.673Z", 
-        "level": 1, 
-        "modified": "2014-09-02T14:31:23.854Z", 
-        "lft": 10, 
-        "tree_id": 2, 
-        "name": "aedilis or iudex quaestionis"
-    }
-},
-{
-    "pk": 29, 
-    "model": "promrep.office", 
-    "fields": {
-        "rght": 8, 
-        "description": "", 
-        "parent": 19, 
-        "created": "2014-09-02T10:49:52.902Z", 
-        "level": 2, 
-        "modified": "2014-09-02T14:31:18.277Z", 
-        "lft": 7, 
-        "tree_id": 2, 
+        "rght": 8,
+        "description": "",
+        "parent": 19,
+        "created": "2014-09-02T10:49:52.902Z",
+        "level": 2,
+        "modified": "2014-09-02T14:31:18.277Z",
+        "lft": 7,
+        "tree_id": 1,
         "name": "aedilis plebis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 29
 },
 {
-    "pk": 30, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 27, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:53.862Z", 
-        "level": 1, 
-        "modified": "2014-09-02T16:37:13.106Z", 
-        "lft": 26, 
-        "tree_id": 2, 
+        "rght": 25,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:53.862Z",
+        "level": 1,
+        "modified": "2014-09-02T16:37:13.106Z",
+        "lft": 24,
+        "tree_id": 1,
         "name": "dictator"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 30
 },
 {
-    "pk": 31, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 55, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:53.881Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:53.889Z", 
-        "lft": 54, 
-        "tree_id": 2, 
+        "rght": 49,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:53.881Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:53.889Z",
+        "lft": 48,
+        "tree_id": 1,
         "name": "magister equitum"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 31
 },
 {
-    "pk": 32, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 43, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:54.569Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:54.577Z", 
-        "lft": 42, 
-        "tree_id": 2, 
-        "name": "Interrex"
-    }
-},
-{
-    "pk": 33, 
-    "model": "promrep.office", 
-    "fields": {
-        "rght": 111, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:55.798Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:55.804Z", 
-        "lft": 110, 
-        "tree_id": 2, 
+        "rght": 97,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:55.798Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:55.804Z",
+        "lft": 96,
+        "tree_id": 1,
         "name": "triumvir capitalis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 33
 },
 {
-    "pk": 34, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 51, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:56.509Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:56.516Z", 
-        "lft": 50, 
-        "tree_id": 2, 
-        "name": "Ludex Quaestionis"
-    }
-},
-{
-    "pk": 35, 
-    "model": "promrep.office", 
-    "fields": {
-        "rght": 113, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:49:59.444Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:49:59.449Z", 
-        "lft": 112, 
-        "tree_id": 2, 
+        "rght": 99,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:49:59.444Z",
+        "level": 1,
+        "modified": "2014-09-02T10:49:59.449Z",
+        "lft": 98,
+        "tree_id": 1,
         "name": "triumvir coloniis deducendis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 35
 },
 {
-    "pk": 36, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 93, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:04.141Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:04.149Z", 
-        "lft": 92, 
-        "tree_id": 2, 
+        "rght": 81,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:50:04.141Z",
+        "level": 1,
+        "modified": "2014-09-02T10:50:04.149Z",
+        "lft": 80,
+        "tree_id": 1,
         "name": "quindecemvir sacris faciundis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 36
 },
 {
-    "pk": 37, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 99, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:04.237Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:04.244Z", 
-        "lft": 98, 
-        "tree_id": 2, 
+        "rght": 87,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:50:04.237Z",
+        "level": 1,
+        "modified": "2014-09-02T10:50:04.244Z",
+        "lft": 86,
+        "tree_id": 1,
         "name": "salius"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 37
 },
 {
-    "pk": 38, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 117, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:09.572Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:09.577Z", 
-        "lft": 116, 
-        "tree_id": 2, 
+        "rght": 5,
+        "description": "",
+        "parent": 1,
+        "created": "2014-09-02T10:50:09.572Z",
+        "level": 1,
+        "modified": "2015-02-18T18:57:54.216Z",
+        "lft": 4,
+        "tree_id": 2,
         "name": "vestalis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 38
 },
 {
-    "pk": 39, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 75, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:09.683Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:09.691Z", 
-        "lft": 74, 
-        "tree_id": 2, 
+        "rght": 69,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:50:09.683Z",
+        "level": 1,
+        "modified": "2014-09-02T10:50:09.691Z",
+        "lft": 68,
+        "tree_id": 1,
         "name": "praetorius"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 39
 },
 {
-    "pk": 40, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 3, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:09.879Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:09.888Z", 
-        "lft": 2, 
-        "tree_id": 2, 
+        "rght": 3,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:50:09.879Z",
+        "level": 1,
+        "modified": "2014-09-02T10:50:09.888Z",
+        "lft": 2,
+        "tree_id": 1,
         "name": "aedilicius"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 40
 },
 {
-    "pk": 41, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 91, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:09.975Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:09.983Z", 
-        "lft": 90, 
-        "tree_id": 2, 
+        "rght": 79,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:50:09.975Z",
+        "level": 1,
+        "modified": "2014-09-02T10:50:09.983Z",
+        "lft": 78,
+        "tree_id": 1,
         "name": "quaestorius"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 41
 },
 {
-    "pk": 42, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 34, 
-        "description": "", 
-        "parent": 47, 
-        "created": "2014-09-02T10:50:15.996Z", 
-        "level": 2, 
-        "modified": "2014-09-02T14:34:41.086Z", 
-        "lft": 33, 
-        "tree_id": 2, 
+        "rght": 32,
+        "description": "",
+        "parent": 47,
+        "created": "2014-09-02T10:50:15.996Z",
+        "level": 2,
+        "modified": "2014-09-02T14:34:41.086Z",
+        "lft": 31,
+        "tree_id": 1,
         "name": "flamen Martialis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 42
 },
 {
-    "pk": 43, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 38, 
-        "description": "", 
-        "parent": 47, 
-        "created": "2014-09-02T10:50:16.011Z", 
-        "level": 2, 
-        "modified": "2014-09-02T14:34:51.521Z", 
-        "lft": 37, 
-        "tree_id": 2, 
+        "rght": 36,
+        "description": "",
+        "parent": 47,
+        "created": "2014-09-02T10:50:16.011Z",
+        "level": 2,
+        "modified": "2014-09-02T14:34:51.521Z",
+        "lft": 35,
+        "tree_id": 1,
         "name": "flaminica Martialis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 43
 },
 {
-    "pk": 44, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 19, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:21.676Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:21.685Z", 
-        "lft": 18, 
-        "tree_id": 2, 
+        "rght": 18,
+        "description": "",
+        "parent": 7,
+        "created": "2014-09-02T10:50:21.676Z",
+        "level": 2,
+        "modified": "2014-09-02T10:50:21.685Z",
+        "lft": 17,
+        "tree_id": 1,
         "name": "consul designatus"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 44
 },
 {
-    "pk": 45, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 87, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:27.425Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:27.434Z", 
-        "lft": 86, 
-        "tree_id": 2, 
-        "name": "Quaesitor"
-    }
-},
-{
-    "pk": 46, 
-    "model": "promrep.office", 
-    "fields": {
-        "rght": 97, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:31.770Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:31.779Z", 
-        "lft": 96, 
-        "tree_id": 2, 
+        "rght": 85,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:50:31.770Z",
+        "level": 1,
+        "modified": "2014-09-02T10:50:31.779Z",
+        "lft": 84,
+        "tree_id": 1,
         "name": "rex sacrorum"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 46
 },
 {
-    "pk": 47, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 39, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:35.837Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:35.846Z", 
-        "lft": 28, 
-        "tree_id": 2, 
+        "rght": 37,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:50:35.837Z",
+        "level": 1,
+        "modified": "2014-09-02T10:50:35.846Z",
+        "lft": 26,
+        "tree_id": 1,
         "name": "flamen"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 47
 },
 {
-    "pk": 48, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 61, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:38.377Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:38.385Z", 
-        "lft": 60, 
-        "tree_id": 2, 
+        "rght": 55,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:50:38.377Z",
+        "level": 1,
+        "modified": "2014-09-02T10:50:38.385Z",
+        "lft": 54,
+        "tree_id": 1,
         "name": "pontifex minor"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 48
 },
 {
-    "pk": 49, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 101, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:40.689Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:40.696Z", 
-        "lft": 100, 
-        "tree_id": 2, 
+        "rght": 89,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:50:40.689Z",
+        "level": 1,
+        "modified": "2014-09-02T10:50:40.696Z",
+        "lft": 88,
+        "tree_id": 1,
         "name": "septemvir epulonum"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 49
 },
 {
-    "pk": 50, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 53, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:40.740Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:40.751Z", 
-        "lft": 52, 
-        "tree_id": 2, 
+        "rght": 47,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:50:40.740Z",
+        "level": 1,
+        "modified": "2014-09-02T10:50:40.751Z",
+        "lft": 46,
+        "tree_id": 1,
         "name": "lupercus"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 50
 },
 {
-    "pk": 51, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 69, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:43.447Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:43.455Z", 
-        "lft": 68, 
-        "tree_id": 2, 
+        "rght": 62,
+        "description": "",
+        "parent": 26,
+        "created": "2014-09-02T10:50:43.447Z",
+        "level": 2,
+        "modified": "2014-09-02T10:50:43.455Z",
+        "lft": 61,
+        "tree_id": 1,
         "name": "praefectus equitum"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 51
 },
 {
-    "pk": 52, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 79, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:44.265Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:44.273Z", 
-        "lft": 78, 
-        "tree_id": 2, 
-        "name": "praetor or quaesitor"
-    }
-},
-{
-    "pk": 53, 
-    "model": "promrep.office", 
-    "fields": {
-        "rght": 41, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:46.769Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:46.778Z", 
-        "lft": 40, 
-        "tree_id": 2, 
+        "rght": 39,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:50:46.769Z",
+        "level": 1,
+        "modified": "2014-09-02T10:50:46.778Z",
+        "lft": 38,
+        "tree_id": 1,
         "name": "interrex"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 53
 },
 {
-    "pk": 54, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 85, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:49.575Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:49.588Z", 
-        "lft": 84, 
-        "tree_id": 2, 
+        "rght": 75,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:50:49.575Z",
+        "level": 1,
+        "modified": "2014-09-02T10:50:49.588Z",
+        "lft": 74,
+        "tree_id": 1,
         "name": "quaesitor"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 54
 },
 {
-    "pk": 55, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 77, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:50:54.342Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:50:54.352Z", 
-        "lft": 76, 
-        "tree_id": 2, 
-        "name": "praetor or iudex"
-    }
-},
-{
-    "pk": 56, 
-    "model": "promrep.office", 
-    "fields": {
-        "rght": 71, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:51:11.361Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:51:11.369Z", 
-        "lft": 70, 
-        "tree_id": 2, 
+        "rght": 58,
+        "description": "",
+        "parent": 26,
+        "created": "2014-09-02T10:51:11.361Z",
+        "level": 2,
+        "modified": "2014-09-02T10:51:11.369Z",
+        "lft": 57,
+        "tree_id": 1,
         "name": "praefectus urbis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 56
 },
 {
-    "pk": 57, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 36, 
-        "description": "", 
-        "parent": 47, 
-        "created": "2014-09-02T10:51:15.081Z", 
-        "level": 2, 
-        "modified": "2014-09-02T14:34:45.927Z", 
-        "lft": 35, 
-        "tree_id": 2, 
+        "rght": 34,
+        "description": "",
+        "parent": 47,
+        "created": "2014-09-02T10:51:15.081Z",
+        "level": 2,
+        "modified": "2014-09-02T14:34:45.927Z",
+        "lft": 33,
+        "tree_id": 1,
         "name": "flamen Quirinalis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 57
 },
 {
-    "pk": 58, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 103, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:51:18.171Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:51:18.178Z", 
-        "lft": 102, 
-        "tree_id": 2, 
-        "name": "Special Commission from Caesar to collect a library"
-    }
-},
-{
-    "pk": 59, 
-    "model": "promrep.office", 
-    "fields": {
-        "rght": 57, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:51:18.750Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:51:18.761Z", 
-        "lft": 56, 
-        "tree_id": 2, 
+        "rght": 51,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:51:18.750Z",
+        "level": 1,
+        "modified": "2014-09-02T10:51:18.761Z",
+        "lft": 50,
+        "tree_id": 1,
         "name": "magister equitum designatus"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 59
 },
 {
-    "pk": 60, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 65, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:51:22.772Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:51:22.780Z", 
-        "lft": 64, 
-        "tree_id": 2, 
+        "rght": 64,
+        "description": "",
+        "parent": 26,
+        "created": "2014-09-02T10:51:22.772Z",
+        "level": 2,
+        "modified": "2014-09-02T10:51:22.780Z",
+        "lft": 63,
+        "tree_id": 1,
         "name": "praefectus agris dandis assignandis"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 60
 },
 {
-    "pk": 61, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 32, 
-        "description": "", 
-        "parent": 47, 
-        "created": "2014-09-02T10:51:23.299Z", 
-        "level": 2, 
-        "modified": "2014-09-02T14:34:36.683Z", 
-        "lft": 31, 
-        "tree_id": 2, 
+        "rght": 30,
+        "description": "",
+        "parent": 47,
+        "created": "2014-09-02T10:51:23.299Z",
+        "level": 2,
+        "modified": "2014-09-02T14:34:36.683Z",
+        "lft": 29,
+        "tree_id": 1,
         "name": "flamen divi Iulii"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 61
 },
 {
-    "pk": 62, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 115, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:51:23.710Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:51:23.717Z", 
-        "lft": 114, 
-        "tree_id": 2, 
+        "rght": 101,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:51:23.710Z",
+        "level": 1,
+        "modified": "2014-09-02T10:51:23.717Z",
+        "lft": 100,
+        "tree_id": 1,
         "name": "triumvir rei publicae constituendae"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 62
 },
 {
-    "pk": 63, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 81, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:51:33.587Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:51:33.595Z", 
-        "lft": 80, 
-        "tree_id": 2, 
+        "rght": 71,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:51:33.587Z",
+        "level": 1,
+        "modified": "2014-09-02T10:51:33.595Z",
+        "lft": 70,
+        "tree_id": 1,
         "name": "praetor suffectus"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 63
 },
 {
-    "pk": 64, 
-    "model": "promrep.office", 
     "fields": {
-        "rght": 119, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:51:37.166Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:51:37.171Z", 
-        "lft": 118, 
-        "tree_id": 2, 
-        "name": "Vestal Virgin"
-    }
-},
-{
-    "pk": 65, 
-    "model": "promrep.office", 
-    "fields": {
-        "rght": 49, 
-        "description": "", 
-        "parent": 4, 
-        "created": "2014-09-02T10:51:40.471Z", 
-        "level": 1, 
-        "modified": "2014-09-02T10:51:40.479Z", 
-        "lft": 48, 
-        "tree_id": 2, 
+        "rght": 45,
+        "description": "",
+        "parent": 4,
+        "created": "2014-09-02T10:51:40.471Z",
+        "level": 1,
+        "modified": "2014-09-02T10:51:40.479Z",
+        "lft": 44,
+        "tree_id": 1,
         "name": "legatus or praefectus"
-    }
+    },
+    "model": "promrep.office",
+    "pk": 65
 }
 ]

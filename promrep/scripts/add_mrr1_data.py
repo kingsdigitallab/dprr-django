@@ -19,85 +19,64 @@ import parsing_aux as aux
 import logging
 
 OFFICE_NAMES_DIC = {
-    'Dictator': 'dictator',
-    'Sacerdotes': 'sacerdos',
-    'Vestales': 'vestalis',
-    'Augures': 'augur',
-    'Aedile or Iudex Quaestionis': 'aedilis or iudex quaestionis',
-    'Aediles': 'aedilis',
-    'Aediles, Curule': 'aedilis curulis',
-    'Aediles of the Plebs': 'aedilis plebis',
-    'Aedilicii?': 'aedilicius',
-    'Augurs': 'augur',
-    'Censors': 'censor',
-    'Consules Designati': 'consul designatus',
-    'Consules Suffecti': 'consul suffectus',
-    'Consuls': 'consul',
-    'Consul Suffectus': 'consul suffectus',
-    'Decemviri Sacris Faciundis': 'decemvir sacris faciundis',
-    'Flamen Dialis': 'flamen dialis',
-    'Flamen Divi Iulii': 'flamen divi Iulii',
-    'Flamen Martialis': 'flamen Martialis',
-    'Flamen Quirinalis': 'flamen Quirinalis',
-    'Flamens': 'flamen',
-    'Flamines': 'flamen',
-    'Flaminica Martialis': 'flaminica Martialis',
-    'Interreges': 'interrex',
-    'Iudex Quaestionis': 'iudex quaestionis',
-    'Iudices Quaestionum': 'iudex quaestionis',
-    'Legates, Ambassadors': 'legatus',
-    'Legates, Ambassadors (or Lieutenants?)': 'legatus',
-    'Legates, Envoys': 'legatus',
-    'Legates, Lieutenants': 'legatus',
-    'Legates or Prefects': 'legatus or praefectus',
-    'Luperci': 'lupercus',
-    'Master of Horse': 'magister equitum',
-    'Masters of Horse Designate': 'magister equitum designatus',
-    'Pontifices': 'pontifex',
-    'Pontifices Minores': 'pontifex minor',
-    'Praefectus Urbi': 'praefectus urbis',
-    'Praetores Suffecti': 'praetor suffectus',
-    'Praetorii': 'praetorius',
-    'Praetor or Iudex': 'praetor or iudex',
-    'Praetor or Quaesitor': 'praetor or quaesitor',
-    'Praetors': 'praetor',
-    'Praetor Suffectus': 'praetor suffectus',
-    'Prefect of Cavalry': 'praefectus equitum',
-    'Prefects': 'praefectus',
-    'Prefects of the City': 'praefectus urbis',
-    'Prefects of the Fleet': 'praefectus classis',
-    'Prefects to assign land to veterans':
-    'praefectus agris dandis assignandis',
-    'Promagistrates': 'promagistrates',
-    'Quaesitores': 'quaesitor',
-    'Quaestorii': 'quaestorius',
-    'Quaestors': 'quaestor',
-    'Quindecimviri Sacris Faciundis': 'quindecemvir sacris faciundis',
-    'Quindecimviri Sacris Fadundis': 'quindecemvir sacris faciundis',
-    'Quindeciniviri Sacris Faciundis': 'quindecemvir sacris faciundis',
-    'Quindecirnviri Sacris Faciundis': 'quindecemvir sacris faciundis',
-    'Quinqueviri agris dandis assignandis':
-    'quinquevir agris dandis assignandis',
-    'Rex Sacrorum': 'rex sacrorum',
-    'Salius': 'salius',
-    'Septemviri Epulones': 'septemvir epulonum',
-    'Special Commission': 'Special Commission from Caesar to collect a library', # in the year 45
-    'Special Commissions Decemviri agris dandis assignandis': 'decemvir agris dandis assignandis', # in the year 91
-    'Special Commissions Quinqueviri agris dandis assignandis': 'quinquevir agris dandis assignandis', # in the year 91
-    'Special Commissions Duumviri Perduellionis': 'duumvir perduellionis', # in the year 63
-    'Special Commissions' : 'triumvir agris dividendis', # in the year 41
-    'Special Commissions 1.': 'duodecemvir agris dandis assignandis', # in the year 59
-    'Special Commissions 1.': 'duumvir actis Caesaris confirmandis', # in the year 44
-    'Special Commissions 2.': 'quinquevir agris dandis assignandis iudicandis',  # in the year 59
-    'Special Commissions 2.': 'septemvir agris dividendis',  # in the year 44
-    'Special Commissions Curator viis sternendis': 'curator viis sternendis', # in the year 93
-    'Special Commissions Triumviri coloniis deducendis': 'triumvir coloniis deducendis', # in the year 80
-    'Tribunes of the Plebs': 'tribunus plebis',
-    'Tribunes of the Soldiers': 'tribunus militum',
-    'Triumvir Capitalis': 'triumvir capitalis',
-    'Triumviri Capitales?': 'triumvir capitalis',
-    'Triumviri Rei Publicae Constituendae': 'triumvir rei publicae constituendae',
-    'Vestal Virgins': 'vestalis'
+    'aediles': 'aedilis',
+    'aediles of the plebs': 'aedilis plebis',
+    'aediles, curule': 'aedilis curulis',
+    'aedilicii': 'aedilicius',
+    'augures': 'augur',
+    'augurs': 'augur',
+    'censors': 'censor',
+    'consul suffectus': 'consul suffectus',
+    'consules designati': 'consul designatus',
+    'consules suffecti': 'consul suffectus',
+    'consuls': 'consul',
+    'decemviri sacris faciundis': 'decemvir sacris faciundis',
+    'flamen dialis': 'flamen dialis',
+    'flamen divi iulii': 'flamen divi iulii',
+    'flamen martialis': 'flamen martialis',
+    'flamen quirinalis': 'flamen quirinalis',
+    'flamens': 'flamen',
+    'flamines': 'flamen',
+    'flaminica martialis': 'flaminica martialis',
+    'interreges': 'interrex',
+    'iudices quaestionum': 'iudex quaestionis',
+    'legates or prefects': 'legatus or praefectus',
+    'legates, ambassadors': 'legatus',
+    'legates, envoys': 'legatus',
+    'legates, lieutenants': 'legatus',
+    'luperci': 'lupercus',
+    'master of horse': 'magister equitum',
+    'masters of horse designate': 'magister equitum designatus',
+    'pontifices': 'pontifex',
+    'pontifices minores': 'pontifex minor',
+    'praefectus urbi': 'praefectus urbis',
+    'praetor suffectus': 'praetor suffectus',
+    'praetores suffecti': 'praetor suffectus',
+    'praetorii': 'praetorius',
+    'praetors': 'praetor',
+    'prefect of cavalry': 'praefectus equitum',
+    'prefects': 'praefectus',
+    'prefects of the city': 'praefectus urbis',
+    'prefects of the fleet': 'praefectus classis',
+    'prefects to assign land to veterans': 'praefectus agris dandis assignandis',
+    'quaesitores': 'quaesitor',
+    'quaestorii': 'quaestorius',
+    'quaestors': 'quaestor',
+    'quindecimviri sacris faciundis': 'quindecemvir sacris faciundis',
+    'quindecimviri sacris fadundis': 'quindecemvir sacris faciundis',
+    'quindeciniviri sacris faciundis': 'quindecemvir sacris faciundis',
+    'quindecirnviri sacris faciundis': 'quindecemvir sacris faciundis',
+    'quinqueviri agris dandis assignandis': 'quinquevir agris dandis assignandis',
+    'rex sacrorum': 'rex sacrorum',
+    'sacerdotes': 'sacerdos',
+    'septemviri epulones': 'septemvir epulonum',
+    'tribunes of the plebs': 'tribunus plebis',
+    'tribunes of the soldiers': 'tribunus militum',
+    'triumvir capitalis': 'triumvir capitalis',
+    'triumviri capitales?': 'triumvir capitalis',
+    'triumviri rei publicae constituendae': 'triumvir rei publicae constituendae',
+    'vestal virgins': 'vestalis',
+    'vestales': 'vestalis'
 }
 
 # TODO: configure in settings
@@ -115,6 +94,9 @@ logger.addHandler(fh)
 
 def get_office_obj(office_name):
     """given a string, returns an office object"""
+
+    # convert to lowercase
+    office_name = office_name.lower()
 
     # tries to get the normalized office name from the
     try:
@@ -155,14 +137,14 @@ def processXML(ifile):
 
     # process year
 
-    # for year in years[0:20]:
+    # for year in years[0:1]:
     for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
 
         print
         print
-        print ">>>>>FNOTES", year_str, years.index(year)
+        print ">>>>> Year", year_str, years.index(year), '(',len(year.findAll('footnote')), 'footnotes)'
         print
 
 
@@ -191,7 +173,7 @@ def processXML(ifile):
             # removes the spaces from the office name
             office_name = office_tag['name'].strip()
 
-            print ">>", office_name
+            print ">>> Office:", office_name
 
             assertion_certainty = True
             if "?" in office_name:
@@ -259,6 +241,8 @@ def processXML(ifile):
 
             # Assertion: Office + Year + Person
             for p in office_tag.find_all('person'):
+                print
+                print "> Person:", p['name']
                 name_el = p['name']
 
                 # TODO: wrap in transaction
@@ -287,10 +271,6 @@ def processXML(ifile):
                                                             nomen = person_info['nomen'],
                                                             real_number = person_info['real_number'],
                                                             )
-
-                    if 'tribe' in person_info:
-                        print "TRIBO", person_info['tribe']
-
 
                     # update the person's information
                     # updates all other relevant fields....
@@ -321,14 +301,11 @@ def processXML(ifile):
                             else:
                                 print ap_date_info
 
-
                         date_start, created = AssertionPersonDate.objects.get_or_create(
                             year = -int(year_str),
                             year_uncertain = yuncertain
                         )
 
-
-                        # TODO: special case for Successor?
                         # TODO: stop creating repeated assertions
                         assertion_person, created = AssertionPerson.objects.get_or_create(
                             role=RoleType.objects.get(name='Holder'),
@@ -336,6 +313,12 @@ def processXML(ifile):
                             person=person,
                             original_text = name_str,
                         )
+
+                        # only adds this the first time the assertion is created
+                        if created:
+                            if p['office-xref'] != "":
+                                assertion_person.office_xref=p['office-xref']
+                                assertion_person.save()
 
                         assertion_person.dates.add(date_start)
 
@@ -345,7 +328,7 @@ def processXML(ifile):
 
                             if fnote_id in fnote_dict:
                                 pnote = fnote_dict[fnote_id]
-                                ap_fnote = AssertionPersonNote(note_type=1, text = ofnote.get_text())
+                                ap_fnote = AssertionPersonNote(note_type=1, text = pnote.get_text())
                                 ap_fnote.save()
                                 assertion_person.notes.add(ap_fnote)
                             else:
@@ -354,11 +337,10 @@ def processXML(ifile):
                         # adds the assertion_person to the refs queue
                         person_ref_queue.append(assertion_person)
 
-                        # if the next element is an AssertionPerson
-                        #  we're adding it to all the assertions in the assertion queue
+                        # if the next element is a reference
+                        #   we're adding it to all the assertions in the assertion queue
                         if p.findNextSibling().name == "references":
                             references = p.findNextSibling()
-
                             footnotes = []
                             notes_queue = []
 
@@ -378,8 +360,6 @@ def processXML(ifile):
 
                             notes_queue.append(note)
 
-                            print "FOOTNOTES", footnotes
-
                             for fnote_id in footnotes:
 
                                 if fnote_id in fnote_dict:
@@ -393,15 +373,12 @@ def processXML(ifile):
                                 else:
                                     print "ERROR adding person footnote with id", fnote_id
 
-
                             for ap in person_ref_queue:
                                 for n in notes_queue:
                                     ap.notes.add(n)
-                                    print n.type, n.text
 
                             # resets the ref queue
                             person_ref_queue = []
-
 
                         try:
                             # tests if person has a bookmark/noteref

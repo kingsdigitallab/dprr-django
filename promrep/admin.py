@@ -11,7 +11,7 @@ from django.forms import TextInput, Textarea
 from models import Person, Office, Praenomen, AssertionPerson, \
     Assertion, AssertionType, RoleType, DateType, \
     SecondarySource, Gens, AssertionNote, AssertionPersonNote, \
-    Tribe, AssertionDate, PersonDate, AssertionPersonDate
+    Tribe, AssertionDate, PersonDate, AssertionPersonDate, AssertionNoteThrough
 
 admin.site.register(AssertionType)
 admin.site.register(DateType)
@@ -49,20 +49,23 @@ class AssertionDateInline(admin.TabularInline):
     show_change_link = True
 
 
-class AssertionNoteInline(admin.TabularInline):
-    classes = ('grp-collapse grp-open',)
+class AssertionNoteInline(admin.StackedInline):
+    model = AssertionNoteThrough
+
     verbose_name = 'Assertion Note'
     verbose_name_plural = 'Assertion Notes'
 
-    model = Assertion.notes.through
+
+    readonly_fields = ('_note_type', )
     raw_id_fields = ('assertionnote', )
 
     related_lookup_fields = {
         'fk': ['assertionnote'],
     }
 
+    def _note_type(self, obj):
+        return obj.assertionnote.get_note_type_display()
 
-    # fields = ('extra_info', )
     # readonly_fields = ('id', )
 
     extra = 0
@@ -191,16 +194,15 @@ class AssertionAdmin(admin.ModelAdmin):
         'secondary_source',
     )
 
-    list_display_links = ('id', 'certainty', 'get_dates', 'display_text', 'assertion_type', 'office', 'secondary_source')
     readonly_fields = ('id', )
     raw_id_fields = ('office', 'secondary_source', 'assertion_type', )
+    list_display_links = ('id', 'certainty', 'get_dates', 'display_text', 'assertion_type', 'office', 'secondary_source')
 
     filter_horizontal = ('dates', )
 
     autocomplete_lookup_fields = {
         'fk': ['office', 'secondary_source', 'assertion_type', ],
     }
-
 
     fieldsets = [
                     ('Database Info', {'fields': ['id']}),

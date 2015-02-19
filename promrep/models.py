@@ -13,7 +13,6 @@ from django.core.urlresolvers import reverse
 
 from author.decorators import with_author
 
-
 class IntegerRangeField(models.IntegerField):
     def __init__(self,
                  verbose_name=None,
@@ -86,7 +85,6 @@ class Date(models.Model):
 
         if self.circa == True:
             date_str = "ca. " + date_str
-
 
         return date_str
 
@@ -454,3 +452,13 @@ class AssertionPerson(TimeStampedModel):
 
     def __unicode__(self):
         return str(self.person.__unicode__()) + ": " + str(self.assertion.__unicode__())
+
+
+class AssertionNoteThrough(Assertion.notes.through):
+    class Meta:
+        proxy = True
+
+    def __unicode__(self):
+        snippet = (self.assertionnote.text[:120] + ' ...') if len(self.assertionnote.text) > 120 else self.assertionnote.text
+
+        return '- "%s"' %(snippet.strip())

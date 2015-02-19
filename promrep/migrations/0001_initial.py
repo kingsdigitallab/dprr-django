@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
-                ('note_type', models.CharField(default=0, max_length=1, choices=[(0, b'Reference (Body of text)'), (1, b'Footnote (Broughton only)')])),
+                ('note_type', models.IntegerField(default=0, choices=[(0, b'Reference'), (1, b'Footnote')])),
                 ('extra_info', models.CharField(max_length=128, blank=True)),
                 ('text', models.CharField(max_length=2048, blank=True)),
                 ('created_by', models.ForeignKey(related_name='assertionnote_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
@@ -105,7 +105,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
-                ('note_type', models.CharField(default=0, max_length=1, choices=[(0, b'Reference (Body of text)'), (1, b'Footnote (Broughton only)')])),
+                ('note_type', models.IntegerField(default=0, choices=[(0, b'Reference'), (1, b'Footnote')])),
                 ('extra_info', models.CharField(max_length=128, blank=True)),
                 ('text', models.CharField(max_length=2048, blank=True)),
                 ('created_by', models.ForeignKey(related_name='assertionpersonnote_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
@@ -415,13 +415,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='assertion',
             name='dates',
-            field=models.ManyToManyField(to='promrep.AssertionDate'),
+            field=models.ManyToManyField(related_name='assertions', to='promrep.AssertionDate'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='assertion',
             name='notes',
-            field=models.ManyToManyField(to='promrep.AssertionNote'),
+            field=models.ManyToManyField(related_name='assertions', to='promrep.AssertionNote'),
             preserve_default=True,
         ),
         migrations.AddField(

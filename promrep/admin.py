@@ -16,11 +16,10 @@ from models import Person, Office, Praenomen, AssertionPerson, \
 admin.site.register(AssertionType)
 admin.site.register(DateType)
 admin.site.register(RoleType)
-admin.site.register(AssertionNote)
 admin.site.register(AssertionPersonNote)
 admin.site.register(AssertionPerson)
 
-# these two classes are separated to allow better field configuration
+
 class AssertionInline(admin.TabularInline):
     verbose_name = 'Assertion'
     verbose_name_plural = 'Assertions'
@@ -37,11 +36,12 @@ class AssertionInline(admin.TabularInline):
     # }
 
 class AssertionDateInline(admin.TabularInline):
+    classes = ('grp-collapse grp-open',)
+
     verbose_name = 'Assertion Date'
-    verbose_name = 'Assertion Dates'
+    verbose_name_plural = 'Assertion Dates'
 
     model = Assertion.dates.through
-    exclude = ('assertions',)
 
     readonly_fields = ('id', )
     extra = 0
@@ -50,20 +50,38 @@ class AssertionDateInline(admin.TabularInline):
 
 
 class AssertionNoteInline(admin.TabularInline):
-    verbose_name = 'Note'
-    verbose_name = 'Notes'
+    classes = ('grp-collapse grp-open',)
+    verbose_name = 'Assertion Note'
+    verbose_name_plural = 'Assertion Notes'
 
     model = Assertion.notes.through
+    raw_id_fields = ('assertionnote', )
 
-    readonly_fields = ('id', )
+    related_lookup_fields = {
+        'fk': ['assertionnote'],
+    }
+
+
+    # fields = ('extra_info', )
+    # readonly_fields = ('id', )
+
     extra = 0
-
     show_change_link = True
 
 
+class AssertionNoteAdmin(admin.ModelAdmin):
+    list_display = ('id', 'note_type', 'text', 'extra_info', 'created', 'modified')
+
+    readonly_fields = ('id', 'created', 'modified')
+    fields = ('id', 'note_type', 'text', 'extra_info', )
+
+admin.site.register(AssertionNote, AssertionNoteAdmin)
+
+
 class PersonInline(admin.TabularInline):
-    verbose_name = 'Person'
-    verbose_name_plural = 'Persons'
+    classes = ('grp-collapse grp-open',)
+    verbose_name = 'Assertion Person'
+    verbose_name_plural = 'Assertion-Person Relationships'
 
     show_change_link = True
 
@@ -73,6 +91,11 @@ class PersonInline(admin.TabularInline):
     readonly_fields = ('id', )
 
     raw_id_fields = ('person', )
+
+    related_lookup_fields = {
+        'fk': ['person'],
+    }
+
     extra = 0
 
     # autocomplete_lookup_fields = {
@@ -113,7 +136,6 @@ class PersonAdmin(admin.ModelAdmin):
         ('RE',
             {'fields': [
                 ('real_number', 'real_number_old', ),
-                 'real_attribute',
             ]}
         ),
         ('Other', {'fields': [('patrician', 'patrician_certainty')]})]
@@ -153,6 +175,7 @@ class OfficeAdmin(DjangoMpttAdmin):
 
 admin.site.register(Office, OfficeAdmin)
 
+
 class AssertionAdmin(admin.ModelAdmin):
 
     search_fields = ['assertionperson__person__nomen', 'assertionperson__person__cognomen', ]
@@ -170,21 +193,31 @@ class AssertionAdmin(admin.ModelAdmin):
 
     list_display_links = ('id', 'certainty', 'get_dates', 'display_text', 'assertion_type', 'office', 'secondary_source')
     readonly_fields = ('id', )
-
     raw_id_fields = ('office', 'secondary_source', 'assertion_type', )
+
+    filter_horizontal = ('dates', )
 
     autocomplete_lookup_fields = {
         'fk': ['office', 'secondary_source', 'assertion_type', ],
     }
 
-    fieldsets = [('Database Info', {'fields': ['id']}),
-    ('Assertion', {'fields': [
-            ('secondary_source', 'certainty', ),
-            ('assertion_type', 'office',),
-            ]}),]
 
-    inlines = [AssertionDateInline, PersonInline, AssertionNoteInline]
-    exclude = ('persons', )
+    fieldsets = [
+                    ('Database Info', {'fields': ['id']}),
+                    ('Assertion',
+                        {
+                        'fields': [
+                                ('secondary_source', 'certainty', ),
+                                ('assertion_type', 'office',),
+                                ('dates', ),
+                                ],
+                        'classes': ('grp-collapse grp-open',),
+                        }
+                    ),
+            ]
+
+    inlines = [PersonInline, AssertionNoteInline, ]
+    exclude = ('persons',  )
 
 admin.site.register(Assertion, AssertionAdmin)
 

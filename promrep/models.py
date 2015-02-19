@@ -35,7 +35,6 @@ class IntegerRangeField(models.IntegerField):
 from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^promrep\.models\.IntegerRangeField"])
 
-
 class DateType(models.Model):
 
     name = models.CharField(max_length=32)
@@ -84,6 +83,10 @@ class Date(models.Model):
             uncertain = ""
 
         date_str = u'%s %s%s %s'.strip() % (self.date_type or '', abs(self.year), uncertain, bc_ad)
+
+        if self.circa == True:
+            date_str = "ca. " + date_str
+
 
         return date_str
 
@@ -165,26 +168,26 @@ class RoleType(TimeStampedModel):
     def __unicode__(self):
         return self.name
 
-REFERENCE_NOTE = 0
-FOOTNOTE = 1
-
-NOTE_TYPES = (
-    (REFERENCE_NOTE, 'Reference (Body of text)'),
-    (FOOTNOTE, 'Footnote (Broughton only)'),
-)
-
 class Note(TimeStampedModel):
-    note_type = models.CharField(max_length=1, choices=NOTE_TYPES, default=REFERENCE_NOTE)
+    REFERENCE_NOTE = 0
+    FOOTNOTE = 1
+
+    NOTE_TYPES = (
+        (REFERENCE_NOTE, 'Reference'),
+        (FOOTNOTE, 'Footnote'),
+    )
+
+    note_type = models.IntegerField(choices=NOTE_TYPES, default=REFERENCE_NOTE)
 
     # useful to store the bookmark number, for instance
-    extra_info = models.CharField(max_length=128, blank=True)
-    text = models.CharField(max_length=2048, blank=True)
+    extra_info = models.TextField(max_length=1024, blank=True)
+    text = models.TextField(max_length=2048, blank=True)
 
     class Meta:
         abstract = True
 
     def __unicode__(self):
-        return self.text
+        return self.text.strip()
 
     @staticmethod
     def autocomplete_search_fields():
@@ -398,8 +401,8 @@ class Assertion(TimeStampedModel):
     office = models.ForeignKey(Office, blank=True, null=True)
     relationship = models.ForeignKey(Relationship, blank=True, null=True)
 
-    notes = models.ManyToManyField(AssertionNote)
-    dates = models.ManyToManyField(AssertionDate)
+    notes = models.ManyToManyField(AssertionNote, related_name="assertions")
+    dates = models.ManyToManyField(AssertionDate, related_name="assertions")
 
     secondary_source = models.ForeignKey(SecondarySource)
     display_text = models.CharField(max_length=1024, blank=True)

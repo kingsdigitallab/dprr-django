@@ -421,18 +421,23 @@ class Assertion(TimeStampedModel):
 
     def get_dates(self):
         dates = ' '.join([unicode(date) for date in self.dates.all()])
-        return dates
+        return dates.strip()
 
     get_dates.short_description = 'Dates'
 
     def __unicode__(self):
-        name = self.assertion_type.name
+        name = ""
 
         if self.office != None:
-            name = name + " (" + self.office.name + ")"
+            name = self.office.name
         if self.relationship != None:
-            name = name + " (" + self.relationship.name + ")"
+            name = self.relationship.name
             # should add the other person's name as well
+
+        if len(self.dates.all()) > 0:
+            name = name + " " + self.get_dates() + " "
+
+        name = name + " (" + self.secondary_source.abbrev_name + ")"
 
         return name
 

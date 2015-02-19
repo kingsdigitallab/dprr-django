@@ -19,21 +19,25 @@ admin.site.register(RoleType)
 admin.site.register(AssertionPersonNote)
 admin.site.register(AssertionPerson)
 
-
-class AssertionInline(admin.TabularInline):
-    verbose_name = 'Assertion'
-    verbose_name_plural = 'Assertions'
-
+class AssertionInline(admin.StackedInline):
     model = Assertion.persons.through
 
-    fields = ('assertion', 'role',  'original_text', )
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-closed',)
 
-    raw_id_fields = ('assertion', )
+    verbose_name = 'Assertion'
+    verbose_name_plural = 'Person Assertions'
+
+    fields = (['assertion', 'role'],  ['original_text', 'office_xref'], 'dates', 'notes')
+    raw_id_fields = ('assertion', 'notes', )
+
     extra = 0
 
-    # autocomplete_lookup_fields = {
-    #     'm2m': ['assertion', ],
-    # }
+    filter_horizontal = ('dates', )
+
+    autocomplete_lookup_fields = {
+        'm2m': ['notes', ],
+    }
 
 class AssertionDateInline(admin.TabularInline):
     classes = ('grp-collapse grp-open',)
@@ -59,7 +63,7 @@ class AssertionNoteInline(admin.StackedInline):
     raw_id_fields = ('assertionnote', )
 
     related_lookup_fields = {
-        'fk': ['assertionnote'],
+        'm2m': ['assertionnote'],
     }
 
     def _note_type(self, obj):

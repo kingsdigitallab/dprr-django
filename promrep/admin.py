@@ -55,7 +55,6 @@ class AssertionNoteInline(admin.StackedInline):
     verbose_name = 'Assertion Note'
     verbose_name_plural = 'Assertion Notes'
 
-
     readonly_fields = ('_note_type', )
     raw_id_fields = ('assertionnote', )
 
@@ -163,7 +162,6 @@ class PersonAdmin(admin.ModelAdmin):
 
     inlines = (AssertionInline, )
 
-
 admin.site.register(Person, PersonAdmin)
 
 class OfficeAdmin(DjangoMpttAdmin):
@@ -190,13 +188,14 @@ class AssertionAdmin(admin.ModelAdmin):
         'office',
         'certainty',
         'get_dates',
-        'display_text',
         'secondary_source',
+        'modified',
+        'created',
     )
 
     readonly_fields = ('id', )
     raw_id_fields = ('office', 'secondary_source', 'assertion_type', )
-    list_display_links = ('id', 'certainty', 'get_dates', 'display_text', 'assertion_type', 'office', 'secondary_source')
+    list_display_links = ('id', 'certainty', 'get_dates', 'assertion_type', 'office', 'secondary_source')
 
     filter_horizontal = ('dates', )
 

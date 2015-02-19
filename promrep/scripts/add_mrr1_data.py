@@ -79,6 +79,7 @@ OFFICE_NAMES_DIC = {
     'vestales': 'vestalis'
 }
 
+
 # TODO: configure in settings
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -148,17 +149,8 @@ def processXML(ifile):
         print
 
 
-        # TODO: create a year note...
-
         # the footnotes can be added to a list
         # ... right at the "start" of the year
-
-        # TODO:
-        # ... we need to make sure all the refs agree with the footnotes
-        # per ref we should:
-        #  a) convert reference superscripts to lowercase/parentesis
-        #  b) double-check if we have any other superscript
-
         fnote_dict = {}
         for fnote in year.findAll('footnote'):
             fnote_dict[fnote['ref']] = fnote
@@ -220,10 +212,9 @@ def processXML(ifile):
 
             # add any existing notes to the assertion
             for onote in office_tag.find_all('office-note'):
-                # print onote.get_text()
-                a_note, created = AssertionNote.objects.get_or_create(text=onote.get_text())
-                # print a_note
-                assertion.notes.add(a_note)
+                if onote.has_attr('name'):
+                    a_note, created = AssertionNote.objects.get_or_create(text=onote['name'])
+                    assertion.notes.add(a_note)
 
             if office_tag.has_attr('footnote'):
                 fnote_id = office_tag['footnote'].lstrip('#')

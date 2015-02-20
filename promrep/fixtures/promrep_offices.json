@@ -699,7 +699,7 @@
         "modified": "2014-09-02T10:51:11.369Z",
         "lft": 57,
         "tree_id": 1,
-        "name": "praefectus urbis"
+        "name": "praefectus urbi"
     },
     "model": "promrep.office",
     "pk": 56

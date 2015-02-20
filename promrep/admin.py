@@ -16,8 +16,8 @@ from models import Person, Office, Praenomen, AssertionPerson, \
 admin.site.register(AssertionType)
 admin.site.register(DateType)
 admin.site.register(RoleType)
-admin.site.register(AssertionPersonNote)
 admin.site.register(AssertionPerson)
+
 
 class AssertionInline(admin.StackedInline):
     model = Assertion.persons.through
@@ -75,6 +75,15 @@ class AssertionNoteInline(admin.StackedInline):
     show_change_link = True
 
 
+class AssertionPersonNoteAdmin(admin.ModelAdmin):
+    list_display = ('id', 'note_type', 'text', 'created', 'modified')
+
+    readonly_fields = ('id', 'created', 'modified')
+    fields = ('id', 'note_type', 'text', 'extra_info', )
+
+admin.site.register(AssertionPersonNote, AssertionPersonNoteAdmin)
+
+
 class AssertionNoteAdmin(admin.ModelAdmin):
     list_display = ('id', 'note_type', 'text', 'extra_info', 'created', 'modified')
 
@@ -93,7 +102,9 @@ class PersonInline(admin.TabularInline):
 
     model = Assertion.persons.through
 
-    fields = ('person', 'role', 'original_text', )
+    fields = ('person', 'role', 'original_text', 'position', )
+    sortable_field_name = "position"
+
     readonly_fields = ('id', )
 
     raw_id_fields = ('person', )
@@ -157,7 +168,9 @@ class PersonAdmin(admin.ModelAdmin):
         'get_dates',
         'patrician',
         'patrician_certainty',
+        'updated_by',
         'modified',
+        'created_by',
         'created',
         )
 

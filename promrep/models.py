@@ -184,6 +184,7 @@ class Note(TimeStampedModel):
 
     class Meta:
         abstract = True
+        ordering = ['id',]
 
     def __unicode__(self):
         return self.text.strip()
@@ -199,7 +200,10 @@ class AssertionNote(Note):
 
 @with_author
 class AssertionPersonNote(Note):
-    pass
+
+    def related_label(self):
+        return u"(%s) %s" % (self.get_note_type_display(), self.text)
+
 
 
 @with_author
@@ -279,42 +283,6 @@ class Person(TimeStampedModel):
 
     get_dates.short_description = 'Dates'
 
-    def update_empty_fields(self, obj):
-        """compares two objects, updating the empty fields from the first
-        object with the values from the second object"""
-
-        attrs = (
-            'patrician_certainty',
-            'patrician',
-            'cognomen',
-            'sex_id',
-            'origin_id',
-            'praenomen_certainty',
-            'filiation',
-            'gens_id',
-            'other_names',
-            'real_number_old',
-            'tribe_id',
-            )
-
-        return self._update_empty_fields(self, obj, attrs)
-
-    def _update_empty_fields( self, obj1, obj2, keys ):
-        (d1, d2) = (obj1.__dict__, obj2.__dict__)
-
-        new_fields = []
-
-        for k in keys:
-            if d1[k] != d2[k]:
-                # tests if the first object's field is empty
-                if not d1[k] and d2[k]:
-                    new_fields.append(k)
-                    setattr(self, k, d2[k])
-
-        self.save( update_fields = new_fields )
-
-        return new_fields
-
     class Meta:
         ordering = ['id',]
 
@@ -345,6 +313,7 @@ class PrimarySource(models.Model):
         return self.name
 
 
+@with_author
 class Office(MPTTModel, TimeStampedModel):
 
     name = models.CharField(max_length=256, unique=True)
@@ -446,7 +415,7 @@ class Assertion(TimeStampedModel):
         return name
 
 
-## @with_author
+@with_author
 class AssertionPerson(TimeStampedModel):
     person = models.ForeignKey(Person)
     assertion = models.ForeignKey(Assertion)
@@ -464,7 +433,8 @@ class AssertionPerson(TimeStampedModel):
     position = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
-        ordering = ['position']
+        ordering = ['position', 'id']
+
 
     def __unicode__(self):
         return str(self.person.__unicode__()) + ": " + str(self.assertion.__unicode__())

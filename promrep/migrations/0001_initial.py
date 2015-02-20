@@ -61,6 +61,7 @@ class Migration(migrations.Migration):
                 ('updated_by', models.ForeignKey(related_name='assertionnote_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
+                'ordering': ['id'],
                 'abstract': False,
             },
             bases=(models.Model,),
@@ -76,9 +77,10 @@ class Migration(migrations.Migration):
                 ('certainty', models.BooleanField(default=True, verbose_name=b'Certainty?')),
                 ('position', models.PositiveSmallIntegerField(default=0)),
                 ('assertion', models.ForeignKey(to='promrep.Assertion')),
+                ('created_by', models.ForeignKey(related_name='assertionperson_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
-                'ordering': ['position'],
+                'ordering': ['position', 'id'],
             },
             bases=(models.Model,),
         ),
@@ -113,6 +115,7 @@ class Migration(migrations.Migration):
                 ('updated_by', models.ForeignKey(related_name='assertionpersonnote_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
+                'ordering': ['id'],
                 'abstract': False,
             },
             bases=(models.Model,),
@@ -166,7 +169,9 @@ class Migration(migrations.Migration):
                 ('rght', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('tree_id', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('level', models.PositiveIntegerField(editable=False, db_index=True)),
+                ('created_by', models.ForeignKey(related_name='office_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
                 ('parent', mptt.fields.TreeForeignKey(related_name='children', blank=True, to='promrep.Office', null=True)),
+                ('updated_by', models.ForeignKey(related_name='office_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
                 'ordering': ['tree_id', 'lft', 'name'],
@@ -405,6 +410,12 @@ class Migration(migrations.Migration):
             model_name='assertionperson',
             name='role',
             field=models.ForeignKey(to='promrep.RoleType'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='assertionperson',
+            name='updated_by',
+            field=models.ForeignKey(related_name='assertionperson_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
             preserve_default=True,
         ),
         migrations.AddField(

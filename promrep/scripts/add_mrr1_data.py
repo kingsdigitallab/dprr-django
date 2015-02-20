@@ -49,14 +49,14 @@ OFFICE_NAMES_DIC = {
     'masters of horse designate': 'magister equitum designatus',
     'pontifices': 'pontifex',
     'pontifices minores': 'pontifex minor',
-    'praefectus urbi': 'praefectus urbis',
     'praetor suffectus': 'praetor suffectus',
     'praetores suffecti': 'praetor suffectus',
     'praetorii': 'praetorius',
     'praetors': 'praetor',
     'prefect of cavalry': 'praefectus equitum',
     'prefects': 'praefectus',
-    'prefects of the city': 'praefectus urbis',
+    'prefects of the city': 'praefectus urbi',
+    'praefectus urbis': 'praefectus urbi',
     'prefects of the fleet': 'praefectus classis',
     'prefects to assign land to veterans': 'praefectus agris dandis assignandis',
     'quaesitores': 'quaesitor',
@@ -138,8 +138,8 @@ def processXML(ifile):
 
     # process year
 
-    for year in years[0:3]:
-    # for year in years:
+    # for year in years[0:3]:
+    for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
 

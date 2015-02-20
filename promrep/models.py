@@ -104,6 +104,7 @@ class AssertionPersonDate(Date):
 class PersonDate(Date):
     pass
 
+@with_author
 class Praenomen(models.Model):
 
     abbrev = models.CharField(max_length=32, unique=True)
@@ -124,7 +125,7 @@ class Sex(models.Model):
     def __unicode__(self):
         return self.name
 
-
+@with_author
 class Gens(models.Model):
 
     class Meta:
@@ -136,7 +137,7 @@ class Gens(models.Model):
     def __unicode__(self):
         return self.name
 
-
+@with_author
 class Tribe(models.Model):
     abbrev = models.CharField(max_length=32, unique=True)
     name = models.CharField(max_length=128)
@@ -148,7 +149,7 @@ class Tribe(models.Model):
     class Meta:
         ordering = ['id', ]
 
-
+@with_author
 class Origin(models.Model):
 
     name = models.CharField(max_length=128, unique=True)
@@ -319,7 +320,7 @@ class Person(TimeStampedModel):
 
 
 # Broughton, Rupke, etc
-
+@with_author
 class SecondarySource(TimeStampedModel):
 
     name = models.CharField(max_length=256, unique=True)
@@ -367,7 +368,7 @@ class Office(MPTTModel, TimeStampedModel):
     def autocomplete_search_fields():
         return ("id__iexact", "name__icontains",)
 
-
+@with_author
 class Relationship(TimeStampedModel):
 
     name = models.CharField(max_length=256, unique=True)
@@ -389,6 +390,7 @@ class AssertionType(models.Model):
         return ("id__iexact", "name__icontains", )
 
 
+@with_author
 class Assertion(TimeStampedModel):
 
     persons = models.ManyToManyField(Person, through='AssertionPerson')
@@ -405,6 +407,8 @@ class Assertion(TimeStampedModel):
     secondary_source = models.ForeignKey(SecondarySource)
     display_text = models.CharField(max_length=1024, blank=True)
 
+    # if we are uncertain about an assertion
+    # ... eg. cases like Broughton's "Augur or Pontifex"
     certainty = models.BooleanField(verbose_name='Certainty?', default=True)
 
     class Meta:
@@ -442,6 +446,7 @@ class Assertion(TimeStampedModel):
         return name
 
 
+## @with_author
 class AssertionPerson(TimeStampedModel):
     person = models.ForeignKey(Person)
     assertion = models.ForeignKey(Assertion)
@@ -454,6 +459,12 @@ class AssertionPerson(TimeStampedModel):
 
     notes = models.ManyToManyField(AssertionPersonNote)
     dates = models.ManyToManyField(AssertionPersonDate)
+
+    # position field
+    position = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ['position']
 
     def __unicode__(self):
         return str(self.person.__unicode__()) + ": " + str(self.assertion.__unicode__())

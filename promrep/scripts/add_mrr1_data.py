@@ -138,8 +138,8 @@ def processXML(ifile):
 
     # process year
 
-    # for year in years[0:1]:
-    for year in years:
+    for year in years[0:3]:
+    # for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
 
@@ -228,8 +228,6 @@ def processXML(ifile):
                 else:
                     print "ERROR adding office fnote" + fnote_id
 
-
-
             # Assertion: Office + Year + Person
             for p in office_tag.find_all('person'):
                 print
@@ -276,13 +274,12 @@ def processXML(ifile):
                         person.cognomen = person_info.get('cognomen', "")
                         person.other_names = person_info.get('other_names', "")
                         person.patrician_certainty = person_info.get('patrician_certainty', False)
-
                         person.save()
+
                         logger.info('Added new person %s with id %i' % (person.get_name(), person.id))
 
+                    # creates the AssertionPerson
                     if person is not None:
-                        # creates the AssertionPerson
-
                         yuncertain = False
 
                         if ap_date_info is not None:
@@ -304,6 +301,10 @@ def processXML(ifile):
                             person=person,
                             original_text = name_str,
                         )
+
+                        # saves the order in the assertion
+                        assertion_person.position = assertion.persons.count()
+                        assertion_person.save()
 
                         # only adds this the first time the assertion is created
                         if created:

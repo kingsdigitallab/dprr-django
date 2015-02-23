@@ -76,6 +76,7 @@ OFFICE_NAMES_DIC = {
     'triumviri capitales?': 'triumvir capitalis',
     'triumviri rei publicae constituendae': 'triumvir rei publicae constituendae',
     'vestal virgins': 'vestalis',
+    'vestal virgin': 'vestalis',
     'vestales': 'vestalis'
 }
 

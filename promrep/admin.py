@@ -130,7 +130,9 @@ class AssertionYearListFilter(SimpleListFilter):
         years = Assertion.objects.all().values('dates__year').distinct()
 
         for year in years:
-            lookup.append((year['dates__year'], year['dates__year']))
+            item = (year['dates__year'], year['dates__year'])
+            if item not in lookup:
+                lookup.append(item)
 
         return sorted(lookup)
 
@@ -161,13 +163,8 @@ class PersonAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'url_to_edit_person',
-        'tribe',
-        'gens',
-        'origin',
-        'sex',
         'get_dates',
         'patrician',
-        'patrician_certainty',
         'updated_by',
         'modified',
         'created_by',
@@ -175,7 +172,7 @@ class PersonAdmin(admin.ModelAdmin):
         )
 
     search_fields = ['nomen', 'cognomen', 'tribe']
-    list_filter = ('assertionperson__role', 'assertionperson__assertion__office', 'tribe__name', 'tribe__abbrev')
+    list_filter = ('assertionperson__role', 'assertionperson__assertion__office', )
 
     inlines = (AssertionInline, )
 

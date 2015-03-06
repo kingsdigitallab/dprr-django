@@ -143,7 +143,9 @@ class AssertionYearListFilter(SimpleListFilter):
 
 class PersonAdmin(admin.ModelAdmin):
 
-    fieldsets = [('Database Info', {'fields': ['id']}), ('Person',
+    fieldsets = [
+            ('Database Info', {'fields': [('id', 'review_flag')]},),
+            ('Person',
                  {'fields': [
             ('praenomen', 'filiation', ),
             ('nomen',),
@@ -164,7 +166,7 @@ class PersonAdmin(admin.ModelAdmin):
         'id',
         'url_to_edit_person',
         'get_dates',
-        'patrician',
+        'review_flag',
         'updated_by',
         'modified',
         'created_by',

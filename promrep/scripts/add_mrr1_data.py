@@ -64,7 +64,7 @@ def get_office_obj(office_name):
 def run():
     # this is the file exported by OpenOffice
 
-    ifile = 'promrep/scripts/data/mrr1_all_LF_Officesv16.docx.html.xml'
+    ifile = 'promrep/scripts/data/mrr1_all_LF_Officesv17.docx.html.xml'
     print 'Will process input file', ifile
     processXML(ifile)
 

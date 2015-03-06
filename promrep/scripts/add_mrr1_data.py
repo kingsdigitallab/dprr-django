@@ -126,7 +126,7 @@ def get_office_obj(office_name):
 def run():
     # this is the file exported by OpenOffice
 
-    ifile = 'promrep/scripts/data/mrr1_all_LF_Officesv14.docx.html.xml'
+    ifile = 'promrep/scripts/data/mrr1_all_LF_Officesv16.docx.html.xml'
     print 'Will process input file', ifile
     processXML(ifile)
 
@@ -303,6 +303,9 @@ def processXML(ifile):
                             person=person,
                             original_text = name_str,
                         )
+
+                        if p.has_attr('assertion-certainty'):
+                            assertion_person.certainty = False
 
                         # saves the order in the assertion
                         assertion_person.position = assertion.persons.count()

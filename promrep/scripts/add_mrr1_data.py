@@ -246,38 +246,39 @@ def processXML(ifile):
                     # TODO: error handling???
                     ######
                     if person_info is None:
-                        # will create a flagged person...
-                        pass
-
-                    # removes the date_certainty info from the dictionary
-                    if 'date_certainty' in person_info:
-                        ap_date_info = person_info.pop('date_certainty')
-                    else:
-                        ap_date_info = None
-
-                    # creates the person object from the dictionary directly
-                    person, created = Person.objects.get_or_create(
-                                                            praenomen = person_info['praenomen'],
-                                                            nomen = person_info['nomen'],
-                                                            real_number = person_info['real_number'],
-                                                            )
-
-                    # update the person's information
-                    # updates all other relevant fields....
-                    if created:
-                        person.patrician = person_info.get('patrician', False)
-                        person.praenomen_certainty = person_info.get('praenomen_certainty', True)
-                        person.filiation = person_info.get('filiation', "")
-
-                        if 'tribe' in person_info:
-                            person.tribe = person_info['tribe']
-
-                        person.cognomen = person_info.get('cognomen', "")
-                        person.other_names = person_info.get('other_names', "")
-                        person.patrician_certainty = person_info.get('patrician_certainty', False)
+                        # creates as person with the whole name str as the nomen
+                        person = Person(nomen = name_str, review_flag=True)
                         person.save()
+                    else:
+                        # removes the date_certainty info from the dictionary
+                        if 'date_certainty' in person_info:
+                            ap_date_info = person_info.pop('date_certainty')
+                        else:
+                            ap_date_info = None
 
-                        logger.info('Added new person %s with id %i' % (person.get_name(), person.id))
+                        # creates the person object from the dictionary directly
+                        person, created = Person.objects.get_or_create(
+                                                                praenomen = person_info['praenomen'],
+                                                                nomen = person_info['nomen'],
+                                                                real_number = person_info['real_number'],
+                                                                )
+
+                        # update the person's information
+                        # updates all other relevant fields....
+                        if created:
+                            person.patrician = person_info.get('patrician', False)
+                            person.praenomen_certainty = person_info.get('praenomen_certainty', True)
+                            person.filiation = person_info.get('filiation', "")
+
+                            if 'tribe' in person_info:
+                                person.tribe = person_info['tribe']
+
+                            person.cognomen = person_info.get('cognomen', "")
+                            person.other_names = person_info.get('other_names', "")
+                            person.patrician_certainty = person_info.get('patrician_certainty', False)
+                            person.save()
+
+                            logger.info('Added new person %s with id %i' % (person.get_name(), person.id))
 
                     # creates the AssertionPerson
                     if person is not None:

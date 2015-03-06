@@ -18,69 +18,6 @@ from promrep.models import ContentType, Assertion, AssertionPerson, \
 import parsing_aux as aux
 import logging
 
-OFFICE_NAMES_DIC = {
-    'aediles': 'aedilis',
-    'aediles of the plebs': 'aedilis plebis',
-    'aediles, curule': 'aedilis curulis',
-    'aedilicii': 'aedilicius',
-    'augures': 'augur',
-    'augurs': 'augur',
-    'censors': 'censor',
-    'consul suffectus': 'consul suffectus',
-    'consules designati': 'consul designatus',
-    'consules suffecti': 'consul suffectus',
-    'consuls': 'consul',
-    'decemviri sacris faciundis': 'decemvir sacris faciundis',
-    'flamen dialis': 'flamen dialis',
-    'flamen divi iulii': 'flamen divi iulii',
-    'flamen martialis': 'flamen martialis',
-    'flamen quirinalis': 'flamen quirinalis',
-    'flamens': 'flamen',
-    'flamines': 'flamen',
-    'flaminica martialis': 'flaminica martialis',
-    'interreges': 'interrex',
-    'iudices quaestionum': 'iudex quaestionis',
-    'legates or prefects': 'legatus or praefectus',
-    'legates, ambassadors': 'legatus',
-    'legates, envoys': 'legatus',
-    'legates, lieutenants': 'legatus',
-    'luperci': 'lupercus',
-    'master of horse': 'magister equitum',
-    'masters of horse designate': 'magister equitum designatus',
-    'pontifices': 'pontifex',
-    'pontifices minores': 'pontifex minor',
-    'praetor suffectus': 'praetor suffectus',
-    'praetores suffecti': 'praetor suffectus',
-    'praetorii': 'praetorius',
-    'praetors': 'praetor',
-    'prefect of cavalry': 'praefectus equitum',
-    'prefects': 'praefectus',
-    'prefects of the city': 'praefectus urbi',
-    'praefectus urbis': 'praefectus urbi',
-    'prefects of the fleet': 'praefectus classis',
-    'prefects to assign land to veterans': 'praefectus agris dandis assignandis',
-    'quaesitores': 'quaesitor',
-    'quaestorii': 'quaestorius',
-    'quaestors': 'quaestor',
-    'quindecimviri sacris faciundis': 'quindecemvir sacris faciundis',
-    'quindecimviri sacris fadundis': 'quindecemvir sacris faciundis',
-    'quindeciniviri sacris faciundis': 'quindecemvir sacris faciundis',
-    'quindecirnviri sacris faciundis': 'quindecemvir sacris faciundis',
-    'quinqueviri agris dandis assignandis': 'quinquevir agris dandis assignandis',
-    'rex sacrorum': 'rex sacrorum',
-    'sacerdotes': 'sacerdos',
-    'septemviri epulones': 'septemvir epulonum',
-    'tribunes of the plebs': 'tribunus plebis',
-    'tribunes of the soldiers': 'tribunus militum',
-    'triumvir capitalis': 'triumvir capitalis',
-    'triumviri capitales?': 'triumvir capitalis',
-    'triumviri rei publicae constituendae': 'triumvir rei publicae constituendae',
-    'vestal virgins': 'vestalis',
-    'vestal virgin': 'vestalis',
-    'vestales': 'vestalis'
-}
-
-
 # TODO: configure in settings
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -93,6 +30,7 @@ fh.setFormatter(frmt)
 # add the Handler to the logger
 logger.addHandler(fh)
 
+from promrep.scripts.offices_ref import OFFICE_NAMES_DIC
 
 def get_office_obj(office_name):
     """given a string, returns an office object"""

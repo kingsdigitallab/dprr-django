@@ -231,8 +231,8 @@ class Person(TimeStampedModel):
 
     origin = models.ForeignKey(Origin, blank=True, null=True)
 
-    patrician = models.BooleanField(verbose_name='Patrician?', default=False)
-    patrician_certainty = models.BooleanField(verbose_name='Patrician Certainty?', default=True)
+    patrician = models.BooleanField(verbose_name='Patrician', default=False)
+    patrician_certainty = models.BooleanField(verbose_name='Certain', default=True)
 
     extra_info = models.CharField(max_length=1024, blank=True)
     extra_info.help_text = "Extra info about the person."

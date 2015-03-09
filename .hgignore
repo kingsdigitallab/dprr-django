@@ -1,0 +1,8 @@
+syntax: glob
+*.pyc
+.vagrant/machines/dprr/virtualbox/action_provision
+.vagrant/machines/dprr/virtualbox/action_set_name
+.vagrant/machines/dprr/virtualbox/id
+.vagrant/machines/dprr/virtualbox/index_uuid
+.vagrant/machines/dprr/virtualbox/synced_folders
+logs/django.log

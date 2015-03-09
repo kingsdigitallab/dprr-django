@@ -1,0 +1,25 @@
+# -*- coding: utf-8 -*-
+
+import os
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+TEMPLATE_DEBUG = True
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'UliuxjcW6UBgBfdy/mB/DxSEVpW5U7Rj'
+
+# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
+# replace this with actual database
+DATABASES = {
+
+    'default': {
+         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+         'NAME': 'app_dprr_local',
+         'USER': 'app_dprr',
+         'PASSWORD': 'app_dprr',
+         'HOST': 'localhost',
+         'PORT': '',
+    },
+
+}

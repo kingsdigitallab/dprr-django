@@ -1,0 +1,21 @@
+// Global Foundation Settings
+@import "settings";
+
+@import "../vendor/foundation/scss/normalize";
+
+@import '../vendor/foundation/scss/foundation';
+
+@import '../vendor/font-awesome/scss/font-awesome.scss';
+
+/*** Global ***/
+
+body {
+	background: $smoke;
+}
+
+.content-area {
+	background: $white;
+}
+
+/*** Navigation ***/
+

@@ -1,8 +1,20 @@
 syntax: glob
+*~
+*.db
+*.log
 *.pyc
-.vagrant/machines/dprr/virtualbox/action_provision
-.vagrant/machines/dprr/virtualbox/action_set_name
-.vagrant/machines/dprr/virtualbox/id
-.vagrant/machines/dprr/virtualbox/index_uuid
-.vagrant/machines/dprr/virtualbox/synced_folders
-logs/django.log
+.bowerrc
+.DS_Store
+.ropeproject
+.sass*
+.vagrant
+bower.json
+db.*
+local.py
+
+__init__.py
+*.orig
+syntax: regexp
+^logs
+^static
+^tags

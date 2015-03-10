@@ -1,16 +1,17 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from dprr import views
 
-# from wagtail.wagtailcore import urls as wagtail_urls
-# from wagtail.wagtailadmin import urls as wagtailadmin_urls
-# from wagtail.wagtaildocs import urls as wagtaildocs_urls
-# from wagtail.wagtailsearch.urls import frontend as wagtailsearch_frontend_urls
+from wagtail.wagtailcore import urls as wagtail_urls
+from wagtail.wagtailadmin import urls as wagtailadmin_urls
+from wagtail.wagtaildocs import urls as wagtaildocs_urls
+from wagtail.wagtailsearch.urls import frontend as wagtailsearch_frontend_urls
 
 # Signal handlers
-# from wagtail.wagtailsearch.signal_handlers import register_signal_handlers as \
-#     wagtailsearch_register_signal_handlers
-# wagtailsearch_register_signal_handlers()
+from wagtail.wagtailsearch.signal_handlers import register_signal_handlers as \
+     wagtailsearch_register_signal_handlers
+wagtailsearch_register_signal_handlers()
 #
 # from ddhldap.signal_handlers import register_signal_handlers as \
 #     ddhldap_register_signal_handlers
@@ -20,6 +21,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^$', views.index, name='index'),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', include(admin.site.urls)),
     )

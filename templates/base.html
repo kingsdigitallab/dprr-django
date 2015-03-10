@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+
+{% load compress staticfiles wagtailbase_tags wagtailuserbar %}
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=IE8">
+    <!-- <meta name="keywords" content="{# block meta_keywords #}{# endblock #}"> -->
+    <!-- <meta name="description" content="{# block meta_description #}{# endblock #}"> -->
+    <title>DPRR</title>
+
+    <!-- <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" /> -->
+
+    {% compress css %}
+    {# SCSS compilation relies on django compressor #}
+    <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/app.scss' %}" />
+    {% endcompress %}
+
+    <script src="/assets/vendor/modernizr/modernizr.js"></script>
+</head>
+<body id="body">
+
+    {% include "includes/header.html" %}
+
+    {% include "includes/nav.html" %}
+
+    <div class="contain-to-grid content-area">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% include "includes/footer.html" %}
+
+    <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/foundation/js/foundation.min.js' %}"></script>
+    <script src="{% static 'javascripts/config.js' %}"></script>
+
+    <script>
+        $(document).foundation();
+    </script>
+
+</body>
+</html>

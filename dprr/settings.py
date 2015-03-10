@@ -66,7 +66,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
-#    'ddhldap',
+    'ddhldap',
     'mptt',
     'django_mptt_admin',
     'author',
@@ -158,12 +158,12 @@ WSGI_APPLICATION = PROJECT_NAME + '.wsgi.application'
 # https://scm.cch.kcl.ac.uk/hg/ddhldap-django
 #------------------------------------------------------------------------------
 
-# from ddhldap.settings import *
-#
-# AUTH_LDAP_REQUIRE_GROUP = 'cn=dprr,' + LDAP_BASE_OU
-# AUTH_LDAP_USER_FLAGS_BY_GROUP['is_staff'] = 'cn=dprr,' + LDAP_BASE_OU
-#
-# LOGIN_URL = 'django.contrib.auth.views.login'
+from ddhldap.settings import *
+
+AUTH_LDAP_REQUIRE_GROUP = 'cn=dprr,' + LDAP_BASE_OU
+AUTH_LDAP_USER_FLAGS_BY_GROUP['is_staff'] = 'cn=dprr,' + LDAP_BASE_OU
+
+LOGIN_URL = 'django.contrib.auth.views.login'
 # LOGIN_REDIRECT_URL = 'wagtailadmin_home'
 
 

@@ -12,3 +12,4 @@ db.*
 local.py
 design-files
 ^logs
+static

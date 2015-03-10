@@ -9,7 +9,7 @@
 
 /*** Global ***/
 
-body {
+header {
 	background: $smoke;
 }
 
@@ -17,5 +17,37 @@ body {
 	background: $white;
 }
 
+/*** Typography ***/
+
+@font-face {
+    font-family: 'Cinzel';
+    src: url('/static/fonts/Cinzel/Cinzel-Regular.ttf');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'Cinzel-Bold';
+    src: url('/static/fonts/Cinzel/Cinzel-Bold.ttf');
+    font-weight: bold;
+}
+
+/*** Headings ***/
+
+h1, h2 {
+	font-family: 'Cinzel', serif;
+}
+
+h1.site-title,
+h2.site-title {
+	font-size: 2rem;
+	text-align: center;
+}
+
+h3 {
+	font-family: 'Cinzel-Bold', serif;
+	font-size: 1.25rem;
+}
+
 /*** Navigation ***/
+
 

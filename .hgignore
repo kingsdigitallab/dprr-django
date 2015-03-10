@@ -5,16 +5,12 @@ syntax: glob
 *.pyc
 .bowerrc
 .DS_Store
-.ropeproject
-.sass*
 .vagrant
 bower.json
 db.*
 local.py
-
 __init__.py
 *.orig
-syntax: regexp
+design-files
 ^logs
-^static
-^tags
+static

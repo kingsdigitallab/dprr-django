@@ -11,7 +11,7 @@ For production settings see
 https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 """
 
-# from wagtailbase import settings as ws
+from wagtailbase import settings as ws
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
@@ -72,11 +72,11 @@ INSTALLED_APPS = (
     'author',
 )
 
-# INSTALLED_APPS += ws.INSTALLED_APPS
+INSTALLED_APPS += ws.INSTALLED_APPS
 
 INSTALLED_APPS += (
     'promrep',
-    # 'wagtailbase',
+    'wagtailbase',
 )
 
 INTERNAL_IPS = ('127.0.0.1',)
@@ -123,7 +123,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-# MIDDLEWARE_CLASSES += ws.MIDDLEWARE_CLASSES
+MIDDLEWARE_CLASSES += ws.MIDDLEWARE_CLASSES
 
 ROOT_URLCONF = PROJECT_NAME + '.urls'
 
@@ -188,7 +188,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
 )
 
-# STATICFILES_FINDERS += ws.STATICFILES_FINDERS
+STATICFILES_FINDERS += ws.STATICFILES_FINDERS
 
 MEDIA_URL = STATIC_URL + 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL.strip('/'))
@@ -213,7 +213,7 @@ if not os.path.exists(MEDIA_ROOT):
 # http://django-compressor.readthedocs.org/en/latest/
 #------------------------------------------------------------------------------
 
-# COMPRESS_PRECOMPILERS = ws.COMPRESS_PRECOMPILERS
+COMPRESS_PRECOMPILERS = ws.COMPRESS_PRECOMPILERS
 
 #------------------------------------------------------------------------------
 # Wagtail

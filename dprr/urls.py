@@ -13,10 +13,8 @@ from wagtail.wagtailsearch.signal_handlers import register_signal_handlers as \
      wagtailsearch_register_signal_handlers
 wagtailsearch_register_signal_handlers()
 #
-# from ddhldap.signal_handlers import register_signal_handlers as \
-#     ddhldap_register_signal_handlers
-
-# ddhldap_register_signal_handlers()
+from ddhldap.signal_handlers import register_signal_handlers as ddhldap_register_signal_handlers
+ddhldap_register_signal_handlers()
 
 admin.autodiscover()
 

@@ -271,8 +271,12 @@ class Person(TimeStampedModel):
     url_to_edit_person.short_description = 'Person'
 
     def __unicode__(self):
+
         # TODO: add praenomen, Re number
-        return self.get_name() + ' (' + self.real_id() + ')'
+        if self.real_id():
+            return self.get_name() + ' (' + self.real_id() + ')'
+        else:
+            return self.get_name()
 
     def get_dates(self):
         dates = ' '.join([unicode(date) for date in self.dates.all()])

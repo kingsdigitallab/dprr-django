@@ -1,0 +1,7 @@
+syntax: glob
+.DS_Store
+re:^\.hgignore$
+*.pyc
+re:^dprr/db\.sqlite3$
+re:^dprr/local_settings\.py$
+*.orig

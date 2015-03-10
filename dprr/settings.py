@@ -162,6 +162,7 @@ from ddhldap.settings import *
 
 AUTH_LDAP_REQUIRE_GROUP = 'cn=dprr,' + LDAP_BASE_OU
 AUTH_LDAP_USER_FLAGS_BY_GROUP['is_staff'] = 'cn=dprr,' + LDAP_BASE_OU
+AUTH_LDAP_USER_FLAGS_BY_GROUP['is_superuser'] = 'cn=dprr,' + LDAP_BASE_OU
 
 LOGIN_URL = 'django.contrib.auth.views.login'
 # LOGIN_REDIRECT_URL = 'wagtailadmin_home'

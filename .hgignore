@@ -1,16 +1,14 @@
 syntax: glob
-*~
-*.db
-*.log
-*.pyc
-.bowerrc
 .DS_Store
+*.pyc
+re:^dprr/local_settings\.py$
+*.orig
+*~
+*.log
+.bowerrc
 .vagrant
 bower.json
 db.*
 local.py
-__init__.py
-*.orig
 design-files
 ^logs
-static

@@ -191,7 +191,7 @@ class Note(TimeStampedModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ("id__iexact", "text__icontains", )
+        return ("id__iexact", "text", )
 
 
 @with_author
@@ -231,8 +231,8 @@ class Person(TimeStampedModel):
 
     origin = models.ForeignKey(Origin, blank=True, null=True)
 
-    patrician = models.BooleanField(verbose_name='Patrician?', default=False)
-    patrician_certainty = models.BooleanField(verbose_name='Patrician Certainty?', default=True)
+    patrician = models.BooleanField(verbose_name='Patrician', default=False)
+    patrician_certainty = models.BooleanField(verbose_name='Certain', default=True)
 
     extra_info = models.CharField(max_length=1024, blank=True)
     extra_info.help_text = "Extra info about the person."
@@ -242,9 +242,6 @@ class Person(TimeStampedModel):
 
     dates = models.ManyToManyField(PersonDate)
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return ("id__iexact", "nomen__icontains", )
 
     def real_id(self):
         return self.real_number
@@ -302,7 +299,7 @@ class SecondarySource(TimeStampedModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ("id__iexact", "name__icontains", "abbrev__icontains")
+        return ("id__iexact", "name", "abbrev")
 
 
 class PrimarySource(models.Model):
@@ -356,7 +353,7 @@ class AssertionType(models.Model):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ("id__iexact", "name__icontains", )
+        return ("id__iexact", "name", )
 
 
 @with_author

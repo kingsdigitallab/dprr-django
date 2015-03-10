@@ -12,9 +12,12 @@ from wagtail.wagtailsearch.urls import frontend as wagtailsearch_frontend_urls
 from wagtail.wagtailsearch.signal_handlers import register_signal_handlers as \
      wagtailsearch_register_signal_handlers
 wagtailsearch_register_signal_handlers()
-#
+
 from ddhldap.signal_handlers import register_signal_handlers as ddhldap_register_signal_handlers
 ddhldap_register_signal_handlers()
+
+from django.core.urlresolvers import reverse
+from django.views.generic.base import RedirectView
 
 admin.autodiscover()
 
@@ -34,24 +37,11 @@ try:
 except ImportError:
     pass
 
-# urlpatterns += patterns('',
-#                         url(r'^wagtail/images/', include(wagtailimages_urls)),
-#                         url(r'^wagtail/embeds/', include(wagtailembeds_urls)),
-#                         url(r'^wagtail/documents/',
-#                             include(wagtaildocs_admin_urls)),
-#                         url(r'^wagtail/snippets/',
-#                             include(wagtailsnippets_urls)),
-#                         url(r'^wagtail/search/',
-#                             include(wagtailsearch_admin_urls)),
-#                         url(r'^wagtail/users/', include(wagtailusers_urls)),
-#                         url(r'^wagtail/redirects/',
-#                             include(wagtailredirects_urls)),
-#                         url(r'^wagtail/', include(wagtailadmin_urls)),
-#                         url(r'^search/', include(wagtailsearch_frontend_urls)),
-#                         url(r'^documents/', include(wagtaildocs_urls)),
-#
-#                         url(r'', include(wagtail_urls)),
-#                         )
+urlpatterns += patterns('',
+                        url(r'^search/', include(wagtailsearch_frontend_urls)),
+                        url(r'^wagtail/', include(wagtailadmin_urls)),
+                        url(r'', include(wagtail_urls)),
+                        )
 
 if settings.DEBUG:
     from django.conf.urls.static import static

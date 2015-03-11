@@ -9,8 +9,10 @@
 
 /*** Global ***/
 
-header {
-	background: $smoke;
+header,
+.header,
+footer {
+	min-height: 10rem;
 }
 
 .content-area {
@@ -18,35 +20,87 @@ header {
 	padding-top: 1rem;
 }
 
+/*** Header ***/
+
+header {
+	background: url('/static/images/header-bg.png') center right no-repeat $sand;
+	background-size: cover;
+}
+
+.header {
+	background: url('/static/images/Togatus_Barberini_2392-transparent.png') center left no-repeat;
+	background-size: contain;
+}
+
 /*** Typography ***/
 
 @font-face {
-    font-family: 'Cinzel';
-    src: url('/static/fonts/Cinzel/Cinzel-Regular.ttf');
-    font-weight: normal;
+    font-family: 'Playfair Display';
+    src: url('/static/fonts/Playfair_Display/PlayfairDisplay-Regular.ttf');
 }
 
 @font-face {
-    font-family: 'Cinzel-Bold';
-    src: url('/static/fonts/Cinzel/Cinzel-Bold.ttf');
-    font-weight: bold;
+    font-family: 'Playfair Display Italic';
+    src: url('/static/fonts/Playfair_Display/PlayfairDisplay-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Playfair Display Bold';
+    src: url('/static/fonts/Playfair_Display/PlayfairDisplay-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Playfair Display Bold Italic';
+    src: url('/static/fonts/Playfair_Display/PlayfairDisplay-BoldItalic.ttf');
 }
 
 /*** Headings ***/
 
+h1, h2, h3, h4, h5, h6 {
+	color: $dark-gold;
+}
+
 h1, h2 {
-	font-family: 'Cinzel', serif;
+	font-family: 'Playfair Display', serif;
 }
 
 h1.site-title,
 h2.site-title {
-	font-size: 2rem;
-	text-align: center;
+	padding-top: 2.75rem;
+	padding-left: 5rem;
+	line-height: 1.25;
+	color: scale-color($dark-gold, $lightness: 20%);
+	text-shadow: 0 0 1px #666;
 }
 
 h3 {
-	font-family: 'Cinzel-Bold', serif;
+	font-family: 'Playfair Display Bold', serif;
 	font-size: 1.25rem;
 }
 
 /*** Navigation ***/
+
+
+/*** Custom media queries ***/
+@media #{$large-up} {
+	h1.site-title,
+	h2.site-title {
+		font-size: 2.5rem !important;
+		width: 65%;
+	}
+}
+
+@media #{$medium-only} {
+	h1.site-title,
+	h2.site-title {
+		font-size: 2rem;
+	}
+}
+
+@media #{$small-only} {
+	h1.site-title,
+	h2.site-title {
+		font-size: 1.75rem;
+		padding-top: 1em;
+	}
+}

@@ -8,6 +8,7 @@ OFFICE_NAMES_DIC = {
     'aedilicii': 'aedilicius',
     'augures': 'augur',
     'augurs': 'augur',
+    'auguris': 'augur',
     'censors': 'censor',
     'consul suffectus': 'consul suffectus',
     'consules designati': 'consul designatus',

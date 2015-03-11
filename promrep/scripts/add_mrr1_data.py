@@ -73,6 +73,8 @@ def processXML(ifile):
     page = file(ifile)
     soup = BeautifulSoup(page, features='xml')
 
+    source = SecondarySource.objects.get(abbrev_name='Broughton MRR I')
+
     years = soup.findAll('year')
 
     # process year
@@ -121,8 +123,6 @@ def processXML(ifile):
 
             assertion_type = AssertionType.objects.get(name='Office')
 
-            source = SecondarySource.objects.get(abbrev_name='Broughton MRR I')
-
             assertion_date, created = AssertionDate.objects.get_or_create(
                         year = -int(year_str),
                     )
@@ -152,7 +152,7 @@ def processXML(ifile):
             # add any existing notes to the assertion
             for onote in office_tag.find_all('office-note'):
                 if onote.has_attr('name'):
-                    a_note, created = AssertionNote.objects.get_or_create(text=onote['name'])
+                    a_note, created = AssertionNote.objects.get_or_create(text=onote['name'], secondary_source=source)
                     assertion.notes.add(a_note)
 
             if office_tag.has_attr('footnote'):
@@ -263,7 +263,7 @@ def processXML(ifile):
 
                             if fnote_id in fnote_dict:
                                 pnote = fnote_dict[fnote_id]
-                                ap_fnote = AssertionPersonNote(note_type=1, text = pnote.get_text())
+                                ap_fnote = AssertionPersonNote(note_type=1, text = pnote.get_text(), secondary_source=source)
                                 ap_fnote.save()
                                 assertion_person.notes.add(ap_fnote)
                             else:

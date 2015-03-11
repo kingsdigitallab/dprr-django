@@ -41,6 +41,7 @@ class Migration(migrations.Migration):
                 ('extra_info', models.TextField(null=True, blank=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True, auto_now_add=True)),
+                ('assertion', models.ForeignKey(related_query_name=b'date', related_name='dates', to='promrep.Assertion')),
                 ('created_by', models.ForeignKey(related_name='assertiondate_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
@@ -55,10 +56,9 @@ class Migration(migrations.Migration):
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
                 ('note_type', models.IntegerField(default=0, choices=[(0, b'Reference'), (1, b'Footnote')])),
+                ('text', models.TextField(max_length=4096, blank=True)),
                 ('extra_info', models.TextField(max_length=1024, blank=True)),
-                ('text', models.TextField(max_length=2048, blank=True)),
                 ('created_by', models.ForeignKey(related_name='assertionnote_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('updated_by', models.ForeignKey(related_name='assertionnote_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
                 'ordering': ['id'],
@@ -95,6 +95,7 @@ class Migration(migrations.Migration):
                 ('extra_info', models.TextField(null=True, blank=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True, auto_now_add=True)),
+                ('assertion_person', models.ForeignKey(related_query_name=b'date', related_name='dates', to='promrep.AssertionPerson')),
                 ('created_by', models.ForeignKey(related_name='assertionpersondate_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
@@ -109,10 +110,9 @@ class Migration(migrations.Migration):
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
                 ('note_type', models.IntegerField(default=0, choices=[(0, b'Reference'), (1, b'Footnote')])),
+                ('text', models.TextField(max_length=4096, blank=True)),
                 ('extra_info', models.TextField(max_length=1024, blank=True)),
-                ('text', models.TextField(max_length=2048, blank=True)),
                 ('created_by', models.ForeignKey(related_name='assertionpersonnote_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('updated_by', models.ForeignKey(related_name='assertionpersonnote_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
                 'ordering': ['id'],
@@ -206,11 +206,13 @@ class Migration(migrations.Migration):
                 ('filiation', models.CharField(max_length=256, blank=True)),
                 ('real_number', models.CharField(help_text=b'RE number', max_length=32, verbose_name=b'RE Number', blank=True)),
                 ('real_number_old', models.CharField(help_text=b'RE number before revising', max_length=32, verbose_name=b'RE (old)', blank=True)),
-                ('patrician', models.BooleanField(default=False, verbose_name=b'Patrician?')),
-                ('patrician_certainty', models.BooleanField(default=True, verbose_name=b'Patrician Certainty?')),
+                ('patrician', models.BooleanField(default=False, verbose_name=b'Patrician')),
+                ('patrician_certainty', models.BooleanField(default=True, verbose_name=b'Certain')),
                 ('extra_info', models.CharField(help_text=b'Extra info about the person.', max_length=1024, blank=True)),
                 ('review_flag', models.BooleanField(default=False, help_text=b'Person needs manual revision.', verbose_name=b'Review needed')),
                 ('created_by', models.ForeignKey(related_name='person_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('gens', models.ForeignKey(blank=True, to='promrep.Gens', null=True)),
+                ('origin', models.ForeignKey(blank=True, to='promrep.Origin', null=True)),
             ],
             options={
                 'ordering': ['id'],
@@ -230,6 +232,7 @@ class Migration(migrations.Migration):
                 ('modified', models.DateTimeField(auto_now=True, auto_now_add=True)),
                 ('created_by', models.ForeignKey(related_name='persondate_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
                 ('date_type', models.ForeignKey(blank=True, to='promrep.DateType', null=True)),
+                ('person', models.ForeignKey(related_query_name=b'date', related_name='dates', to='promrep.Person')),
                 ('updated_by', models.ForeignKey(related_name='persondate_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
@@ -336,24 +339,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='person',
-            name='dates',
-            field=models.ManyToManyField(to='promrep.PersonDate'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='person',
-            name='gens',
-            field=models.ForeignKey(blank=True, to='promrep.Gens', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='person',
-            name='origin',
-            field=models.ForeignKey(blank=True, to='promrep.Origin', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='person',
             name='praenomen',
             field=models.ForeignKey(blank=True, to='promrep.Praenomen', null=True),
             preserve_default=True,
@@ -377,6 +362,18 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AddField(
+            model_name='assertionpersonnote',
+            name='secondary_source',
+            field=models.ForeignKey(to='promrep.SecondarySource'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='assertionpersonnote',
+            name='updated_by',
+            field=models.ForeignKey(related_name='assertionpersonnote_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
             model_name='assertionpersondate',
             name='date_type',
             field=models.ForeignKey(blank=True, to='promrep.DateType', null=True),
@@ -386,12 +383,6 @@ class Migration(migrations.Migration):
             model_name='assertionpersondate',
             name='updated_by',
             field=models.ForeignKey(related_name='assertionpersondate_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='assertionperson',
-            name='dates',
-            field=models.ManyToManyField(to='promrep.AssertionPersonDate'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -419,6 +410,18 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AddField(
+            model_name='assertionnote',
+            name='secondary_source',
+            field=models.ForeignKey(to='promrep.SecondarySource'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='assertionnote',
+            name='updated_by',
+            field=models.ForeignKey(related_name='assertionnote_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
             model_name='assertiondate',
             name='date_type',
             field=models.ForeignKey(blank=True, to='promrep.DateType', null=True),
@@ -440,12 +443,6 @@ class Migration(migrations.Migration):
             model_name='assertion',
             name='created_by',
             field=models.ForeignKey(related_name='assertion_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='assertion',
-            name='dates',
-            field=models.ManyToManyField(related_name='assertions', to='promrep.AssertionDate'),
             preserve_default=True,
         ),
         migrations.AddField(

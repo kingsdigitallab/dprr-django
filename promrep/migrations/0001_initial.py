@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
                 ('extra_info', models.TextField(null=True, blank=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True, auto_now_add=True)),
-                ('assertion', models.ForeignKey(related_query_name=b'date', related_name='dates', to='promrep.Assertion')),
+                ('assertion', models.ForeignKey(related_query_name=b'date', related_name='dates', blank=True, to='promrep.Assertion', null=True)),
                 ('created_by', models.ForeignKey(related_name='assertiondate_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
@@ -95,7 +95,7 @@ class Migration(migrations.Migration):
                 ('extra_info', models.TextField(null=True, blank=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True, auto_now_add=True)),
-                ('assertion_person', models.ForeignKey(related_query_name=b'date', related_name='dates', to='promrep.AssertionPerson')),
+                ('assertion_person', models.ForeignKey(related_query_name=b'date', related_name='dates', blank=True, to='promrep.AssertionPerson', null=True)),
                 ('created_by', models.ForeignKey(related_name='assertionpersondate_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
@@ -232,7 +232,7 @@ class Migration(migrations.Migration):
                 ('modified', models.DateTimeField(auto_now=True, auto_now_add=True)),
                 ('created_by', models.ForeignKey(related_name='persondate_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
                 ('date_type', models.ForeignKey(blank=True, to='promrep.DateType', null=True)),
-                ('person', models.ForeignKey(related_query_name=b'date', related_name='dates', to='promrep.Person')),
+                ('person', models.ForeignKey(related_query_name=b'date', related_name='dates', blank=True, to='promrep.Person', null=True)),
                 ('updated_by', models.ForeignKey(related_name='persondate_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={

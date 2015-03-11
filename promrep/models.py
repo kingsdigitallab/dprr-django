@@ -298,11 +298,11 @@ class Assertion(TimeStampedModel):
 
     get_persons.short_description = "Persons"
 
-#    def get_dates(self):
-#        dates = ' '.join([unicode(date) for date in self.dates.all()])
-#        return dates.strip()
+    def get_dates(self):
+        dates = ' '.join([unicode(date) for date in self.dates.all()])
+        return dates.strip()
 
-#     get_dates.short_description = 'Dates'
+    get_dates.short_description = 'Dates'
 
     def __unicode__(self):
         name = ""
@@ -436,12 +436,12 @@ class Date(models.Model):
 
 @with_author
 class AssertionDate(Date):
-    assertion = models.ForeignKey(Assertion, related_name="dates", related_query_name="date")
+    assertion = models.ForeignKey(Assertion, related_name="dates", related_query_name="date", blank=True, null=True)
 
 @with_author
 class AssertionPersonDate(Date):
-    assertion_person = models.ForeignKey(AssertionPerson, related_name="dates", related_query_name="date")
+    assertion_person = models.ForeignKey(AssertionPerson, related_name="dates", related_query_name="date", blank=True, null=True)
 
 @with_author
 class PersonDate(Date):
-    person = models.ForeignKey(Person, related_name="dates", related_query_name="date")
+    person = models.ForeignKey(Person, related_name="dates", related_query_name="date", blank=True, null=True)

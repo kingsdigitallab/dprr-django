@@ -16,9 +16,73 @@ from models import Person, Office, Praenomen, AssertionPerson, \
 admin.site.register(AssertionType)
 admin.site.register(DateType)
 admin.site.register(RoleType)
-admin.site.register(AssertionPerson)
 admin.site.register(AssertionDate)
 admin.site.register(AssertionPersonDate)
+
+
+# Date Inline Admin
+class DateInline(admin.StackedInline):
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-closed',)
+
+    readonly_fields = ('id', )
+    fields = (['id', 'date_type'], ['interval', 'year', ], ['circa', 'year_uncertain', ], 'extra_info')
+    extra = 0
+
+    show_change_link = True
+
+class AssertionDateInline(DateInline):
+    verbose_name = 'Assertion Date'
+    verbose_name_plural = 'Assertion Dates'
+
+    model = AssertionDate
+
+class AssertionPersonDateInline(DateInline):
+    verbose_name = 'Assertion Person Date'
+    verbose_name_plural = 'Assertion Person Dates'
+
+    model = AssertionPersonDate
+
+class PersonDateInline(DateInline):
+    verbose_name = 'Person Date'
+    verbose_name_plural = 'Person Dates'
+
+    model = PersonDate
+
+
+class AssertionPersonNoteInline(admin.StackedInline):
+    model = AssertionPerson.notes.through
+    extra = 0
+
+    raw_id_fields = ['assertionperson']
+
+    related_lookup_fields = {
+        'm2m': 'assertionperson'
+        }
+
+
+# TODO: not displaying all info...
+class AssertionPersonAdmin(admin.ModelAdmin):
+
+    fieldsets = [
+            ('Database Info', {'fields': [('id')]}),
+            ('', {'fields': ['assertion', 'person']}),
+            ]
+
+    readonly_fields = ('id', )
+    list_display = ('id', 'assertion', 'person', 'created_by', 'created', 'modified')
+
+    # fields = (['id', ])
+
+    raw_id_fields = ('assertion', 'person', )
+
+    related_lookup_fields = {
+         'fk': ['assertion', 'person'],
+    }
+
+    inlines = (AssertionPersonDateInline, AssertionPersonNoteInline, )
+
+admin.site.register(AssertionPerson, AssertionPersonAdmin)
 
 
 class AssertionInline(admin.StackedInline):
@@ -31,41 +95,21 @@ class AssertionInline(admin.StackedInline):
     verbose_name_plural = 'Person Assertions'
 
     fields = (['assertion', 'role'],  ['original_text', 'office_xref'], 'notes')
-    raw_id_fields = ('assertion', 'notes', )
-
     extra = 0
 
-#    autocomplete_lookup_fields = {
-#        'm2m': ['notes', ],
-#    }
-
-    show_change_link = True
-
-    raw_id_fields = ('notes',)
+    raw_id_fields = ('notes', 'assertion')
 
     related_lookup_fields = {
-        'm2m': ['notes'],
+        'pk': ['assertion', ],
+        'm2m': ['notes', ],
     }
-
-
-class AssertionDateInline(admin.StackedInline):
-    classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-closed',)
-
-    verbose_name = 'Assertion Date'
-    verbose_name_plural = 'Assertion Dates'
-
-    model = AssertionDate
-
-    readonly_fields = ('id', )
-    fields = (['id', 'date_type'], ['interval', 'year', ], ['circa', 'year_uncertain', ], 'extra_info')
-    extra = 0
-
-    show_change_link = True
 
 
 class AssertionNoteInline(admin.StackedInline):
     model = AssertionNoteThrough
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-closed',)
 
     verbose_name = 'Assertion Note'
     verbose_name_plural = 'Assertion Notes'
@@ -73,6 +117,7 @@ class AssertionNoteInline(admin.StackedInline):
     readonly_fields = ('_note_type', )
 
     raw_id_fields = ('assertionnote', )
+
     related_lookup_fields = {
         'm2m': ['assertionnote'],
     }
@@ -86,43 +131,43 @@ class AssertionNoteInline(admin.StackedInline):
     show_change_link = True
 
 
-class AssertionPersonNoteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'note_type', 'text', 'created', 'modified')
-
-    readonly_fields = ('id', 'created', 'modified')
-    fields = ('id', 'note_type', 'text', 'extra_info', )
-
-admin.site.register(AssertionPersonNote, AssertionPersonNoteAdmin)
-
-
-class AssertionNoteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'note_type', 'text', 'extra_info', 'created', 'modified')
+class NoteAdmin(admin.ModelAdmin):
+    list_display = ('id', 'note_type', 'secondary_source', 'text', 'extra_info', 'created', 'modified')
     readonly_fields = ('id', 'created', 'modified')
 
     search_fields = ['id', 'note_type', 'text']
-    fields = ('id', 'note_type', 'text', 'extra_info', )
+    fields = ('id', ['secondary_source', 'note_type'], 'text', 'extra_info', )
 
-admin.site.register(AssertionNote, AssertionNoteAdmin)
+    # list_display_links = ('id', 'certainty', 'assertion_type', 'office', 'secondary_source')
+
+    show_change_link = True
 
 
-class PersonInline(admin.TabularInline):
+admin.site.register(AssertionPersonNote, NoteAdmin)
+admin.site.register(AssertionNote, NoteAdmin)
+
+
+class PersonInline(admin.StackedInline):
+
     classes = ('grp-collapse grp-open',)
-    verbose_name = 'Assertion Person'
-    verbose_name_plural = 'Assertion-Person Relationships'
+    inline_classes = ('grp-collapse grp-closed',)
+
+    verbose_name_plural = 'Persons on this Assertion'
+    verbose_name = 'Person:'
 
     show_change_link = True
 
     model = Assertion.persons.through
 
-    fields = ('person', 'role', 'original_text', 'position', )
-    sortable_field_name = "position"
+    fields = (['id', 'position'] , ['person', 'role'],  ['original_text', 'office_xref'], 'notes')
+    sortable_field_name = 'position'
 
     readonly_fields = ('id', )
 
-    raw_id_fields = ('person', )
-
+    raw_id_fields = ('person', 'notes')
     related_lookup_fields = {
-        'fk': ['person'],
+        'fk': ['person', ],
+        'm2m': ['notes', ]
     }
 
     extra = 0
@@ -188,7 +233,9 @@ class PersonAdmin(admin.ModelAdmin):
 
     list_filter = ('assertionperson__role', 'nomen', 'assertionperson__assertion__office', 'review_flag', )
 
-    inlines = (AssertionInline, )
+    inlines = (PersonDateInline, AssertionInline, )
+    exclude = ('assertions',  )
+
 
 admin.site.register(Person, PersonAdmin)
 
@@ -224,11 +271,11 @@ class AssertionAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = ('id', )
-    raw_id_fields = ('office', 'secondary_source', 'assertion_type', )
     list_display_links = ('id', 'certainty', 'assertion_type', 'office', 'secondary_source')
 
-    autocomplete_lookup_fields = {
-        'fk': ['office', 'secondary_source', 'assertion_type', ],
+    raw_id_fields = ('office', )
+    related_lookup_fields = {
+        'fk': ['office', ],
     }
 
     fieldsets = [

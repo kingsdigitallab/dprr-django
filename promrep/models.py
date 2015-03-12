@@ -124,10 +124,6 @@ class Note(TimeStampedModel):
     def __unicode__(self):
         return self.text.strip()
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return ("id__iexact", "text", )
-
 
 @with_author
 class AssertionNote(Note):
@@ -318,6 +314,10 @@ class Assertion(TimeStampedModel):
         name = name + " (" + self.secondary_source.abbrev_name + ")"
 
         return name
+
+    def related_label(self):
+        return u"%s" % (self.__unicode__(), )
+
 
 
 @with_author

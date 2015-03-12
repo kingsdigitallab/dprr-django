@@ -133,6 +133,7 @@ class AssertionNoteInline(admin.StackedInline):
 
 class NoteAdmin(admin.ModelAdmin):
     list_display = ('id', 'note_type', 'secondary_source', 'text', 'extra_info', 'created', 'modified')
+    list_display_links = ('note_type', 'secondary_source', 'text', 'extra_info')
     readonly_fields = ('id', 'created', 'modified')
 
     search_fields = ['id', 'note_type', 'text']

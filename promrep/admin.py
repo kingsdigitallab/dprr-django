@@ -230,7 +230,7 @@ class PersonAdmin(admin.ModelAdmin):
         'created',
         )
 
-    search_fields = ['nomen', 'cognomen', 'praenomen__abbrev', 'praenomen__name', 'other_names', ]
+    search_fields = ['id', 'nomen', 'cognomen', 'praenomen__abbrev', 'praenomen__name', 'other_names', ]
 
     list_filter = ('assertionperson__role', 'nomen', 'assertionperson__assertion__office', 'review_flag', )
 
@@ -257,7 +257,7 @@ admin.site.register(Office, OfficeAdmin)
 
 class AssertionAdmin(admin.ModelAdmin):
 
-    search_fields = ['assertionperson__person__nomen', 'assertionperson__person__cognomen', ]
+    search_fields = ['id', 'assertionperson__person__nomen', 'assertionperson__person__cognomen', ]
     list_filter = ('secondary_source', 'assertion_type', AssertionYearListFilter, 'office')
 
     list_display = (

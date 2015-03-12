@@ -139,10 +139,10 @@ class AssertionYearListFilter(SimpleListFilter):
 
     def lookups(self, request, model_admin):
         lookup = []
-        years = Assertion.objects.all().values('dates__year').distinct()
+        years = Assertion.objects.all().values('date__year').distinct()
 
         for year in years:
-            item = (year['dates__year'], year['dates__year'])
+            item = (year['date__year'], year['date__year'])
             if item not in lookup:
                 lookup.append(item)
 
@@ -150,7 +150,7 @@ class AssertionYearListFilter(SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value():
-            return queryset.filter(dates__year__exact=self.value())
+            return queryset.filter(date__year__exact=self.value())
 
 
 class PersonAdmin(admin.ModelAdmin):
@@ -229,10 +229,6 @@ class AssertionAdmin(admin.ModelAdmin):
 
     autocomplete_lookup_fields = {
         'fk': ['office', 'secondary_source', 'assertion_type', ],
-    }
-
-    related_lookup_fields = {
-        'pk': ['dates'],
     }
 
     fieldsets = [

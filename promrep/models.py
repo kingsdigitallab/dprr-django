@@ -114,7 +114,7 @@ class Note(TimeStampedModel):
     secondary_source = models.ForeignKey(SecondarySource)
 
     # useful to store the bookmark number, for instance
-    text = models.TextField(max_length=4096, blank=True)
+    text = models.TextField(blank=True)
     extra_info = models.TextField(max_length=1024, blank=True)
 
     class Meta:
@@ -174,7 +174,6 @@ class Person(TimeStampedModel):
 
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Person needs manual revision."
-
 
     def real_id(self):
         return self.real_number

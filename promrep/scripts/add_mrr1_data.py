@@ -73,11 +73,13 @@ def processXML(ifile):
     page = file(ifile)
     soup = BeautifulSoup(page, features='xml')
 
+    source = SecondarySource.objects.get(abbrev_name='Broughton MRR I')
+
     years = soup.findAll('year')
 
     # process year
 
-    # for year in years[0:3]:
+#    for year in years[0:3]:
     for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
@@ -86,7 +88,6 @@ def processXML(ifile):
         print
         print ">>>>> Year", year_str, years.index(year), '(',len(year.findAll('footnote')), 'footnotes)'
         print
-
 
         # the footnotes can be added to a list
         # ... right at the "start" of the year
@@ -115,34 +116,27 @@ def processXML(ifile):
             # get office using office name
             office_obj = get_office_obj(office_name)
 
-            #  every time a note is found, it is associated with
-            #  all the assertion_persons in the list
+            #  every time a note is found, it is associated with all the assertion_persons in the list
             person_ref_queue = []
 
             assertion_type = AssertionType.objects.get(name='Office')
 
-            source = SecondarySource.objects.get(abbrev_name='Broughton MRR I')
-
-            assertion_date, created = AssertionDate.objects.get_or_create(
-                        year = -int(year_str),
-                    )
-
-            assertion_dates_list = []
-            assertion_dates_list.append(assertion_date)
+            assertion_date = AssertionDate.objects.create(year = -int(year_str),)
 
             # tests if assertion already exists
             assertion_list = Assertion.objects.filter(office=office_obj,
                                                       assertion_type=assertion_type,
                                                       secondary_source=source,
-                                                      dates__in = assertion_dates_list,
+                                                      date__year = assertion_date.year,
                                                       certainty = assertion_certainty)
 
             # if it doesn't exist, creates a new assertion
             if len(assertion_list) == 0:
                 assertion = Assertion.objects.create(office=office_obj, assertion_type=assertion_type, secondary_source=source, certainty=assertion_certainty)
+                assertion_date.assertion = assertion
+                assertion_date.save()
 
-                for date in assertion_dates_list:
-                    assertion.dates.add(date)
+
             elif len(assertion_list) == 1:
                 assertion = assertion_list[0]
             else:
@@ -152,7 +146,7 @@ def processXML(ifile):
             # add any existing notes to the assertion
             for onote in office_tag.find_all('office-note'):
                 if onote.has_attr('name'):
-                    a_note, created = AssertionNote.objects.get_or_create(text=onote['name'])
+                    a_note, created = AssertionNote.objects.get_or_create(text=onote['name'], secondary_source=source)
                     assertion.notes.add(a_note)
 
             if office_tag.has_attr('footnote'):
@@ -161,7 +155,7 @@ def processXML(ifile):
                 if fnote_id in fnote_dict:
                     ofnote = fnote_dict[fnote_id]
 
-                    afnote = AssertionNote(note_type=1, text = ofnote.get_text())
+                    afnote = AssertionNote(note_type=1, text = ofnote.get_text(), secondary_source=source)
                     afnote.save()
                     assertion.notes.add(afnote)
                 else:
@@ -190,9 +184,9 @@ def processXML(ifile):
                     else:
                         # removes the date_certainty info from the dictionary
                         if 'date_certainty' in person_info:
-                            ap_date_info = person_info.pop('date_certainty')
+                            ap_date_info = person_info.pop('date_certainty').strip()
                         else:
-                            ap_date_info = None
+                            ap_date_info = ""
 
                         # creates the person object from the dictionary directly
                         person, created = Person.objects.get_or_create(
@@ -216,23 +210,13 @@ def processXML(ifile):
                             person.patrician_certainty = person_info.get('patrician_certainty', False)
                             person.save()
 
-                            logger.info('Added new person %s with id %i' % (person.get_name(), person.id))
-
                     # creates the AssertionPerson
                     if person is not None:
-                        yuncertain = False
 
-                        if ap_date_info is not None:
-
-                            if '?' in ap_date_info:
-                                yuncertain = True
-                            else:
-                                print ap_date_info
-
-                        date_start, created = AssertionPersonDate.objects.get_or_create(
-                            year = -int(year_str),
-                            year_uncertain = yuncertain
-                        )
+                        if p.has_attr('office-xref'):
+                            oxref=p['office-xref']
+                        else:
+                            oxref=""
 
                         # TODO: stop creating repeated assertions
                         assertion_person, created = AssertionPerson.objects.get_or_create(
@@ -240,8 +224,21 @@ def processXML(ifile):
                             assertion=assertion,
                             person=person,
                             original_text = name_str,
+                            office_xref = oxref
                         )
 
+                        # AssertionPerson Dates
+                        ap_date_info = ap_date_info.strip("[:")
+
+                        if ap_date_info:
+                            ap_date = AssertionPersonDate.objects.create(year = -int(year_str), year_uncertain = True, assertion_person = assertion_person)
+
+                            # cases that need manual fixing
+                            if ap_date_info != "?":
+                                ap_date.extra_info = ap_date_info
+                                ap_date.save()
+
+                        # AP certainty
                         if p.has_attr('assertion-certainty'):
                             assertion_person.certainty = False
 
@@ -249,23 +246,18 @@ def processXML(ifile):
                         assertion_person.position = assertion.persons.count()
                         assertion_person.save()
 
-                        # only adds this the first time the assertion is created
-                        if created:
-                            if p.has_attr('office-xref'):
-                                assertion_person.office_xref=p['office-xref']
-                                assertion_person.save()
-
-                        assertion_person.dates.add(date_start)
-
                         # add any footnotes the person might have
                         if p.has_attr('footnote'):
                             fnote_id = p['footnote'].lstrip('#')
 
                             if fnote_id in fnote_dict:
                                 pnote = fnote_dict[fnote_id]
-                                ap_fnote = AssertionPersonNote(note_type=1, text = pnote.get_text())
-                                ap_fnote.save()
-                                assertion_person.notes.add(ap_fnote)
+                                try:
+                                    ap_fnote = AssertionPersonNote(note_type=1, text = pnote.get_text(), secondary_source=source)
+                                    ap_fnote.save()
+                                    assertion_person.notes.add(ap_fnote)
+                                except:
+                                    print "ERROR ADDING NOTES!!!"
                             else:
                                 print "ERROR adding person footnote with id", fnote_id
 
@@ -283,24 +275,23 @@ def processXML(ifile):
 
                             # glues the ref parts together; mines footnotes
                             for r in references.findAll('ref'):
-                                ref_text = ref_text + " " + r.get_text()
+                                ref_text = ref_text + " " + r.get_text().strip()
 
                                 if r.has_attr('footnote'):
                                     footnotes.append(r['footnote'].lstrip('#'))
 
                             # creates the note
                             note, created = AssertionPersonNote.objects.get_or_create(
-                                text=ref_text
+                                text=ref_text.strip(),
+                                secondary_source=source
                             )
 
                             notes_queue.append(note)
 
                             for fnote_id in footnotes:
-
                                 if fnote_id in fnote_dict:
                                     apfnote_obj = fnote_dict[fnote_id]
-
-                                    apfnote = AssertionPersonNote(note_type=1, text = apfnote_obj.get_text())
+                                    apfnote = AssertionPersonNote(note_type=1, text = apfnote_obj.get_text().strip())
                                     apfnote.save()
 
                                     notes_queue.append(apfnote)
@@ -309,6 +300,7 @@ def processXML(ifile):
                                     print "ERROR adding person footnote with id", fnote_id
 
                             for ap in person_ref_queue:
+
                                 for n in notes_queue:
                                     ap.notes.add(n)
 
@@ -325,7 +317,8 @@ def processXML(ifile):
                                     endnote = AssertionPersonNote(
                                         text = endnote_text,
                                         note_type = NoteType.objects.get(name="Endnote"),
-                                        extra_info = endnote_name
+                                        extra_info = endnote_name,
+                                        secondary_source = source
                                         )
                                     endnote.save()
                                     assertion.notes.add(endnote)

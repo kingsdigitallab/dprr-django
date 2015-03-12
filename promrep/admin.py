@@ -17,6 +17,8 @@ admin.site.register(AssertionType)
 admin.site.register(DateType)
 admin.site.register(RoleType)
 admin.site.register(AssertionPerson)
+admin.site.register(AssertionDate)
+admin.site.register(AssertionPersonDate)
 
 
 class AssertionInline(admin.StackedInline):
@@ -28,26 +30,35 @@ class AssertionInline(admin.StackedInline):
     verbose_name = 'Assertion'
     verbose_name_plural = 'Person Assertions'
 
-    fields = (['assertion', 'role'],  ['original_text', 'office_xref'], 'dates', 'notes')
+    fields = (['assertion', 'role'],  ['original_text', 'office_xref'], 'notes')
     raw_id_fields = ('assertion', 'notes', )
 
     extra = 0
 
-    filter_horizontal = ('dates', )
+#    autocomplete_lookup_fields = {
+#        'm2m': ['notes', ],
+#    }
 
-    autocomplete_lookup_fields = {
-        'm2m': ['notes', ],
+    show_change_link = True
+
+    raw_id_fields = ('notes',)
+
+    related_lookup_fields = {
+        'm2m': ['notes'],
     }
 
-class AssertionDateInline(admin.TabularInline):
+
+class AssertionDateInline(admin.StackedInline):
     classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-closed',)
 
     verbose_name = 'Assertion Date'
     verbose_name_plural = 'Assertion Dates'
 
-    model = Assertion.dates.through
+    model = AssertionDate
 
     readonly_fields = ('id', )
+    fields = (['id', 'date_type'], ['interval', 'year', ], ['circa', 'year_uncertain', ], 'extra_info')
     extra = 0
 
     show_change_link = True
@@ -60,8 +71,8 @@ class AssertionNoteInline(admin.StackedInline):
     verbose_name_plural = 'Assertion Notes'
 
     readonly_fields = ('_note_type', )
-    raw_id_fields = ('assertionnote', )
 
+    raw_id_fields = ('assertionnote', )
     related_lookup_fields = {
         'm2m': ['assertionnote'],
     }
@@ -86,8 +97,9 @@ admin.site.register(AssertionPersonNote, AssertionPersonNoteAdmin)
 
 class AssertionNoteAdmin(admin.ModelAdmin):
     list_display = ('id', 'note_type', 'text', 'extra_info', 'created', 'modified')
-
     readonly_fields = ('id', 'created', 'modified')
+
+    search_fields = ['id', 'note_type', 'text']
     fields = ('id', 'note_type', 'text', 'extra_info', )
 
 admin.site.register(AssertionNote, AssertionNoteAdmin)
@@ -127,10 +139,10 @@ class AssertionYearListFilter(SimpleListFilter):
 
     def lookups(self, request, model_admin):
         lookup = []
-        years = Assertion.objects.all().values('dates__year').distinct()
+        years = Assertion.objects.all().values('date__year').distinct()
 
         for year in years:
-            item = (year['dates__year'], year['dates__year'])
+            item = (year['date__year'], year['date__year'])
             if item not in lookup:
                 lookup.append(item)
 
@@ -138,7 +150,7 @@ class AssertionYearListFilter(SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value():
-            return queryset.filter(dates__year__exact=self.value())
+            return queryset.filter(date__year__exact=self.value())
 
 
 class PersonAdmin(admin.ModelAdmin):
@@ -165,7 +177,6 @@ class PersonAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'url_to_edit_person',
-        'get_dates',
         'review_flag',
         'updated_by',
         'modified',
@@ -194,6 +205,8 @@ class OfficeAdmin(DjangoMpttAdmin):
 admin.site.register(Office, OfficeAdmin)
 
 
+
+
 class AssertionAdmin(admin.ModelAdmin):
 
     search_fields = ['assertionperson__person__nomen', 'assertionperson__person__cognomen', ]
@@ -203,18 +216,16 @@ class AssertionAdmin(admin.ModelAdmin):
         'id',
         'assertion_type',
         'office',
-        'certainty',
         'get_dates',
         'secondary_source',
+        'certainty',
         'modified',
         'created',
     )
 
     readonly_fields = ('id', )
     raw_id_fields = ('office', 'secondary_source', 'assertion_type', )
-    list_display_links = ('id', 'certainty', 'get_dates', 'assertion_type', 'office', 'secondary_source')
-
-    filter_horizontal = ('dates', )
+    list_display_links = ('id', 'certainty', 'assertion_type', 'office', 'secondary_source')
 
     autocomplete_lookup_fields = {
         'fk': ['office', 'secondary_source', 'assertion_type', ],
@@ -227,14 +238,13 @@ class AssertionAdmin(admin.ModelAdmin):
                         'fields': [
                                 ('secondary_source', 'certainty', ),
                                 ('assertion_type', 'office',),
-                                ('dates', ),
                                 ],
                         'classes': ('grp-collapse grp-open',),
                         }
                     ),
             ]
 
-    inlines = [PersonInline, AssertionNoteInline, ]
+    inlines = [AssertionDateInline, PersonInline, AssertionNoteInline, ]
     exclude = ('persons',  )
 
 admin.site.register(Assertion, AssertionAdmin)

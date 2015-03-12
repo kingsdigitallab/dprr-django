@@ -10,7 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=IE8">
     <!-- <meta name="keywords" content="{# block meta_keywords #}{# endblock #}"> -->
     <!-- <meta name="description" content="{# block meta_description #}{# endblock #}"> -->
-    <title>DPRR</title>
+    <title>{% block meta_title %}{% endblock %} | DPRR</title>
 
     <!-- <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" /> -->
 
@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/app.scss' %}" />
     {% endcompress %}
 
-    <script src="/assets/vendor/modernizr/modernizr.js"></script>
+    <script src="{% static 'vendor/modernizr/modernizr.js' %}"></script>
 </head>
 <body id="body">
 
@@ -28,7 +28,10 @@
     {% include "includes/nav.html" %}
 
     <div class="contain-to-grid content-area">
-        {% block content %}{% endblock %}
+        <section class="main">
+        {% block main %}
+        {% endblock %}
+        </section>
     </div>
 
     {% include "includes/footer.html" %}

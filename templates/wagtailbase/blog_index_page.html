@@ -1,0 +1,41 @@
+{% extends "wagtailbase/index_page.html" %}
+
+{% load wagtailcore_tags wagtailbase_tags %}
+
+{% block main %}
+
+<div class="row">
+	<div class="large-12 columns">
+		<h1 class="list-page-title">Blog</h1>
+	</div>
+</div>
+
+<div class="row">
+	<div class="large-12 columns">
+		{% block posts_by %}
+		{% if filter_type == 'author' %}
+		<h2>Showing posts by {{ filter|safe }} <a href="{% pageurl self %}">Show all</a></h2>
+		{% endif %}
+		{% endblock %}
+
+		{% block posts_tagged_as %}
+		{% if filter_type == 'tag' %}
+		<h2>Showing posts tagged as {{ filter|safe }} <a href="{% pageurl self %}">Show all</a></h2>
+		{% endif %}
+		{% endblock %}
+
+		{% block posts_by_date %}
+		{% if filter_type == 'date' %}
+		<h2>Showing posts on {{ filter|date:filter_format }} <a href="{% pageurl self %}">Show all</a></h2>
+		{% endif %}
+		{% endblock %}
+
+		{% block index_page_children %}
+		{% include "wagtailbase/includes/blog_index_posts.html" with class="posts" %}
+		{% endblock %}
+
+		{% block latest_blog_post %}{% endblock %}
+	</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,13 @@
+{% load wagtailcore_tags wagtailbase_tags %}
+
+<ul class="main-navigation">
+    <li class="{% if current_page and root.url == current_page.url %}active{% endif %}">
+        <a href="{% pageurl root %}">{{ root.title }}</a>
+    </li>
+
+    {% for page in menu_pages %}
+    <li class="{% if current_page and page|is_current_or_ancestor:current_page %}active{% endif %}">
+        <a href="{% pageurl page %}">{{ page.title }}</a>
+    </li>
+    {% endfor %}
+</ul>

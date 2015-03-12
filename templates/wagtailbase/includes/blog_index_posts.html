@@ -1,0 +1,14 @@
+{% load wagtailcore_tags %}
+
+<ul class="{{ class }} no-bullet">
+    {% for post in posts %}
+    <li>
+        {% include "wagtailbase/includes/blog_post_preview.html" with post=post %}
+    </li>
+    {% empty %}
+        <li>Sorry, nothing to show here.</li>
+    {% endfor %}
+</ul>
+
+{% include "wagtailbase/includes/pagination.html" with pages=posts %}
+

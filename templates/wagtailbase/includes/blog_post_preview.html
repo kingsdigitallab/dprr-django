@@ -1,0 +1,19 @@
+{% extends "wagtailbase/includes/blog_post_body.html" %}
+
+{% if post %}
+{% load wagtailcore_tags %}
+
+{% block blog_post_title %}
+<h2 class="posttitle">
+    <a href="{% pageurl post %}">{{ post.title }}</a>
+</h2>
+{% endblock %}
+
+{% block blog_post_content %}
+<section class="postcontent">
+    <p>{{ post.content|richtext|truncatewords_html:75 }}</p>
+    <a href="{% pageurl post %}" class="small button radius">Read more <i class="fa fa-angle-double-right"></i></a>
+</section>
+{% endblock %}
+
+{% endif %}

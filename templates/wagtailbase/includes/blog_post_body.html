@@ -1,0 +1,46 @@
+{% if post %}
+{% load wagtailcore_tags wagtailbase_tags wagtailroutablepage_tags %}
+
+<article class="post" id="post{{ post.id }}">
+    <header>
+        {% block blog_post_title %}
+        <h1 class="posttitle">{{ post.title }}</h1>
+        {% endblock %}
+
+        {% block blog_post_author %}
+        <p class="byline"><time datetime="{{ post.date|date:'c' }}">{{ post.date }}</time> by <a href="{% routablepageurl post.blog_index.specific 'author' post.owner %}">{{ post.owner|unslugify }}</a>
+
+            {% are_comments_allowed as allow_comments %}
+            {% if allow_comments %}
+            {% block blog_post_comments_link %}
+            <a href="#disqus_thread" data-disqus-identifier="{{ post.id }}">Comments</a>
+            {% endblock %}
+            {% endif %}
+        </p>
+        {% endblock %}
+    </header>
+
+    {% block blog_post_content %}
+    <section class="postcontent">
+        {{ post.content|richtext }}
+    </section>
+    {% endblock %}
+
+    {% block blog_post_tags %}
+    <footer>
+        {% with post.tags.all as tags %}
+        {% if tags %}
+        <h3>Tags</h3>
+        <ul class="tags">
+            {% for tag in tags %}
+            <li class="tag">
+                <a href="{% routablepageurl post.blog_index.specific 'tag' tag %}">{{ tag|unslugify }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </footer>
+    {% endblock %}
+</article>
+{% endif %}

@@ -1,4 +1,3 @@
-// Global Foundation Settings
 @import "settings";
 
 @import "../vendor/foundation/scss/normalize";
@@ -9,9 +8,9 @@
 
 /*** Global ***/
 
-header,
+header.main-header,
 .header,
-footer {
+footer.main-footer {
 	min-height: 10rem;
 }
 
@@ -20,9 +19,13 @@ footer {
 	padding-top: 1rem;
 }
 
+li.greyed-out a {
+	color: rgba(0, 0, 0, 0.3) !important;
+}
+
 /*** Header ***/
 
-header {
+header.main-header {
 	background: url('/static/images/header-bg.png') center right no-repeat $sand;
 	background-size: cover;
 }
@@ -32,61 +35,156 @@ header {
 	background-size: contain;
 }
 
-/*** Typography ***/
-
-@font-face {
-    font-family: 'Playfair Display';
-    src: url('/static/fonts/Playfair_Display/PlayfairDisplay-Regular.ttf');
-}
-
-@font-face {
-    font-family: 'Playfair Display Italic';
-    src: url('/static/fonts/Playfair_Display/PlayfairDisplay-Italic.ttf');
-}
-
-@font-face {
-    font-family: 'Playfair Display Bold';
-    src: url('/static/fonts/Playfair_Display/PlayfairDisplay-Bold.ttf');
-}
-
-@font-face {
-    font-family: 'Playfair Display Bold Italic';
-    src: url('/static/fonts/Playfair_Display/PlayfairDisplay-BoldItalic.ttf');
-}
-
 /*** Headings ***/
 
 h1, h2, h3, h4, h5, h6 {
 	color: $dark-gold;
 }
 
-h1, h2 {
-	font-family: 'Playfair Display', serif;
+h1, h2, h3 {
+	font-family: 'Julius Sans', sans-serif;
 }
 
 h1.site-title,
 h2.site-title {
-	padding-top: 2.75rem;
+	padding-top: 2rem;
 	padding-left: 5rem;
 	line-height: 1.25;
-	color: scale-color($dark-gold, $lightness: 20%);
 	text-shadow: 0 0 1px #666;
 }
 
 h3 {
-	font-family: 'Playfair Display Bold', serif;
 	font-size: 1.25rem;
+}
+
+h4, h5, h6 {
+	font-family: 'Open Sans Condensed Light', sans-serif;
+}
+
+.main h1,
+.main h2,
+.main h3 {
+	font-family: 'Open Sans Condensed Light', sans-serif;
 }
 
 /*** Navigation ***/
 
+.top-bar-section ul li {
+	border-right: 1px solid scale-color($royal-blue, $lightness: 15%);
+}
+
+.top-bar-section ul li:last-child {
+	border: none;
+}
+
+/*** Content ***/
+
+.list-page-title {
+	border-bottom: 1px solid $iron;
+	margin-bottom: 1rem;
+	padding-bottom: .5rem;
+	font-size: 1.5rem;
+}
+
+/*** Blog ***/
+ul.blog,
+ul.blog p {
+	font-size: .875rem;
+	margin: .5rem 0;
+	line-height: 1.25rem
+}
+
+ul.blog li {
+	display: block;
+	overflow: hidden;
+	border-bottom: 1px dotted $royal-blue;
+	margin: 1rem 0;
+	padding-bottom: 1rem;
+}
+
+ul.blog li:last-child {
+	border-bottom: none;
+	margin-bottom: 0;
+}
+
+.posts li {
+	border-bottom: 1px solid $iron;
+}
+
+.postcontent {
+	padding-bottom: 1rem;
+}
+
+p.meta,
+.byline {
+	font-size: .75rem !important;
+	font-style: italic;
+}
+
+/*** Sidebar ***/
+.sidebar {
+	background: $sand;
+	padding: 1rem;
+}
+
+/*** Footer ***/
+
+footer.main-footer {
+	padding-top: 1rem;
+	color: $dark-gold;
+}
+
+footer.main-footer,
+footer.main-footer p {
+	font-size: .75rem;	
+}
+
+footer.main-footer a {
+	color: $dark-gold;
+	border-bottom: 1px dotted $dark-gold;
+}
+
+footer.main-footer .logo {
+	max-width: 150px;
+}
+
+footer.main-footer .logo a {
+	border: none !important;
+}
+
+footer.main-footer .right p {
+	text-align: right;
+}
+
+/*** Typography ***/
+
+@font-face {
+	font-family: 'Julius Sans';
+	src: url('/static/fonts/Julius_Sans_One/JuliusSansOne-Regular.ttf');
+}
+
+@font-face {
+	font-family: 'Open Sans Condensed Light';
+	src: url('/static/fonts/Open_Sans_Condensed/OpenSans-CondLight.ttf');
+}
+
+@font-face {
+	font-family: 'Open Sans Condensed Light Italic';
+	src: url('/static/fonts/Open_Sans_Condensed/OpenSans-CondLightItalic.ttf');
+}
+
+@font-face {
+	font-family: 'Open Sans Condensed Bold';
+	src: url('/static/fonts/Open_Sans_Condensed/OpenSans-CondBold.ttf');
+}
 
 /*** Custom media queries ***/
+
 @media #{$large-up} {
 	h1.site-title,
 	h2.site-title {
 		font-size: 2.5rem !important;
-		width: 65%;
+		width: 80%;
 	}
 }
 

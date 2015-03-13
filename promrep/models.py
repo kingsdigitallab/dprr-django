@@ -124,11 +124,6 @@ class Note(TimeStampedModel):
     def __unicode__(self):
         return self.text.strip()
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return ("id__iexact", "text", )
-
-
 @with_author
 class AssertionNote(Note):
     pass
@@ -136,8 +131,13 @@ class AssertionNote(Note):
 @with_author
 class AssertionPersonNote(Note):
 
+    def url_to_edit_note(self):
+        url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.module_name), args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.__unicode__())
+
     def related_label(self):
-        return u"(%s) %s<a href=\"aaa\">link</a><br />" % (self.get_note_type_display(), self.text)
+
+        return u"[%s - %s] %s<br /><br />" % (self.get_note_type_display(), self.secondary_source.abbrev_name , self.text)
 
 
 
@@ -318,6 +318,10 @@ class Assertion(TimeStampedModel):
         name = name + " (" + self.secondary_source.abbrev_name + ")"
 
         return name
+
+    def related_label(self):
+        return u"%s" % (self.__unicode__(), )
+
 
 
 @with_author

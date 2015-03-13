@@ -23,6 +23,10 @@ li.greyed-out a {
 	color: rgba(0, 0, 0, 0.3) !important;
 }
 
+.rich-text {
+	padding-bottom: 1rem;
+}
+
 /*** Header ***/
 
 header.main-header {
@@ -75,6 +79,14 @@ h4, h5, h6 {
 
 .top-bar-section ul li:last-child {
 	border: none;
+}
+
+.top-bar-section .dropdown li:not(.has-form):not(.active) > a:not(.button) {
+	border-bottom: 1px solid scale-color($royal-blue, $lightness: 15%);
+}
+
+.top-bar-section .dropdown li:not(.has-form):not(.active) > a:not(.button):hover {
+	background: scale-color($royal-blue, $lightness: -15%);
 }
 
 /*** Content ***/

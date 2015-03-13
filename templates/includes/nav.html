@@ -1,3 +1,5 @@
+{% load wagtailbase_tags %}
+
 <div class="contain-to-grid">
 	<nav class="top-bar" data-topbar role="navigation">
 		<ul class="title-area">
@@ -9,6 +11,7 @@
 
 		<section class="top-bar-section">
 			<!-- Right Nav Section -->
+			<!-- Generic search -->
 			<!-- <ul class="right">
 				<li class="has-form">
 					<div class="row collapse">
@@ -22,9 +25,24 @@
 				</li>
 			</ul> -->
 			<!-- Left Nav Section -->
+			{# block main_menu #}
+            {# get_site_root as site_root #}
+            {# main_menu root=site_root current_page=self #}
+            {# endblock #}
+
+
 			<ul class="left">
 				<li class="active"><a href="/">Home</a></li>
-				<li><a href="/about/">About</a></li>
+				<li class="has-dropdown">
+					<a href="/about/">About </a>
+					<ul class="dropdown">
+						<li><a href="/about/database/">DPRR database explained</a></li>
+						<li><a href="/about/events/">Events</a></li>
+						<li><a href="/about/project-team">Project team</a></li>
+						<li><a href="/about/biblio-sources/">Bibliogarphical sources</a></li>
+						<li><a href="/about/copyright/">Copyright and sharing the work</a></li>
+					</ul>
+				</li>
 				<li><a href="/blog/">Blog</a></li>
 				<li class="greyed-out"><a href="/browse/">Browse</a></li>
 				<li><a href="/contact/">Contact</a></li>

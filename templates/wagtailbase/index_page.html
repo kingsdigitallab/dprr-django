@@ -2,20 +2,36 @@
 
 {% block main %}
 
-{% block index_page_introduction %}
-{% include "wagtailbase/includes/introduction.html" with introduction=self.introduction only %}
+{% block breadcrumbs %}
+{% include "includes/breadcrumbs.html" %}
 {% endblock %}
 
-{% block index_page_children %}
-{% include "wagtailbase/includes/index_page_children.html" with title="In this section" %}
-{% endblock %}
+<div class="row" data-equalizer>
+	<div class="large-4 columns sidebar" data-equalizer-watch>
+		{% block sidebar %}
+		{% block index_page_children %}
+		{% include "wagtailbase/includes/index_page_children.html" with title="In this section" %}
+		{% endblock %}
+		{% endblock %}
+	</div>
 
-{% block attachments %}
-{% include "wagtailbase/includes/attachments.html" with attachments=self.attachments.all title="Attachments" %}
-{% endblock %}
+	<div class="large-8 columns" data-equalizer-watch>
 
-{% block related_links %}
-{% include "wagtailbase/includes/related_links.html" with related_links=self.related_links.all title="Related links" %}
-{% endblock %}
+		<h1>{% block title %} {{ self.title }} {% endblock %}</h1>
+
+		{% block index_page_introduction %}
+		{% include "wagtailbase/includes/introduction.html" with introduction=self.introduction only %}
+		{% endblock %}
+
+		{% block attachments %}
+		{% include "wagtailbase/includes/attachments.html" with attachments=self.attachments.all title="Attachments" %}
+		{% endblock %}
+
+		{% block related_links %}
+		{% include "wagtailbase/includes/related_links.html" with related_links=self.related_links.all title="Related links" %}
+		{% endblock %}
+
+	</div>
+</div>
 
 {% endblock %}

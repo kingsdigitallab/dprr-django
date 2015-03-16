@@ -62,24 +62,33 @@ def get_office_obj(office_name):
 
 
 def run():
-    # this is the file exported by OpenOffice
-
-    ifile = 'promrep/scripts/data/mrr1_all_LF_Officesv18.docx.html.xml'
-    print 'Will process input file', ifile
-    processXML(ifile)
+    processXML()
 
 
-def processXML(ifile):
+def processXML():
+
+    volume = 'mrr2'
+
+    sdict = {
+        'mrr1': ['Broughton MRR I', 'promrep/scripts/data/mrr1_all_LF_Officesv18.docx.html.xml'],
+        'mrr2': ['Broughton MRR II', 'promrep/scripts/data/mrr2_converted_html_v7.xml']
+    }
+
+    source = SecondarySource.objects.get( abbrev_name = sdict[volume][0] )
+    ifile = sdict[volume][1]
+
+    print
+    print 'Will read', source, 'from file', ifile
+    print
+
     page = file(ifile)
     soup = BeautifulSoup(page, features='xml')
-
-    source = SecondarySource.objects.get(abbrev_name='Broughton MRR I')
 
     years = soup.findAll('year')
 
     # process year
 
-#    for year in years[0:3]:
+    # for year in years[42:]:
     for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
@@ -163,24 +172,19 @@ def processXML(ifile):
 
             # Assertion: Office + Year + Person
             for p in office_tag.find_all('person'):
+
+                name_str = p['name'].replace(u"’", "'").replace(u"\u2013", "-").replace(u'\xb4', "'")
+
                 print
-                print "> Person:", p['name']
-                name_el = p['name']
+                print "> Person:", name_str
 
-                # TODO: wrap in transaction
                 try:
-                    name_str = name_el
-
                     # parses person from name
                     person_info = aux.parse_person(name_str)
 
-                    ######
-                    # TODO: error handling???
-                    ######
                     if person_info is None:
                         # creates as person with the whole name str as the nomen
-                        person = Person(nomen = name_str, review_flag=True)
-                        person.save()
+                        person, created = Person.objects.get_or_create(nomen = name_str, review_flag=True)
                     else:
                         # removes the date_certainty info from the dictionary
                         if 'date_certainty' in person_info:
@@ -210,9 +214,11 @@ def processXML(ifile):
                             person.patrician_certainty = person_info.get('patrician_certainty', False)
                             person.save()
 
-                    # creates the AssertionPerson
-                    if person is not None:
+                    if person is None:
+                        print "ERROR creating person-->", name_str
 
+                    # creates the AssertionPerson
+                    else:
                         if p.has_attr('office-xref'):
                             oxref=p['office-xref']
                         else:

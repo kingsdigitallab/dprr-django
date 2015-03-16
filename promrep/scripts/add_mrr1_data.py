@@ -88,8 +88,8 @@ def processXML():
 
     # process year
 
-    # for year in years[42:]:
-    for year in years:
+    for year in years[0:1]:
+    #for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
 
@@ -158,8 +158,11 @@ def processXML():
                     a_note, created = AssertionNote.objects.get_or_create(text=onote['name'], secondary_source=source)
                     assertion.notes.add(a_note)
 
-            if office_tag.has_attr('footnote'):
-                fnote_id = office_tag['footnote'].lstrip('#')
+            if office_tag.has_attr('footnote') or office_tag.has_attr('x_footnote'):
+                if office_tag.has_attr('footnote'):
+                    fnote_id = office_tag['footnote'].lstrip('#')
+                else:
+                    fnote_id = office_tag['x_footnote'].lstrip('#')
 
                 if fnote_id in fnote_dict:
                     ofnote = fnote_dict[fnote_id]
@@ -253,8 +256,11 @@ def processXML():
                         assertion_person.save()
 
                         # add any footnotes the person might have
-                        if p.has_attr('footnote'):
-                            fnote_id = p['footnote'].lstrip('#')
+                        if p.has_attr('footnote') or p.has_attr('x_footnote'):
+                            if p.has_attr('footnote'):
+                                fnote_id = p['footnote'].lstrip('#')
+                            else:
+                                fnote_id = p['x_footnote'].lstrip('#')
 
                             if fnote_id in fnote_dict:
                                 pnote = fnote_dict[fnote_id]
@@ -285,6 +291,8 @@ def processXML():
 
                                 if r.has_attr('footnote'):
                                     footnotes.append(r['footnote'].lstrip('#'))
+                                elif r.has_attr('x_footnote'):
+                                    footnotes.append(r['x_footnote'].lstrip('#'))
 
                             # creates the note
                             note, created = AssertionPersonNote.objects.get_or_create(

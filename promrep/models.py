@@ -346,6 +346,10 @@ class AssertionPerson(TimeStampedModel):
         name = name + " (" + self.secondary_source.abbrev_name + ")"
         return name
 
+    def get_dates(self):
+        dates = ' '.join([unicode(date) for date in self.dates.all()])
+        return dates
+
 
 class AssertionNoteThrough(Assertion.notes.through):
     class Meta:

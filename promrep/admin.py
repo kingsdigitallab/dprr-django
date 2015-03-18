@@ -8,6 +8,8 @@ from django_mptt_admin.admin import DjangoMpttAdmin
 from django.contrib.contenttypes import generic
 from django.forms import TextInput, Textarea
 
+from promrep.forms import AssertionInlineForm
+
 from models import Person, Office, Praenomen, AssertionPerson, \
     Assertion, AssertionType, RoleType, DateType, \
     SecondarySource, Gens, AssertionNote, AssertionPersonNote, \
@@ -71,7 +73,7 @@ class AssertionPersonAdmin(admin.ModelAdmin):
             ]
 
     readonly_fields = ('id', )
-    list_display = ('id', 'get_dates', 'assertion', 'person', 'secondary_source', 'created_by', 'created', 'modified')
+    list_display = ('id', 'assertion', 'person', 'secondary_source', 'created_by', 'created', 'modified')
 
     raw_id_fields = ('assertion', 'person',  )
 
@@ -162,11 +164,12 @@ class PersonInline(admin.StackedInline):
 
 class AssertionInline(admin.StackedInline):
     model = AssertionPerson
+    form = AssertionInlineForm
 
     extra = 0
 
-    classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-closed',)
+    # classes = ('grp-collapse grp-open',)
+    # inline_classes = ('grp-collapse grp-closed',)
 
     verbose_name = 'Assertion'
     verbose_name_plural = 'Person Assertions'
@@ -176,7 +179,9 @@ class AssertionInline(admin.StackedInline):
     fields = (['id', 'position'] ,
               ['assertion', 'role'],
               ['secondary_source', 'original_text', 'office_xref'],
-              'notes', )
+              'notes',
+              'print_dates',
+              'edit_link',)
 
     raw_id_fields = ('notes', 'assertion')
 

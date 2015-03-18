@@ -278,7 +278,6 @@ class Assertion(TimeStampedModel):
 
     notes = models.ManyToManyField(AssertionNote, related_name="assertions")
 
-    secondary_source = models.ForeignKey(SecondarySource)
     display_text = models.CharField(max_length=1024, blank=True)
 
     # if we are uncertain about an assertion
@@ -315,8 +314,6 @@ class Assertion(TimeStampedModel):
         if len(self.dates.all()) > 0:
             name = name + " " + self.get_dates() + " "
 
-        name = name + " (" + self.secondary_source.abbrev_name + ")"
-
         return name
 
     def related_label(self):
@@ -328,6 +325,7 @@ class Assertion(TimeStampedModel):
 class AssertionPerson(TimeStampedModel):
     person = models.ForeignKey(Person)
     assertion = models.ForeignKey(Assertion)
+    secondary_source = models.ForeignKey(SecondarySource)
 
     role = models.ForeignKey(RoleType)
     original_text = models.CharField(max_length=1024, blank=True)
@@ -344,7 +342,9 @@ class AssertionPerson(TimeStampedModel):
         ordering = ['position', 'id']
 
     def __unicode__(self):
-        return str(self.person.__unicode__()) + ": " + str(self.assertion.__unicode__())
+        name = str(self.person.__unicode__()) + ": " + str(self.assertion.__unicode__())
+        name = name + " (" + self.secondary_source.abbrev_name + ")"
+        return name
 
 
 class AssertionNoteThrough(Assertion.notes.through):

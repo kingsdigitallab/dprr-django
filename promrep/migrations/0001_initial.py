@@ -405,6 +405,12 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='assertionperson',
+            name='secondary_source',
+            field=models.ForeignKey(to='promrep.SecondarySource'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='assertionperson',
             name='updated_by',
             field=models.ForeignKey(related_name='assertionperson_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
             preserve_default=True,
@@ -467,12 +473,6 @@ class Migration(migrations.Migration):
             model_name='assertion',
             name='relationship',
             field=models.ForeignKey(blank=True, to='promrep.Relationship', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='assertion',
-            name='secondary_source',
-            field=models.ForeignKey(to='promrep.SecondarySource'),
             preserve_default=True,
         ),
         migrations.AddField(

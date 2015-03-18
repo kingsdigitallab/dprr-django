@@ -67,7 +67,7 @@ def run():
 
 def processXML():
 
-    volume = 'mrr2'
+    volume = 'mrr1'
 
     sdict = {
         'mrr1': ['Broughton MRR I', 'promrep/scripts/data/mrr1_all_LF_Officesv18.docx.html.xml'],
@@ -88,8 +88,8 @@ def processXML():
 
     # process year
 
-    for year in years[0:1]:
-    #for year in years:
+    for year in years[0:5]:
+    # for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
 
@@ -135,16 +135,14 @@ def processXML():
             # tests if assertion already exists
             assertion_list = Assertion.objects.filter(office=office_obj,
                                                       assertion_type=assertion_type,
-                                                      secondary_source=source,
                                                       date__year = assertion_date.year,
                                                       certainty = assertion_certainty)
 
             # if it doesn't exist, creates a new assertion
             if len(assertion_list) == 0:
-                assertion = Assertion.objects.create(office=office_obj, assertion_type=assertion_type, secondary_source=source, certainty=assertion_certainty)
+                assertion = Assertion.objects.create(office=office_obj, assertion_type=assertion_type, certainty=assertion_certainty)
                 assertion_date.assertion = assertion
                 assertion_date.save()
-
 
             elif len(assertion_list) == 1:
                 assertion = assertion_list[0]
@@ -231,6 +229,7 @@ def processXML():
                         assertion_person, created = AssertionPerson.objects.get_or_create(
                             role=RoleType.objects.get(name='Holder'),
                             assertion=assertion,
+                            secondary_source=source,
                             person=person,
                             original_text = name_str,
                             office_xref = oxref

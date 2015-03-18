@@ -19,7 +19,6 @@ admin.site.register(RoleType)
 admin.site.register(AssertionDate)
 admin.site.register(AssertionPersonDate)
 
-
 # Date Inline Admin
 class DateInline(admin.StackedInline):
     classes = ('grp-collapse grp-open',)
@@ -30,6 +29,7 @@ class DateInline(admin.StackedInline):
     extra = 0
 
     show_change_link = True
+
 
 class AssertionDateInline(DateInline):
     verbose_name = 'Assertion Date'
@@ -43,25 +43,26 @@ class AssertionPersonDateInline(DateInline):
 
     model = AssertionPersonDate
 
+    extra = 0
+
+
 class PersonDateInline(DateInline):
     verbose_name = 'Person Date'
     verbose_name_plural = 'Person Dates'
 
     model = PersonDate
 
-
 class AssertionPersonNoteInline(admin.StackedInline):
     model = AssertionPerson.notes.through
     extra = 0
 
-    raw_id_fields = ['assertionperson']
+    raw_id_fields = ['assertionperson', 'assertionpersonnote']
 
     related_lookup_fields = {
         'm2m': 'assertionperson'
         }
 
 
-# TODO: not displaying all info...
 class AssertionPersonAdmin(admin.ModelAdmin):
 
     fieldsets = [
@@ -70,11 +71,9 @@ class AssertionPersonAdmin(admin.ModelAdmin):
             ]
 
     readonly_fields = ('id', )
-    list_display = ('id', 'assertion', 'person', 'created_by', 'created', 'modified')
+    list_display = ('id', 'get_dates', 'assertion', 'person', 'secondary_source', 'created_by', 'created', 'modified')
 
-    # fields = (['id', ])
-
-    raw_id_fields = ('assertion', 'person', )
+    raw_id_fields = ('assertion', 'person',  )
 
     related_lookup_fields = {
          'fk': ['assertion', 'person'],
@@ -83,26 +82,6 @@ class AssertionPersonAdmin(admin.ModelAdmin):
     inlines = (AssertionPersonDateInline, AssertionPersonNoteInline, )
 
 admin.site.register(AssertionPerson, AssertionPersonAdmin)
-
-
-class AssertionInline(admin.StackedInline):
-    model = Assertion.persons.through
-
-    classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-closed',)
-
-    verbose_name = 'Assertion'
-    verbose_name_plural = 'Person Assertions'
-
-    fields = (['assertion', 'role'],  ['original_text', 'office_xref'], 'notes')
-    extra = 0
-
-    raw_id_fields = ('notes', 'assertion')
-
-    related_lookup_fields = {
-        'pk': ['assertion', ],
-        'm2m': ['notes', ],
-    }
 
 
 class AssertionNoteInline(admin.StackedInline):
@@ -149,6 +128,7 @@ admin.site.register(AssertionNote, NoteAdmin)
 
 
 class PersonInline(admin.StackedInline):
+    model = Assertion.persons.through
 
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-closed',)
@@ -158,9 +138,11 @@ class PersonInline(admin.StackedInline):
 
     show_change_link = True
 
-    model = Assertion.persons.through
+    fields = (['id', 'position'] ,
+              ['person', 'role'],
+              ['secondary_source', 'original_text', 'office_xref'],
+              'notes')
 
-    fields = (['id', 'position'] , ['person', 'role'],  ['original_text', 'office_xref'], 'notes')
     sortable_field_name = 'position'
 
     readonly_fields = ('id', )
@@ -177,6 +159,31 @@ class PersonInline(admin.StackedInline):
     #     'm2m': ['person', 'assertion', ],
     # }
 
+
+class AssertionInline(admin.StackedInline):
+    model = AssertionPerson
+
+    extra = 0
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-closed',)
+
+    verbose_name = 'Assertion'
+    verbose_name_plural = 'Person Assertions'
+
+    readonly_fields = ('id', )
+
+    fields = (['id', 'position'] ,
+              ['assertion', 'role'],
+              ['secondary_source', 'original_text', 'office_xref'],
+              'notes', )
+
+    raw_id_fields = ('notes', 'assertion')
+
+    related_lookup_fields = {
+        'pk': ['assertion', ],
+        'm2m': ['notes', ],
+    }
 
 
 class AssertionYearListFilter(SimpleListFilter):
@@ -235,7 +242,7 @@ class PersonAdmin(admin.ModelAdmin):
     list_filter = ('assertionperson__role', 'nomen', 'assertionperson__assertion__office', 'review_flag', )
 
     inlines = (PersonDateInline, AssertionInline, )
-    exclude = ('assertions',  )
+    exclude = ('assertions', )
 
 
 admin.site.register(Person, PersonAdmin)
@@ -253,26 +260,23 @@ class OfficeAdmin(DjangoMpttAdmin):
 admin.site.register(Office, OfficeAdmin)
 
 
-
-
 class AssertionAdmin(admin.ModelAdmin):
 
     search_fields = ['id', 'assertionperson__person__nomen', 'assertionperson__person__cognomen', ]
-    list_filter = ('secondary_source', 'assertion_type', AssertionYearListFilter, 'office')
+    list_filter = ('assertion_type', AssertionYearListFilter, 'office')
 
     list_display = (
         'id',
         'assertion_type',
         'office',
         'get_dates',
-        'secondary_source',
         'certainty',
         'modified',
         'created',
     )
 
     readonly_fields = ('id', )
-    list_display_links = ('id', 'certainty', 'assertion_type', 'office', 'secondary_source')
+    list_display_links = ('id', 'certainty', 'assertion_type', 'office', )
 
     raw_id_fields = ('office', )
     related_lookup_fields = {
@@ -284,8 +288,7 @@ class AssertionAdmin(admin.ModelAdmin):
                     ('Assertion',
                         {
                         'fields': [
-                                ('secondary_source', 'certainty', ),
-                                ('assertion_type', 'office',),
+                                ( 'assertion_type', 'office', 'certainty', ),
                                 ],
                         'classes': ('grp-collapse grp-open',),
                         }

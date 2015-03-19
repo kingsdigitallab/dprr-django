@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
-                ('note_type', models.IntegerField(default=0, choices=[(0, b'Reference'), (1, b'Footnote')])),
+                ('note_type', models.IntegerField(default=0, choices=[(0, b'Reference'), (1, b'Footnote'), (2, b'Reference (Office)'), (3, b'Footnote (Office)')])),
                 ('text', models.TextField(blank=True)),
                 ('extra_info', models.TextField(max_length=1024, blank=True)),
                 ('created_by', models.ForeignKey(related_name='assertionnote_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
@@ -109,7 +109,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
-                ('note_type', models.IntegerField(default=0, choices=[(0, b'Reference'), (1, b'Footnote')])),
+                ('note_type', models.IntegerField(default=0, choices=[(0, b'Reference'), (1, b'Footnote'), (2, b'Reference (Office)'), (3, b'Footnote (Office)')])),
                 ('text', models.TextField(blank=True)),
                 ('extra_info', models.TextField(max_length=1024, blank=True)),
                 ('created_by', models.ForeignKey(related_name='assertionpersonnote_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
@@ -480,14 +480,5 @@ class Migration(migrations.Migration):
             name='updated_by',
             field=models.ForeignKey(related_name='assertion_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
             preserve_default=True,
-        ),
-        migrations.CreateModel(
-            name='AssertionNoteThrough',
-            fields=[
-            ],
-            options={
-                'proxy': True,
-            },
-            bases=('promrep.assertion_notes',),
         ),
     ]

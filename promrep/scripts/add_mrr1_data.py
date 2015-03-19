@@ -62,12 +62,12 @@ def get_office_obj(office_name):
 
 
 def run():
-    processXML()
 
+    for vol in ['mrr1', ]:
+    # for vol in ['mrr1', 'mrr2']:
+        processXML(vol)
 
-def processXML():
-
-    volume = 'mrr1'
+def processXML(volume):
 
     sdict = {
         'mrr1': ['Broughton MRR I', 'promrep/scripts/data/mrr1_all_LF_Officesv18.docx.html.xml'],
@@ -88,8 +88,8 @@ def processXML():
 
     # process year
 
-    for year in years[0:5]:
-    # for year in years:
+    # for year in years[0:5]:
+    for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
 
@@ -101,6 +101,7 @@ def processXML():
         # the footnotes can be added to a list
         # ... right at the "start" of the year
         fnote_dict = {}
+
         for fnote in year.findAll('footnote'):
             fnote_dict[fnote['ref']] = fnote
 
@@ -140,7 +141,9 @@ def processXML():
 
             # if it doesn't exist, creates a new assertion
             if len(assertion_list) == 0:
-                assertion = Assertion.objects.create(office=office_obj, assertion_type=assertion_type, certainty=assertion_certainty)
+                assertion = Assertion.objects.create(office=office_obj,
+                                                     assertion_type=assertion_type,
+                                                     certainty=assertion_certainty)
                 assertion_date.assertion = assertion
                 assertion_date.save()
 
@@ -150,11 +153,20 @@ def processXML():
                 # TODO: throw an Exception
                 print "ERROR HERE! Multiple assertions with same basic info..."
 
-            # add any existing notes to the assertion
-            for onote in office_tag.find_all('office-note'):
-                if onote.has_attr('name'):
-                    a_note, created = AssertionNote.objects.get_or_create(text=onote['name'], secondary_source=source)
-                    assertion.notes.add(a_note)
+
+            # all these notes will be added to the individual assertionpersons
+            assertion_notes_queue = []
+
+            # all onotes are added to the assertionpersonobjects in this assertion
+            if len(office_tag.find_all('office-note')) > 0:
+                for onote in office_tag.find_all('office-note'):
+                    if onote.has_attr('name'):
+                        a_note, created = AssertionPersonNote.objects.get_or_create(
+                                                text=onote['name'],
+                                                secondary_source=source,
+                                                note_type=AssertionPersonNote.OFFICE_NOTE)
+
+                        assertion_notes_queue.append(a_note)
 
             if office_tag.has_attr('footnote') or office_tag.has_attr('x_footnote'):
                 if office_tag.has_attr('footnote'):
@@ -165,9 +177,12 @@ def processXML():
                 if fnote_id in fnote_dict:
                     ofnote = fnote_dict[fnote_id]
 
-                    afnote = AssertionNote(note_type=1, text = ofnote.get_text(), secondary_source=source)
-                    afnote.save()
-                    assertion.notes.add(afnote)
+                    afnote, created = AssertionPersonNote.objects.get_or_create(
+                                        text=ofnote.get_text(),
+                                        secondary_source=source,
+                                        note_type=AssertionPersonNote.OFFICE_FOOTNOTE)
+
+                    assertion_notes_queue.append(afnote)
                 else:
                     print "ERROR adding office fnote" + fnote_id
 
@@ -184,8 +199,10 @@ def processXML():
                     person_info = aux.parse_person(name_str)
 
                     if person_info is None:
-                        # creates as person with the whole name str as the nomen
-                        person, created = Person.objects.get_or_create(nomen = name_str, review_flag=True)
+                        # creates person with the whole name str as the nomen
+                        person, created = Person.objects.get_or_create(
+                                                    nomen=name_str,
+                                                    review_flag=True)
                     else:
                         # removes the date_certainty info from the dictionary
                         if 'date_certainty' in person_info:
@@ -195,9 +212,9 @@ def processXML():
 
                         # creates the person object from the dictionary directly
                         person, created = Person.objects.get_or_create(
-                                                                praenomen = person_info['praenomen'],
-                                                                nomen = person_info['nomen'],
-                                                                real_number = person_info['real_number'],
+                                                                praenomen=person_info['praenomen'],
+                                                                nomen=person_info['nomen'],
+                                                                real_number=person_info['real_number'],
                                                                 )
 
                         # update the person's information
@@ -254,6 +271,10 @@ def processXML():
                         assertion_person.position = assertion.persons.count()
                         assertion_person.save()
 
+                        # adds all assertion notes to the assertionperson object
+                        for assertion_note in assertion_notes_queue:
+                            assertion_person.notes.add(assertion_note)
+
                         # add any footnotes the person might have
                         if p.has_attr('footnote') or p.has_attr('x_footnote'):
                             if p.has_attr('footnote'):
@@ -264,7 +285,7 @@ def processXML():
                             if fnote_id in fnote_dict:
                                 pnote = fnote_dict[fnote_id]
                                 try:
-                                    ap_fnote = AssertionPersonNote(note_type=1, text = pnote.get_text(), secondary_source=source)
+                                    ap_fnote = AssertionPersonNote(note_type = AssertionPersonNote.FOOTNOTE, text = pnote.get_text(), secondary_source=source)
                                     ap_fnote.save()
                                     assertion_person.notes.add(ap_fnote)
                                 except:
@@ -289,26 +310,22 @@ def processXML():
                                 ref_text = ref_text + " " + r.get_text().strip()
 
                                 if r.has_attr('footnote'):
-                                    footnotes.append(r['footnote'].lstrip('#'))
+                                    notes.append(r['footnote'].lstrip('#'))
                                 elif r.has_attr('x_footnote'):
                                     footnotes.append(r['x_footnote'].lstrip('#'))
 
                             # creates the note
-                            note, created = AssertionPersonNote.objects.get_or_create(
+                            note=AssertionPersonNote.objects.create(
                                 text=ref_text.strip(),
-                                secondary_source=source
-                            )
+                                secondary_source=source)
 
                             notes_queue.append(note)
 
                             for fnote_id in footnotes:
                                 if fnote_id in fnote_dict:
                                     apfnote_obj = fnote_dict[fnote_id]
-                                    apfnote = AssertionPersonNote(note_type=1, text = apfnote_obj.get_text().strip())
-                                    apfnote.save()
-
+                                    apfnote = AssertionPersonNote.objects.create(note_type=AssertionPersonNote.FOOTNOTE, text = apfnote_obj.get_text().strip())
                                     notes_queue.append(apfnote)
-
                                 else:
                                     print "ERROR adding person footnote with id", fnote_id
 
@@ -320,26 +337,6 @@ def processXML():
                             # resets the ref queue
                             person_ref_queue = []
 
-                        try:
-                            # tests if person has a bookmark/noteref
-                            if p.find('noteref'):
-                                endnote_name = p.noteref.get_text().strip('#')
-                                endnote_text = year.find('note', bookmarks=endnote_name).get_text()
-
-                                if endnote_text:
-                                    endnote = AssertionPersonNote(
-                                        text = endnote_text,
-                                        note_type = NoteType.objects.get(name="Endnote"),
-                                        extra_info = endnote_name,
-                                        secondary_source = source
-                                        )
-                                    endnote.save()
-                                    assertion.notes.add(endnote)
-                                else:
-                                    logger.error("Endnote error: %s" %(endnote_name))
-
-                        except Exception as e:
-                            logger.error('Error saving endnote: %s (%s)' % (e.message, type(e)))
 
                 except Exception as e:
                     logger.error('%s' %(e.message))

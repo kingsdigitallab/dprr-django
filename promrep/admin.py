@@ -16,7 +16,7 @@ from promrep.forms import AssertionInlineForm
 from models import Person, Office, Praenomen, AssertionPerson, \
     Assertion, AssertionType, RoleType, DateType, \
     SecondarySource, Gens, AssertionNote, AssertionPersonNote, \
-    Tribe, AssertionDate, PersonDate, AssertionPersonDate, AssertionNoteThrough
+    Tribe, AssertionDate, PersonDate, AssertionPersonDate
 
 admin.site.register(AssertionType)
 admin.site.register(DateType)
@@ -92,30 +92,18 @@ admin.site.register(AssertionPerson, AssertionPersonAdmin)
 
 
 class AssertionNoteInline(admin.StackedInline):
-    model = AssertionNoteThrough
+    model = Assertion.notes.through
 
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-closed',)
 
+    extra = 0
+
     verbose_name = 'Assertion Note'
     verbose_name_plural = 'Assertion Notes'
-
-    readonly_fields = ('_note_type', )
-
     raw_id_fields = ('assertionnote', )
 
-    related_lookup_fields = {
-        'm2m': ['assertionnote'],
-    }
-
-    def _note_type(self, obj):
-        return obj.assertionnote.get_note_type_display()
-
-    # readonly_fields = ('id', )
-
-    extra = 0
-    show_change_link = True
-
+    readonly_fields = ('id', )
 
 class NoteAdmin(admin.ModelAdmin):
     list_display = ('id', 'note_type', 'secondary_source', 'text', 'extra_info', 'created', 'modified')

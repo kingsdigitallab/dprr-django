@@ -103,10 +103,14 @@ class RoleType(TimeStampedModel):
 class Note(TimeStampedModel):
     REFERENCE_NOTE = 0
     FOOTNOTE = 1
+    OFFICE_NOTE = 2
+    OFFICE_FOOTNOTE = 3
 
     NOTE_TYPES = (
         (REFERENCE_NOTE, 'Reference'),
         (FOOTNOTE, 'Footnote'),
+        (OFFICE_NOTE, 'Reference (Office)'),
+        (OFFICE_FOOTNOTE, 'Footnote (Office)')
     )
 
     note_type = models.IntegerField(choices=NOTE_TYPES, default=REFERENCE_NOTE)
@@ -350,17 +354,6 @@ class AssertionPerson(TimeStampedModel):
     def get_dates(self):
         dates = ' '.join([unicode(date) for date in self.dates.all()])
         return dates
-
-
-class AssertionNoteThrough(Assertion.notes.through):
-    class Meta:
-        proxy = True
-
-    def __unicode__(self):
-        snippet = (self.assertionnote.text[:120] + ' ...') if len(self.assertionnote.text) > 120 else self.assertionnote.text
-
-        return '- "%s"' %(snippet.strip())
-
 
 
 class IntegerRangeField(models.IntegerField):

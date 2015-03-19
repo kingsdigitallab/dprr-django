@@ -8,6 +8,9 @@ from django_mptt_admin.admin import DjangoMpttAdmin
 from django.contrib.contenttypes import generic
 from django.forms import TextInput, Textarea
 
+from django.core import urlresolvers
+from django.utils.html import format_html
+
 from promrep.forms import AssertionInlineForm
 
 from models import Person, Office, Praenomen, AssertionPerson, \
@@ -39,6 +42,7 @@ class AssertionDateInline(DateInline):
 
     model = AssertionDate
 
+
 class AssertionPersonDateInline(DateInline):
     verbose_name = 'Assertion Person Date'
     verbose_name_plural = 'Assertion Person Dates'
@@ -54,6 +58,7 @@ class PersonDateInline(DateInline):
 
     model = PersonDate
 
+
 class AssertionPersonNoteInline(admin.StackedInline):
     model = AssertionPerson.notes.through
     extra = 0
@@ -66,14 +71,14 @@ class AssertionPersonNoteInline(admin.StackedInline):
 
 
 class AssertionPersonAdmin(admin.ModelAdmin):
+    list_display = ('id', 'assertion', 'person', 'secondary_source', 'created_by', 'created', 'modified')
+
+    readonly_fields = ('id', )
 
     fieldsets = [
             ('Database Info', {'fields': [('id')]}),
             ('', {'fields': ['assertion', 'person']}),
             ]
-
-    readonly_fields = ('id', )
-    list_display = ('id', 'assertion', 'person', 'secondary_source', 'created_by', 'created', 'modified')
 
     raw_id_fields = ('assertion', 'person',  )
 
@@ -130,7 +135,7 @@ admin.site.register(AssertionNote, NoteAdmin)
 
 
 class PersonInline(admin.StackedInline):
-    model = Assertion.persons.through
+    model = AssertionPerson
 
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-closed',)
@@ -141,7 +146,8 @@ class PersonInline(admin.StackedInline):
     show_change_link = True
 
     fields = (['id', 'position'] ,
-              ['person', 'role'],
+              ['person',],
+              ['role'],
               ['secondary_source', 'original_text', 'office_xref'],
               'notes')
 
@@ -157,10 +163,6 @@ class PersonInline(admin.StackedInline):
 
     extra = 0
 
-    # autocomplete_lookup_fields = {
-    #     'm2m': ['person', 'assertion', ],
-    # }
-
 
 class AssertionInline(admin.StackedInline):
     model = AssertionPerson
@@ -168,27 +170,50 @@ class AssertionInline(admin.StackedInline):
 
     extra = 0
 
-    # classes = ('grp-collapse grp-open',)
-    # inline_classes = ('grp-collapse grp-closed',)
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-closed',)
 
     verbose_name = 'Assertion'
     verbose_name_plural = 'Person Assertions'
 
-    readonly_fields = ('id', )
+    show_change_link = True
 
-    fields = (['id', 'position'] ,
-              ['assertion', 'role'],
-              ['secondary_source', 'original_text', 'office_xref'],
-              'notes',
-              'print_dates',
-              'edit_link',)
+    readonly_fields = ('id', 'dates_list', )
 
-    raw_id_fields = ('notes', 'assertion')
+    fields = (['id'] ,
+            ['assertion',],
+            ['role', 'secondary_source', ],
+            ['original_text', 'office_xref'],
+            'notes',
+            'print_dates',
+            'edit_link',
+            'dates_list',
+            )
+
+    raw_id_fields = ('notes', 'assertion', )
 
     related_lookup_fields = {
-        'pk': ['assertion', ],
+        'fk': ['assertion', ],
         'm2m': ['notes', ],
     }
+
+
+    def dates_list(self, obj):
+        dates = obj.dates.all()
+
+        if dates.count() == 0:
+            return '(None)'
+
+        date_links = []
+
+        for date in dates:
+            change_url = urlresolvers.reverse('admin:promrep_assertionpersondate_change', args=(date.id,))
+            date_links.append('<a href="%s">%s</a>' % (change_url, unicode(date)))
+
+        return format_html(', '.join(date_links))
+
+    dates_list.allow_tags = True
+    dates_list.short_description = 'Date(s)'
 
 
 class AssertionYearListFilter(SimpleListFilter):
@@ -205,6 +230,7 @@ class AssertionYearListFilter(SimpleListFilter):
                 lookup.append(item)
 
         return sorted(lookup)
+
 
     def queryset(self, request, queryset):
         if self.value():
@@ -284,18 +310,16 @@ class AssertionAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'certainty', 'assertion_type', 'office', )
 
     raw_id_fields = ('office', )
-    related_lookup_fields = {
+    autocomplete_lookup_fields = {
         'fk': ['office', ],
     }
 
-    fieldsets = [
-                    ('Database Info', {'fields': ['id']}),
+    fieldsets = [ ('Database Info', {'fields': ['id']}),
                     ('Assertion',
                         {
                         'fields': [
                                 ( 'assertion_type', 'office', 'certainty', ),
                                 ],
-                        'classes': ('grp-collapse grp-open',),
                         }
                     ),
             ]
@@ -304,7 +328,6 @@ class AssertionAdmin(admin.ModelAdmin):
     exclude = ('persons',  )
 
 admin.site.register(Assertion, AssertionAdmin)
-
 
 
 class GensAdmin(admin.ModelAdmin):

@@ -30,8 +30,6 @@ class AssertionPersonDatesWidget(forms.Widget):
         return self.object.get_dates()
 
 
-
-
 class AssertionInlineForm(forms.ModelForm):
 
     '''This form renders a model and adds a link to edit the nested inline

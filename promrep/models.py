@@ -9,12 +9,11 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+from django.core import urlresolvers
 from django.core.urlresolvers import reverse
 
 from author.decorators import with_author
 
-
-# Broughton, Rupke, etc
 @with_author
 class SecondarySource(TimeStampedModel):
 
@@ -317,7 +316,9 @@ class Assertion(TimeStampedModel):
         return name
 
     def related_label(self):
-        return u"%s" % (self.__unicode__(), )
+        change_url = urlresolvers.reverse('admin:promrep_assertion_change', args=(self.id,))
+
+        return u'<a href="%s">%s</a>' % (change_url, self.__unicode__(), )
 
 
 
@@ -410,7 +411,7 @@ class Date(models.Model):
     date_type = models.ForeignKey(DateType, blank=True, null=True)
     interval = models.SmallIntegerField(choices=DATE_INTERVAL_CHOICES, default=DATE_SINGLE)
 
-    year = IntegerRangeField(min_value=-500, max_value=500, blank=True, null=False)
+    year = IntegerRangeField(min_value=-600, max_value=100, blank=True, null=False)
     year_uncertain = models.BooleanField(verbose_name='uncertain', default=False)
 
     circa = models.BooleanField(default=False)

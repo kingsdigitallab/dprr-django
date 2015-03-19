@@ -113,7 +113,6 @@ class NoteAdmin(admin.ModelAdmin):
     search_fields = ['id', 'note_type', 'text']
     fields = ('id', ['secondary_source', 'note_type'], 'text', 'extra_info', )
 
-    # list_display_links = ('id', 'certainty', 'assertion_type', 'office', 'secondary_source')
 
     show_change_link = True
 
@@ -243,7 +242,7 @@ class PersonAdmin(admin.ModelAdmin):
                 ('real_number', 'real_number_old', ),
             ]}
         ),
-        ('Other', {'fields': [('patrician', 'patrician_certainty')]})]
+        ('Other', {'fields': [('patrician', 'patrician_uncertain')]})]
 
     readonly_fields = ('id', )
     list_display = (
@@ -289,13 +288,13 @@ class AssertionAdmin(admin.ModelAdmin):
         'assertion_type',
         'office',
         'get_dates',
-        'certainty',
+        'uncertain',
         'modified',
         'created',
     )
 
     readonly_fields = ('id', )
-    list_display_links = ('id', 'certainty', 'assertion_type', 'office', )
+    list_display_links = ('id', 'uncertain', 'assertion_type', 'office', )
 
     raw_id_fields = ('office', )
     autocomplete_lookup_fields = {
@@ -306,7 +305,7 @@ class AssertionAdmin(admin.ModelAdmin):
                     ('Assertion',
                         {
                         'fields': [
-                                ( 'assertion_type', 'office', 'certainty', ),
+                                ( 'assertion_type', 'office', 'uncertain', ),
                                 ],
                         }
                     ),

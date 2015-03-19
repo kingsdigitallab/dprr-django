@@ -148,7 +148,7 @@ class AssertionPersonNote(Note):
 class Person(TimeStampedModel):
 
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
-    praenomen_certainty = models.BooleanField(verbose_name='Praenomen Certainty?', default=True)
+    praenomen_uncertain = models.BooleanField(verbose_name='Uncertain Praenomen', default=False)
 
     nomen = models.CharField(max_length=128, blank=True)
     cognomen = models.CharField(max_length=64, blank=True)
@@ -170,7 +170,7 @@ class Person(TimeStampedModel):
     origin = models.ForeignKey(Origin, blank=True, null=True)
 
     patrician = models.BooleanField(verbose_name='Patrician', default=False)
-    patrician_certainty = models.BooleanField(verbose_name='Certain', default=True)
+    patrician_uncertain = models.BooleanField(verbose_name='Uncertain Patrician', default=False)
 
     extra_info = models.CharField(max_length=1024, blank=True)
     extra_info.help_text = "Extra info about the person."
@@ -285,7 +285,7 @@ class Assertion(TimeStampedModel):
 
     # if we are uncertain about an assertion
     # ... eg. cases like Broughton's "Augur or Pontifex"
-    certainty = models.BooleanField(verbose_name='Certainty?', default=True)
+    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
 
     class Meta:
         ordering = ['id',]
@@ -336,7 +336,7 @@ class AssertionPerson(TimeStampedModel):
     original_text = models.CharField(max_length=1024, blank=True)
     office_xref = models.CharField(max_length=1024, blank=True)
 
-    certainty = models.BooleanField(verbose_name='Certainty?', default=True)
+    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
 
     notes = models.ManyToManyField(AssertionPersonNote)
 

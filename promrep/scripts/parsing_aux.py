@@ -19,7 +19,6 @@ fh.setFormatter(frmt)
 # add the Handler to the logger
 logger.addHandler(fh)
 
-
 def parse_person(text):
     """ Will return a dictionary with all the parsed attributes"""
 
@@ -98,7 +97,8 @@ def parse_person(text):
         praenomen_str = praenomen_str.strip("()")
 
         if "?" in praenomen_str:
-            person_data['praenomen_certainty'] = False
+            print "PRAENOMEN UNCERTAIN:", text
+            person_data['praenomen_uncertain'] = True
             praenomen_str = praenomen_str.replace("?", "")
 
         try:
@@ -124,7 +124,8 @@ def parse_person(text):
         person_data['patrician'] = True
 
         if "?" in pat_str[0]:
-            person_data['patrician_certainty'] = False
+            print "PATRICIAN UNCERTAIN:", text
+            person_data['patrician_uncertain'] = True
 
     if len(captured.captures('tribe')):
         tribe_abbrev = captured.captures('tribe')[0].strip()
@@ -224,12 +225,12 @@ def parse_brennan_person(text):
     # parse patrician and patrician certainty
 
     pat_str = captured.captures('patrician')
-    pat_certain = True
+    pat_uncertain = False
     is_pat = False
 
     if len(pat_str):
         if "?" in pat_str[0]:
-            pat_certain = False
+            pat_uncertain = True
         is_pat = True
 
     tribe = None
@@ -269,7 +270,7 @@ def parse_brennan_person(text):
             real_number=real,
             other_names=other_names,
             patrician=is_pat,
-            patrician_certainty=pat_certain,
+            patrician_uncertain=pat_uncertain,
             )
 
     except Exception as e:

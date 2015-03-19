@@ -117,11 +117,11 @@ def processXML(volume):
 
             print ">>> Office:", office_name
 
-            assertion_certainty = True
+            assertion_uncertain = False
             if "?" in office_name:
                 # removes questionmark, marks assertion as uncertain
                 office_name = office_name.strip('? ')
-                assertion_certainty = False
+                assertion_uncertain = True
 
             # get office using office name
             office_obj = get_office_obj(office_name)
@@ -136,14 +136,12 @@ def processXML(volume):
             # tests if assertion already exists
             assertion_list = Assertion.objects.filter(office=office_obj,
                                                       assertion_type=assertion_type,
-                                                      date__year = assertion_date.year,
-                                                      certainty = assertion_certainty)
+                                                      date__year = assertion_date.year, )
 
             # if it doesn't exist, creates a new assertion
             if len(assertion_list) == 0:
                 assertion = Assertion.objects.create(office=office_obj,
-                                                     assertion_type=assertion_type,
-                                                     certainty=assertion_certainty)
+                                                     assertion_type=assertion_type, )
                 assertion_date.assertion = assertion
                 assertion_date.save()
 
@@ -221,7 +219,7 @@ def processXML(volume):
                         # updates all other relevant fields....
                         if created:
                             person.patrician = person_info.get('patrician', False)
-                            person.praenomen_certainty = person_info.get('praenomen_certainty', True)
+                            person.praenomen_uncertain = person_info.get('praenomen_uncertain', False)
                             person.filiation = person_info.get('filiation', "")
 
                             if 'tribe' in person_info:
@@ -229,7 +227,7 @@ def processXML(volume):
 
                             person.cognomen = person_info.get('cognomen', "")
                             person.other_names = person_info.get('other_names', "")
-                            person.patrician_certainty = person_info.get('patrician_certainty', False)
+                            person.patrician_uncertain = person_info.get('patrician_uncertain', False)
                             person.save()
 
                     if person is None:
@@ -256,16 +254,19 @@ def processXML(volume):
                         ap_date_info = ap_date_info.strip("[:")
 
                         if ap_date_info:
-                            ap_date = AssertionPersonDate.objects.create(year = -int(year_str), year_uncertain = True, assertion_person = assertion_person)
+                            ap_date = AssertionPersonDate.objects.create(
+                                            year = -int(year_str),
+                                            year_uncertain = True,
+                                            assertion_person = assertion_person)
 
                             # cases that need manual fixing
                             if ap_date_info != "?":
                                 ap_date.extra_info = ap_date_info
                                 ap_date.save()
 
-                        # AP certainty
-                        if p.has_attr('assertion-certainty'):
-                            assertion_person.certainty = False
+                        # Assertion Person uncertain
+                        if p.has_attr('assertion-certainty') or (assertion_uncertain == True):
+                            assertion_person.uncertain = True
 
                         # saves the order in the assertion
                         assertion_person.position = assertion.persons.count()

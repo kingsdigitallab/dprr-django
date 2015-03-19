@@ -102,13 +102,13 @@ class AddParsingAuxTestCase(TestCase):
         self.assertTrue(p['patrician'])
         self.assertEqual(p['real_number'], "76")
         self.assertEqual(p['praenomen'], Praenomen.objects.get(abbrev="A."))
-        self.assertFalse(p['praenomen_certainty'])
+        self.assertTrue(p['praenomen_uncertain'])
 
         # uncertain praenomen
         p = aux.parse_person("C.? Memmius (7)")
         self.assertEqual(p['nomen'], "Memmius")
         self.assertEqual(p['praenomen'], Praenomen.objects.get(abbrev="C."))
-        self.assertFalse(p['praenomen_certainty'])
+        self.assertTrue(p['praenomen_uncertain'])
         self.assertEqual(p['real_number'], "7")
 
         ### TODO: date/office uncertainty ??

@@ -105,6 +105,7 @@ class AssertionNoteInline(admin.StackedInline):
 
     readonly_fields = ('id', )
 
+
 class NoteAdmin(admin.ModelAdmin):
     list_display = ('id', 'note_type', 'secondary_source', 'text', 'extra_info', 'created', 'modified')
     list_display_links = ('note_type', 'secondary_source', 'text', 'extra_info')
@@ -172,9 +173,9 @@ class AssertionInline(admin.StackedInline):
             ['role', 'secondary_source', ],
             ['original_text', 'office_xref'],
             'notes',
-            'print_dates',
-            'edit_link',
+#            'print_dates',
             'dates_list',
+            'edit_link',
             )
 
     raw_id_fields = ('notes', 'assertion', )

@@ -63,11 +63,17 @@ class AssertionPersonNoteInline(admin.StackedInline):
     model = AssertionPerson.notes.through
     extra = 0
 
-    raw_id_fields = ['assertionperson', 'assertionpersonnote']
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-closed',)
+
+    verbose_name = 'Assertion Person Note'
+    verbose_name_plural = 'Assertion Person Notes'
+
+    raw_id_fields = ('assertionpersonnote', )
 
     related_lookup_fields = {
-        'm2m': 'assertionperson'
-        }
+        'fk': ['assertionpersonnote', ],
+    }
 
 
 class AssertionPersonAdmin(admin.ModelAdmin):

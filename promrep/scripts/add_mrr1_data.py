@@ -63,8 +63,8 @@ def get_office_obj(office_name):
 
 def run():
 
-    for vol in ['mrr1', ]:
-    # for vol in ['mrr1', 'mrr2']:
+    # for vol in ['mrr1', ]:
+    for vol in ['mrr1', 'mrr2']:
         processXML(vol)
 
 def processXML(volume):

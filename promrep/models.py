@@ -196,13 +196,15 @@ class Person(TimeStampedModel):
         # remove empty strings and concatenate
         return ' '.join(filter(None, name_parts))
 
-
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.module_name), args=[self.id])
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     url_to_edit_person.allow_tags = True
     url_to_edit_person.short_description = 'Person'
+
+    def related_label(self):
+        return self.url_to_edit_person()
 
     def __unicode__(self):
 

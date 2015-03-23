@@ -63,8 +63,8 @@ def get_office_obj(office_name):
 
 def run():
 
-    for vol in ['mrr1', ]:
-    # for vol in ['mrr1', 'mrr2']:
+    # for vol in ['mrr2', ]:
+    for vol in ['mrr1', 'mrr2']:
         processXML(vol)
 
 def processXML(volume):
@@ -217,6 +217,7 @@ def processXML(volume):
                                                                 praenomen=person_info['praenomen'],
                                                                 nomen=person_info['nomen'],
                                                                 real_number=person_info['real_number'],
+                                                                review_flag=False
                                                                 )
 
                                 if created:
@@ -233,8 +234,6 @@ def processXML(volume):
 
                                     if 'tribe' in person_info:
                                         person.tribe = person_info['tribe']
-                                        if '?' in person_info['tribe']:
-                                            person.tribe_uncertain = True
 
                                     if 'cognomen' in person_info:
                                         person.cognomen = person_info['cognomen']
@@ -246,6 +245,7 @@ def processXML(volume):
                                     person.patrician_uncertain = person_info.get('patrician_uncertain', False)
 
                                     person.save()
+
                                 else:
                                     print "Person already existed with id: ", person.id
 

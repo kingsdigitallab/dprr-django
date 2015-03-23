@@ -143,7 +143,6 @@ class AssertionPersonNote(Note):
         return u"[%s - %s] %s<br /><br />" % (self.get_note_type_display(), self.secondary_source.abbrev_name , self.text)
 
 
-
 @with_author
 class Person(TimeStampedModel):
 
@@ -151,13 +150,21 @@ class Person(TimeStampedModel):
     praenomen_uncertain = models.BooleanField(verbose_name='Uncertain Praenomen', default=False)
 
     nomen = models.CharField(max_length=128, blank=True)
+    nomen_uncertain = models.BooleanField(verbose_name='Uncertain Nomen', default=False)
+
     cognomen = models.CharField(max_length=64, blank=True)
+    cognomen_uncertain = models.BooleanField(verbose_name='Uncertain Cognomen', default=False)
 
     other_names = models.CharField(max_length=128, blank=True)
 
     filiation = models.CharField(max_length=256, blank=True)
+    filiation_uncertain = models.BooleanField(verbose_name='Uncertain Filiation', default=False)
+
     gens = models.ForeignKey(Gens, blank=True, null=True)
+    gens_uncertain = models.BooleanField(verbose_name='Uncertain Gens', default=False)
+
     tribe = models.ForeignKey(Tribe, blank=True, null=True)
+    tribe_uncertain = models.BooleanField(verbose_name='Uncertain Tribe', default=False)
 
     sex = models.ForeignKey(Sex, blank=True, null=True, default=1)
 
@@ -396,12 +403,17 @@ class DateType(models.Model):
 
 class Date(models.Model):
 
-    # Promrep settings
-
     DATE_SINGLE = 0
     DATE_MIN = 1
     DATE_MAX = 2
-    DATE_INTERVAL_CHOICES = ((DATE_SINGLE, 'single'), (DATE_MIN, 'min'), (DATE_MAX, 'max'))
+    DATE_BY = 3
+
+    DATE_INTERVAL_CHOICES = (
+        (DATE_SINGLE, 'on'),
+        (DATE_MIN, 'after'),
+        (DATE_MAX, 'before'),
+        (DATE_BY, 'by'),
+    )
 
     date_type = models.ForeignKey(DateType, blank=True, null=True)
     interval = models.SmallIntegerField(choices=DATE_INTERVAL_CHOICES, default=DATE_SINGLE)
@@ -426,7 +438,7 @@ class Date(models.Model):
         else:
             uncertain = ""
 
-        date_str = u'%s %s%s %s'.strip() % (self.date_type or '', abs(self.year), uncertain, bc_ad)
+        date_str = u'%s %s%s %s'.strip() % (self.date_type or '', uncertain, abs(self.year), bc_ad)
 
         if self.circa == True:
             date_str = "ca. " + date_str

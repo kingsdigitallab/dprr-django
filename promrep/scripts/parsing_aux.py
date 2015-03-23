@@ -90,6 +90,8 @@ def parse_person(text):
     real = captured.captures('real')[0].strip()
     person_data['real_number'] = real
 
+
+    # TODO: what to do with the empty praenomen??
     if len(captured.captures('praenomen')):
         praenomen_str = captured.captures('praenomen')[0].strip()
 
@@ -97,7 +99,6 @@ def parse_person(text):
         praenomen_str = praenomen_str.strip("()")
 
         if "?" in praenomen_str:
-            print "PRAENOMEN UNCERTAIN:", text
             person_data['praenomen_uncertain'] = True
             praenomen_str = praenomen_str.replace("?", "")
 
@@ -107,24 +108,21 @@ def parse_person(text):
             else:
                 praenomen = Praenomen.objects.get(name=praenomen_str)
         except:
-            logger.error('Praenomen lookup error: %s', praenomen_str)
+            logger.error('ERROR: Praenomen lookup error: %s', praenomen_str)
             return None
 
         person_data['praenomen'] = praenomen
-
 
     nomen = captured.captures('nomen')[0].strip()
     person_data['nomen'] = nomen.strip("?()[]")
 
     # parse patrician and patrician certainty
-
     pat_str = captured.captures('patrician')
 
     if len(pat_str):
         person_data['patrician'] = True
 
         if "?" in pat_str[0]:
-            print "PATRICIAN UNCERTAIN:", text
             person_data['patrician_uncertain'] = True
 
     if len(captured.captures('tribe')):
@@ -141,6 +139,11 @@ def parse_person(text):
     if len(cog_list) > 1:
         other_names = ' '.join(cog_list[1:]).strip().replace('  ', ' ')
         person_data['other_names'] = other_names
+
+    if 'cognomen' and 'other_names' in person_data:
+        if person_data['other_names'] == "?)" and person_data['cognomen'][0] == "(":
+            person_data['cognomen'] = person_data['cognomen'] + " ?)"
+            person_data.pop('other_names')
 
     if len(captured.captures('date_certainty')):
         person_data['date_certainty'] = captured.captures('date_certainty')[0].strip()

@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 
 from promrep.models import ContentType, Assertion, AssertionPerson, \
   AssertionType, AssertionNote, AssertionDate, Office, Person, \
-  RoleType, SecondarySource, AssertionPersonNote, AssertionPersonDate
+  RoleType, SecondarySource, AssertionPersonNote, AssertionPersonDate, Praenomen
 
 import parsing_aux as aux
 import logging
@@ -63,8 +63,8 @@ def get_office_obj(office_name):
 
 def run():
 
-    # for vol in ['mrr1', ]:
-    for vol in ['mrr1', 'mrr2']:
+    for vol in ['mrr1', ]:
+    # for vol in ['mrr1', 'mrr2']:
         processXML(vol)
 
 def processXML(volume):
@@ -88,7 +88,7 @@ def processXML(volume):
 
     # process year
 
-    # for year in years[0:5]:
+    # for year in years[0:100]:
     for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
@@ -196,11 +196,12 @@ def processXML(volume):
                     # parses person from name
                     person_info = aux.parse_person(name_str)
 
+                    print person_info
+                    debug_data = person_info
+
                     if person_info is None:
                         # creates person with the whole name str as the nomen
-                        person, created = Person.objects.get_or_create(
-                                                    nomen=name_str,
-                                                    review_flag=True)
+                        person, created = Person.objects.get_or_create(nomen=name_str, review_flag=True)
                     else:
                         # removes the date_certainty info from the dictionary
                         if 'date_certainty' in person_info:
@@ -208,12 +209,27 @@ def processXML(volume):
                         else:
                             ap_date_info = ""
 
-                        # creates the person object from the dictionary directly
-                        person, created = Person.objects.get_or_create(
+                        if 'praenomen' in person_info:
+                            try:
+                                # creates the person object from the dictionary directly
+                                person, created = Person.objects.get_or_create(
                                                                 praenomen=person_info['praenomen'],
                                                                 nomen=person_info['nomen'],
                                                                 real_number=person_info['real_number'],
                                                                 )
+                            except Exception as e:
+                                print "FATAL ERROR (1) while creating person:", name_str, debug_data, e.message
+
+                        else:
+                            try:
+                                person = Person.objects.create(
+                                            praenomen=Praenomen.objects.get(name='-'),
+                                                    nomen=person_info['nomen'],
+                                                    real_number=person_info['real_number'],
+                                                    review_flag=True)
+                            except Exception as e:
+                                print "FATAL ERROR (2) while creating person:", name_str, debug_data, e.message
+
 
                         # update the person's information
                         # updates all other relevant fields....
@@ -225,11 +241,15 @@ def processXML(volume):
                             if 'tribe' in person_info:
                                 person.tribe = person_info['tribe']
 
-                            person.cognomen = person_info.get('cognomen', "")
+                            person.cognomen = person_info.get('cognomen', '')
                             person.other_names = person_info.get('other_names', "")
                             person.patrician_uncertain = person_info.get('patrician_uncertain', False)
-                            person.save()
 
+                            person.save()
+                        else:
+                            print "person already existed with id: ", person.id
+
+                    # catch all ...
                     if person is None:
                         print "ERROR creating person-->", name_str
 
@@ -340,4 +360,4 @@ def processXML(volume):
 
 
                 except Exception as e:
-                    logger.error('%s' %(e.message))
+                    logger.error('FATAL %s' %(e.message))

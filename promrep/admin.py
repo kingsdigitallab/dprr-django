@@ -191,7 +191,6 @@ class AssertionInline(admin.StackedInline):
         'm2m': ['notes', ],
     }
 
-
     def dates_list(self, obj):
         dates = obj.dates.all()
 

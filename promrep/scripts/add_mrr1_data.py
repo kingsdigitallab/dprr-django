@@ -12,8 +12,8 @@ Usage:
 from bs4 import BeautifulSoup
 
 from promrep.models import ContentType, Assertion, AssertionPerson, \
-  AssertionType, AssertionNote, AssertionDate, Office, Person, \
-  RoleType, SecondarySource, AssertionPersonNote, AssertionPersonDate, Praenomen
+  AssertionType, AssertionNote, AssertionDate, Office, Person, RoleType, \
+  SecondarySource, AssertionPersonNote, AssertionPersonDate, Praenomen, Date
 
 import parsing_aux as aux
 import logging
@@ -209,6 +209,7 @@ def processXML(volume):
                         else:
                             ap_date_info = ""
 
+
                         if 'praenomen' in person_info:
                             try:
                                 # creates the person object from the dictionary directly
@@ -217,6 +218,37 @@ def processXML(volume):
                                                                 nomen=person_info['nomen'],
                                                                 real_number=person_info['real_number'],
                                                                 )
+
+                                if created:
+                                    person.patrician = person_info.get('patrician', False)
+                                    person.praenomen_uncertain = person_info.get('praenomen_uncertain', False)
+
+                                    if '?' in person.nomen:
+                                        person.nomen_uncertain = True
+
+                                    if 'filiation' in person_info:
+                                        person.filiation = person_info['filiation']
+                                        if '?' in person_info['filiation']:
+                                            person.filiation_uncertain = True
+
+                                    if 'tribe' in person_info:
+                                        person.tribe = person_info['tribe']
+                                        if '?' in person_info['tribe']:
+                                            person.tribe_uncertain = True
+
+                                    if 'cognomen' in person_info:
+                                        person.cognomen = person_info['cognomen']
+                                        if '?' in person_info['cognomen']:
+                                            person.cognomen_uncertain = True
+
+
+                                    person.other_names = person_info.get('other_names', "")
+                                    person.patrician_uncertain = person_info.get('patrician_uncertain', False)
+
+                                    person.save()
+                                else:
+                                    print "Person already existed with id: ", person.id
+
                             except Exception as e:
                                 print "FATAL ERROR (1) while creating person:", name_str, debug_data, e.message
 
@@ -229,25 +261,6 @@ def processXML(volume):
                                                     review_flag=True)
                             except Exception as e:
                                 print "FATAL ERROR (2) while creating person:", name_str, debug_data, e.message
-
-
-                        # update the person's information
-                        # updates all other relevant fields....
-                        if created:
-                            person.patrician = person_info.get('patrician', False)
-                            person.praenomen_uncertain = person_info.get('praenomen_uncertain', False)
-                            person.filiation = person_info.get('filiation', "")
-
-                            if 'tribe' in person_info:
-                                person.tribe = person_info['tribe']
-
-                            person.cognomen = person_info.get('cognomen', '')
-                            person.other_names = person_info.get('other_names', "")
-                            person.patrician_uncertain = person_info.get('patrician_uncertain', False)
-
-                            person.save()
-                        else:
-                            print "person already existed with id: ", person.id
 
                     # catch all ...
                     if person is None:
@@ -277,6 +290,7 @@ def processXML(volume):
                             ap_date = AssertionPersonDate.objects.create(
                                             year = -int(year_str),
                                             year_uncertain = True,
+                                            interval=Date.DATE_BY,
                                             assertion_person = assertion_person)
 
                             # cases that need manual fixing

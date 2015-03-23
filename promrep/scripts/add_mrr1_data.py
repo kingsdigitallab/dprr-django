@@ -70,7 +70,7 @@ def run():
 def processXML(volume):
 
     sdict = {
-        'mrr1': ['Broughton MRR I', 'promrep/scripts/data/mrr1_all_MR_Officesv19.docx.html.xml'],
+        'mrr1': ['Broughton MRR I', 'promrep/scripts/data/mrr1_all_LF_Officesv20.docx.html.xml'],
         'mrr2': ['Broughton MRR II', 'promrep/scripts/data/mrr2_converted_html_MRv8.xml']
     }
 

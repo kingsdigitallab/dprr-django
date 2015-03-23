@@ -22,7 +22,7 @@ admin.site.register(AssertionType)
 admin.site.register(DateType)
 admin.site.register(RoleType)
 admin.site.register(AssertionDate)
-admin.site.register(AssertionPersonDate)
+
 
 # Date Inline Admin
 class DateInline(admin.StackedInline):
@@ -58,7 +58,6 @@ class PersonDateInline(DateInline):
 
     model = PersonDate
 
-
 class AssertionPersonNoteInline(admin.StackedInline):
     model = AssertionPerson.notes.through
     extra = 0
@@ -74,6 +73,28 @@ class AssertionPersonNoteInline(admin.StackedInline):
     related_lookup_fields = {
         'fk': ['assertionpersonnote', ],
     }
+
+
+class AssertionPersonDateAdmin(admin.ModelAdmin):
+    model = AssertionPersonDate
+    list_display = ('id', 'year', 'created_by', 'created', 'modified')
+
+    readonly_fields = ('id', )
+
+    fields = (['id',],
+            ['interval', 'year', ],
+            ['circa', 'year_uncertain', ],
+            ['assertion_person', ],
+             )
+
+    raw_id_fields = ('assertion_person', )
+    related_lookup_fields = {
+         'fk': ['assertion_person', ],
+    }
+
+
+admin.site.register(AssertionPersonDate, AssertionPersonDateAdmin)
+
 
 
 class AssertionPersonAdmin(admin.ModelAdmin):

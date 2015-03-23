@@ -22,7 +22,7 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 # add a file handler
-fh = logging.FileHandler( 'mrr1_data_import.log')
+fh = logging.FileHandler('mrr1_data_import.log')
 fh.setLevel(logging.DEBUG)
 # create a formatter and set the formatter for the handler.
 frmt = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
@@ -60,9 +60,7 @@ def get_office_obj(office_name):
     return office
 
 
-
 def run():
-
     # for vol in ['mrr1', ]:
     for vol in ['mrr1', 'mrr2']:
         processXML(vol)
@@ -86,9 +84,7 @@ def processXML(volume):
 
     years = soup.findAll('year')
 
-    # process year
-
-    # for year in years[0:100]:
+    # for year in years[23:24]:
     for year in years:
         year_str = year['name'].split()[0]
         logger.debug("Parsing year %s" % (year_str))
@@ -181,9 +177,7 @@ def processXML(volume):
                 try:
                     # parses person from name
                     person_info = aux.parse_person(name_str)
-
-                    print person_info
-                    debug_data = person_info
+                    print 'pinfo->', person_info
 
                     if person_info is None:
                         # creates person with the whole name str as the nomen
@@ -194,7 +188,6 @@ def processXML(volume):
                             ap_date_info = person_info.pop('date_certainty').strip()
                         else:
                             ap_date_info = ""
-
 
                         if 'praenomen' in person_info:
                             try:
@@ -226,7 +219,6 @@ def processXML(volume):
                                         if '?' in person_info['cognomen']:
                                             person.cognomen_uncertain = True
 
-
                                     person.other_names = person_info.get('other_names', "")
                                     person.patrician_uncertain = person_info.get('patrician_uncertain', False)
 
@@ -236,7 +228,7 @@ def processXML(volume):
                                     print "Person already existed with id: ", person.id
 
                             except Exception as e:
-                                print "FATAL ERROR (1) while creating person:", name_str, debug_data, e.message
+                                print "FATAL ERROR (1) while creating person:", name_str, e.message
 
                         else:
                             try:
@@ -246,7 +238,7 @@ def processXML(volume):
                                                     real_number=person_info['real_number'],
                                                     review_flag=True)
                             except Exception as e:
-                                print "FATAL ERROR (2) while creating person:", name_str, debug_data, e.message
+                                print "FATAL ERROR (2) while creating person:", name_str, e.message
 
                     # catch all ...
                     if person is None:
@@ -360,4 +352,4 @@ def processXML(volume):
 
 
                 except Exception as e:
-                    logger.error('FATAL %s' %(e.message))
+                    print 'FATAL ERROR (3)', e.message

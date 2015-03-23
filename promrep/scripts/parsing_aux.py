@@ -25,7 +25,7 @@ def parse_person(text):
     # returnable dictionary
     person_data = {}
 
-    logger.info("ParsePersonName: %s" %(text))
+    print "ParsePersonName", text
 
     praenomen_list = [regex.escape(p.abbrev) for p in Praenomen.objects.all()]
     praenomen_abbrev = r'(?:%s)' % '|'.join(praenomen_list)
@@ -82,75 +82,79 @@ def parse_person(text):
 
     captured = person_re.match(text)
 
-    if captured is None:
-        logger.error('Unable to parse the name: %s' % (text))
-        print "ERROR: cannot parse " + text
+    try:
+        real = captured.captures('real')[0].strip()
+        person_data['real_number'] = real
+
+        # TODO: what to do with the empty praenomen??
+        if len(captured.captures('praenomen')):
+            praenomen_str = captured.captures('praenomen')[0].strip()
+
+            # TODO:
+            praenomen_str = praenomen_str.strip("()")
+
+            if "?" in praenomen_str:
+                person_data['praenomen_uncertain'] = True
+                praenomen_str = praenomen_str.replace("?", "")
+
+            try:
+                if praenomen_str == "-.":
+                    praenomen = Praenomen.objects.get(name="-")
+                elif "." in praenomen_str:
+                    praenomen = Praenomen.objects.get(abbrev=praenomen_str)
+                else:
+                    praenomen = Praenomen.objects.get(name=praenomen_str)
+            except:
+                logger.error('ERROR: Praenomen lookup error: %s', praenomen_str)
+                return None
+
+            person_data['praenomen'] = praenomen
+
+        nomen = captured.captures('nomen')[0].strip()
+        person_data['nomen'] = nomen.strip("?()[]")
+
+        # parse patrician and patrician certainty
+        pat_str = captured.captures('patrician')
+
+        if len(pat_str):
+            person_data['patrician'] = True
+
+            if "?" in pat_str[0]:
+                person_data['patrician_uncertain'] = True
+
+        if len(captured.captures('tribe')):
+            tribe_abbrev = captured.captures('tribe')[0].strip()
+            tribe = Tribe.objects.get(abbrev = tribe_abbrev)
+            person_data['tribe'] = tribe
+
+        cog_list = captured.captures('cognomen')
+
+        if len(cog_list):
+            cognomen_first = cog_list[0].strip()
+            person_data['cognomen'] = cognomen_first
+
+        if len(cog_list) > 1:
+            other_names = ' '.join(cog_list[1:]).strip().replace('  ', ' ')
+            person_data['other_names'] = other_names
+
+        if 'cognomen' and 'other_names' in person_data:
+            if person_data['other_names'] == "?)" and person_data['cognomen'][0] == "(":
+                person_data['cognomen'] = person_data['cognomen'] + " ?)"
+                person_data.pop('other_names')
+
+        if len(captured.captures('date_certainty')):
+            person_data['date_certainty'] = captured.captures('date_certainty')[0].strip()
+
+        person_data['filiation'] = ''.join(captured.captures('filiation')).strip()
+        return person_data
+
+    except Exception as e:
+        print 'Unable to parse the name:', text
         return None
 
-    real = captured.captures('real')[0].strip()
-    person_data['real_number'] = real
 
 
-    # TODO: what to do with the empty praenomen??
-    if len(captured.captures('praenomen')):
-        praenomen_str = captured.captures('praenomen')[0].strip()
 
-        # TODO:
-        praenomen_str = praenomen_str.strip("()")
-
-        if "?" in praenomen_str:
-            person_data['praenomen_uncertain'] = True
-            praenomen_str = praenomen_str.replace("?", "")
-
-        try:
-            if "." in praenomen_str:
-                praenomen = Praenomen.objects.get(abbrev=praenomen_str)
-            else:
-                praenomen = Praenomen.objects.get(name=praenomen_str)
-        except:
-            logger.error('ERROR: Praenomen lookup error: %s', praenomen_str)
-            return None
-
-        person_data['praenomen'] = praenomen
-
-    nomen = captured.captures('nomen')[0].strip()
-    person_data['nomen'] = nomen.strip("?()[]")
-
-    # parse patrician and patrician certainty
-    pat_str = captured.captures('patrician')
-
-    if len(pat_str):
-        person_data['patrician'] = True
-
-        if "?" in pat_str[0]:
-            person_data['patrician_uncertain'] = True
-
-    if len(captured.captures('tribe')):
-        tribe_abbrev = captured.captures('tribe')[0].strip()
-        tribe = Tribe.objects.get(abbrev = tribe_abbrev)
-        person_data['tribe'] = tribe
-
-    cog_list = captured.captures('cognomen')
-
-    if len(cog_list):
-        cognomen_first = cog_list[0].strip()
-        person_data['cognomen'] = cognomen_first
-
-    if len(cog_list) > 1:
-        other_names = ' '.join(cog_list[1:]).strip().replace('  ', ' ')
-        person_data['other_names'] = other_names
-
-    if 'cognomen' and 'other_names' in person_data:
-        if person_data['other_names'] == "?)" and person_data['cognomen'][0] == "(":
-            person_data['cognomen'] = person_data['cognomen'] + " ?)"
-            person_data.pop('other_names')
-
-    if len(captured.captures('date_certainty')):
-        person_data['date_certainty'] = captured.captures('date_certainty')[0].strip()
-
-    person_data['filiation'] = ''.join(captured.captures('filiation')).strip()
-
-    return person_data
 
 
 def parse_brennan_person(text):

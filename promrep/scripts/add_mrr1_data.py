@@ -63,8 +63,8 @@ def get_office_obj(office_name):
 
 def run():
 
-    for vol in ['mrr1', ]:
-    # for vol in ['mrr1', 'mrr2']:
+    # for vol in ['mrr1', ]:
+    for vol in ['mrr1', 'mrr2']:
         processXML(vol)
 
 def processXML(volume):
@@ -173,8 +173,6 @@ def processXML(volume):
 
             # Assertion: Office + Year + Person
             for p in office_tag.find_all('person'):
-                print "ABCD", p
-
                 name_str = p['name'].replace(u"’", "'").replace(u"\u2013", "-").replace(u'\xb4', "'")
 
                 print

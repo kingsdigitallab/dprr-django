@@ -17866,7 +17866,7 @@
    </references>
   </office>
   <office name="Pontifices"/>
-  <office-note name="The members of the college of Pontifices in 179 may be listed as follows:">
+  <office-note name="The members of the college of Pontifices in 179 may be listed as follows:"/>
    <person name="Cn. Servilius Cn. f. Cn. n. Caepio (44)" office-xref="Cos. 203, Pr. 205 Pont. 213-174"/>
    <person name="M. Aemilius M. f. M. n. Lepidus (68)" office-xref="Cos. 187, 175, Pr. 191 Pont. 199-152, Pont. Max. 180-152"/>
    <person name="Cn. Cornelius Cn. f. L. n. Scipio Hispallus (346)" office-xref="Cos. 176, Pr. 179 Pont. 199-176"/>
@@ -17876,7 +17876,6 @@
    <person name="M. Claudius M. f. M. n. Marcellus (222)" office-xref="Cos. 196, Pr. 198 Pont. 196-177"/>
    <person name="M. Sempronius M. f. C. n. Tuditanus (195)" office-xref="Cos. 185, Pr. 189 Pont. 183-174"/>
    <person name="Q. Fulvius Q. f. M. n. Flaccus (61)" office-xref="Cos. 179, Pr. 182 Pont. 180-172"/>
-  </office-note>
   <office name="Rex Sacrorum">
    <person name="P. Cloelius Siculus (9)" office-xref="180- - -?"/>
    <page name="394"/>
@@ -17892,7 +17891,7 @@
    <person name="Q. Fabius Pictor (127)" office-xref="Pr. 189 Fl. Quir. 190-167"/>
   </office>
   <office name="Augurs"/>
-  <office-note name="The members of the college of Augurs in 179 may be listed as follows. (One plebeian member of the college is unknown):">
+  <office-note name="The members of the college of Augurs in 179 may be listed as follows. (One plebeian member of the college is unknown):"/>
    <person name="L. Quinctius T. f. L. n. Flamininus (*4)" office-xref="Cos. 192, Pr. 199 Augur 213-170"/>
    <person name="L. Aemilius L. f. M. n. Paullus (114)" office-xref="Cos. 182, 168, Pr. 191 Augur ca. 192-160"/>
    <person name="C. Claudius Ap. f. P. n. Pulcher (300)" office-xref="Cos. 177, Pr. 180 Augur 195-167"/>
@@ -17902,7 +17901,6 @@
    <person name="Ti. Sempronius Ti. f. C. n. Longus (67)" office-xref="Cos. 194, Pr. 196 Augur 210-174"/>
    <person name="Ti. Sempronius P. f. Ti. n. Gracchus (53) Cos. 177, 163, Pr. 180 Augur 204- - -? (see 174, notes 4 and 5)"/>
    <page name="395"/>
-  </office-note>
  </year>
  <year name="178 B.C. A.U.C. 576">
   <office name="Consuls">

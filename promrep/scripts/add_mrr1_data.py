@@ -63,8 +63,8 @@ def get_office_obj(office_name):
 
 def run():
 
-    # for vol in ['mrr2', ]:
-    for vol in ['mrr1', 'mrr2']:
+    for vol in ['mrr1', ]:
+    # for vol in ['mrr1', 'mrr2']:
         processXML(vol)
 
 def processXML(volume):
@@ -129,28 +129,15 @@ def processXML(volume):
             #  every time a note is found, it is associated with all the assertion_persons in the list
             person_ref_queue = []
 
-            assertion_type = AssertionType.objects.get(name='Office')
-
-            assertion_date = AssertionDate.objects.create(year = -int(year_str),)
-
-            # tests if assertion already exists
-            assertion_list = Assertion.objects.filter(office=office_obj,
-                                                      assertion_type=assertion_type,
-                                                      date__year = assertion_date.year, )
-
-            # if it doesn't exist, creates a new assertion
-            if len(assertion_list) == 0:
-                assertion = Assertion.objects.create(office=office_obj,
-                                                     assertion_type=assertion_type, )
+            try:
+                assertion_type = AssertionType.objects.get(name='Office')
+                assertion_date = AssertionDate.objects.create(year = -int(year_str),)
+                assertion = Assertion.objects.create(office=office_obj, assertion_type=assertion_type, )
                 assertion_date.assertion = assertion
                 assertion_date.save()
 
-            elif len(assertion_list) == 1:
-                assertion = assertion_list[0]
-            else:
-                # TODO: throw an Exception
-                print "ERROR HERE! Multiple assertions with same basic info..."
-
+            except Exception as e:
+                logger.error('FATAL ERROR CREATING ASSERTION: %s' %(e.message))
 
             # all these notes will be added to the individual assertionpersons
             assertion_notes_queue = []
@@ -186,6 +173,7 @@ def processXML(volume):
 
             # Assertion: Office + Year + Person
             for p in office_tag.find_all('person'):
+                print "ABCD", p
 
                 name_str = p['name'].replace(u"’", "'").replace(u"\u2013", "-").replace(u'\xb4', "'")
 

@@ -253,6 +253,25 @@ class AssertionInline(admin.StackedInline):
     dates_list.short_description = 'Date(s)'
 
 
+
+class REUpdatedListFilter(SimpleListFilter):
+    title = 'RE Updated'
+    parameter_name = 're_updated'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', 'Yes'),
+            ('no', 'No'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.exclude(real_number_old__exact='')
+
+        if self.value() == 'no':
+            return queryset.filter(real_number_old__exact='')
+
+
 class AssertionYearListFilter(SimpleListFilter):
     title = 'assertion year'
     parameter_name = 'year'
@@ -311,7 +330,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     search_fields = ['id', 'nomen', 'cognomen', 'praenomen__abbrev', 'praenomen__name', 'other_names', ]
 
-    list_filter = ('assertionperson__role', 'nomen', 'assertionperson__assertion__office', 'review_flag', )
+    list_filter = ('assertionperson__role', 'nomen', 'assertionperson__assertion__office', 'review_flag', REUpdatedListFilter)
 
     inlines = (PersonDateInline, AssertionInline, )
     exclude = ('assertions', )

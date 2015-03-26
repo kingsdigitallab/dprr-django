@@ -13,4 +13,5 @@ def run():
 
     for a in Assertion.objects.all():
         for ap in a.assertionperson_set.all():
-            print ap.original_text
+            if ap.secondary_source.id == 1:
+                print ap.original_text

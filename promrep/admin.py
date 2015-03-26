@@ -104,8 +104,7 @@ class AssertionPersonAdmin(admin.ModelAdmin):
 
     fieldsets = [
             ('Database Info', {'fields': [('id')]}),
-            ('', {'fields': ['assertion', 'person']}),
-            ]
+            ('', {'fields': ['person', 'assertion', ('role', 'uncertain'), ('original_text', 'office_xref'), ]}),]
 
     raw_id_fields = ('assertion', 'person',  )
 
@@ -162,7 +161,7 @@ class PersonInline(admin.StackedInline):
 
     fields = (['id', 'position'] ,
               ['person',],
-              ['role'],
+              ['role', 'uncertain'],
               ['secondary_source', 'original_text', 'office_xref'],
               'notes')
 
@@ -197,7 +196,8 @@ class AssertionInline(admin.StackedInline):
 
     fields = (['id'] ,
             ['assertion',],
-            ['role', 'secondary_source', ],
+            ['role', 'uncertain'],
+            ['secondary_source', ],
             ['original_text', 'office_xref'],
             'notes',
 #            'print_dates',

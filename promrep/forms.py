@@ -51,3 +51,22 @@ class AssertionInlineForm(forms.ModelForm):
         # instance is always available, it just does or doesn't have pk.
         self.fields['edit_link'].widget = ModelLinkWidget(self.instance)
         self.fields['print_dates'].widget = AssertionPersonDatesWidget(self.instance)
+
+
+class PersonInlineForm(forms.ModelForm):
+
+    '''This form renders a model and adds a link to edit the nested inline
+    model. This is useful for inline editing when the nested inline fields are
+    not displayed.'''
+
+    edit_link = forms.CharField(label='Edit', required=False)
+
+    class Meta:
+        exclude = ()
+        fieldsets = []
+
+    def __init__(self, *args, **kwargs):
+        super(PersonInlineForm, self).__init__(*args, **kwargs)
+
+        # instance is always available, it just does or doesn't have pk.
+        self.fields['edit_link'].widget = ModelLinkWidget(self.instance)

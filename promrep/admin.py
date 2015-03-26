@@ -58,12 +58,13 @@ class PersonDateInline(DateInline):
 
     model = PersonDate
 
+
 class AssertionPersonNoteInline(admin.StackedInline):
     model = AssertionPerson.notes.through
     extra = 0
 
     classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-closed',)
+    inline_classes = ('grp-collapse grp-open',)
 
     verbose_name = 'Assertion Person Note'
     verbose_name_plural = 'Assertion Person Notes'
@@ -104,7 +105,12 @@ class AssertionPersonAdmin(admin.ModelAdmin):
 
     fieldsets = [
             ('Database Info', {'fields': [('id')]}),
-            ('', {'fields': ['person', 'assertion', ('role', 'uncertain'), ('original_text', 'office_xref'), ]}),]
+            ('', {'fields':
+             ['person',
+             'assertion',
+             ('role', 'uncertain'),
+             ('original_text', 'office_xref'),
+             ]}),]
 
     raw_id_fields = ('assertion', 'person',  )
 
@@ -150,6 +156,7 @@ admin.site.register(AssertionNote, NoteAdmin)
 
 class PersonInline(admin.StackedInline):
     model = AssertionPerson
+    form = AssertionInlineForm
 
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-closed',)
@@ -160,14 +167,17 @@ class PersonInline(admin.StackedInline):
     show_change_link = True
 
     fields = (['id', 'position'] ,
+              'dates_list',
               ['person',],
               ['role', 'uncertain'],
               ['secondary_source', 'original_text', 'office_xref'],
-              'notes')
+              'notes',
+              'edit_link'
+              )
 
     sortable_field_name = 'position'
 
-    readonly_fields = ('id', )
+    readonly_fields = ('id', 'dates_list', )
 
     raw_id_fields = ('person', 'notes')
     related_lookup_fields = {
@@ -176,6 +186,20 @@ class PersonInline(admin.StackedInline):
     }
 
     extra = 0
+
+    def dates_list(self, obj):
+        dates = obj.dates.all()
+
+        if dates.count() == 0:
+            return '(None)'
+
+        date_links = []
+
+        for date in dates:
+            change_url = urlresolvers.reverse('admin:promrep_assertionpersondate_change', args=(date.id,))
+            date_links.append('<a href="%s">%s</a>' % (change_url, unicode(date)))
+
+        return format_html(', '.join(date_links))
 
 
 class AssertionInline(admin.StackedInline):
@@ -195,13 +219,12 @@ class AssertionInline(admin.StackedInline):
     readonly_fields = ('id', 'dates_list', )
 
     fields = (['id'] ,
+            'dates_list',
             ['assertion',],
             ['role', 'uncertain'],
             ['secondary_source', ],
             ['original_text', 'office_xref'],
             'notes',
-#            'print_dates',
-            'dates_list',
             'edit_link',
             )
 

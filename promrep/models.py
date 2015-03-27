@@ -240,7 +240,7 @@ class Office(MPTTModel, TimeStampedModel):
                             related_name='children')
 
     class Meta:
-        verbose_name_plural = 'Offices'
+        verbose_name_plural = 'Office List'
         verbose_name = 'Office List'
         ordering = ['tree_id', 'lft', 'name']
 

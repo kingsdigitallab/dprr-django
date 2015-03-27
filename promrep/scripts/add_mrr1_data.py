@@ -11,25 +11,11 @@ Usage:
 
 from bs4 import BeautifulSoup
 
-from promrep.models import ContentType, Assertion, AssertionPerson, \
-  AssertionType, AssertionNote, AssertionDate, Office, Person, RoleType, \
-  SecondarySource, AssertionPersonNote, AssertionPersonDate, Praenomen, Date
+from promrep.models import Post, PostAssertion, PostNote, PostDate, \
+    Office, Person, RoleType, SecondarySource, PostAssertionNote, \
+    PostAssertionDate, Praenomen, Date
 
 import parsing_aux as aux
-import logging
-
-# TODO: configure in settings
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-# add a file handler
-fh = logging.FileHandler('mrr1_data_import.log')
-fh.setLevel(logging.DEBUG)
-# create a formatter and set the formatter for the handler.
-frmt = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-fh.setFormatter(frmt)
-# add the Handler to the logger
-logger.addHandler(fh)
-
 from promrep.scripts.offices_ref import OFFICE_NAMES_DIC
 
 def get_office_obj(office_name):
@@ -42,7 +28,7 @@ def get_office_obj(office_name):
     try:
         oname = OFFICE_NAMES_DIC[office_name]
     except:
-        logger.warn("Unable to normalize office name: '%s'" %(office_name,))
+        print "WARNING: Unable to normalize office name: '%s'" %(office_name,)
         oname = office_name
 
     try:
@@ -55,7 +41,7 @@ def get_office_obj(office_name):
         office = Office(name=oname, parent = parent)
         office.save()
 
-        logger.info('Added Office: %s (id=%i)' % (office.name, office.id))
+        print 'Added Office: %s (id=%i)' % (office.name, office.id)
 
     return office
 
@@ -75,9 +61,7 @@ def processXML(volume):
     source = SecondarySource.objects.get( abbrev_name = sdict[volume][0] )
     ifile = sdict[volume][1]
 
-    print
-    print 'Will read', source, 'from file', ifile
-    print
+    print 'Will read', source, 'from file', ifile, '\n\n'
 
     page = file(ifile)
     soup = BeautifulSoup(page, features='xml')
@@ -87,12 +71,7 @@ def processXML(volume):
     # for year in years[23:24]:
     for year in years:
         year_str = year['name'].split()[0]
-        logger.debug("Parsing year %s" % (year_str))
-
-        print
-        print
-        print ">>>>> Year", year_str, years.index(year), '(',len(year.findAll('footnote')), 'footnotes)'
-        print
+        print "\n\n>>>>> Year", year_str, years.index(year), '(',len(year.findAll('footnote')), 'footnotes)\n\n'
 
         # the footnotes can be added to a list
         # ... right at the "start" of the year
@@ -103,9 +82,7 @@ def processXML(volume):
 
         # print fnote_dict
 
-        # an assertion is defined by year, office, persons
-        #   it can have associated notes
-        #   and footnotes
+        # a post is defined by year and office
         for office_tag in year.findAll('office'):
 
             # removes the spaces from the office name
@@ -122,30 +99,29 @@ def processXML(volume):
             # get office using office name
             office_obj = get_office_obj(office_name)
 
-            #  every time a note is found, it is associated with all the assertion_persons in the list
+            #  every time a note is found, it is associated with all the post_assertions in the list
             person_ref_queue = []
 
             try:
-                assertion_type = AssertionType.objects.get(name='Office')
-                assertion_date = AssertionDate.objects.create(year = -int(year_str),)
-                assertion = Assertion.objects.create(office=office_obj, assertion_type=assertion_type, )
-                assertion_date.assertion = assertion
+                assertion_date = PostDate.objects.create(year = -int(year_str),)
+                assertion = Post.objects.create(office=office_obj, )
+                assertion_date.post = assertion
                 assertion_date.save()
 
             except Exception as e:
-                logger.error('FATAL ERROR CREATING ASSERTION: %s' %(e.message))
+                print 'FATAL ERROR CREATING POST: %s' %(e.message)
 
-            # all these notes will be added to the individual assertionpersons
+            # all these notes will be added to the individual PostAssertions
             assertion_notes_queue = []
 
-            # all onotes are added to the assertionpersonobjects in this assertion
+            # all onotes are added to the PostAssertion objects in this assertion
             if len(office_tag.find_all('office-note')) > 0:
                 for onote in office_tag.find_all('office-note'):
                     if onote.has_attr('name'):
-                        a_note, created = AssertionPersonNote.objects.get_or_create(
+                        a_note, created = PostAssertionNote.objects.get_or_create(
                                                 text=onote['name'],
                                                 secondary_source=source,
-                                                note_type=AssertionPersonNote.OFFICE_NOTE)
+                                                note_type=PostAssertionNote.OFFICE_NOTE)
 
                         assertion_notes_queue.append(a_note)
 
@@ -158,16 +134,16 @@ def processXML(volume):
                 if fnote_id in fnote_dict:
                     ofnote = fnote_dict[fnote_id]
 
-                    afnote, created = AssertionPersonNote.objects.get_or_create(
+                    afnote, created = PostAssertionNote.objects.get_or_create(
                                         text=ofnote.get_text(),
                                         secondary_source=source,
-                                        note_type=AssertionPersonNote.OFFICE_FOOTNOTE)
+                                        note_type=PostAssertionNote.OFFICE_FOOTNOTE)
 
                     assertion_notes_queue.append(afnote)
                 else:
                     print "ERROR adding office fnote" + fnote_id
 
-            # Assertion: Office + Year + Person
+            # Post: Office + Year + Person
             for p in office_tag.find_all('person'):
                 name_str = p['name'].replace(u"’", "'").replace(u"\u2013", "-").replace(u'\xb4', "'")
 
@@ -244,7 +220,7 @@ def processXML(volume):
                     if person is None:
                         print "ERROR creating person-->", name_str
 
-                    # creates the AssertionPerson
+                    # creates the PostAssertion
                     else:
                         if p.has_attr('office-xref'):
                             oxref=p['office-xref']
@@ -252,41 +228,41 @@ def processXML(volume):
                             oxref=""
 
                         # TODO: stop creating repeated assertions
-                        assertion_person, created = AssertionPerson.objects.get_or_create(
+                        post_assertion, created = PostAssertion.objects.get_or_create(
                             role=RoleType.objects.get(name='Holder'),
-                            assertion=assertion,
+                            post=assertion,
                             secondary_source=source,
                             person=person,
                             original_text = name_str,
                             office_xref = oxref
                         )
 
-                        # AssertionPerson Dates
+                        # PostAssertion Dates
                         ap_date_info = ap_date_info.strip("[:")
 
                         if ap_date_info:
-                            ap_date = AssertionPersonDate.objects.create(
+                            ap_date = PostAssertionDate.objects.create(
                                             year = -int(year_str),
                                             year_uncertain = True,
                                             interval=Date.DATE_BY,
-                                            assertion_person = assertion_person)
+                                            post_assertion = post_assertion)
 
                             # cases that need manual fixing
                             if ap_date_info != "?":
                                 ap_date.extra_info = ap_date_info
                                 ap_date.save()
 
-                        # Assertion Person uncertain
+                        # Post Person uncertain
                         if p.has_attr('assertion-certainty') or (assertion_uncertain == True):
-                            assertion_person.uncertain = True
+                            post_assertion.uncertain = True
 
                         # saves the order in the assertion
-                        assertion_person.position = assertion.persons.count()
-                        assertion_person.save()
+                        post_assertion.position = assertion.persons.count()
+                        post_assertion.save()
 
-                        # adds all assertion notes to the assertionperson object
+                        # adds all assertion notes to the PostAssertion object
                         for assertion_note in assertion_notes_queue:
-                            assertion_person.notes.add(assertion_note)
+                            post_assertion.notes.add(assertion_note)
 
                         # add any footnotes the person might have
                         if p.has_attr('footnote') or p.has_attr('x_footnote'):
@@ -298,16 +274,16 @@ def processXML(volume):
                             if fnote_id in fnote_dict:
                                 pnote = fnote_dict[fnote_id]
                                 try:
-                                    ap_fnote = AssertionPersonNote(note_type = AssertionPersonNote.FOOTNOTE, text = pnote.get_text(), secondary_source=source)
+                                    ap_fnote = PostAssertionNote(note_type = PostAssertionNote.FOOTNOTE, text = pnote.get_text(), secondary_source=source)
                                     ap_fnote.save()
-                                    assertion_person.notes.add(ap_fnote)
+                                    post_assertion.notes.add(ap_fnote)
                                 except:
                                     print "ERROR ADDING NOTES!!!"
                             else:
                                 print "ERROR adding person footnote with id", fnote_id
 
-                        # adds the assertion_person to the refs queue
-                        person_ref_queue.append(assertion_person)
+                        # adds the post_assertion to the refs queue
+                        person_ref_queue.append(post_assertion)
 
                         # if the next element is a reference
                         #   we're adding it to all the assertions in the assertion queue
@@ -328,7 +304,7 @@ def processXML(volume):
                                     footnotes.append(r['x_footnote'].lstrip('#'))
 
                             # creates the note
-                            note=AssertionPersonNote.objects.create(
+                            note=PostAssertionNote.objects.create(
                                 text=ref_text.strip(),
                                 secondary_source=source)
 
@@ -337,7 +313,7 @@ def processXML(volume):
                             for fnote_id in footnotes:
                                 if fnote_id in fnote_dict:
                                     apfnote_obj = fnote_dict[fnote_id]
-                                    apfnote = AssertionPersonNote.objects.create(note_type=AssertionPersonNote.FOOTNOTE, text = apfnote_obj.get_text().strip())
+                                    apfnote = PostAssertionNote.objects.create(note_type=PostAssertionNote.FOOTNOTE, text = apfnote_obj.get_text().strip())
                                     notes_queue.append(apfnote)
                                 else:
                                     print "ERROR adding person footnote with id", fnote_id

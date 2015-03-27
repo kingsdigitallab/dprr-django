@@ -23,9 +23,6 @@ def run():
     print '  Role Types...'
     call_command('loaddata', 'promrep/fixtures/promrep_roletype.json')
 
-    print '  Assertion Types...'
-    call_command('loaddata', 'promrep/fixtures/promrep_assertiontype.json')
-
     print '  Secondary Sources...'
     call_command('loaddata', 'promrep/fixtures/promrep_secondarysource.json')
 

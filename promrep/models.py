@@ -128,18 +128,17 @@ class Note(TimeStampedModel):
         return self.text.strip()
 
 @with_author
-class AssertionNote(Note):
+class PostNote(Note):
     pass
 
 @with_author
-class AssertionPersonNote(Note):
+class PostAssertionNote(Note):
 
     def url_to_edit_note(self):
-        url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.module_name), args=[self.id])
+        url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.model_name), args=[self.id])
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     def related_label(self):
-
         return u"[%s - %s] %s<br /><br />" % (self.get_note_type_display(), self.secondary_source.abbrev_name , self.text)
 
 
@@ -265,30 +264,15 @@ class Relationship(TimeStampedModel):
         return self.name
 
 
-class AssertionType(models.Model):
-
-    name = models.CharField(max_length=128, unique=True)
-
-    def __unicode__(self):
-        return self.name
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return ("id__iexact", "name", )
-
-
 @with_author
-class Assertion(TimeStampedModel):
-
-    persons = models.ManyToManyField(Person, through='AssertionPerson')
-    assertion_type = models.ForeignKey(AssertionType)
+class Post(TimeStampedModel):
+    persons = models.ManyToManyField(Person, through='PostAssertion')
 
     # should these be combined into a single tree
-
     office = models.ForeignKey(Office, blank=True, null=True)
     relationship = models.ForeignKey(Relationship, blank=True, null=True)
 
-    notes = models.ManyToManyField(AssertionNote, related_name="assertions")
+    notes = models.ManyToManyField(PostNote, related_name="posts")
 
     display_text = models.CharField(max_length=1024, blank=True)
 
@@ -301,7 +285,7 @@ class Assertion(TimeStampedModel):
 
     def get_persons(self):
         s = []
-        for ap in self.assertionperson_set.all():
+        for ap in self.PostAssertion_set.all():
             s.append(ap.person.__unicode__() + ' [' + ap.role.name + ']')
 
         return '; '.join(s)
@@ -329,16 +313,15 @@ class Assertion(TimeStampedModel):
         return name
 
     def related_label(self):
-        change_url = urlresolvers.reverse('admin:promrep_assertion_change', args=(self.id,))
-
-        return u'<a href="%s">%s</a>' % (change_url, self.__unicode__(), )
+        url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.module_name), args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.__unicode__(), )
 
 
 
 @with_author
-class AssertionPerson(TimeStampedModel):
+class PostAssertion(TimeStampedModel):
     person = models.ForeignKey(Person)
-    assertion = models.ForeignKey(Assertion)
+    post = models.ForeignKey(Post)
     secondary_source = models.ForeignKey(SecondarySource)
 
     role = models.ForeignKey(RoleType)
@@ -347,7 +330,7 @@ class AssertionPerson(TimeStampedModel):
 
     uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
 
-    notes = models.ManyToManyField(AssertionPersonNote)
+    notes = models.ManyToManyField(PostAssertionNote)
 
     # position field
     position = models.PositiveSmallIntegerField(default=0)
@@ -356,7 +339,7 @@ class AssertionPerson(TimeStampedModel):
         ordering = ['position', 'id']
 
     def __unicode__(self):
-        name = str(self.person.__unicode__()) + ": " + str(self.assertion.__unicode__())
+        name = str(self.person.__unicode__()) + ": " + str(self.post.__unicode__())
         name = name + " (" + self.secondary_source.abbrev_name + ")"
         return name
 
@@ -450,12 +433,12 @@ class Date(models.Model):
 
 
 @with_author
-class AssertionDate(Date):
-    assertion = models.ForeignKey(Assertion, related_name="dates", related_query_name="date", blank=True, null=True)
+class PostDate(Date):
+    post = models.ForeignKey(Post, related_name="dates", related_query_name="date", blank=True, null=True)
 
 @with_author
-class AssertionPersonDate(Date):
-    assertion_person = models.ForeignKey(AssertionPerson, related_name="dates", related_query_name="date", blank=True, null=True)
+class PostAssertionDate(Date):
+    post_assertion = models.ForeignKey(PostAssertion, related_name="dates", related_query_name="date", blank=True, null=True)
 
 @with_author
 class PersonDate(Date):

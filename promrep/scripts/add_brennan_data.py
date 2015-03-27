@@ -3,8 +3,8 @@
 
 import csv
 
-from promrep.models import ContentType, Assertion, AssertionPerson, \
-    AssertionType, Date, DateType, Office, Person, \
+from promrep.models import ContentType, Post, PostAssertion, \
+    PostType, Date, DateType, Office, Person, \
     Praenomen, RoleType, SecondarySource, Sex, Relationship, Note, NoteType
 
 import parsing_aux
@@ -156,8 +156,8 @@ def add_relationship_assertion(person, ancestor_str, rel_name):
 
     print '[ancestor_str] ' + ancestor_str
 
-    rel_assertion = Assertion(
-        assertion_type=AssertionType.objects.get(name='Relationship'),
+    rel_assertion = Post(
+        assertion_type=PostType.objects.get(name='Relationship'),
         relationship=Relationship.objects.get(name=rel_name),
         secondary_source=SecondarySource.objects.get(abbrev_name='Brennan Praetors'))
     rel_assertion.save()
@@ -165,7 +165,7 @@ def add_relationship_assertion(person, ancestor_str, rel_name):
     certainty = True
 
     # only one descendant - the current person
-    desc_ap = AssertionPerson(
+    desc_ap = PostAssertion(
         assertion = rel_assertion,
         person=person,
         role=RoleType.objects.get(name = relationships_dic[rel_name][0]),
@@ -198,7 +198,7 @@ def add_relationship_assertion(person, ancestor_str, rel_name):
 
             logger.info('Saved ancestor object %s with id %i' %(ancestor.get_name(), ancestor.id))
 
-        ancestor_ap = AssertionPerson(
+        ancestor_ap = PostAssertion(
             assertion = rel_assertion,
             person=ancestor,
             role=RoleType.objects.get(name = relationships_dic[rel_name][1]),
@@ -218,12 +218,12 @@ def add_office_assertion(person, date, original_text):
 
     source = SecondarySource.objects.get(abbrev_name='Brennan Praetors')
     office = Office.objects.get(name='praetor')
-    assertion_type = AssertionType.objects.get(name='Office')
+    assertion_type = PostType.objects.get(name='Office')
     praetor_role = RoleType.objects.get(name='Holder')
 
     ## TODO: wrap in a transaction
     try:
-        assertion = Assertion(office=office,
+        assertion = Post(office=office,
                 assertion_type=assertion_type,
                 secondary_source=source)
         assertion.save()
@@ -234,16 +234,16 @@ def add_office_assertion(person, date, original_text):
         logger.error('Unable to save assertion.')
 
     try:
-        ap = AssertionPerson(
+        ap = PostAssertion(
                 role = praetor_role,
                 assertion = assertion,
                 person = person,
                 original_text = original_text)
         ap.save()
-        logger.info('Added new AssertionPerson: %s' %(ap.id))
+        logger.info('Added new PostAssertion: %s' %(ap.id))
 
     except:
-        logger.error('Unable to add new AssertionPerson object.')
+        logger.error('Unable to add new PostAssertion object.')
 
         # date_list = parse_brennan_date(date)
         # if date_list:

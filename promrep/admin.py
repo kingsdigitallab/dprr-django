@@ -11,18 +11,15 @@ from django.forms import TextInput, Textarea
 from django.core import urlresolvers
 from django.utils.html import format_html
 
-from promrep.forms import AssertionInlineForm
+from promrep.forms import PostInlineForm
 
-from models import Person, Office, Praenomen, AssertionPerson, \
-    Assertion, AssertionType, RoleType, DateType, \
-    SecondarySource, Gens, AssertionNote, AssertionPersonNote, \
-    Tribe, AssertionDate, PersonDate, AssertionPersonDate
+from models import Person, Office, Praenomen, PostAssertion, \
+    Post, RoleType, DateType, SecondarySource, Gens, PostNote, \
+    PostAssertionNote, Tribe, PostDate, PersonDate, PostAssertionDate
 
-admin.site.register(AssertionType)
 admin.site.register(DateType)
 admin.site.register(RoleType)
-admin.site.register(AssertionDate)
-
+admin.site.register(PostDate)
 
 # Date Inline Admin
 class DateInline(admin.StackedInline):
@@ -36,18 +33,18 @@ class DateInline(admin.StackedInline):
     show_change_link = True
 
 
-class AssertionDateInline(DateInline):
-    verbose_name = 'Assertion Date'
-    verbose_name_plural = 'Assertion Dates'
+class PostDateInline(DateInline):
+    verbose_name = 'Post Date'
+    verbose_name_plural = 'Post Dates'
 
-    model = AssertionDate
+    model = PostDate
 
 
-class AssertionPersonDateInline(DateInline):
-    verbose_name = 'Assertion Person Date'
-    verbose_name_plural = 'Assertion Person Dates'
+class PostAssertionDateInline(DateInline):
+    verbose_name = 'Post Person Date'
+    verbose_name_plural = 'Post Person Dates'
 
-    model = AssertionPersonDate
+    model = PostAssertionDate
 
     extra = 0
 
@@ -59,25 +56,25 @@ class PersonDateInline(DateInline):
     model = PersonDate
 
 
-class AssertionPersonNoteInline(admin.StackedInline):
-    model = AssertionPerson.notes.through
+class PostAssertionNoteInline(admin.StackedInline):
+    model = PostAssertion.notes.through
     extra = 0
 
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-open',)
 
-    verbose_name = 'Assertion Person Note'
-    verbose_name_plural = 'Assertion Person Notes'
+    verbose_name = 'Post Person Note'
+    verbose_name_plural = 'Post Person Notes'
 
-    raw_id_fields = ('assertionpersonnote', )
+    raw_id_fields = ('postassertionnote', )
 
     related_lookup_fields = {
-        'fk': ['assertionpersonnote', ],
+        'fk': ['postassertionnote', ],
     }
 
 
-class AssertionPersonDateAdmin(admin.ModelAdmin):
-    model = AssertionPersonDate
+class PostAssertionDateAdmin(admin.ModelAdmin):
+    model = PostAssertionDate
     list_display = ('id', 'year', 'created_by', 'created', 'modified')
 
     readonly_fields = ('id', )
@@ -85,21 +82,20 @@ class AssertionPersonDateAdmin(admin.ModelAdmin):
     fields = (['id',],
             ['interval', 'year', ],
             ['circa', 'year_uncertain', ],
-            ['assertion_person', ],
+            ['post_assertion', ],
              )
 
-    raw_id_fields = ('assertion_person', )
+    raw_id_fields = ('post_assertion', )
     related_lookup_fields = {
-         'fk': ['assertion_person', ],
+         'fk': ['post_assertion', ],
     }
 
-
-admin.site.register(AssertionPersonDate, AssertionPersonDateAdmin)
-
+admin.site.register(PostAssertionDate, PostAssertionDateAdmin)
 
 
-class AssertionPersonAdmin(admin.ModelAdmin):
-    list_display = ('id', 'assertion', 'person', 'secondary_source', 'created_by', 'created', 'modified')
+
+class PostAssertionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'post', 'person', 'secondary_source', 'created_by', 'created', 'modified')
 
     readonly_fields = ('id', )
 
@@ -107,33 +103,33 @@ class AssertionPersonAdmin(admin.ModelAdmin):
             ('Database Info', {'fields': [('id')]}),
             ('', {'fields':
              ['person',
-             'assertion',
+             'post',
              ('role', 'uncertain'),
              ('original_text', 'office_xref'),
              ]}),]
 
-    raw_id_fields = ('assertion', 'person',  )
+    raw_id_fields = ('post', 'person',  )
 
     related_lookup_fields = {
-         'fk': ['assertion', 'person'],
+         'fk': ['post', 'person'],
     }
 
-    inlines = (AssertionPersonDateInline, AssertionPersonNoteInline, )
+    inlines = (PostAssertionDateInline, PostAssertionNoteInline, )
 
-admin.site.register(AssertionPerson, AssertionPersonAdmin)
+admin.site.register(PostAssertion, PostAssertionAdmin)
 
 
-class AssertionNoteInline(admin.StackedInline):
-    model = Assertion.notes.through
+class PostNoteInline(admin.StackedInline):
+    model = Post.notes.through
 
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-closed',)
 
     extra = 0
 
-    verbose_name = 'Assertion Note'
-    verbose_name_plural = 'Assertion Notes'
-    raw_id_fields = ('assertionnote', )
+    verbose_name = 'Post Note'
+    verbose_name_plural = 'Post Notes'
+    raw_id_fields = ('postnote', )
 
     readonly_fields = ('id', )
 
@@ -150,18 +146,18 @@ class NoteAdmin(admin.ModelAdmin):
     show_change_link = True
 
 
-admin.site.register(AssertionPersonNote, NoteAdmin)
-admin.site.register(AssertionNote, NoteAdmin)
+admin.site.register(PostAssertionNote, NoteAdmin)
+admin.site.register(PostNote, NoteAdmin)
 
 
 class PersonInline(admin.StackedInline):
-    model = AssertionPerson
-    form = AssertionInlineForm
+    model = PostAssertion
+    form = PostInlineForm
 
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-closed',)
 
-    verbose_name_plural = 'Persons on this Assertion'
+    verbose_name_plural = 'Persons on this Post'
     verbose_name = 'Person:'
 
     show_change_link = True
@@ -196,23 +192,23 @@ class PersonInline(admin.StackedInline):
         date_links = []
 
         for date in dates:
-            change_url = urlresolvers.reverse('admin:promrep_assertionpersondate_change', args=(date.id,))
+            change_url = urlresolvers.reverse('admin:promrep_postassertiondate_change', args=(date.id,))
             date_links.append('<a href="%s">%s</a>' % (change_url, unicode(date)))
 
         return format_html(', '.join(date_links))
 
 
-class AssertionInline(admin.StackedInline):
-    model = AssertionPerson
-    form = AssertionInlineForm
+class PostInline(admin.StackedInline):
+    model = PostAssertion
+    form = PostInlineForm
 
     extra = 0
 
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-closed',)
 
-    verbose_name = 'Assertion'
-    verbose_name_plural = 'Person Assertions'
+    verbose_name = 'Post'
+    verbose_name_plural = 'Person Posts'
 
     show_change_link = True
 
@@ -220,7 +216,7 @@ class AssertionInline(admin.StackedInline):
 
     fields = (['id'] ,
             'dates_list',
-            ['assertion',],
+            ['post',],
             ['role', 'uncertain'],
             ['secondary_source', ],
             ['original_text', 'office_xref'],
@@ -228,10 +224,10 @@ class AssertionInline(admin.StackedInline):
             'edit_link',
             )
 
-    raw_id_fields = ('notes', 'assertion', )
+    raw_id_fields = ('notes', 'post', )
 
     related_lookup_fields = {
-        'fk': ['assertion', ],
+        'fk': ['post', ],
         'm2m': ['notes', ],
     }
 
@@ -244,7 +240,7 @@ class AssertionInline(admin.StackedInline):
         date_links = []
 
         for date in dates:
-            change_url = urlresolvers.reverse('admin:promrep_assertionpersondate_change', args=(date.id,))
+            change_url = urlresolvers.reverse('admin:promrep_postassertiondate_change', args=(date.id,))
             date_links.append('<a href="%s">%s</a>' % (change_url, unicode(date)))
 
         return format_html(', '.join(date_links))
@@ -272,13 +268,13 @@ class REUpdatedListFilter(SimpleListFilter):
             return queryset.filter(real_number_old__exact='')
 
 
-class AssertionYearListFilter(SimpleListFilter):
-    title = 'assertion year'
+class PostYearListFilter(SimpleListFilter):
+    title = 'post year'
     parameter_name = 'year'
 
     def lookups(self, request, model_admin):
         lookup = []
-        years = Assertion.objects.all().values('date__year').distinct()
+        years = Post.objects.all().values('date__year').distinct()
 
         for year in years:
             item = (year['date__year'], year['date__year'])
@@ -296,18 +292,19 @@ class AssertionYearListFilter(SimpleListFilter):
 class PersonAdmin(admin.ModelAdmin):
 
     fieldsets = [
-            ('Database Info', {'fields': [('id', 'review_flag')]},),
+            ('Database Info',
+                {'fields': [('id', 'review_flag')]},),
             ('Person',
-                 {'fields': [
-                    ('sex',),
-                    ('praenomen', 'praenomen_uncertain'),
-                    ('nomen', 'nomen_uncertain'),
-                    ('filiation', 'filiation_uncertain'),
-                    ('cognomen', 'cognomen_uncertain'),
-                    ('other_names', ),
-                    ('gens', 'gens_uncertain',),
-                    ('tribe', 'tribe_uncertain'),
-                    ('origin', ),
+                {'fields': [
+                   ('sex',),
+                   ('praenomen', 'praenomen_uncertain'),
+                   ('nomen', 'nomen_uncertain'),
+                   ('filiation', 'filiation_uncertain'),
+                   ('cognomen', 'cognomen_uncertain'),
+                   ('other_names', ),
+                   ('gens', 'gens_uncertain',),
+                   ('tribe', 'tribe_uncertain'),
+                   ('origin', ),
         ]}),
 
         ('RE',
@@ -329,14 +326,13 @@ class PersonAdmin(admin.ModelAdmin):
         )
 
     search_fields = ['id', 'nomen', 'cognomen', 'praenomen__abbrev', 'praenomen__name', 'other_names', ]
+    list_filter = ('postassertion__role', 'nomen', 'postassertion__post__office', 'review_flag', REUpdatedListFilter)
 
-    list_filter = ('assertionperson__role', 'nomen', 'assertionperson__assertion__office', 'review_flag', REUpdatedListFilter)
-
-    inlines = (PersonDateInline, AssertionInline, )
+    inlines = (PersonDateInline, PostInline, )
     exclude = ('assertions', )
 
-
 admin.site.register(Person, PersonAdmin)
+
 
 class OfficeAdmin(DjangoMpttAdmin):
     readonly_fields = ('id', )
@@ -351,14 +347,13 @@ class OfficeAdmin(DjangoMpttAdmin):
 admin.site.register(Office, OfficeAdmin)
 
 
-class AssertionAdmin(admin.ModelAdmin):
+class PostAdmin(admin.ModelAdmin):
 
-    search_fields = ['id', 'assertionperson__person__nomen', 'assertionperson__person__cognomen', ]
-    list_filter = ('assertion_type', AssertionYearListFilter, 'office')
+    search_fields = ['id', 'postassertion__person__nomen', 'postassertion__person__cognomen', ]
+    list_filter = (PostYearListFilter, 'office')
 
     list_display = (
         'id',
-        'assertion_type',
         'office',
         'get_dates',
         'uncertain',
@@ -366,8 +361,8 @@ class AssertionAdmin(admin.ModelAdmin):
         'created',
     )
 
-    readonly_fields = ('id', )
-    list_display_links = ('id', 'uncertain', 'assertion_type', 'office', )
+    readonly_fields = ('id', 'get_dates', )
+    list_display_links = ('id', 'uncertain', 'office', )
 
     raw_id_fields = ('office', )
     autocomplete_lookup_fields = {
@@ -375,19 +370,19 @@ class AssertionAdmin(admin.ModelAdmin):
     }
 
     fieldsets = [ ('Database Info', {'fields': ['id']}),
-                    ('Assertion',
+                    ('Post',
                         {
                         'fields': [
-                                ( 'assertion_type', 'office', 'uncertain', ),
+                                ( 'office', 'uncertain', ),
                                 ],
                         }
                     ),
             ]
 
-    inlines = [AssertionDateInline, PersonInline, AssertionNoteInline, ]
+    inlines = [PostDateInline, PersonInline, PostNoteInline, ]
     exclude = ('persons',  )
 
-admin.site.register(Assertion, AssertionAdmin)
+admin.site.register(Post, PostAdmin)
 
 
 class GensAdmin(admin.ModelAdmin):

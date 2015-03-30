@@ -171,7 +171,7 @@ def processXML(volume):
                                 person, created = Person.objects.get_or_create(
                                                                 praenomen=person_info['praenomen'],
                                                                 nomen=person_info['nomen'],
-                                                                real_number=person_info['real_number'],
+                                                                re_number=person_info['re_number'],
                                                                 review_flag=False
                                                                 )
 
@@ -211,7 +211,7 @@ def processXML(volume):
                                 person = Person.objects.create(
                                             praenomen=Praenomen.objects.get(name='-'),
                                                     nomen=person_info['nomen'],
-                                                    real_number=person_info['real_number'],
+                                                    re_number=person_info['re_number'],
                                                     review_flag=True)
                             except Exception as e:
                                 print "FATAL ERROR (2) while creating person:", name_str, e.message

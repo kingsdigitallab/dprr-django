@@ -86,7 +86,7 @@ def processXML(ifile):
                         person = Person.objects.get(
                                 praenomen = parsed_person.praenomen,
                                 nomen= parsed_person.nomen,
-                                real_number=parsed_person.real_number)
+                                re_number=parsed_person.re_number)
 
                         person.update_empty_fields(parsed_person)
                         logger.info('Updated existing person %s with id %i' %(person.get_name(), person.id))

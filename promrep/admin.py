@@ -15,11 +15,13 @@ from promrep.forms import PostInlineForm
 
 from models import Person, Office, Praenomen, PostAssertion, \
     Post, RoleType, DateType, SecondarySource, Gens, PostNote, \
-    PostAssertionNote, Tribe, PostDate, PersonDate, PostAssertionDate
+    PostAssertionNote, Tribe, PostDate, PersonDate, PostAssertionDate, \
+    Location
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
 admin.site.register(PostDate)
+
 
 # Date Inline Admin
 class DateInline(admin.StackedInline):
@@ -142,12 +144,24 @@ class NoteAdmin(admin.ModelAdmin):
     search_fields = ['id', 'note_type', 'text']
     fields = ('id', ['secondary_source', 'note_type'], 'text', 'extra_info', )
 
-
     show_change_link = True
 
 
 admin.site.register(PostAssertionNote, NoteAdmin)
 admin.site.register(PostNote, NoteAdmin)
+
+
+class LocationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'location_type', 'created', 'modified')
+    list_display_links = ('id', 'name', 'location_type', )
+    readonly_fields = ('id', 'created', 'modified')
+
+    search_fields = ['id', 'name', ]
+    fields = ('id', ['name', 'location_type'], 'description' )
+
+    show_change_link = True
+
+admin.site.register(Location, LocationAdmin)
 
 
 class PersonInline(admin.StackedInline):
@@ -262,10 +276,10 @@ class REUpdatedListFilter(SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'yes':
-            return queryset.exclude(real_number_old__exact='')
+            return queryset.exclude(re_number_old__exact='')
 
         if self.value() == 'no':
-            return queryset.filter(real_number_old__exact='')
+            return queryset.filter(re_number_old__exact='')
 
 
 class PostYearListFilter(SimpleListFilter):
@@ -309,7 +323,7 @@ class PersonAdmin(admin.ModelAdmin):
 
         ('RE',
             {'fields': [
-                ('real_number', 'real_number_old', ),
+                ('re_number', 're_number_old', ),
             ]}
         ),
         ('Other', {'fields': [('patrician', 'patrician_uncertain')]})]
@@ -355,6 +369,7 @@ class PostAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'office',
+        'location',
         'get_dates',
         'uncertain',
         'modified',
@@ -364,9 +379,9 @@ class PostAdmin(admin.ModelAdmin):
     readonly_fields = ('id', 'get_dates', )
     list_display_links = ('id', 'uncertain', 'office', )
 
-    raw_id_fields = ('office', )
+    raw_id_fields = ('office', 'location')
     autocomplete_lookup_fields = {
-        'fk': ['office', ],
+        'fk': ['office', 'location', ],
     }
 
     fieldsets = [ ('Database Info', {'fields': ['id']}),
@@ -374,6 +389,7 @@ class PostAdmin(admin.ModelAdmin):
                         {
                         'fields': [
                                 ( 'office', 'uncertain', ),
+                                ('location', )
                                 ],
                         }
                     ),

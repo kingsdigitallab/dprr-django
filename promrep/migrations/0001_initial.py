@@ -44,6 +44,24 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
+            name='Location',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('name', models.CharField(unique=True, max_length=256)),
+                ('description', models.CharField(max_length=1024, blank=True)),
+                ('location_type', models.SmallIntegerField(default=0, choices=[(0, b'place'), (1, b'province')])),
+                ('created_by', models.ForeignKey(related_name='location_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('updated_by', models.ForeignKey(related_name='location_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'verbose_name': 'Places',
+                'verbose_name_plural': 'Place List',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='Office',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -62,7 +80,7 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['tree_id', 'lft', 'name'],
                 'verbose_name': 'Office List',
-                'verbose_name_plural': 'Offices',
+                'verbose_name_plural': 'Office List',
             },
             bases=(models.Model,),
         ),
@@ -95,8 +113,8 @@ class Migration(migrations.Migration):
                 ('filiation_uncertain', models.BooleanField(default=False, verbose_name=b'Uncertain Filiation')),
                 ('gens_uncertain', models.BooleanField(default=False, verbose_name=b'Uncertain Gens')),
                 ('tribe_uncertain', models.BooleanField(default=False, verbose_name=b'Uncertain Tribe')),
-                ('real_number', models.CharField(help_text=b'RE number', max_length=32, verbose_name=b'RE Number', blank=True)),
-                ('real_number_old', models.CharField(help_text=b'RE number before revising', max_length=32, verbose_name=b'RE (old)', blank=True)),
+                ('re_number', models.CharField(help_text=b'RE number', max_length=32, verbose_name=b'RE Number', blank=True)),
+                ('re_number_old', models.CharField(help_text=b'RE number before revising', max_length=32, verbose_name=b'RE (old)', blank=True)),
                 ('patrician', models.BooleanField(default=False, verbose_name=b'Patrician')),
                 ('patrician_uncertain', models.BooleanField(default=False, verbose_name=b'Uncertain Patrician')),
                 ('extra_info', models.CharField(help_text=b'Extra info about the person.', max_length=1024, blank=True)),
@@ -140,6 +158,7 @@ class Migration(migrations.Migration):
                 ('display_text', models.CharField(max_length=1024, blank=True)),
                 ('uncertain', models.BooleanField(default=False, verbose_name=b'Uncertain')),
                 ('created_by', models.ForeignKey(related_name='post_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('location', models.ForeignKey(blank=True, to='promrep.Location', null=True)),
             ],
             options={
                 'ordering': ['id'],
@@ -412,12 +431,6 @@ class Migration(migrations.Migration):
             model_name='post',
             name='persons',
             field=models.ManyToManyField(to='promrep.Person', through='promrep.PostAssertion'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='post',
-            name='relationship',
-            field=models.ForeignKey(blank=True, to='promrep.Relationship', null=True),
             preserve_default=True,
         ),
         migrations.AddField(

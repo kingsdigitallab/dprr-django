@@ -84,7 +84,7 @@ def parse_person(text):
 
     try:
         real = captured.captures('real')[0].strip()
-        person_data['real_number'] = real
+        person_data['re_number'] = real
 
         # TODO: what to do with the empty praenomen??
         if len(captured.captures('praenomen')):
@@ -274,7 +274,7 @@ def parse_brennan_person(text):
             filiation=filiation,
             tribe = tribe,
             cognomen=cognomen_first,
-            real_number=real,
+            re_number=real,
             other_names=other_names,
             patrician=is_pat,
             patrician_uncertain=pat_uncertain,

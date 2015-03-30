@@ -22,12 +22,6 @@ fh.setFormatter(frmt)
 # add the Handler to the logger
 logger.addHandler(fh)
 
-
-
-
-
-
-
 def run():
     # U flag: universal new-line mode
     ifile = open('promrep/scripts/data/BrennanExportv6.csv', 'rU')
@@ -46,7 +40,7 @@ def run():
             assertion_type,
             praenomen_str,
             nomen,
-            real_number,
+            re_number,
             filiation,
             cognomen,
             patrician,
@@ -71,8 +65,8 @@ def run():
 
         original_text = ' '.join(filter(None, [praenomen_str, nomen, cognomen]))
 
-        if real_number:
-            original_text = "%s (%s)" %(original_text, real_number)
+        if re_number:
+            original_text = "%s (%s)" %(original_text, re_number)
 
         cognomen = ''
         other_names = ''
@@ -108,7 +102,7 @@ def run():
         parsed_person = Person(
             sex=Sex.objects.get(name='Male'),
             praenomen=praenomen,
-            real_number=real_number,
+            re_number=re_number,
             nomen=nomen.translate(None, "?()[]"),
             filiation=filiation,
             cognomen=cognomen,
@@ -122,7 +116,7 @@ def run():
             person = Person.objects.get(
                         praenomen = parsed_person.praenomen,
                         nomen = parsed_person.nomen,
-                        real_number = parsed_person.real_number)
+                        re_number = parsed_person.re_number)
 
             person.update_empty_fields(parsed_person)
             logger.info('Updated existing person %s with id %i' %(person.get_name(), person.id))
@@ -189,7 +183,7 @@ def add_relationship_assertion(person, ancestor_str, rel_name):
             ancestor = Person.objects.get(
                 praenomen = ancestor_obj.praenomen,
                 nomen = ancestor_obj.nomen,
-                real_number = ancestor_obj.real_number)
+                re_number = ancestor_obj.re_number)
 
             logger.info('Found existing object (ancestor) %s with id %i' %(ancestor.get_name(), ancestor.id))
         except :

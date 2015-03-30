@@ -2,11 +2,9 @@ import csv
 
 from promrep.models import Praenomen, Person
 
-
-
 def run():
     # U flag: universal new-line mode
-    ifile = open('promrep/scripts/data/OldRENumbersv2.csv', 'rU')
+    ifile = open('promrep/scripts/data/OldRENumbersv3.csv', 'rU')
     reader = csv.reader(ifile, delimiter=',', skipinitialspace=True)
 
     # next(reader, None)
@@ -27,7 +25,7 @@ def run():
             else:
                 praenomen = Praenomen.objects.get(name=praenomen_str)
 
-            p = Person.objects.filter(praenomen=praenomen, nomen=nomen, real_number=re)
+            p = Person.objects.filter(praenomen=praenomen, nomen=nomen, re_number=re)
 
             if len(p) == 1:
                 found = found + 1

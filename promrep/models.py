@@ -167,11 +167,11 @@ class Person(TimeStampedModel):
 
     sex = models.ForeignKey(Sex, blank=True, null=True, default=1)
 
-    real_number = models.CharField(max_length=32, blank=True, verbose_name='RE Number')
-    real_number.help_text = "RE number"
+    re_number = models.CharField(max_length=32, blank=True, verbose_name='RE Number')
+    re_number.help_text = "RE number"
 
-    real_number_old = models.CharField(max_length=32, blank=True, verbose_name='RE (old)')
-    real_number_old.help_text = "RE number before revising"
+    re_number_old = models.CharField(max_length=32, blank=True, verbose_name='RE (old)')
+    re_number_old.help_text = "RE number before revising"
 
     origin = models.ForeignKey(Origin, blank=True, null=True)
 
@@ -185,7 +185,7 @@ class Person(TimeStampedModel):
     review_flag.help_text = "Person needs manual revision."
 
     def real_id(self):
-        return self.real_number
+        return self.re_number
 
     def get_name(self):
 
@@ -236,8 +236,7 @@ class Office(MPTTModel, TimeStampedModel):
     name = models.CharField(max_length=256, unique=True)
     description = models.CharField(max_length=1024, blank=True)
 
-    parent = TreeForeignKey('self', null=True, blank=True,
-                            related_name='children')
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
 
     class Meta:
         verbose_name_plural = 'Office List'
@@ -265,13 +264,36 @@ class Relationship(TimeStampedModel):
 
 
 @with_author
+class Location(TimeStampedModel):
+    LOCATION_PLACE = 0
+    LOCATION_REGION = 1
+
+    LOCATION_TYPE_CHOICES = (
+        (LOCATION_PLACE, 'place'),
+        (LOCATION_REGION, 'province'),
+    )
+
+    name = models.CharField(max_length=256, unique=True)
+    description = models.CharField(max_length=1024, blank=True)
+    location_type = models.SmallIntegerField(choices=LOCATION_TYPE_CHOICES, default=LOCATION_PLACE)
+
+
+    class Meta:
+        verbose_name_plural = 'Place List'
+        verbose_name = 'Places'
+
+    def __unicode__(self):
+        return self.name
+
+
+@with_author
 class Post(TimeStampedModel):
     persons = models.ManyToManyField(Person, through='PostAssertion')
 
     # should these be combined into a single tree
     office = models.ForeignKey(Office, blank=True, null=True)
-    relationship = models.ForeignKey(Relationship, blank=True, null=True)
 
+    location = models.ForeignKey(Location, blank=True, null=True)
     notes = models.ManyToManyField(PostNote, related_name="posts")
 
     display_text = models.CharField(max_length=1024, blank=True)
@@ -303,9 +325,6 @@ class Post(TimeStampedModel):
 
         if self.office != None:
             name = self.office.name
-        if self.relationship != None:
-            name = self.relationship.name
-            # should add the other person's name as well
 
         if len(self.dates.all()) > 0:
             name = name + " " + self.get_dates() + " "

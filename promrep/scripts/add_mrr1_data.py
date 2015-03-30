@@ -119,7 +119,7 @@ def processXML(volume):
                 for onote in office_tag.find_all('office-note'):
                     if onote.has_attr('name'):
                         a_note, created = PostAssertionNote.objects.get_or_create(
-                                                text=onote['name'],
+                                                text=onote['name'].strip(),
                                                 secondary_source=source,
                                                 note_type=PostAssertionNote.OFFICE_NOTE)
 
@@ -135,7 +135,7 @@ def processXML(volume):
                     ofnote = fnote_dict[fnote_id]
 
                     afnote, created = PostAssertionNote.objects.get_or_create(
-                                        text=ofnote.get_text(),
+                                        text=ofnote.get_text().strip(),
                                         secondary_source=source,
                                         note_type=PostAssertionNote.OFFICE_FOOTNOTE)
 
@@ -153,7 +153,7 @@ def processXML(volume):
                 try:
                     # parses person from name
                     person_info = aux.parse_person(name_str)
-                    print 'pinfo->', person_info
+                    # print 'pinfo->', person_info
 
                     if person_info is None:
                         # creates person with the whole name str as the nomen
@@ -274,7 +274,7 @@ def processXML(volume):
                             if fnote_id in fnote_dict:
                                 pnote = fnote_dict[fnote_id]
                                 try:
-                                    ap_fnote = PostAssertionNote(note_type = PostAssertionNote.FOOTNOTE, text = pnote.get_text(), secondary_source=source)
+                                    ap_fnote = PostAssertionNote(note_type = PostAssertionNote.FOOTNOTE, text = pnote.get_text().strip(), secondary_source=source)
                                     ap_fnote.save()
                                     post_assertion.notes.add(ap_fnote)
                                 except:

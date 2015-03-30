@@ -33,9 +33,9 @@ def run():
             elif len(p) > 1:
                 print 'ERROR: More than one person found:', praenomen_str, nomen, re
             else:
-                print 'ERROR: Unable to find person:', praenomen_str, nomen, re
+                print 'ERROR: Unable to find person:', praenomen.abbrev(), nomen, re
 
         except:
-            print 'ERROR: Praenomen lookup error:', praenomen_str
+            print 'ERROR: Praenomen lookup error:', praenomen_str, nomen, re
 
     print total, found

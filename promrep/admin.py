@@ -339,7 +339,7 @@ class PersonAdmin(admin.ModelAdmin):
         'created',
         )
 
-    search_fields = ['id', 'nomen', 'cognomen', 'praenomen__abbrev', 'praenomen__name', 'other_names', ]
+    search_fields = ['id', 'nomen', 'cognomen', 'praenomen__abbrev', 'praenomen__name', 'other_names', 're_number', ]
     list_filter = ('postassertion__role', 'nomen', 'postassertion__post__office', 'review_flag', REUpdatedListFilter)
 
     inlines = (PersonDateInline, PostInline, )

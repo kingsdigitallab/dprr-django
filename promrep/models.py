@@ -294,7 +294,7 @@ class Post(TimeStampedModel):
     office = models.ForeignKey(Office, blank=True, null=True)
 
     location = models.ForeignKey(Location, blank=True, null=True)
-    notes = models.ManyToManyField(PostNote, related_name="posts")
+    notes = models.ManyToManyField(PostNote, related_name="posts", blank=True)
 
     display_text = models.CharField(max_length=1024, blank=True)
 
@@ -343,13 +343,13 @@ class PostAssertion(TimeStampedModel):
     post = models.ForeignKey(Post)
     secondary_source = models.ForeignKey(SecondarySource)
 
-    role = models.ForeignKey(RoleType)
+    role = models.ForeignKey(RoleType, default=1)
     original_text = models.CharField(max_length=1024, blank=True)
     office_xref = models.CharField(max_length=1024, blank=True)
 
     uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
 
-    notes = models.ManyToManyField(PostAssertionNote)
+    notes = models.ManyToManyField(PostAssertionNote, blank=True)
 
     # position field
     position = models.PositiveSmallIntegerField(default=0)

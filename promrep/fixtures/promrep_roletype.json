@@ -7,37 +7,5 @@
         "description": ""
     }
 },
-{
-    "pk": 2,
-    "model": "promrep.roletype",
-    "fields": {
-        "name": "Father",
-        "description": ""
-    }
-},
-{
-    "pk": 3,
-    "model": "promrep.roletype",
-    "fields": {
-        "name": "Son",
-        "description": ""
-    }
-},
-{
-    "pk": 4,
-    "model": "promrep.roletype",
-    "fields": {
-        "name": "Grandson",
-        "description": ""
-    }
-},
-{
-    "pk": 5,
-    "model": "promrep.roletype",
-    "fields": {
-        "name": "Grandfather",
-        "description": ""
-    }
-}
 ]
 

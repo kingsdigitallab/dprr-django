@@ -262,6 +262,13 @@
         "abbrev": "-",
         "name": "-"
     }
+},
+{
+    "pk": 33,
+    "model": "promrep.praenomen",
+    "fields": {
+        "abbrev": "Voler.",
+        "name": "Volero"
+    }
 }
-
 ]

@@ -306,10 +306,12 @@ class PostYearListFilter(SimpleListFilter):
 class PersonAdmin(admin.ModelAdmin):
 
     fieldsets = [
-            ('Database Info',
+            ('Database',
                  {'fields': [('id', 'review_flag')]},),
-            ('',
-                {'fields': [
+            ('General Info',
+                {
+                'classes': ('grp-collapse grp-open',),
+                'fields': [
                     ('sex',),
                     ('praenomen', 'praenomen_uncertain'),
                     ('nomen', 'nomen_uncertain'),
@@ -321,22 +323,32 @@ class PersonAdmin(admin.ModelAdmin):
                     ('origin', ),
                 ]}),
             ('RE',
-                {'fields': [
+                {'classes': ('grp-collapse grp-open',),
+                'fields': [
                     ('re_number', 're_number_old', ),
                 ]}
             ),
 
-        ('Patrician', {'fields': [('patrician', 'patrician_uncertain'),
+        ('Patrician', {
+            'classes': ('grp-collapse grp-open',),
+            'fields': [('patrician', 'patrician_uncertain'),
                               ('patrician_notes')]}),
-        ('Novus', {'fields': [('novus', 'novus_uncertain'),
+        ('Novus', {
+            'classes': ('grp-collapse grp-open',),
+            'fields': [('novus', 'novus_uncertain'),
                               ('novus_notes')]}),
-        ('Nobilis', {'fields': [('nobilis', 'nobilis_uncertain'),
+        ('Nobilis', {
+            'classes': ('grp-collapse grp-open',),
+            'fields': [('nobilis', 'nobilis_uncertain'),
                                 ('novus_notes')]}),
-        ('Eques', {'fields': [('eques', 'eques_uncertain'),
+        ('Eques', {
+            'classes': ('grp-collapse grp-open',),
+            'fields': [('eques', 'eques_uncertain'),
                               ('eques_notes')]}),
         ]
 
     readonly_fields = ('id', )
+
     list_display = (
         'id',
         'url_to_edit_person',
@@ -347,8 +359,12 @@ class PersonAdmin(admin.ModelAdmin):
         'created',
         )
 
-    search_fields = ['id', 'nomen', 'cognomen', 'praenomen__abbrev', 'praenomen__name', 'other_names', 're_number', ]
-    list_filter = ('postassertion__role', 'nomen', 'postassertion__post__office', 'review_flag', REUpdatedListFilter)
+    search_fields = ['id', 'nomen', 'cognomen', 'praenomen__abbrev',
+                    'praenomen__name', 'other_names', 're_number', ]
+
+    list_filter = ('postassertion__role', 'nomen', 'postassertion__post__office',
+                   'review_flag', REUpdatedListFilter, 'patrician', 'novus',
+                   'nobilis', 'eques', )
 
     inlines = (PersonDateInline, PostInline, )
     exclude = ('assertions', )

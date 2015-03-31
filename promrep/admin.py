@@ -307,26 +307,34 @@ class PersonAdmin(admin.ModelAdmin):
 
     fieldsets = [
             ('Database Info',
-                {'fields': [('id', 'review_flag')]},),
-            ('Person',
+                 {'fields': [('id', 'review_flag')]},),
+            ('',
                 {'fields': [
-                   ('sex',),
-                   ('praenomen', 'praenomen_uncertain'),
-                   ('nomen', 'nomen_uncertain'),
-                   ('filiation', 'filiation_uncertain'),
-                   ('cognomen', 'cognomen_uncertain'),
-                   ('other_names', ),
-                   ('gens', 'gens_uncertain',),
-                   ('tribe', 'tribe_uncertain'),
-                   ('origin', ),
-        ]}),
+                    ('sex',),
+                    ('praenomen', 'praenomen_uncertain'),
+                    ('nomen', 'nomen_uncertain'),
+                    ('filiation', 'filiation_uncertain'),
+                    ('cognomen', 'cognomen_uncertain'),
+                    ('other_names', ),
+                    ('gens', 'gens_uncertain',),
+                    ('tribe', 'tribe_uncertain'),
+                    ('origin', ),
+                ]}),
+            ('RE',
+                {'fields': [
+                    ('re_number', 're_number_old', ),
+                ]}
+            ),
 
-        ('RE',
-            {'fields': [
-                ('re_number', 're_number_old', ),
-            ]}
-        ),
-        ('Other', {'fields': [('patrician', 'patrician_uncertain')]})]
+        ('Patrician', {'fields': [('patrician', 'patrician_uncertain'),
+                              ('patrician_notes')]}),
+        ('Novus', {'fields': [('novus', 'novus_uncertain'),
+                              ('novus_notes')]}),
+        ('Nobilis', {'fields': [('nobilis', 'nobilis_uncertain'),
+                                ('novus_notes')]}),
+        ('Eques', {'fields': [('eques', 'eques_uncertain'),
+                              ('eques_notes')]}),
+        ]
 
     readonly_fields = ('id', )
     list_display = (

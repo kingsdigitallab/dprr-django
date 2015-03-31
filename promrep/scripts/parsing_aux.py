@@ -146,15 +146,12 @@ def parse_person(text):
             person_data['date_certainty'] = captured.captures('date_certainty')[0].strip()
 
         person_data['filiation'] = ''.join(captured.captures('filiation')).strip()
+
         return person_data
 
     except Exception as e:
         print 'Unable to parse the name:', text
         return None
-
-
-
-
 
 
 def parse_brennan_person(text):

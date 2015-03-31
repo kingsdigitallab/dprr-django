@@ -175,32 +175,27 @@ class Person(TimeStampedModel):
 
     origin = models.ForeignKey(Origin, blank=True, null=True)
 
-    patrician = models.BooleanField(verbose_name='Patrician', default=False)
+    patrician = models.NullBooleanField(verbose_name='Patrician', default=None, null=True)
     patrician_uncertain = models.BooleanField(verbose_name='Uncertain Patrician', default=False)
+    patrician_notes = models.TextField(blank=True)
 
-    extra_info = models.CharField(max_length=1024, blank=True)
+    novus = models.NullBooleanField(default=None, null=True)
+    novus_uncertain = models.NullBooleanField(default=False)
+    novus_notes = models.TextField(blank=True)
+
+    eques = models.NullBooleanField(default=None, null=True)
+    eques_uncertain = models.BooleanField(default=False)
+    eques_notes = models.TextField(blank=True)
+
+    nobilis = models.NullBooleanField(default=None, null=True)
+    nobilis_uncertain = models.BooleanField(default=False)
+    nobilis_notes = models.TextField(blank=True)
+
+    extra_info = models.TextField(blank=True)
     extra_info.help_text = "Extra info about the person."
 
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Person needs manual revision."
-
-    def real_id(self):
-        return self.re_number
-
-    def get_name(self):
-
-        tribe_abbrev = ''
-        if self.tribe:
-            tribe_abbrev = self.tribe.abbrev
-
-        prae_abbrev = ''
-        if self.praenomen:
-            prae_abbrev = self.praenomen.abbrev
-
-        name_parts = [prae_abbrev, self.nomen, self.filiation, tribe_abbrev, self.cognomen, self.other_names]
-
-        # remove empty strings and concatenate
-        return ' '.join(filter(None, name_parts))
 
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.module_name), args=[self.id])
@@ -213,12 +208,34 @@ class Person(TimeStampedModel):
         return self.url_to_edit_person()
 
     def __unicode__(self):
+        name = ""
 
-        # TODO: add praenomen, Re number
-        if self.real_id():
-            return self.get_name() + ' (' + self.real_id() + ')'
-        else:
-            return self.get_name()
+        if self.praenomen:
+            name = name + ' ' + self.praenomen.abbrev
+
+        if self.nomen:
+            name = name + ' ' + self.nomen
+
+        if self.re_number:
+            name = name + ' ' + '(' + self.re_number + ')'
+
+        if self.filiation:
+            name = name + ' ' + self.filiation
+
+        if self.tribe:
+            name = name + ' ' + self.tribe.abbrev
+
+        if self.cognomen:
+            name = name + ' ' + self.cognomen
+
+        if self.other_names:
+            name = name + ' ' + self.other_names
+
+        if self.patrician == True:
+            name = name + ' ' + "Pat."
+
+        return name.strip()
+
 
 #    def get_dates(self):
 #        dates = ' '.join([unicode(date) for date in self.dates.all()])

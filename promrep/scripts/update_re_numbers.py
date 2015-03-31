@@ -4,7 +4,7 @@ from promrep.models import Praenomen, Person
 
 def run():
     # U flag: universal new-line mode
-    ifile = open('promrep/scripts/data/OldRENumbersv3.csv', 'rU')
+    ifile = open('promrep/scripts/data/OldRENumbersv4.csv', 'rU')
     reader = csv.reader(ifile, delimiter=',', skipinitialspace=True)
 
     # next(reader, None)

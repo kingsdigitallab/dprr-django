@@ -115,9 +115,19 @@ class Migration(migrations.Migration):
                 ('tribe_uncertain', models.BooleanField(default=False, verbose_name=b'Uncertain Tribe')),
                 ('re_number', models.CharField(help_text=b'RE number', max_length=32, verbose_name=b'RE Number', blank=True)),
                 ('re_number_old', models.CharField(help_text=b'RE number before revising', max_length=32, verbose_name=b'RE (old)', blank=True)),
-                ('patrician', models.BooleanField(default=False, verbose_name=b'Patrician')),
+                ('patrician', models.NullBooleanField(default=None, verbose_name=b'Patrician')),
                 ('patrician_uncertain', models.BooleanField(default=False, verbose_name=b'Uncertain Patrician')),
-                ('extra_info', models.CharField(help_text=b'Extra info about the person.', max_length=1024, blank=True)),
+                ('patrician_notes', models.TextField(blank=True)),
+                ('novus', models.NullBooleanField(default=None)),
+                ('novus_uncertain', models.NullBooleanField(default=False)),
+                ('novus_notes', models.TextField(blank=True)),
+                ('eques', models.NullBooleanField(default=None)),
+                ('eques_uncertain', models.BooleanField(default=False)),
+                ('eques_notes', models.TextField(blank=True)),
+                ('nobilis', models.NullBooleanField(default=None)),
+                ('nobilis_uncertain', models.BooleanField(default=False)),
+                ('nobilis_notes', models.TextField(blank=True)),
+                ('extra_info', models.TextField(help_text=b'Extra info about the person.', blank=True)),
                 ('review_flag', models.BooleanField(default=False, help_text=b'Person needs manual revision.', verbose_name=b'Review needed')),
                 ('created_by', models.ForeignKey(related_name='person_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
                 ('gens', models.ForeignKey(blank=True, to='promrep.Gens', null=True)),
@@ -382,7 +392,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='postassertion',
             name='notes',
-            field=models.ManyToManyField(to='promrep.PostAssertionNote'),
+            field=models.ManyToManyField(to='promrep.PostAssertionNote', blank=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -400,7 +410,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='postassertion',
             name='role',
-            field=models.ForeignKey(to='promrep.RoleType'),
+            field=models.ForeignKey(default=1, to='promrep.RoleType'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -418,7 +428,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='post',
             name='notes',
-            field=models.ManyToManyField(related_name='posts', to='promrep.PostNote'),
+            field=models.ManyToManyField(related_name='posts', to='promrep.PostNote', blank=True),
             preserve_default=True,
         ),
         migrations.AddField(

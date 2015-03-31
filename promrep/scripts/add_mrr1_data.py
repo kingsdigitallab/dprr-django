@@ -47,14 +47,14 @@ def get_office_obj(office_name):
 
 
 def run():
-    # for vol in ['mrr1', ]:
+    # for vol in ['mrr2', ]:
     for vol in ['mrr1', 'mrr2']:
         processXML(vol)
 
 def processXML(volume):
 
     sdict = {
-        'mrr1': ['Broughton MRR I', 'promrep/scripts/data/mrr1_all_LF_Officesv20.docx.html.xml'],
+        'mrr1': ['Broughton MRR I', 'promrep/scripts/data/mrr1_all_MR_Officesv21.docx.html.xml'],
         'mrr2': ['Broughton MRR II', 'promrep/scripts/data/mrr2_converted_html_LFv9.xml']
     }
 
@@ -68,7 +68,7 @@ def processXML(volume):
 
     years = soup.findAll('year')
 
-    # for year in years[23:24]:
+    # for year in years[:4]:
     for year in years:
         year_str = year['name'].split()[0]
         print "\n\n>>>>> Year", year_str, years.index(year), '(',len(year.findAll('footnote')), 'footnotes)\n\n'
@@ -176,8 +176,11 @@ def processXML(volume):
                                                                 )
 
                                 if created:
-                                    person.patrician = person_info.get('patrician', False)
                                     person.praenomen_uncertain = person_info.get('praenomen_uncertain', False)
+
+                                    if 'patrician' in person_info:
+                                        person.patrician = person_info['patrician']
+                                        person.patrican_uncertain = person_info.get('patrician_uncertain', False)
 
                                     if '?' in person.nomen:
                                         person.nomen_uncertain = True
@@ -196,8 +199,6 @@ def processXML(volume):
                                             person.cognomen_uncertain = True
 
                                     person.other_names = person_info.get('other_names', "")
-                                    person.patrician_uncertain = person_info.get('patrician_uncertain', False)
-
                                     person.save()
 
                                 else:

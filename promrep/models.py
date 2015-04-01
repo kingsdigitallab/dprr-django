@@ -324,7 +324,7 @@ class Post(TimeStampedModel):
 
     def get_persons(self):
         s = []
-        for ap in self.PostAssertion_set.all():
+        for ap in self.postassertion_set.all():
             s.append(ap.person.__unicode__() + ' [' + ap.role.name + ']')
 
         return '; '.join(s)

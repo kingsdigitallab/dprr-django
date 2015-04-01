@@ -212,7 +212,7 @@ class PersonInline(admin.StackedInline):
         return format_html(', '.join(date_links))
 
 
-class PostInline(admin.StackedInline):
+class PostAssertionInline(admin.StackedInline):
     model = PostAssertion
     form = PostInlineForm
 
@@ -366,10 +366,19 @@ class PersonAdmin(admin.ModelAdmin):
                    'review_flag', REUpdatedListFilter, 'patrician', 'novus',
                    'nobilis', 'eques', )
 
-    inlines = (PersonDateInline, PostInline, )
+    inlines = (PersonDateInline, PostAssertionInline, )
     exclude = ('assertions', )
 
 admin.site.register(Person, PersonAdmin)
+
+
+class PostInline(admin.TabularInline):
+    model = Post
+    classes = ('grp-collapse grp-open',)
+
+    readonly_fields = ('id', 'get_persons', 'related_label')
+    fields = ('id', 'related_label', 'get_persons')
+    extra = 0
 
 
 class OfficeAdmin(DjangoMpttAdmin):
@@ -381,6 +390,8 @@ class OfficeAdmin(DjangoMpttAdmin):
         'name',
         'description',
         )
+
+    inlines = (PostInline, )
 
 admin.site.register(Office, OfficeAdmin)
 

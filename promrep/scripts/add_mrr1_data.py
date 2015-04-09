@@ -54,8 +54,8 @@ def run():
 def processXML(volume):
 
     sdict = {
-        'mrr1': ['Broughton MRR I', 'promrep/scripts/data/mrr1_all_MR_Officesv21.docx.html.xml'],
-        'mrr2': ['Broughton MRR II', 'promrep/scripts/data/mrr2_converted_html_LFv9.xml']
+        'mrr1': ['Broughton MRR I', 'promrep/scripts/data/mrr1_all_LF_Officesv22.docx.html.xml'],
+        'mrr2': ['Broughton MRR II', 'promrep/scripts/data/mrr2_converted_html_LFv10.xml']
     }
 
     source = SecondarySource.objects.get( abbrev_name = sdict[volume][0] )
@@ -68,7 +68,7 @@ def processXML(volume):
 
     years = soup.findAll('year')
 
-    # for year in years[:4]:
+#    for year in years[:1]:
     for year in years:
         year_str = year['name'].split()[0]
         print "\n\n>>>>> Year", year_str, years.index(year), '(',len(year.findAll('footnote')), 'footnotes)\n\n'
@@ -145,7 +145,10 @@ def processXML(volume):
 
             # Post: Office + Year + Person
             for p in office_tag.find_all('person'):
-                name_str = p['name'].replace(u"’", "'").replace(u"\u2013", "-").replace(u'\xb4', "'")
+                try:
+                    name_str = p['name'].replace(u"’", "'").replace(u"\u2013", "-").replace(u'\xb4', "'")
+                except Exception as e:
+                    print "FATAL: Error getting person name", e
 
                 print
                 print "> Person:", name_str
@@ -288,45 +291,51 @@ def processXML(volume):
 
                         # if the next element is a reference
                         #   we're adding it to all the assertions in the assertion queue
-                        if p.findNextSibling().name == "references":
-                            references = p.findNextSibling()
-                            footnotes = []
-                            notes_queue = []
+                        if p.findNextSibling() == None:
+                            pass
+                        else:
+                            if p.findNextSibling().name == "references":
+                                references = p.findNextSibling()
+                                footnotes = []
+                                notes_queue = []
 
-                            ref_text = ""
+                                ref_text = ""
 
-                            # glues the ref parts together; mines footnotes
-                            for r in references.findAll('ref'):
-                                ref_text = ref_text + " " + r.get_text().strip()
+                                # glues the ref parts together; mines footnotes
+                                for r in references.findAll('ref'):
+                                    ref_text = ref_text + " " + r.get_text().strip()
 
-                                if r.has_attr('footnote'):
-                                    notes.append(r['footnote'].lstrip('#'))
-                                elif r.has_attr('x_footnote'):
-                                    footnotes.append(r['x_footnote'].lstrip('#'))
+                                    if r.has_attr('footnote'):
+                                        footnotes.append(r['footnote'].lstrip('#'))
+                                    elif r.has_attr('x_footnote'):
+                                        footnotes.append(r['x_footnote'].lstrip('#'))
 
-                            # creates the note
-                            note=PostAssertionNote.objects.create(
-                                text=ref_text.strip(),
-                                secondary_source=source)
+                                # creates the note
+                                note=PostAssertionNote.objects.create(
+                                    text=ref_text.strip(),
+                                    secondary_source=source)
 
-                            notes_queue.append(note)
+                                notes_queue.append(note)
 
-                            for fnote_id in footnotes:
-                                if fnote_id in fnote_dict:
-                                    apfnote_obj = fnote_dict[fnote_id]
-                                    apfnote = PostAssertionNote.objects.create(note_type=PostAssertionNote.FOOTNOTE, text = apfnote_obj.get_text().strip())
-                                    notes_queue.append(apfnote)
-                                else:
-                                    print "ERROR adding person footnote with id", fnote_id
+                                for fnote_id in footnotes:
+                                    if fnote_id in fnote_dict:
+                                        apfnote_obj = fnote_dict[fnote_id]
+                                        apfnote = PostAssertionNote.objects.create(
+                                                    note_type=PostAssertionNote.FOOTNOTE,
+                                                    text=apfnote_obj.get_text().strip(),
+                                                    secondary_source=source)
+                                        notes_queue.append(apfnote)
+                                    else:
+                                        print "ERROR adding person footnote with id", fnote_id
 
-                            for ap in person_ref_queue:
+                                for ap in person_ref_queue:
 
-                                for n in notes_queue:
-                                    ap.notes.add(n)
+                                    for n in notes_queue:
+                                        ap.notes.add(n)
 
-                            # resets the ref queue
-                            person_ref_queue = []
+                                # resets the ref queue
+                                person_ref_queue = []
 
 
                 except Exception as e:
-                    print 'FATAL ERROR (3)', e.message
+                    print 'FATAL ERROR (3) parsing year ', year_str, p, e.message

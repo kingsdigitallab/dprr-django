@@ -4,38 +4,46 @@ from promrep.models import Praenomen, Person
 
 def run():
     # U flag: universal new-line mode
-    ifile = open('promrep/scripts/data/OldRENumbersv4.csv', 'rU')
+    ifile = open('promrep/scripts/data/OldRENumbersv5.csv', 'rU')
     reader = csv.reader(ifile, delimiter=',', skipinitialspace=True)
-
-    # next(reader, None)
 
     total = 0
     found = 0
 
-    for original_row in reader:
-        total = total + 1
-        row = [a.strip() for a in original_row]
-        (praenomen_str, nomen, re, new_re) = row
+    with open('re_update_v4.csv', 'wb') as csvfile:
+        spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-        try:
-            if praenomen_str == "":
-                praenomen = Praenomen.objects.get(name="-")
-            elif "." in praenomen_str:
-                praenomen = Praenomen.objects.get(abbrev=praenomen_str)
-            else:
-                praenomen = Praenomen.objects.get(name=praenomen_str)
+        for original_row in reader:
+            total = total + 1
+            row = [a.strip() for a in original_row]
+            (praenomen_str, nomen, re, new_re) = row
 
-            p = Person.objects.filter(praenomen=praenomen, nomen=nomen, re_number=re)
+            try:
+                if praenomen_str == "":
+                    praenomen = Praenomen.objects.get(name="-")
+                elif "." in praenomen_str:
+                    praenomen = Praenomen.objects.get(abbrev=praenomen_str)
+                else:
+                    praenomen = Praenomen.objects.get(name=praenomen_str)
 
-            if len(p) == 1:
+                p = Person.objects.filter(praenomen=praenomen, nomen=nomen, re_number=re)
+
+                if len(p) == 0:
+                    raise ValueError('No person found!')
+                elif len(p) > 1:
+                    raise ValueError('More than one person found!')
+
+                person = p[0]
                 found = found + 1
-                print p[0].id, praenomen_str, nomen, re
-            elif len(p) > 1:
-                print 'ERROR: More than one person found:', praenomen_str, nomen, re
-            else:
-                print 'ERROR: Unable to find person:', praenomen.abbrev(), nomen, re
 
-        except:
-            print 'ERROR: Praenomen lookup error:', praenomen_str, nomen, re
+                person.re_number_old = re
+                person.re_number = new_re
 
-    print total, found
+                person.save()
+                spamwriter.writerow((praenomen_str, nomen, re, new_re, person.id))
+
+            except Exception as e:
+                spamwriter.writerow((praenomen_str, nomen, re, new_re, "ERROR: " + e.message))
+                print 'ERROR:', e, praenomen_str, nomen, re
+
+        print total, found

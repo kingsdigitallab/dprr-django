@@ -54,8 +54,8 @@ def run():
 def processXML(volume):
 
     sdict = {
-        'mrr1': ['Broughton MRR I', 'promrep/scripts/data/mrr1_all_LF_Officesv22.docx.html.xml'],
-        'mrr2': ['Broughton MRR II', 'promrep/scripts/data/mrr2_converted_html_LFv10.xml']
+        'mrr1': ['Broughton MRR I', 'promrep/scripts/data/mrr1_all_MR_Officesv23.docx.html.xml'],
+        'mrr2': ['Broughton MRR II', 'promrep/scripts/data/mrr2_converted_html_MRv11.xml']
     }
 
     source = SecondarySource.objects.get( abbrev_name = sdict[volume][0] )

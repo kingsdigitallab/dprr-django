@@ -369,6 +369,7 @@ class PostAssertion(TimeStampedModel):
     notes = models.ManyToManyField(PostAssertionNote, blank=True)
 
     # position field
+    # used to set order in inline position
     position = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
@@ -384,33 +385,11 @@ class PostAssertion(TimeStampedModel):
         return dates
 
 
-class IntegerRangeField(models.IntegerField):
-    def __init__(self,
-                 verbose_name=None,
-                 name=None,
-                 min_value=None,
-                 max_value=None,
-                 **kwargs):
-
-        (self.min_value, self.max_value) = (min_value, max_value)
-        models.IntegerField.__init__(self, verbose_name, name, **kwargs)
-
-    def formfield(self, **kwargs):
-        defaults = {'min_value': self.min_value,
-                    'max_value': self.max_value}
-        defaults.update(kwargs)
-        return super(IntegerRangeField, self).formfield(**defaults)
-
-
-from south.modelsinspector import add_introspection_rules
-add_introspection_rules([], ["^promrep\.models\.IntegerRangeField"])
-
 class DateType(models.Model):
 
     name = models.CharField(max_length=32)
     created = models.DateTimeField(auto_now_add=True, editable=False)
-    modified = models.DateTimeField(auto_now=True, auto_now_add=True,
-                                    editable=False)
+    modified = models.DateTimeField(auto_now=True, auto_now_add=True, editable=False)
 
     class Meta:
 
@@ -422,26 +401,26 @@ class DateType(models.Model):
 
 class Date(models.Model):
 
-    DATE_SINGLE = 0
-    DATE_MIN = 1
-    DATE_MAX = 2
-    DATE_BY = 3
-
-    DATE_INTERVAL_CHOICES = (
-        (DATE_SINGLE, 'on'),
-        (DATE_MIN, 'after'),
-        (DATE_MAX, 'before'),
-        (DATE_BY, 'by'),
-    )
-
     date_type = models.ForeignKey(DateType, blank=True, null=True)
-    interval = models.SmallIntegerField(choices=DATE_INTERVAL_CHOICES, default=DATE_SINGLE)
 
-    year = IntegerRangeField(min_value=-600, max_value=100, blank=True, null=False)
-    year_uncertain = models.BooleanField(verbose_name='uncertain', default=False)
+    start = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
+    start_uncertain = models.BooleanField(default=False)
+    start_circa = models.BooleanField(default=False)
 
-    circa = models.BooleanField(default=False)
+    end = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
+    end_uncertain = models.BooleanField(default=False)
+    end_circa = models.BooleanField(default=False)
+
+    start_alt = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
+    start_alt_uncertain = models.BooleanField(default=False)
+    start_alt_circa = models.BooleanField(default=False)
+
+    end_alt = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
+    end_alt_uncertain = models.BooleanField(default=False)
+    end_alt_circa = models.BooleanField(default=False)
+
     extra_info = models.TextField(blank=True, null=True)
+
     created = models.DateTimeField(auto_now_add=True, editable=False)
     modified = models.DateTimeField(auto_now=True, auto_now_add=True, editable=False)
 
@@ -457,7 +436,7 @@ class Date(models.Model):
         else:
             uncertain = ""
 
-        date_str = u'%s %s%s %s'.strip() % (self.date_type or '', uncertain, abs(self.year), bc_ad)
+        date_str = u'%s %s%s %s'.strip() % (self.date_type or '', uncertain, self.year, bc_ad)
 
         if self.circa == True:
             date_str = "ca. " + date_str

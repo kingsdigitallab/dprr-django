@@ -4,13 +4,13 @@ from promrep.models import Praenomen, Person
 
 def run():
     # U flag: universal new-line mode
-    ifile = open('promrep/scripts/data/OldRENumbersv5.csv', 'rU')
+    ifile = open('promrep/scripts/data/OldRENumbersv6.csv', 'rU')
     reader = csv.reader(ifile, delimiter=',', skipinitialspace=True)
 
     total = 0
     found = 0
 
-    with open('re_update_v4.csv', 'wb') as csvfile:
+    with open('re_update_log.csv', 'wb') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
         for original_row in reader:

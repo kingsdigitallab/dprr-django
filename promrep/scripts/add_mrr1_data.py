@@ -11,25 +11,11 @@ Usage:
 
 from bs4 import BeautifulSoup
 
-from promrep.models import ContentType, Assertion, AssertionPerson, \
-  AssertionType, AssertionNote, AssertionDate, Office, Person, \
-  RoleType, SecondarySource, AssertionPersonNote, AssertionPersonDate
+from promrep.models import Post, PostAssertion, PostNote, PostDate, \
+    Office, Person, RoleType, SecondarySource, PostAssertionNote, \
+    PostAssertionDate, Praenomen, Date
 
 import parsing_aux as aux
-import logging
-
-# TODO: configure in settings
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-# add a file handler
-fh = logging.FileHandler( 'mrr1_data_import.log')
-fh.setLevel(logging.DEBUG)
-# create a formatter and set the formatter for the handler.
-frmt = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-fh.setFormatter(frmt)
-# add the Handler to the logger
-logger.addHandler(fh)
-
 from promrep.scripts.offices_ref import OFFICE_NAMES_DIC
 
 def get_office_obj(office_name):
@@ -42,7 +28,7 @@ def get_office_obj(office_name):
     try:
         oname = OFFICE_NAMES_DIC[office_name]
     except:
-        logger.warn("Unable to normalize office name: '%s'" %(office_name,))
+        print "WARNING: Unable to normalize office name: '%s'" %(office_name,)
         oname = office_name
 
     try:
@@ -55,51 +41,48 @@ def get_office_obj(office_name):
         office = Office(name=oname, parent = parent)
         office.save()
 
-        logger.info('Added Office: %s (id=%i)' % (office.name, office.id))
+        print 'Added Office: %s (id=%i)' % (office.name, office.id)
 
     return office
 
 
-
 def run():
-    # this is the file exported by OpenOffice
+    # for vol in ['mrr2', ]:
+    for vol in ['mrr1', 'mrr2']:
+        processXML(vol)
 
-    ifile = 'promrep/scripts/data/mrr1_all_LF_Officesv18.docx.html.xml'
-    print 'Will process input file', ifile
-    processXML(ifile)
+def processXML(volume):
 
+    sdict = {
+        'mrr1': ['Broughton MRR I', 'promrep/scripts/data/mrr1_all_MR_Officesv24.docx.html.xml'],
+        'mrr2': ['Broughton MRR II', 'promrep/scripts/data/mrr2_converted_html_MRv12.xml']
+    }
 
-def processXML(ifile):
+    source = SecondarySource.objects.get( abbrev_name = sdict[volume][0] )
+    ifile = sdict[volume][1]
+
+    print 'Will read', source, 'from file', ifile, '\n\n'
+
     page = file(ifile)
     soup = BeautifulSoup(page, features='xml')
 
-    source = SecondarySource.objects.get(abbrev_name='Broughton MRR I')
-
     years = soup.findAll('year')
 
-    # process year
-
-#    for year in years[0:3]:
+#    for year in years[:1]:
     for year in years:
         year_str = year['name'].split()[0]
-        logger.debug("Parsing year %s" % (year_str))
-
-        print
-        print
-        print ">>>>> Year", year_str, years.index(year), '(',len(year.findAll('footnote')), 'footnotes)'
-        print
+        print "\n\n>>>>> Year", year_str, years.index(year), '(',len(year.findAll('footnote')), 'footnotes)\n\n'
 
         # the footnotes can be added to a list
         # ... right at the "start" of the year
         fnote_dict = {}
+
         for fnote in year.findAll('footnote'):
             fnote_dict[fnote['ref']] = fnote
 
         # print fnote_dict
 
-        # an assertion is defined by year, office, persons
-        #   it can have associated notes
-        #   and footnotes
+        # a post is defined by year and office
         for office_tag in year.findAll('office'):
 
             # removes the spaces from the office name
@@ -107,80 +90,77 @@ def processXML(ifile):
 
             print ">>> Office:", office_name
 
-            assertion_certainty = True
+            assertion_uncertain = False
             if "?" in office_name:
                 # removes questionmark, marks assertion as uncertain
                 office_name = office_name.strip('? ')
-                assertion_certainty = False
+                assertion_uncertain = True
 
             # get office using office name
             office_obj = get_office_obj(office_name)
 
-            #  every time a note is found, it is associated with all the assertion_persons in the list
+            #  every time a note is found, it is associated with all the post_assertions in the list
             person_ref_queue = []
 
-            assertion_type = AssertionType.objects.get(name='Office')
-
-            assertion_date = AssertionDate.objects.create(year = -int(year_str),)
-
-            # tests if assertion already exists
-            assertion_list = Assertion.objects.filter(office=office_obj,
-                                                      assertion_type=assertion_type,
-                                                      secondary_source=source,
-                                                      date__year = assertion_date.year,
-                                                      certainty = assertion_certainty)
-
-            # if it doesn't exist, creates a new assertion
-            if len(assertion_list) == 0:
-                assertion = Assertion.objects.create(office=office_obj, assertion_type=assertion_type, secondary_source=source, certainty=assertion_certainty)
-                assertion_date.assertion = assertion
+            try:
+                assertion_date = PostDate.objects.create(year = -int(year_str),)
+                assertion = Post.objects.create(office=office_obj, )
+                assertion_date.post = assertion
                 assertion_date.save()
 
+            except Exception as e:
+                print 'FATAL ERROR CREATING POST: %s' %(e.message)
 
-            elif len(assertion_list) == 1:
-                assertion = assertion_list[0]
-            else:
-                # TODO: throw an Exception
-                print "ERROR HERE! Multiple assertions with same basic info..."
+            # all these notes will be added to the individual PostAssertions
+            assertion_notes_queue = []
 
-            # add any existing notes to the assertion
-            for onote in office_tag.find_all('office-note'):
-                if onote.has_attr('name'):
-                    a_note, created = AssertionNote.objects.get_or_create(text=onote['name'], secondary_source=source)
-                    assertion.notes.add(a_note)
+            # all onotes are added to the PostAssertion objects in this assertion
+            if len(office_tag.find_all('office-note')) > 0:
+                for onote in office_tag.find_all('office-note'):
+                    if onote.has_attr('name'):
+                        a_note, created = PostAssertionNote.objects.get_or_create(
+                                                text=onote['name'].strip(),
+                                                secondary_source=source,
+                                                note_type=PostAssertionNote.OFFICE_NOTE)
 
-            if office_tag.has_attr('footnote'):
-                fnote_id = office_tag['footnote'].lstrip('#')
+                        assertion_notes_queue.append(a_note)
+
+            if office_tag.has_attr('footnote') or office_tag.has_attr('x_footnote'):
+                if office_tag.has_attr('footnote'):
+                    fnote_id = office_tag['footnote'].lstrip('#')
+                else:
+                    fnote_id = office_tag['x_footnote'].lstrip('#')
 
                 if fnote_id in fnote_dict:
                     ofnote = fnote_dict[fnote_id]
 
-                    afnote = AssertionNote(note_type=1, text = ofnote.get_text(), secondary_source=source)
-                    afnote.save()
-                    assertion.notes.add(afnote)
+                    afnote, created = PostAssertionNote.objects.get_or_create(
+                                        text=ofnote.get_text().strip(),
+                                        secondary_source=source,
+                                        note_type=PostAssertionNote.OFFICE_FOOTNOTE)
+
+                    assertion_notes_queue.append(afnote)
                 else:
                     print "ERROR adding office fnote" + fnote_id
 
-            # Assertion: Office + Year + Person
+            # Post: Office + Year + Person
             for p in office_tag.find_all('person'):
-                print
-                print "> Person:", p['name']
-                name_el = p['name']
-
-                # TODO: wrap in transaction
                 try:
-                    name_str = name_el
+                    name_str = p['name'].replace(u"’", "'").replace(u"\u2013", "-").replace(u'\xb4', "'")
+                except Exception as e:
+                    print "FATAL: Error getting person name", e
 
+                print
+                print "> Person:", name_str
+
+                try:
                     # parses person from name
                     person_info = aux.parse_person(name_str)
+                    # print 'pinfo->', person_info
 
-                    ######
-                    # TODO: error handling???
-                    ######
                     if person_info is None:
-                        # creates as person with the whole name str as the nomen
-                        person = Person(nomen = name_str, review_flag=True)
-                        person.save()
+                        # creates person with the whole name str as the nomen
+                        person, created = Person.objects.get_or_create(nomen=name_str, review_flag=True)
                     else:
                         # removes the date_certainty info from the dictionary
                         if 'date_certainty' in person_info:
@@ -188,145 +168,174 @@ def processXML(ifile):
                         else:
                             ap_date_info = ""
 
-                        # creates the person object from the dictionary directly
-                        person, created = Person.objects.get_or_create(
-                                                                praenomen = person_info['praenomen'],
-                                                                nomen = person_info['nomen'],
-                                                                real_number = person_info['real_number'],
+                        if 'praenomen' in person_info:
+                            try:
+                                # creates the person object from the dictionary directly
+                                person, created = Person.objects.get_or_create(
+                                                                praenomen=person_info['praenomen'],
+                                                                nomen=person_info['nomen'],
+                                                                re_number=person_info['re_number'],
+                                                                review_flag=False
                                                                 )
 
-                        # update the person's information
-                        # updates all other relevant fields....
-                        if created:
-                            person.patrician = person_info.get('patrician', False)
-                            person.praenomen_certainty = person_info.get('praenomen_certainty', True)
-                            person.filiation = person_info.get('filiation', "")
+                                if created:
+                                    person.praenomen_uncertain = person_info.get('praenomen_uncertain', False)
 
-                            if 'tribe' in person_info:
-                                person.tribe = person_info['tribe']
+                                    if 'patrician' in person_info:
+                                        person.patrician = person_info['patrician']
+                                        person.patrican_uncertain = person_info.get('patrician_uncertain', False)
 
-                            person.cognomen = person_info.get('cognomen', "")
-                            person.other_names = person_info.get('other_names', "")
-                            person.patrician_certainty = person_info.get('patrician_certainty', False)
-                            person.save()
+                                    if '?' in person.nomen:
+                                        person.nomen_uncertain = True
 
-                    # creates the AssertionPerson
-                    if person is not None:
+                                    if 'filiation' in person_info:
+                                        person.filiation = person_info['filiation']
+                                        if '?' in person_info['filiation']:
+                                            person.filiation_uncertain = True
 
+                                    if 'tribe' in person_info:
+                                        person.tribe = person_info['tribe']
+
+                                    if 'cognomen' in person_info:
+                                        person.cognomen = person_info['cognomen']
+                                        if '?' in person_info['cognomen']:
+                                            person.cognomen_uncertain = True
+
+                                    person.other_names = person_info.get('other_names', "")
+                                    person.save()
+
+                                else:
+                                    print "Person already existed with id: ", person.id
+
+                            except Exception as e:
+                                print "FATAL ERROR (1) while creating person:", name_str, e.message
+
+                        else:
+                            try:
+                                person = Person.objects.create(
+                                            praenomen=Praenomen.objects.get(name='-'),
+                                                    nomen=person_info['nomen'],
+                                                    re_number=person_info['re_number'],
+                                                    review_flag=True)
+                            except Exception as e:
+                                print "FATAL ERROR (2) while creating person:", name_str, e.message
+
+                    # catch all ...
+                    if person is None:
+                        print "ERROR creating person-->", name_str
+
+                    # creates the PostAssertion
+                    else:
                         if p.has_attr('office-xref'):
                             oxref=p['office-xref']
                         else:
                             oxref=""
 
                         # TODO: stop creating repeated assertions
-                        assertion_person, created = AssertionPerson.objects.get_or_create(
+                        post_assertion, created = PostAssertion.objects.get_or_create(
                             role=RoleType.objects.get(name='Holder'),
-                            assertion=assertion,
+                            post=assertion,
+                            secondary_source=source,
                             person=person,
                             original_text = name_str,
                             office_xref = oxref
                         )
 
-                        # AssertionPerson Dates
+                        # PostAssertion Dates
                         ap_date_info = ap_date_info.strip("[:")
 
                         if ap_date_info:
-                            ap_date = AssertionPersonDate.objects.create(year = -int(year_str), year_uncertain = True, assertion_person = assertion_person)
+                            ap_date = PostAssertionDate.objects.create(
+                                            year = -int(year_str),
+                                            year_uncertain = True,
+                                            interval=Date.DATE_BY,
+                                            post_assertion = post_assertion)
 
                             # cases that need manual fixing
                             if ap_date_info != "?":
                                 ap_date.extra_info = ap_date_info
                                 ap_date.save()
 
-                        # AP certainty
-                        if p.has_attr('assertion-certainty'):
-                            assertion_person.certainty = False
+                        # Post Person uncertain
+                        if p.has_attr('assertion-certainty') or (assertion_uncertain == True):
+                            post_assertion.uncertain = True
 
                         # saves the order in the assertion
-                        assertion_person.position = assertion.persons.count()
-                        assertion_person.save()
+                        post_assertion.position = assertion.persons.count()
+                        post_assertion.save()
+
+                        # adds all assertion notes to the PostAssertion object
+                        for assertion_note in assertion_notes_queue:
+                            post_assertion.notes.add(assertion_note)
 
                         # add any footnotes the person might have
-                        if p.has_attr('footnote'):
-                            fnote_id = p['footnote'].lstrip('#')
+                        if p.has_attr('footnote') or p.has_attr('x_footnote'):
+                            if p.has_attr('footnote'):
+                                fnote_id = p['footnote'].lstrip('#')
+                            else:
+                                fnote_id = p['x_footnote'].lstrip('#')
 
                             if fnote_id in fnote_dict:
                                 pnote = fnote_dict[fnote_id]
                                 try:
-                                    ap_fnote = AssertionPersonNote(note_type=1, text = pnote.get_text(), secondary_source=source)
+                                    ap_fnote = PostAssertionNote(note_type = PostAssertionNote.FOOTNOTE, text = pnote.get_text().strip(), secondary_source=source)
                                     ap_fnote.save()
-                                    assertion_person.notes.add(ap_fnote)
+                                    post_assertion.notes.add(ap_fnote)
                                 except:
                                     print "ERROR ADDING NOTES!!!"
                             else:
                                 print "ERROR adding person footnote with id", fnote_id
 
-                        # adds the assertion_person to the refs queue
-                        person_ref_queue.append(assertion_person)
+                        # adds the post_assertion to the refs queue
+                        person_ref_queue.append(post_assertion)
 
                         # if the next element is a reference
                         #   we're adding it to all the assertions in the assertion queue
-                        if p.findNextSibling().name == "references":
-                            references = p.findNextSibling()
-                            footnotes = []
-                            notes_queue = []
+                        if p.findNextSibling() == None:
+                            pass
+                        else:
+                            if p.findNextSibling().name == "references":
+                                references = p.findNextSibling()
+                                footnotes = []
+                                notes_queue = []
 
-                            ref_text = ""
+                                ref_text = ""
 
-                            # glues the ref parts together; mines footnotes
-                            for r in references.findAll('ref'):
-                                ref_text = ref_text + " " + r.get_text().strip()
+                                # glues the ref parts together; mines footnotes
+                                for r in references.findAll('ref'):
+                                    ref_text = ref_text + " " + r.get_text().strip()
 
-                                if r.has_attr('footnote'):
-                                    footnotes.append(r['footnote'].lstrip('#'))
+                                    if r.has_attr('footnote'):
+                                        footnotes.append(r['footnote'].lstrip('#'))
+                                    elif r.has_attr('x_footnote'):
+                                        footnotes.append(r['x_footnote'].lstrip('#'))
 
-                            # creates the note
-                            note, created = AssertionPersonNote.objects.get_or_create(
-                                text=ref_text.strip(),
-                                secondary_source=source
-                            )
+                                # creates the note
+                                note=PostAssertionNote.objects.create(
+                                    text=ref_text.strip(),
+                                    secondary_source=source)
 
-                            notes_queue.append(note)
+                                notes_queue.append(note)
 
-                            for fnote_id in footnotes:
-                                if fnote_id in fnote_dict:
-                                    apfnote_obj = fnote_dict[fnote_id]
-                                    apfnote = AssertionPersonNote(note_type=1, text = apfnote_obj.get_text().strip())
-                                    apfnote.save()
+                                for fnote_id in footnotes:
+                                    if fnote_id in fnote_dict:
+                                        apfnote_obj = fnote_dict[fnote_id]
+                                        apfnote = PostAssertionNote.objects.create(
+                                                    note_type=PostAssertionNote.FOOTNOTE,
+                                                    text=apfnote_obj.get_text().strip(),
+                                                    secondary_source=source)
+                                        notes_queue.append(apfnote)
+                                    else:
+                                        print "ERROR adding person footnote with id", fnote_id
 
-                                    notes_queue.append(apfnote)
+                                for ap in person_ref_queue:
 
-                                else:
-                                    print "ERROR adding person footnote with id", fnote_id
+                                    for n in notes_queue:
+                                        ap.notes.add(n)
 
-                            for ap in person_ref_queue:
+                                # resets the ref queue
+                                person_ref_queue = []
 
-                                for n in notes_queue:
-                                    ap.notes.add(n)
-
-                            # resets the ref queue
-                            person_ref_queue = []
-
-                        try:
-                            # tests if person has a bookmark/noteref
-                            if p.find('noteref'):
-                                endnote_name = p.noteref.get_text().strip('#')
-                                endnote_text = year.find('note', bookmarks=endnote_name).get_text()
-
-                                if endnote_text:
-                                    endnote = AssertionPersonNote(
-                                        text = endnote_text,
-                                        note_type = NoteType.objects.get(name="Endnote"),
-                                        extra_info = endnote_name,
-                                        secondary_source = source
-                                        )
-                                    endnote.save()
-                                    assertion.notes.add(endnote)
-                                else:
-                                    logger.error("Endnote error: %s" %(endnote_name))
-
-                        except Exception as e:
-                            logger.error('Error saving endnote: %s (%s)' % (e.message, type(e)))
 
                 except Exception as e:
-                    logger.error('%s' %(e.message))
+                    print 'FATAL ERROR (3) parsing year ', year_str, p, e.message

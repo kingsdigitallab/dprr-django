@@ -9,12 +9,11 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+from django.core import urlresolvers
 from django.core.urlresolvers import reverse
 
 from author.decorators import with_author
 
-
-# Broughton, Rupke, etc
 @with_author
 class SecondarySource(TimeStampedModel):
 
@@ -104,10 +103,14 @@ class RoleType(TimeStampedModel):
 class Note(TimeStampedModel):
     REFERENCE_NOTE = 0
     FOOTNOTE = 1
+    OFFICE_NOTE = 2
+    OFFICE_FOOTNOTE = 3
 
     NOTE_TYPES = (
         (REFERENCE_NOTE, 'Reference'),
         (FOOTNOTE, 'Footnote'),
+        (OFFICE_NOTE, 'Reference (Office)'),
+        (OFFICE_FOOTNOTE, 'Footnote (Office)')
     )
 
     note_type = models.IntegerField(choices=NOTE_TYPES, default=REFERENCE_NOTE)
@@ -125,74 +128,74 @@ class Note(TimeStampedModel):
         return self.text.strip()
 
 @with_author
-class AssertionNote(Note):
+class PostNote(Note):
     pass
 
 @with_author
-class AssertionPersonNote(Note):
+class PostAssertionNote(Note):
 
     def url_to_edit_note(self):
-        url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.module_name), args=[self.id])
+        url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.model_name), args=[self.id])
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     def related_label(self):
-
         return u"[%s - %s] %s<br /><br />" % (self.get_note_type_display(), self.secondary_source.abbrev_name , self.text)
-
 
 
 @with_author
 class Person(TimeStampedModel):
 
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
-    praenomen_certainty = models.BooleanField(verbose_name='Praenomen Certainty?', default=True)
+    praenomen_uncertain = models.BooleanField(verbose_name='Uncertain Praenomen', default=False)
 
     nomen = models.CharField(max_length=128, blank=True)
+    nomen_uncertain = models.BooleanField(verbose_name='Uncertain Nomen', default=False)
+
     cognomen = models.CharField(max_length=64, blank=True)
+    cognomen_uncertain = models.BooleanField(verbose_name='Uncertain Cognomen', default=False)
 
     other_names = models.CharField(max_length=128, blank=True)
 
     filiation = models.CharField(max_length=256, blank=True)
+    filiation_uncertain = models.BooleanField(verbose_name='Uncertain Filiation', default=False)
+
     gens = models.ForeignKey(Gens, blank=True, null=True)
+    gens_uncertain = models.BooleanField(verbose_name='Uncertain Gens', default=False)
+
     tribe = models.ForeignKey(Tribe, blank=True, null=True)
+    tribe_uncertain = models.BooleanField(verbose_name='Uncertain Tribe', default=False)
 
     sex = models.ForeignKey(Sex, blank=True, null=True, default=1)
 
-    real_number = models.CharField(max_length=32, blank=True, verbose_name='RE Number')
-    real_number.help_text = "RE number"
+    re_number = models.CharField(max_length=32, blank=True, verbose_name='RE Number')
+    re_number.help_text = "RE number"
 
-    real_number_old = models.CharField(max_length=32, blank=True, verbose_name='RE (old)')
-    real_number_old.help_text = "RE number before revising"
+    re_number_old = models.CharField(max_length=32, blank=True, verbose_name='RE (old)')
+    re_number_old.help_text = "RE number before revising"
 
     origin = models.ForeignKey(Origin, blank=True, null=True)
 
-    patrician = models.BooleanField(verbose_name='Patrician', default=False)
-    patrician_certainty = models.BooleanField(verbose_name='Certain', default=True)
+    patrician = models.NullBooleanField(verbose_name='Patrician', default=None, null=True)
+    patrician_uncertain = models.BooleanField(verbose_name='Uncertain Patrician', default=False)
+    patrician_notes = models.TextField(blank=True)
 
-    extra_info = models.CharField(max_length=1024, blank=True)
+    novus = models.NullBooleanField(default=None, null=True)
+    novus_uncertain = models.NullBooleanField(default=False)
+    novus_notes = models.TextField(blank=True)
+
+    eques = models.NullBooleanField(default=None, null=True)
+    eques_uncertain = models.BooleanField(default=False)
+    eques_notes = models.TextField(blank=True)
+
+    nobilis = models.NullBooleanField(default=None, null=True)
+    nobilis_uncertain = models.BooleanField(default=False)
+    nobilis_notes = models.TextField(blank=True)
+
+    extra_info = models.TextField(blank=True)
     extra_info.help_text = "Extra info about the person."
 
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Person needs manual revision."
-
-    def real_id(self):
-        return self.real_number
-
-    def get_name(self):
-
-        tribe_abbrev = ''
-        if self.tribe:
-            tribe_abbrev = self.tribe.abbrev
-
-        prae_abbrev = ''
-        if self.praenomen:
-            prae_abbrev = self.praenomen.abbrev
-
-        name_parts = [prae_abbrev, self.nomen, self.filiation, tribe_abbrev, self.cognomen, self.other_names]
-
-        # remove empty strings and concatenate
-        return ' '.join(filter(None, name_parts))
-
 
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.module_name), args=[self.id])
@@ -201,13 +204,38 @@ class Person(TimeStampedModel):
     url_to_edit_person.allow_tags = True
     url_to_edit_person.short_description = 'Person'
 
-    def __unicode__(self):
+    def related_label(self):
+        return self.url_to_edit_person()
 
-        # TODO: add praenomen, Re number
-        if self.real_id():
-            return self.get_name() + ' (' + self.real_id() + ')'
-        else:
-            return self.get_name()
+    def __unicode__(self):
+        name = ""
+
+        if self.praenomen:
+            name = name + ' ' + self.praenomen.abbrev
+
+        if self.nomen:
+            name = name + ' ' + self.nomen
+
+        if self.re_number:
+            name = name + ' ' + '(' + self.re_number + ')'
+
+        if self.filiation:
+            name = name + ' ' + self.filiation
+
+        if self.tribe:
+            name = name + ' ' + self.tribe.abbrev
+
+        if self.cognomen:
+            name = name + ' ' + self.cognomen
+
+        if self.other_names:
+            name = name + ' ' + self.other_names
+
+        if self.patrician == True:
+            name = name + ' ' + "Pat."
+
+        return name.strip()
+
 
 #    def get_dates(self):
 #        dates = ' '.join([unicode(date) for date in self.dates.all()])
@@ -225,11 +253,10 @@ class Office(MPTTModel, TimeStampedModel):
     name = models.CharField(max_length=256, unique=True)
     description = models.CharField(max_length=1024, blank=True)
 
-    parent = TreeForeignKey('self', null=True, blank=True,
-                            related_name='children')
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
 
     class Meta:
-        verbose_name_plural = 'Offices'
+        verbose_name_plural = 'Office List'
         verbose_name = 'Office List'
         ordering = ['tree_id', 'lft', 'name']
 
@@ -253,44 +280,51 @@ class Relationship(TimeStampedModel):
         return self.name
 
 
-class AssertionType(models.Model):
+@with_author
+class Location(TimeStampedModel):
+    LOCATION_PLACE = 0
+    LOCATION_REGION = 1
 
-    name = models.CharField(max_length=128, unique=True)
+    LOCATION_TYPE_CHOICES = (
+        (LOCATION_PLACE, 'place'),
+        (LOCATION_REGION, 'province'),
+    )
+
+    name = models.CharField(max_length=256, unique=True)
+    description = models.CharField(max_length=1024, blank=True)
+    location_type = models.SmallIntegerField(choices=LOCATION_TYPE_CHOICES, default=LOCATION_PLACE)
+
+
+    class Meta:
+        verbose_name_plural = 'Place List'
+        verbose_name = 'Places'
 
     def __unicode__(self):
         return self.name
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return ("id__iexact", "name", )
-
 
 @with_author
-class Assertion(TimeStampedModel):
-
-    persons = models.ManyToManyField(Person, through='AssertionPerson')
-    assertion_type = models.ForeignKey(AssertionType)
+class Post(TimeStampedModel):
+    persons = models.ManyToManyField(Person, through='PostAssertion')
 
     # should these be combined into a single tree
-
     office = models.ForeignKey(Office, blank=True, null=True)
-    relationship = models.ForeignKey(Relationship, blank=True, null=True)
 
-    notes = models.ManyToManyField(AssertionNote, related_name="assertions")
+    location = models.ForeignKey(Location, blank=True, null=True)
+    notes = models.ManyToManyField(PostNote, related_name="posts", blank=True)
 
-    secondary_source = models.ForeignKey(SecondarySource)
     display_text = models.CharField(max_length=1024, blank=True)
 
     # if we are uncertain about an assertion
     # ... eg. cases like Broughton's "Augur or Pontifex"
-    certainty = models.BooleanField(verbose_name='Certainty?', default=True)
+    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
 
     class Meta:
         ordering = ['id',]
 
     def get_persons(self):
         s = []
-        for ap in self.assertionperson_set.all():
+        for ap in self.postassertion_set.all():
             s.append(ap.person.__unicode__() + ' [' + ap.role.name + ']')
 
         return '; '.join(s)
@@ -308,34 +342,31 @@ class Assertion(TimeStampedModel):
 
         if self.office != None:
             name = self.office.name
-        if self.relationship != None:
-            name = self.relationship.name
-            # should add the other person's name as well
 
         if len(self.dates.all()) > 0:
             name = name + " " + self.get_dates() + " "
 
-        name = name + " (" + self.secondary_source.abbrev_name + ")"
-
         return name
 
     def related_label(self):
-        return u"%s" % (self.__unicode__(), )
+        url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.module_name), args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.__unicode__(), )
 
 
 
 @with_author
-class AssertionPerson(TimeStampedModel):
+class PostAssertion(TimeStampedModel):
     person = models.ForeignKey(Person)
-    assertion = models.ForeignKey(Assertion)
+    post = models.ForeignKey(Post)
+    secondary_source = models.ForeignKey(SecondarySource)
 
-    role = models.ForeignKey(RoleType)
+    role = models.ForeignKey(RoleType, default=1)
     original_text = models.CharField(max_length=1024, blank=True)
     office_xref = models.CharField(max_length=1024, blank=True)
 
-    certainty = models.BooleanField(verbose_name='Certainty?', default=True)
+    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
 
-    notes = models.ManyToManyField(AssertionPersonNote)
+    notes = models.ManyToManyField(PostAssertionNote, blank=True)
 
     # position field
     position = models.PositiveSmallIntegerField(default=0)
@@ -344,18 +375,13 @@ class AssertionPerson(TimeStampedModel):
         ordering = ['position', 'id']
 
     def __unicode__(self):
-        return str(self.person.__unicode__()) + ": " + str(self.assertion.__unicode__())
+        name = str(self.person.__unicode__()) + ": " + str(self.post.__unicode__())
+        name = name + " (" + self.secondary_source.abbrev_name + ")"
+        return name
 
-
-class AssertionNoteThrough(Assertion.notes.through):
-    class Meta:
-        proxy = True
-
-    def __unicode__(self):
-        snippet = (self.assertionnote.text[:120] + ' ...') if len(self.assertionnote.text) > 120 else self.assertionnote.text
-
-        return '- "%s"' %(snippet.strip())
-
+    def get_dates(self):
+        dates = ' '.join([unicode(date) for date in self.dates.all()])
+        return dates
 
 
 class IntegerRangeField(models.IntegerField):
@@ -396,17 +422,22 @@ class DateType(models.Model):
 
 class Date(models.Model):
 
-    # Promrep settings
-
     DATE_SINGLE = 0
     DATE_MIN = 1
     DATE_MAX = 2
-    DATE_INTERVAL_CHOICES = ((DATE_SINGLE, 'single'), (DATE_MIN, 'min'), (DATE_MAX, 'max'))
+    DATE_BY = 3
+
+    DATE_INTERVAL_CHOICES = (
+        (DATE_SINGLE, 'on'),
+        (DATE_MIN, 'after'),
+        (DATE_MAX, 'before'),
+        (DATE_BY, 'by'),
+    )
 
     date_type = models.ForeignKey(DateType, blank=True, null=True)
     interval = models.SmallIntegerField(choices=DATE_INTERVAL_CHOICES, default=DATE_SINGLE)
 
-    year = IntegerRangeField(min_value=-500, max_value=500, blank=True, null=False)
+    year = IntegerRangeField(min_value=-600, max_value=100, blank=True, null=False)
     year_uncertain = models.BooleanField(verbose_name='uncertain', default=False)
 
     circa = models.BooleanField(default=False)
@@ -426,7 +457,7 @@ class Date(models.Model):
         else:
             uncertain = ""
 
-        date_str = u'%s %s%s %s'.strip() % (self.date_type or '', abs(self.year), uncertain, bc_ad)
+        date_str = u'%s %s%s %s'.strip() % (self.date_type or '', uncertain, abs(self.year), bc_ad)
 
         if self.circa == True:
             date_str = "ca. " + date_str
@@ -438,12 +469,12 @@ class Date(models.Model):
 
 
 @with_author
-class AssertionDate(Date):
-    assertion = models.ForeignKey(Assertion, related_name="dates", related_query_name="date", blank=True, null=True)
+class PostDate(Date):
+    post = models.ForeignKey(Post, related_name="dates", related_query_name="date", blank=True, null=True)
 
 @with_author
-class AssertionPersonDate(Date):
-    assertion_person = models.ForeignKey(AssertionPerson, related_name="dates", related_query_name="date", blank=True, null=True)
+class PostAssertionDate(Date):
+    post_assertion = models.ForeignKey(PostAssertion, related_name="dates", related_query_name="date", blank=True, null=True)
 
 @with_author
 class PersonDate(Date):

@@ -3,7 +3,7 @@
 
 from bs4 import BeautifulSoup
 
-from promrep.models import ContentType, Assertion, AssertionPerson, AssertionType, \
+from promrep.models import ContentType, Post, PostAssertion, PostType, \
     Date, Office, Person, RoleType, SecondarySource, Note, NoteType
 
 import parsing_aux as aux
@@ -86,7 +86,7 @@ def processXML(ifile):
                         person = Person.objects.get(
                                 praenomen = parsed_person.praenomen,
                                 nomen= parsed_person.nomen,
-                                real_number=parsed_person.real_number)
+                                re_number=parsed_person.re_number)
 
                         person.update_empty_fields(parsed_person)
                         logger.info('Updated existing person %s with id %i' %(person.get_name(), person.id))
@@ -98,13 +98,13 @@ def processXML(ifile):
 
 
                     if person != None:
-                        # create both the assertion and the assertionperson objects
+                        # create both the assertion and the PostAssertion objects
                         assertion_type = \
-                            AssertionType.objects.get(name='Office')
+                            PostType.objects.get(name='Office')
                         source = \
                             SecondarySource.objects.get(abbrev_name='Broughton MRR II'
                                 )
-                        assertion = Assertion(office=office,
+                        assertion = Post(office=office,
                                 assertion_type=assertion_type,
                                 secondary_source=source,
                                 )
@@ -130,14 +130,14 @@ def processXML(ifile):
                                 date_start.save()
                             except Exception as e:
                                 logger.error('Unable to save date...' + year_str)
-                            assertion_person = AssertionPerson(
+                            post_assertion = PostAssertion(
                                 role=RoleType.objects.get(name='Holder'),
                                 assertion=assertion,
                                 person=person,
                                 original_text = name_str,
                                 )
                             try:
-                                assertion_person.save()
+                                post_assertion.save()
                             except:
                                 logger.error("[ERROR][ASSERTION_PERSON] Could not save assertion person...")
 

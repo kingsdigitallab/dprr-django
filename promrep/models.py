@@ -15,12 +15,23 @@ from django.core.urlresolvers import reverse
 from author.decorators import with_author
 
 @with_author
+class DateType(TimeStampedModel):
+    name = models.CharField(max_length=256, unique=True)
+    description = models.CharField(max_length=1024, blank=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+
+
+@with_author
 class SecondarySource(TimeStampedModel):
 
     name = models.CharField(max_length=256, unique=True)
-
-    abbrev_name = models.CharField(max_length=256, unique=True,
-                                   blank=True)
+    abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
     biblio = models.CharField(max_length=512, unique=True, blank=True)
 
     def __unicode__(self):
@@ -195,14 +206,14 @@ class Person(TimeStampedModel):
     extra_info.help_text = "Extra info about the person."
 
     # dates
-    date_first = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
-    date_first_type = models.ForeignKey(DateType, blank=True, null=True)
+    date_first = models.IntegerField(blank=True, null=False)
+    date_first_type = models.ForeignKey(DateType, blank=True, null=True, related_name='person_first')
 
-    date_last = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
-    date_last_type = models.ForeignKey(DateType, blank=True, null=True)
+    date_last = models.IntegerField(blank=True, null=False)
+    date_last_type = models.ForeignKey(DateType, blank=True, null=True, related_name='person_last')
 
-    era_from = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
-    era_to = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
+    era_from = models.IntegerField(blank=True, null=False)
+    era_to = models.IntegerField(blank=True, null=False)
 
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Person needs manual revision."
@@ -255,7 +266,6 @@ class Person(TimeStampedModel):
 
     class Meta:
         ordering = ['id',]
-
 
 @with_author
 class Office(MPTTModel, TimeStampedModel):
@@ -382,6 +392,15 @@ class PostAssertion(TimeStampedModel):
     # used to set order in inline position
     position = models.PositiveSmallIntegerField(default=0)
 
+    # date information
+    date_start = models.IntegerField(blank=True, null=False)
+    date_start_uncertain = models.BooleanField(default=False)
+
+    date_end = models.IntegerField(blank=True, null=False)
+    date_end_uncertain = models.BooleanField(default=False)
+
+    date_info = models.TextField(blank=True, null=True)
+
     class Meta:
         ordering = ['position', 'id']
 
@@ -390,42 +409,24 @@ class PostAssertion(TimeStampedModel):
         name = name + " (" + self.secondary_source.abbrev_name + ")"
         return name
 
-    def get_dates(self):
-        dates = ' '.join([unicode(date) for date in self.dates.all()])
-        return dates
-
-
-class DateType(models.Model):
-
-    name = models.CharField(max_length=32)
-    created = models.DateTimeField(auto_now_add=True, editable=False)
-    modified = models.DateTimeField(auto_now=True, auto_now_add=True, editable=False)
-
-    class Meta:
-
-        ordering = ['name']
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
 
 class Date(models.Model):
 
     date_type = models.ForeignKey(DateType, blank=True, null=True)
 
-    start = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
+    start = models.IntegerField(blank=True, null=False)
     start_uncertain = models.BooleanField(default=False)
     start_circa = models.BooleanField(default=False)
 
-    end = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
+    end = models.IntegerField(blank=True, null=False)
     end_uncertain = models.BooleanField(default=False)
     end_circa = models.BooleanField(default=False)
 
-    start_alt = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
+    start_alt = models.IntegerField(blank=True, null=False)
     start_alt_uncertain = models.BooleanField(default=False)
     start_alt_circa = models.BooleanField(default=False)
 
-    end_alt = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
+    end_alt = models.IntegerField(blank=True, null=False)
     end_alt_uncertain = models.BooleanField(default=False)
     end_alt_circa = models.BooleanField(default=False)
 
@@ -461,7 +462,4 @@ class Date(models.Model):
 class PostDate(Date):
     post = models.ForeignKey(Post, related_name="dates", related_query_name="date", blank=True, null=True)
 
-@with_author
-class PostAssertionDate(Date):
-    post_assertion = models.ForeignKey(PostAssertion, related_name="dates", related_query_name="date", blank=True, null=True)
 

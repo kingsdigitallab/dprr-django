@@ -1,0 +1,23 @@
+[
+{
+    "pk": 1,
+    "model": "promrep.datetype",
+    "fields": {
+        "name": "Birth"
+    }
+},
+{
+    "pk": 2,
+    "model": "promrep.datetype",
+    "fields": {
+        "name": "Death"
+    }
+},
+{
+    "pk": 3,
+    "model": "promrep.datetype",
+    "fields": {
+        "name": "Attestation"
+    }
+},
+]

@@ -194,6 +194,16 @@ class Person(TimeStampedModel):
     extra_info = models.TextField(blank=True)
     extra_info.help_text = "Extra info about the person."
 
+    # dates
+    date_first = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
+    date_first_type = models.ForeignKey(DateType, blank=True, null=True)
+
+    date_last = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
+    date_last_type = models.ForeignKey(DateType, blank=True, null=True)
+
+    era_from = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
+    era_to = models.IntegerField(min_value=-600, max_value=100, blank=True, null=False)
+
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Person needs manual revision."
 
@@ -455,6 +465,3 @@ class PostDate(Date):
 class PostAssertionDate(Date):
     post_assertion = models.ForeignKey(PostAssertion, related_name="dates", related_query_name="date", blank=True, null=True)
 
-@with_author
-class PersonDate(Date):
-    person = models.ForeignKey(Person, related_name="dates", related_query_name="date", blank=True, null=True)

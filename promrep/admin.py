@@ -15,30 +15,10 @@ from promrep.forms import PostInlineForm
 
 from models import Person, Office, Praenomen, PostAssertion, \
     Post, RoleType, DateType, SecondarySource, Gens, PostNote, \
-    PostAssertionNote, Tribe, PostDate, Location
+    PostAssertionNote, Tribe, Location
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
-admin.site.register(PostDate)
-
-
-# Date Inline Admin
-class DateInline(admin.StackedInline):
-    classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-closed',)
-
-    readonly_fields = ('id', )
-    fields = (['id', 'date_type'], ['interval', 'year', ], ['circa', 'year_uncertain', ], 'extra_info')
-    extra = 0
-
-    show_change_link = True
-
-
-class PostDateInline(DateInline):
-    verbose_name = 'Post Date'
-    verbose_name_plural = 'Post Dates'
-
-    model = PostDate
 
 class PostAssertionNoteInline(admin.StackedInline):
     model = PostAssertion.notes.through
@@ -357,7 +337,7 @@ class PostAdmin(admin.ModelAdmin):
                     ),
             ]
 
-    inlines = [PostDateInline, PersonInline, PostNoteInline, ]
+    inlines = [PersonInline, PostNoteInline, ]
     exclude = ('persons',  )
 
 admin.site.register(Post, PostAdmin)

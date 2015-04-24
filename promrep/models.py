@@ -339,6 +339,9 @@ class Post(TimeStampedModel):
     # ... eg. cases like Broughton's "Augur or Pontifex"
     uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
 
+     # date information
+    date_info = models.TextField(blank=True, null=True)
+
     class Meta:
         ordering = ['id',]
 
@@ -358,14 +361,7 @@ class Post(TimeStampedModel):
     get_dates.short_description = 'Dates'
 
     def __unicode__(self):
-        name = ""
-
-        if self.office != None:
-            name = self.office.name
-
-        if len(self.dates.all()) > 0:
-            name = name + " " + self.get_dates() + " "
-
+        name = self.office.name + " " + self.date_info
         return name
 
     def related_label(self):
@@ -410,56 +406,8 @@ class PostAssertion(TimeStampedModel):
         return name
 
 
-class Date(models.Model):
-
-    date_type = models.ForeignKey(DateType, blank=True, null=True)
-
-    start = models.IntegerField(blank=True, null=False)
-    start_uncertain = models.BooleanField(default=False)
-    start_circa = models.BooleanField(default=False)
-
-    end = models.IntegerField(blank=True, null=False)
-    end_uncertain = models.BooleanField(default=False)
-    end_circa = models.BooleanField(default=False)
-
-    start_alt = models.IntegerField(blank=True, null=False)
-    start_alt_uncertain = models.BooleanField(default=False)
-    start_alt_circa = models.BooleanField(default=False)
-
-    end_alt = models.IntegerField(blank=True, null=False)
-    end_alt_uncertain = models.BooleanField(default=False)
-    end_alt_circa = models.BooleanField(default=False)
-
-    extra_info = models.TextField(blank=True, null=True)
-
-    created = models.DateTimeField(auto_now_add=True, editable=False)
-    modified = models.DateTimeField(auto_now=True, auto_now_add=True, editable=False)
-
-    def __unicode__(self):
-
-        if self.year < 0:
-            bc_ad = "BC"
-        else:
-            bc_ad = "AD"
-
-        if self.year_uncertain:
-            uncertain = "?"
-        else:
-            uncertain = ""
-
-        date_str = u'%s %s%s %s'.strip() % (self.date_type or '', uncertain, self.year, bc_ad)
-
-        if self.circa == True:
-            date_str = "ca. " + date_str
-
-        return date_str
-
-    class Meta:
-        abstract = True
 
 
-@with_author
-class PostDate(Date):
-    post = models.ForeignKey(Post, related_name="dates", related_query_name="date", blank=True, null=True)
+
 
 

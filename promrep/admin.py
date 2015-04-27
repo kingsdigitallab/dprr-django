@@ -38,18 +38,27 @@ class PostAssertionNoteInline(admin.StackedInline):
 
 
 class PostAssertionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'post', 'person', 'secondary_source', 'created_by', 'created', 'modified')
+    list_display = ('id', 'post', 'person', 'date_start', 'date_end', 'secondary_source', 'created_by', 'created', 'modified')
 
     readonly_fields = ('id', )
 
     fieldsets = [
-            ('Database Info', {'fields': [('id')]}),
+            ('Database Info',
+                {'fields': [('id')]}),
             ('', {'fields':
-             ['person',
-             'post',
-             ('role', 'uncertain'),
-             ('original_text', 'office_xref'),
-             ]}),]
+                    [
+                        'person',
+                        'post',
+                        ('role', 'uncertain'),
+                        ('original_text', 'office_xref'),
+                    ],
+                }
+                ),
+            ('Dates', {'fields': [
+                        ('date_start', 'date_start_uncertain'),
+                        ('date_end', 'date_end_uncertain')
+                     ]})
+            ]
 
     raw_id_fields = ('post', 'person',  )
 
@@ -117,12 +126,15 @@ class PersonInline(admin.StackedInline):
 
     show_change_link = True
 
-    fields = (['id', 'position'] ,
-              ['person',],
-              ['role', 'uncertain'],
-              ['secondary_source', 'original_text', 'office_xref'],
-              'notes',
-              'edit_link'
+    fields = (
+                ['id', 'position'] ,
+                ['person',],
+                ['role', 'uncertain'],
+                ['secondary_source', 'original_text', 'office_xref'],
+                ['date_start', 'date_start_uncertain'],
+                ['date_end', 'date_end_uncertain'],
+                'notes',
+                'edit_link'
               )
 
     sortable_field_name = 'position'
@@ -159,6 +171,8 @@ class PostAssertionInline(admin.StackedInline):
             ['role', 'uncertain'],
             ['secondary_source', ],
             ['original_text', 'office_xref'],
+            ['date_start', 'date_start_uncertain'],
+            ['date_end', 'date_end_uncertain'],
             'notes',
             'edit_link',
             )
@@ -195,10 +209,10 @@ class PostYearListFilter(SimpleListFilter):
 
     def lookups(self, request, model_admin):
         lookup = []
-        years = Post.objects.all().values('date__year').distinct()
+        years = Post.objects.all().values('date_year').distinct()
 
         for year in years:
-            item = (year['date__year'], year['date__year'])
+            item = (year['date_year'], year['date_year'])
             if item not in lookup:
                 lookup.append(item)
 
@@ -311,14 +325,15 @@ class PostAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'office',
+        'date_year',
+        'date_info',
         'location',
-        'get_dates',
         'uncertain',
         'modified',
         'created',
     )
 
-    readonly_fields = ('id', 'get_dates', )
+    readonly_fields = ('id', )
     list_display_links = ('id', 'uncertain', 'office', )
 
     raw_id_fields = ('office', 'location')
@@ -331,6 +346,7 @@ class PostAdmin(admin.ModelAdmin):
                         {
                         'fields': [
                                 ( 'office', 'uncertain', ),
+                                ('date_year', 'date_info', ),
                                 ('location', )
                                 ],
                         }

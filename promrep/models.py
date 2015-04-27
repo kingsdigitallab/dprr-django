@@ -206,14 +206,14 @@ class Person(TimeStampedModel):
     extra_info.help_text = "Extra info about the person."
 
     # dates
-    date_first = models.IntegerField(blank=True, null=False)
+    date_first = models.IntegerField(blank=True, null=True)
     date_first_type = models.ForeignKey(DateType, blank=True, null=True, related_name='person_first')
 
-    date_last = models.IntegerField(blank=True, null=False)
+    date_last = models.IntegerField(blank=True, null=True)
     date_last_type = models.ForeignKey(DateType, blank=True, null=True, related_name='person_last')
 
-    era_from = models.IntegerField(blank=True, null=False)
-    era_to = models.IntegerField(blank=True, null=False)
+    era_from = models.IntegerField(blank=True, null=True)
+    era_to = models.IntegerField(blank=True, null=True)
 
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Person needs manual revision."
@@ -339,8 +339,9 @@ class Post(TimeStampedModel):
     # ... eg. cases like Broughton's "Augur or Pontifex"
     uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
 
-     # date information
-    date_info = models.TextField(blank=True, null=True)
+    # date information
+    date_year = models.IntegerField(blank=True, null=False)
+    date_info = models.CharField(max_length=1024, blank=True, null=True)
 
     class Meta:
         ordering = ['id',]
@@ -353,12 +354,6 @@ class Post(TimeStampedModel):
         return '; '.join(s)
 
     get_persons.short_description = "Persons"
-
-    def get_dates(self):
-        dates = ' '.join([unicode(date) for date in self.dates.all()])
-        return dates.strip()
-
-    get_dates.short_description = 'Dates'
 
     def __unicode__(self):
         name = self.office.name + " " + self.date_info
@@ -389,10 +384,10 @@ class PostAssertion(TimeStampedModel):
     position = models.PositiveSmallIntegerField(default=0)
 
     # date information
-    date_start = models.IntegerField(blank=True, null=False)
+    date_start = models.IntegerField(blank=True, null=True)
     date_start_uncertain = models.BooleanField(default=False)
 
-    date_end = models.IntegerField(blank=True, null=False)
+    date_end = models.IntegerField(blank=True, null=True)
     date_end_uncertain = models.BooleanField(default=False)
 
     date_info = models.TextField(blank=True, null=True)

@@ -55,6 +55,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
                 }
                 ),
             ('Dates', {'fields': [
+                        ('date_info'),
                         ('date_start', 'date_start_uncertain'),
                         ('date_end', 'date_end_uncertain')
                      ]})
@@ -131,8 +132,8 @@ class PersonInline(admin.StackedInline):
                 ['person',],
                 ['role', 'uncertain'],
                 ['secondary_source', 'original_text', 'office_xref'],
-                ['date_start', 'date_start_uncertain'],
-                ['date_end', 'date_end_uncertain'],
+                ['date_info'],
+                ['date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'],
                 'notes',
                 'edit_link'
               )
@@ -171,8 +172,8 @@ class PostAssertionInline(admin.StackedInline):
             ['role', 'uncertain'],
             ['secondary_source', ],
             ['original_text', 'office_xref'],
-            ['date_start', 'date_start_uncertain'],
-            ['date_end', 'date_end_uncertain'],
+            'date_info',
+            ['date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'],
             'notes',
             'edit_link',
             )

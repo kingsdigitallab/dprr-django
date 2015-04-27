@@ -178,7 +178,7 @@ class Migration(migrations.Migration):
                 ('date_start_uncertain', models.BooleanField(default=False)),
                 ('date_end', models.IntegerField(null=True, blank=True)),
                 ('date_end_uncertain', models.BooleanField(default=False)),
-                ('date_info', models.TextField(null=True, blank=True)),
+                ('date_info', models.CharField(max_length=1024, null=True, blank=True)),
                 ('created_by', models.ForeignKey(related_name='postassertion_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={

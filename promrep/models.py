@@ -26,7 +26,6 @@ class DateType(TimeStampedModel):
         return u'%s' % self.name
 
 
-
 @with_author
 class SecondarySource(TimeStampedModel):
 
@@ -398,7 +397,7 @@ class PostAssertion(TimeStampedModel):
     date_end = models.IntegerField(blank=True, null=True)
     date_end_uncertain = models.BooleanField(default=False)
 
-    date_info = models.TextField(blank=True, null=True)
+    date_info = models.CharField(max_length=1024, blank=True, null=True)
 
     class Meta:
         ordering = ['position', 'id']

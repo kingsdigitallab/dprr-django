@@ -355,8 +355,16 @@ class Post(TimeStampedModel):
 
     get_persons.short_description = "Persons"
 
+
+    def print_date(self):
+        if self.date_year < 0:
+            return str(abs(self.date_year)) + " B.C."
+        else:
+            return str(self.date_year) + " A.D."
+
+
     def __unicode__(self):
-        name = self.office.name + " " + self.date_info
+        name = self.office.name + " " + self.print_date()
         return name
 
     def related_label(self):

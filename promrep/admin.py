@@ -249,7 +249,13 @@ class PersonAdmin(admin.ModelAdmin):
                     ('re_number', 're_number_old', ),
                 ]}
             ),
-
+        ('Dates', {
+            'classes': ('grp-collapse grp-open',),
+            'fields': [
+                ('date_first', 'date_first_type'),
+                ('date_last', 'date_last_type'),
+                ('era_from', 'era_to'),
+        ]}),
         ('Patrician', {
             'classes': ('grp-collapse grp-open',),
             'fields': [('patrician', 'patrician_uncertain'),

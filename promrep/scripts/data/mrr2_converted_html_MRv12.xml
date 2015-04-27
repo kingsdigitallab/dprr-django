@@ -14,8 +14,8 @@
   <office name="Praetors">
    <person name="? C. Cassius Longinius (57)" office-xref="Cos. 96" x_footnote="#_bookmark0"/>
    <person name="? C. Coelius Caldus (12)" office-xref="Cos. 94" x_footnote="#_bookmark1"/>
+   <person name="? Cn. Domitius Ahenobarbus (21)" office-xref="Cos. 96"/>
   </office>
-  <person name="? Cn. Domitius Ahenobarbus (21)" office-xref="Cos. 96"/>
   <footnote class="ref" ref="_bookmark0">
    1 The latest possible year for his praetorship under the Leges Annales.
   </footnote>
@@ -83,7 +83,7 @@
    </references>
    <person name="C. Saufeius (3)" x_footnote="#_bookmark8"/>
    <references>
-    <ref>
+    <ref>P. Canidius Crassus
      In office on December 10, 100, during the disorders caused by Saturninus and Glaucia, he seized the Capitol, was the last of his group to surrender, and was killed in the Curia (App. BC 1.32; cf. Cic. Rab. Perd. 20; Oros. 5.17.8-9).
     </ref>
    </references>
@@ -779,7 +779,7 @@
      Elogia, Inscr. Ital. 13.3.7, and 75 a-CIL 12. 1, p. 199; Plin. NH 7.181; cf. Suet. Iul. 1.1.
     </ref>
    </references>
-   <person name="? Cn. Pompeius Strabo (*13)" office-xref="Cos. 89" x_footnote="#_bookmark46"/>
+   <person name="? Cn. Pompeius Strabo (*14)" office-xref="Cos. 89" x_footnote="#_bookmark46"/>
    <person name="? L. Porcius Cato (*16)" office-xref="Cos. 89" x_footnote="#_bookmark47"/>
    <person name="? M. Porcius Cato (*14)"/>
    <references>
@@ -1148,7 +1148,7 @@
      Commanded an eastern province with the title of # (I. de Delos 4.1.1782; cf. BCH 44 [1920] 303).
     </ref>
    </references>
-   <person name="L. Postumius Pat. (not in *RE)"/>
+   <person name="L. Postumius Pat. (13)"/>
    <references> 
    <ref>
      Liv. Per. 73. Captured and slain by the Samnites at Nola (Liv. Per. 73; cf. App. BC 1.42).
@@ -1843,7 +1843,7 @@
  <year name="88 B.C. A.U.C. 666">
   <office name="Consuls">
    <person name="L. Cornelius L. f. P. n. Sulla (Felix) Pat. (392)" office-xref="Cos. 80, Pr. 93"/>
-   <person name="Q. Pompeius Q. f. A.? n. Rufus (*4)" office-xref="Pr. 91"/>
+   <person name="Q. Pompeius Q. f. A.? n. Rufus (39)" office-xref="Pr. 91"/>
    <references>
     <ref>
      Grueber, CRRBM 1.484; Cic. Cluent. 11; Leg. Agr. 1. 10; 2.38; Brut. 306; Fast. Ant., Degrassi 164f., and Fast.
@@ -2450,7 +2450,7 @@
      Driven back from Ariminum by a certain Marius (Gran. Lic. 27B; see above, on Marius Gratidianus) who took over his army.
     </ref>
     </references>
-     <person name="Valerius Pat. (*57?)" x_footnote="#_bookmark135"/>
+     <person name="Valerius Pat. (178 ?)" x_footnote="#_bookmark135"/>
     <references>
     <ref>
      Betrayed Ostia to Marius (Gran. Lic. 25B; cf. Liv. Per. 79; Plut. Mar. 42.1; App. BC 1.67; Oros. 5.19.17).
@@ -2537,7 +2537,7 @@
    </references>
   </office>
   <office name="Consul Suffectus">
-   <person name="L. Valerius C.? f. L. n. Flaccus Pat. (*57)" office-xref="Pr. ca. 93" x_footnote="#_bookmark136"/>
+   <person name="L. Valerius C.? f. L. n. Flaccus Pat. (178)" office-xref="Pr. ca. 93" x_footnote="#_bookmark136"/>
    <references>
     <ref>
      Elected before February 5 (CIL 12.2.891; cf. Fast. Cap., Degrassi 54f.. 130, 482f.). Carried a law to permit debtors to settle debts for one fourth of the principal sum (Vell. 2.23.2; cf. Cic. Font. 1.1; Quinct. 17; Sall. Cat. 33.2; see ESA-R 1.270f.). Also succeeded Marius in the command against Mithridates, but after losing some of his forces on the Way to the East and some to Sulla, and alienating many more, he was killed in a mutiny which was led by his Legate Fimbria (Cic. Flacc. 61, and Fr. Mediol.; Diod. 38.8.1; Strabo 13.1.27, 594c; Liv. Per. 82; Vell. 2.24.1; Plut. Sull. 20.1; Luc. 7.2; App. BC 1.75, with dating unclear; Mith. 51-53; Memnon in FGrH 3B.353, 34; Dio 30-35, fr. 105.1-5; Auct. Vir. Ill. 70.1; Oros. 6.2.9; cf. Sall. Hist. 3.33; 5.13M; Liv. Per. 98, on
@@ -2995,7 +2995,7 @@
    </references>
   </office>
   <office name="Quaestors">
-   <person name="M. (Pupius) Piso (Calpurnianus Frugi) (*2. 100)" office-xref="Cos. 61, Pr. 72?"/>
+   <person name="M. (Pupius) Piso (Calpurnianus Frugi) (10)" office-xref="Cos. 61, Pr. 72?"/>
     <references>
     <ref>
      Assigned to serve under the Consul Scipio, but refused to do so (Cic. Verr. 2.1.37). See D.-G. 2.69, no. 15.
@@ -3401,7 +3401,7 @@
      Propraetor in Cispadane Gaul (CIL 12.2.719, perhaps 81 B.C.; cf. 742). Won a victory over Papirius Carbo's Legate Quinctius at Fidentia (Liv. Per. 88; Vell. 2.28.1; Plut. Sull. 27.7-8; App. BC 1.92, at Placentia; Oros. 5.20.3).
     </ref>
     </references>
-    <person name="C. Valerius Flaccus Pat. (*55, *58, 168)" office-xref="Cos. 93"/>
+    <person name="C. Valerius Flaccus Pat. (168)" office-xref="Cos. 93"/>
     <references>
     <ref>
      Proconsul in Transalpine Gaul (see 84-81, Promagistrates).
@@ -3490,7 +3490,7 @@
      A Legate under Sulla, for whom he recovered Sardinia (Liv. Per. 86).
     </ref>
    </references>
-   <person name="? Quinctius (not in *RE)"/>
+   <person name="? Quinctius (not in RE)"/>
     <references>
     <ref>
      Probably a Legate under Papirius Carbo. Defeated by M. Lucullus at Fidentia (Oros. 5.20.8; see Promagistrates, on M. Lucullus).
@@ -3707,7 +3707,7 @@
      Served under C. Annius in Spain (Grueber, CRRBM 2.356).
     </ref>
     </references>
-    <person name="L. (Valerius) Triarius (*61, cf. *62)"/>
+    <person name="L. (Valerius) Triarius (363, 366)"/>
     <references>
     <ref>
      Quaestor Urbanus (Cic. Verr. 2.1.37). See 67, Legates.
@@ -4209,7 +4209,7 @@
      See 77, Promagistrates; and 75, Praetors, on L. Furius or L. Turius.
     </ref>
    </references>
-   <person name="? L. Valerius Trianius (*61, of. *62)"/>
+   <person name="? L. Valerius Triarius (363, 366)"/>
    <references>
     <ref>
      See 77, Promagistrates.
@@ -4734,7 +4734,7 @@
   <office name="Quindecimviri Sacris Faciundis">
    <person name="P. Gabinius (13)" office-xref="Pr. 89"/>
    <person name="M. Otacilius (5, cf. 4)"/>
-   <person name="L. Valerius (not in *RE or RE)"/>
+   <person name="L. Valerius (not in RE)"/>
    <references>
     <ref>
      Fenestella fr. 18 Peter.
@@ -5117,7 +5117,7 @@
    </references>
   </office>
   <office name="Tribunes of the Plebs">
-   <person name="L. Quinctius (*IV. 4)" office-xref="Pr. 68 or 67"/>
+   <person name="L. Quinctius (12)" office-xref="Pr. 68 or 67"/>
     <references>
     <ref>
      His agitation for restoration of the powers of the tribunate was checked by Lucullus (Cic. Cluent. 110-112; Sall. Hist. 3.48.11M; Plut. Luc. 5.4; Ps.-Ascon. 189 Stangl). Defended Oppianicus, and after his condemnation secured the conviction of C. Iunius, the Iudex Quaestionis, and prosecuted Falcula, one of the jurors (Cic. Cluent. 72-96, 103-116 passim, 119, 136-138, 178; Verr. 1.29; 2.1.157; Quintil. Inst. Or. 5.13.39; Ps.-Ascon.
@@ -5704,7 +5704,7 @@
      Defeated by Spartacus (Liv. Per. 96).
     </ref>
    </references>
-   <person name="M. Pupius Piso Frugi Calpurnianus (*2.100)" office-xref="Cos. 61 See 71-9, Promagistrates. See D.-G. 2.69, no. 15." x_footnote="#_bookmark223"/>
+   <person name="M. Pupius Piso Frugi Calpurnianus (10)" office-xref="Cos. 61 See 71-9, Promagistrates. See D.-G. 2.69, no. 15." x_footnote="#_bookmark223"/>
   </office>
   <office name="Quaestors">
    <person name="Q. Caecilius Niger (101)"/>
@@ -6128,7 +6128,7 @@
      and 5).
     </ref>
    </references>
-   <person name="M. Pupius Piso Frugi Calpurnianus (*2.100)" office-xref="Cos. 61, Pr. 72?"/>
+   <person name="M. Pupius Piso Frugi Calpurnianus (10)" office-xref="Cos. 61, Pr. 72?"/>
    <references>
     <ref>
      Proconsul in Spain (Ascon. 15 C). See 72, Praetors; 69, Promagistrates; D.-G. 2.69, no. 15.
@@ -6198,7 +6198,7 @@
      Legate under Crassus against Spartacus (Frontin. Str. 2.4.7).
     </ref>
    </references>
-   <person name="L. Quinctius (*IV.5)" office-xref="Pr. 68"/>
+   <person name="L. Quinctius (12)" office-xref="Pr. 68"/>
    <references>
     <ref>
      Commander of cavalry under Crassus against Spartacus (Frontin. Str. 2.5.23; cf. Plut. Crass. 11.4).
@@ -6339,7 +6339,7 @@
      Cic. Brut. 263-264, quaestorius, in age contemporary with Visellius Varro (see 73, Addendum).
     </ref>
    </references>
-   <person name="? C. Vergilius C. f. Balbus (*2)" office-xref="Pr. 62 See 69, Promagistrates."/>
+   <person name="? C. Vergilius C. f. Balbus (2)" office-xref="Pr. 62 See 69, Promagistrates."/>
   </office>
   <office name="Promagistrates">
    <person name="L. Afranius (6)" office-xref="Cos. 60, Pr. 71?" x_footnote="#_bookmark233"/>
@@ -6366,7 +6366,7 @@
      Proconsul in Asia, Cilicia, Bithynia and Pontus (Liv. Per. 95). His alliance with Machares, king of the Bosporus (Liv. Per. 98; Plut. Luc. 24.1; App. Mith. 83; Memnon 54, in FGrH 3B.364), the capture of Sinope and Amasia of Pontus (Strabo 12.3.11, 546c; Plut. Luc. 23.2-7; App. Mith. 83; Memnon 53-54, in FGrH 3B.364f.), and his request that a senatorial commission be sent to assist in the organization of the former kingdom of Mithridates, may all be dated in this year (Plut. Luc. 35.5; 36.1, cf. 24.1; Dio 36.43.2, and 46.1; cf. Cic. Att. 13.6a). See below, Legates, Ambassadors.
     </ref>
    </references>
-   <person name="M. Pupius Piso Frugi Calpurnianus (*2.100)" office-xref="Cos. 61, Pr. 72?"/>
+   <person name="M. Pupius Piso Frugi Calpurnianus (10)" office-xref="Cos. 61, Pr. 72?"/>
    <references>
     <ref>
      Proconsul in Spain (Ascon. 15 C). See 69, Promagistrates; and D.-G. 4.69, no. 15.
@@ -6557,13 +6557,13 @@
      Governor of Africa before 68, with the young Plancius on his staff (Cic. Planc. 27). See 67, Legates of Pompey.
     </ref>
    </references>
-   <person name="M. Pupius Piso Frugi Calpurnianus (*2.100)" office-xref="Cos. 61, Pr. 72?"/>
+   <person name="M. Pupius Piso Frugi Calpurnianus (10)" office-xref="Cos. 61, Pr. 72?"/>
    <references>
     <ref>
      Proconsul in Spain, whence he returned to celebrate a triumph (Cic. Pis. 62; Ascon. 15 C; see Degrassi 565). See D.-G. 4.69, no. 15.
     </ref>
    </references>
-   <person name="C. Vergilius C. f. Balbus (*2)" office-xref="Pr. 62"/>
+   <person name="C. Vergilius C. f. Balbus (2)" office-xref="Pr. 62"/>
    <references>
     <ref>
      Proquaestor in Sicily, honored by Halaesa (IG 14.356-IGRP 1.508).
@@ -6792,7 +6792,7 @@
      See 67, Promagistrates; and below, note 9
     </ref>
    </references>
-   <person name="L. Quinctius (*IV.4)" x_footnote="#_bookmark258"/>
+   <person name="L. Quinctius (12)" x_footnote="#_bookmark258"/>
    <references>
     <ref>
      Active in moving to send successors to the provinces of Lucullus (Plut. Luc. 33.5; cf. Sall. Hist. 4.71 M).
@@ -7345,7 +7345,7 @@
      Also a Legate, Envoy in the same year.
     </ref>
    </references>
-   <person name="A. Plotius (*4)" office-xref="Pr. 51" x_footnote="#_bookmark278"/>
+   <person name="A. Plotius (8)" office-xref="Pr. 51" x_footnote="#_bookmark278"/>
    <references>
     <ref>
      Held command in Sicily (App., #; Flor., Plotius).
@@ -7357,7 +7357,7 @@
      Had charge of the coasts of Gaul and Liguria (App.; Flor., sinus .... Gallicus).
     </ref>
    </references>
-   <person name="M. Pupius Piso Frugi Calpurnianus (*2.100)" office-xref="Cos. 61, Pr. 72?" x_footnote="#_bookmark279"/>
+   <person name="M. Pupius Piso Frugi Calpurnianus (10)" office-xref="Cos. 61, Pr. 72?" x_footnote="#_bookmark279"/>
    <references>
     <ref>
      Had charge of the Propontus and the Bosporus (App.; Flor., Cato, but cf. Plut. Cat. Alin. 14.3). See D.-G. 4.70, no. 15.
@@ -7369,13 +7369,13 @@
      Held command in the Ionian sea from Delos to Sicily (Varro RR 2, proem. 6; App.; Flor.; Plin NH 3.101), and won the corona rostrata (Plin. NH 7.115; 16.7).
     </ref>
    </references>
-    <person name="Pompeius (*17)"/>
+    <person name="Cn. Pompeius (*17)"/>
     <references>
      <ref>
       In command in the Adriatic,  Florus (1.41.9-10). 
      </ref>
     </references>
-    <person name="Pompeius (*18)"/>
+    <person name="Sex. Pompeius (*18)"/>
       <references>
        <ref>
         In command in the Adriatic, Florus (1.41.9-10). 
@@ -8204,7 +8204,7 @@
      Sent to guard Capua and its gladiatorial schools against the Catilinarian conspirators (Sall. Cat. 30.5). See D.–G. 4.323, no. 14.
     </ref>
    </references>
-   <person name="C. Pomptinus (Pontinius * 1)"/>
+   <person name="C. Pomptinus (1)"/>
    <references>
     <ref>
      Aided in the arrest of the Allobrogian envoys, and the capture of the letters which incriminated the Catilinarian conspirators (Cic. Cat. 3.5 and 14; Flacc. 102; Sall. Cat. 45; cf. Cic. Prov. Cons. 32). See Lübker 839.
@@ -8432,7 +8432,7 @@
      The inscription Bacchius Iudaeus on the coins of his aedileship in 54 probably refers to his service under Pompey in Palestine in this year (Grueber, CRRBM 1.490).
     </ref>
    </references>
-   <person name="M. Pupius Piso Frugi Calpurnianus (*2.100)" office-xref="Cos. 61, Pr. 72?"/>
+   <person name="M. Pupius Piso Frugi Calpurnianus (10)" office-xref="Cos. 61, Pr. 72?"/>
    <references>
     <ref>
      Served as a Legate under Pompey at the siege of Jerusalem (Joseph. AJ 14.59; BJ 1. 144; Hegesipp. 1. 16). See D.–G. 2.69, no. 15.
@@ -8546,7 +8546,7 @@
      Cic. Planc. 95; cf. Att. 1.15.1, and 13.5. Crushed Catilinarian sympathizers in Bruttium (Oros. 6.6.7; cf. Dio 37.41). Presided at the trial of Archias (Cic. Arch. 3 and 32; Schol. Bob. 175 Stangl).
     </ref>
    </references>
-   <person name="?. Valerius Messalla (Rufus) Pat. (*77)" office-xref="Cos. 53"/>
+   <person name="?. Valerius Messalla (Rufus) Pat. (268)" office-xref="Cos. 53"/>
    <references>
     <ref>
      A candidate in 63 (Cic. Sull. 42). See Münzer, Gent. Val. 53, no. 60.
@@ -8759,7 +8759,7 @@
      Legate, perhaps under Valerius Flaccus, in Asia (Cic. Flacc. 50).
     </ref>
    </references>
-   <person name="M. Pupius Piso Frugi Calpurnianus (*2.100)" office-xref="Cos. 61, Pr. 72?"/>
+   <person name="M. Pupius Piso Frugi Calpurnianus (10)" office-xref="Cos. 61, Pr. 72?"/>
    <references>
     <ref>
      Legatus under Pompey (see 63, Legates), who asked for a postponement of the consular elections for 61 in order that his Legate might be a candidate (Dio 37.44.3, granted; Plut. Pomp. 44. 1, refused). See D.-G. 2.69, no. 15.
@@ -8795,7 +8795,7 @@
  </year>
  <year name="61 B.C. A.U.C. 693">
   <office name="Consuls">
-   <person name="M. Pupius M. f. - n. Piso Frugi Calpurnianus (*2.100)" office-xref="Pr. 72?"/>
+   <person name="M. Pupius M. f. - n. Piso Frugi Calpurnianus (10)" office-xref="Pr. 72?"/>
    <person name="M. Valerius M. f. M'. n. Messalla Niger Pat. (*76)" office-xref="Pr. by 64"/>
    <references>
     <ref>
@@ -9198,7 +9198,7 @@
   </office>
   <office name="Legates, Ambassadors">
    <person name="Q. Caecilius Metellus Creticus (87)" office-xref="Cos. 69, Pr. 74"/>
-   <person name="L. Valerius Flaccus Pat.(*69, 179)" office-xref="Pr. 63"/>
+   <person name="L. Valerius Flaccus Pat.(179)" office-xref="Pr. 63"/>
    <person name="Cn. Cornelius Lentulus Clodianus Pat. (217)" office-xref="Pr. 59"/>
    <references>
     <ref>
@@ -9338,7 +9338,7 @@
      Carried a law to require separate reports of the votes of the three classes that composed the juries (Dio 38.8.1; Schol. Bob. 97 Stangl; cf. Ascon. 89 C, on the votes of the jury that acquitted Catiline in 65).
     </ref>
    </references>
-   <person name="T. Vettius (Sabinus) (* 12)" office-xref="Quaestio de repetundis"/>
+   <person name="T. Vettius (Sabinus) (*12)" office-xref="Quaestio de repetundis"/>
    <references>
     <ref>
      Presided at the trial of L. Valerius Flaccus for extortion (Cic. Flacc. s5; see 58, Promagistrates). On the name, see Grueber, CRRBM 1.417.
@@ -9634,7 +9634,7 @@
     </ref>
    </references>
    <person name="P. Nigidius Figulus (3)" office-xref="Cic. QF 1.2.16."/>
-   <person name="? L. Villius Annalis (*8)" office-xref="See 51, Addendum."/>
+   <person name="? L. Villius Annalis (7)" office-xref="See 51, Addendum."/>
    <references>
     <ref>
      The following men held provincial governorships immediately after the passage in 52 of the Pompeian law which established an interval between the praetorship or consulship and a provincial command, and may therefore have held the praetorship before 57 (all the Praetors of 57 are known). It is however more probable that the law did not apply to magistrates in office in 53 and 52 (see 54, Praetors), hence these dates remain only as possibilities.
@@ -9678,7 +9678,7 @@
    <person name="P. Plautius Hypsaeus (23)" office-xref="Pr. 55 Grueber, CRRBM 1.483f."/>
   </office>
   <office name="Iudex Quaestionis">
-   <person name="? C. Visellius Varro (* 2)"/>
+   <person name="? C. Visellius Varro (*2)"/>
    <references>
     <ref>
      Held this position after his aedileship (Cic. Brut. 264; see 59, Aediles, Curule). See Lübker no. 1.
@@ -9805,7 +9805,7 @@
      Dio 38.31-50; Oros. 6.7.3-10; cf. Tac. Hist. 4.73; Varro Atac. in GLK 2.497).
     </ref>
    </references>
-   <person name="C. Pomptinus (*Pontinius 1)" office-xref="Pr. 63"/>
+   <person name="C. Pomptinus (1)" office-xref="Pr. 63"/>
    <references>
     <ref>
      See 62-64, Promagistrates; and Lübker p. 839.
@@ -9832,7 +9832,7 @@
      Proconsul in Asia, whence he returned in May (see 6 1, Promagistrates; Cic. QF 1.3; Att. 3.9.1).
     </ref>
    </references>
-   <person name="C. Vergilius (Balbus?) (Virgilius *2 *3)" office-xref="Pr. 62"/>
+   <person name="C. Vergilius (Balbus?) (2)" office-xref="Pr. 62"/>
    <references>
     <ref>
      Propraetor in Sicily (see 6 1, Promagistrates). Debarred by the terms of the law of Clodius from giving Cicero a refuge (Cic. Planc. 95-96)
@@ -9975,7 +9975,7 @@
      Cic. P. Red. in Sen. 23. See 56, Promagistrates.
     </ref>
    </references>
-   <person name="Q,. Valerius Orca (*78)"/>
+   <person name="Q,. Valerius Orca (280)"/>
     <references>
     <ref>
      Cic. P. Red. in Sen. 23. See 56, Promagistrates.
@@ -10164,7 +10164,7 @@
      Quaestor pro praetore in charge of the annexation of Cyprus and the restoration of the Byzantine exiles (see 58, Promagistrates).
     </ref>
    </references>
-   <person name="? T. Vettius (Sabinus) (* 12)" office-xref="Pr. 59"/>
+   <person name="? T. Vettius (Sabinus) (*12)" office-xref="Pr. 59"/>
    <references>
     <ref>
      See 58, Promagistrates. He may have remained as governor of Africa.
@@ -10239,7 +10239,7 @@
      Legate under Pompey; served in Sardinia beginning in the autumn of 57 (Cic. QF 2.1.3; cf. 2.2.1, 3.7, 4.7, and 5.3; Fam. 1.9.9; Scaur. 39).
     </ref>
    </references>
-   <person name="L. (Valerius) Flaccus (* 69, 179)" office-xref="Pr. 63"/>
+   <person name="L. (Valerius) Flaccus (179)" office-xref="Pr. 63"/>
    <references>
     <ref>
      Legate under Piso in Macedonia (Cic. Pis. 54). See Münzer, Gent. Val. 43, no. 28.
@@ -10251,7 +10251,7 @@
      Legate under Caesar in Gaul (Cic. Vat. 35; Schol. Bob. 150f., Stangl). See Lübker no. 2.
     </ref>
    </references>
-   <person name="C. Vergilius (Balbus) (Virgilius *3, cf. *2)" office-xref="Pr. 62"/>
+   <person name="C. Vergilius (Balbus) (2)" office-xref="Pr. 62"/>
    <references>
     <ref>
      Legate under Piso in Macedonia (Cic. Prov. Cong. 7; possibly the Praetor of 62, Propr. in Sicily, 61-58).
@@ -10650,7 +10650,7 @@
      Legate under Caesar, but in Rome in 56 while Legate (Cic. Vat. 35, note the present tense; cf. Schol. Bob. 150f. Stangl).
     </ref>
    </references>
-   <person name="C. Vergilius (Balbus?) (Virgilius *3, cf. *2)" office-xref="Pr. 62"/>
+   <person name="C. Vergilius (Balbus?) (2)" office-xref="Pr. 62"/>
    <references>
     <ref>
      Legate under Piso in Macedonia (Cic. Prov. Cons. 7).
@@ -11087,9 +11087,9 @@
      See Cic. Sest. 113-114; Vat. 38; Schol. Bob. 135 Stangl.
     </ref>
    </references>
-   <person name="L. Postumius (see *50)"/>
+   <person  assertion-certainty="False" name="L. Postumius (*45)"/>
    <person name="P. Sestius (6)"/>
-   <person name="Voconius (*4)"/>
+   <person name="Voconius (2)"/>
    <references>
     <ref>
      The appearance of the members of this group as Promagistrates in various provinces and commands in 49 after the passage of Pompey's law making mandatory an interval of five years between the city magistracy and the
@@ -11357,7 +11357,8 @@
      Legate under Caesar in Gaul (Cic. Att. 4.14.2; QF 2.10.4-5; 2.123.9, passim; Fam. 1.9.21). He shared in the expedition to Britain (Cic. Att. 4.15.10, cf. 17.6, and 18.5; QF 2.13.2, and 15.1; 3.1.10, and 25; 3.3.1), and went into winter-quarters among the Nervii, where he bravely sustained a severe siege, and probably saved the situation for Caesar in northern Gaul (Caes. BG 5.24.2, 38-52; Cic. Att. 4.19.2; QF 3.8.2; Liv. Per. 106; Plut. Caes. 24.2-3; App. Celt. 21; Polyaen. 8.23.6; Dio 40.7- 10; Oros. 6.10.2-9).
     </ref>
    </references>
-   <person name="Octavius (5) Vargunteius (*4)"/>
+   <person name="Octavius (5)"/>
+   <person name="Vargunteius (1)"/>
    <references>
     <ref>
      Legates of Crassus in 53 (see 53, Legates). They probably accompanied him to Syria in 54.
@@ -11379,7 +11380,7 @@
  <year name="53 B.C. A.U.C. 701">
   <office name="Consuls">
    <person name="Cn. Domitius M. f. M. n. Calvinus (43, cf. 11)" office-xref="Cos. 40, Pr. 56"/>
-   <person name="M. Valerius - f. -n. Messalla Rufus Pat. (* 77)" office-xref="Pr. 62?"/>
+   <person name="M. Valerius - f. -n. Messalla Rufus Pat. (*77)" office-xref="Pr. 62?"/>
     <references>
     <ref>
      CIL 12.2.930, cf. 944, 2663c; Cic. QF 3.8.3; Ascon. 48 C; Plut. Pomp. 54.3; Dio 40, Index, and 17.1; Chr. 354
@@ -11680,13 +11681,13 @@
      Legate under Caesar in Gaul. The camp at Aduatuca which was under his command was endangered when his failure to obey orders led to an attack by the Sugambri from across the Rhine (Caes. BG 6.32.7, and 35-42; Cic. Epp. fr. in GLK 1.126; cf. Dio 40.32.4-5).
     </ref>
    </references>
-   <person name="? C. (Valerius) Flaccus L. f. (*91)"/>
+   <person name="? C. (Valerius) Flaccus L. f. (169)"/>
    <references>
     <ref>
      On the staff of Appius Claudius in Cilicia (Cic. Fam. 3.4.1, and 11.3).
     </ref>
    </references>
-   <person name="Vargunteius (*4)"/>
+   <person name="Vargunteius (1)"/>
    <references>
     <ref>
      A Legate under Crassus who fell in battle near Carrhae (Plut. Crass. 28.1-2; Oros. 6.13.3). See Lübker no. 2.
@@ -12140,7 +12141,7 @@
      Appointed by Appius Claudius in Cilicia as Prefect of cavalry in order to collect debts owing to Brutus by Salamis of Cyprus (Cic. Att. 5.21.10; 6.1.6, and 2.8, and 3.5).
     </ref>
    </references>
-   <person name="? C. Volusenus Quadratus (Volusienus*2)"/>
+   <person name="? C. Volusenus Quadratus (3)"/>
     <references>
     <ref>
      Sent to put Commius the Atrebatian to death (Hirt. in Caes. BG 8.23.4-6). See 51, Prefects.
@@ -12206,7 +12207,7 @@
      Vetoed several anti-Caesarian resolutions of the Senate (Cael. in Cic. Fam. 8.8.6-8). See Lübker no. 6.
     </ref>
    </references>
-   <person name="L. Vinicius (*2)" office-xref="Cos. Suff. 33"/>
+   <person name="L. Vinicius (cf. 1)" office-xref="Cos. Suff. 33"/>
    <references>
     <ref>
      Vetoed an anti-Caesarian resolution of the Senate (Cael. in Cic. Fam. 8.8.6). See Lübker no. 1; PIR 3.435.
@@ -12564,7 +12565,7 @@
     <ref>
      Sent to Cyprus by Cicero to attend to the litigation of the Roman citizens there (Cic. Att. 5.21.6; the praenomen Cn. in Att. 5.11.4 may be an error).
     </ref>
-   </references><person name="C. Volusius Quadratus (Volusienus*2)"/>
+   </references><person name="C. Volusius Quadratus (2)"/>
     <references>
     <ref>
      Praefectus equitum under Caesar in Gaul (Hirtius in Caes. BG 8.48; cf. 8.23.4-6; Dio 40.43.1).
@@ -12585,7 +12586,7 @@
    </references>
    <person name="L. Domitius Ahenobarbus (27)" office-xref="Cos. 54"/>
    <person name="Q. Caecilius Metellus Pius Scipio Nasica (99)" office-xref="Cos. 52"/>
-   <person name="L. Villius Annalis (*8)"/>
+   <person name="L. Villius Annalis (7)"/>
    <person name="C. Septimus (7)" office-xref="Pr. 57"/>
    <person name="C. Lucilius Hirrus (25)" office-xref="Tr. Pl. 53"/>
    <person name="C. Scribonius Curio (11)" office-xref="Tr. Pl. 50"/>
@@ -12874,7 +12875,8 @@
      Caesar sent him to Rome early in December to meet Balbus and Metellus Scipio, but he hurried back immediately after his arrival without meeting Pompey's representatives (Cic. Att. 7.4.2).
     </ref>
    </references>
-   <office name="Legates, Lieutenants"/>
+  </office>
+   <office name="Legates, Lieutenants">    
    <person name="L. Afranius (6)" office-xref="Cos. 60, Pr. 72?"/>
    <references>
     <ref>
@@ -12986,10 +12988,7 @@
    <person name="Q. Tullius Cicero (31)" office-xref="Pr. 62"/>
    <references>
     <ref>
-     Legate under Cicero in Cilicia (Cic. Att. 5.21.6 and 9; 6.3.2-3, and 4.1; 7.1.1; Fam. 2.15.4; 16.1, and 3, and 4,
-    </ref>
-    <ref>
-     and 5, and 6, prescripts).
+     Legate under Cicero in Cilicia (Cic. Att. 5.21.6 and 9; 6.3.2-3, and 4.1; 7.1.1; Fam. 2.15.4; 16.1, and 3, and 4, and 5, and 6, prescripts).
     </ref>
    </references>
    <person name="P. Vatinius (*2)" office-xref="Cos. 47, Pr. 55"/>
@@ -13557,7 +13556,7 @@
      A Proquaestor under Pompey in Spain (Grueber, CRRBM 2.362f.). See above, on Cn. Piso; and 75, note 7.
     </ref>
    </references>
-   <person name="Voconius (*4)"/>
+   <person name="Voconius (2)"/>
    <references>
     <ref>
      One of Cicero's list of holders of imperium in 49 (Cic. Att. 8.15.3, dated March 3).
@@ -13823,7 +13822,7 @@
      He was ordered to take charge of Sicily, but refused to go without Cato (Cic. Att. 7.15.2; see Promagistrates, on Cato). He was a senator of some influence, and so probably a praetorian Legate. See above, Proniagistrates.
     </ref>
    </references>
-   <person name="M. Pupius Piso Frugi Calpurnianus (*2.100)" office-xref="Cos. 61, Pr. 72 or 71"/>
+   <person name="M. Pupius Piso Frugi Calpurnianus (10)" office-xref="Cos. 61, Pr. 72 or 71"/>
    <references>
     <ref>
      A Legate, who recruited troops for Pompey at Delos (Joseph. AJ 14.231).
@@ -13971,7 +13970,7 @@
      Held command, along with Laelius (see above) of the Pompeian ships from Asia (Caes. BC 3.5.3).
     </ref>
    </references>
-   <person name="? Vibius Curius (*8, cf. *2)"/>
+   <person name="? Vibius Curius (8)"/>
     <references>
     <ref>
      Probably a Prefect of Cavalry under Caesar (Caes. BC 1.24.3; cf. Cic. Att. 9.6.1).
@@ -14378,7 +14377,7 @@
      Sent by Domitius Calvinus to Cilicia to summon reinforcements against the invasion of Pharnaces of Pontus (Bell. Alex. 34.5). Münzer (RE) suggests that the name Patisius is an error for Patiscus (cf. Cic. Fam. 2.11.2; 8.9.3; and the Index, on Patiscus).
     </ref>
    </references>
-   <person name="M. Plotius (*7, not in RE)"/>
+   <person name="M. Plotius (not in RE)"/>
     <references>
     <ref>
      With Cornelius Balbus in a colloquy with Pompeian officers at the Apsus river (Caes. BC 3.19.7).
@@ -14665,13 +14664,13 @@
      Prefect of an ala of cavalry in Pompey's army (Cic. Off. 2.45).
     </ref>
    </references>
-   <person name="C. Valerius Triarius (*81, 363)"/>
+   <person name="C. Valerius Triarius (363)"/>
     <references>
     <ref>
      See 49, Prefects. He was with Pompey at Pharsalus (Caes. BC 3.92).
     </ref>
    </references>
-   <person name="C. Volusenus (*Volusienus 2)"/>
+   <person name="C. Volusenus Quadratus (3)"/>
     <references>
     <ref>
      Prefect of cavalry under Caesar (Caes. BC 3.60.4).
@@ -15330,7 +15329,7 @@
      With Caesar in Africa pro consule, where he received the command of the town of Thapsus (Bell. Afr. 80.4).
     </ref>
    </references>
-   <person name="Cn. Pompeius Magnus (* 17)"/>
+   <person name="Cn. Pompeius Magnus (*17)"/>
     <references>
     <ref>
      He assumed the title Imperator in Spain (Grueber, CRRBM 2.364-367; CIL 12.2.885; Bell. Hisp. 42.6, fasces imperiumque sibi arripuit), where he had arrived by early in 46 (see 47, Legates). He soon occupied Baetica, and rallied a force of thirteen legions (Cic. Att. 12.2.1; Auct. Bell. Hisp. 7.4; 30.1; Nic. Dam., Vit. Aug. 10, FGrH 2A.394f.; Vell. 2.55.2; Plut. Caes. 56.1; App. BC 2.87, and 103; Flor. 2.13.73-74; Dio 43.29-31). See D.-G.
@@ -15852,7 +15851,7 @@
      He introduced bills for Caesar's program to beautify the plan of the city (Cic. Att. 13.20.1, and 33a.4, and 35.1, gentilis tuus; cf. Suet. Iul. 44; Dio 43.49). His office is not named, but he was almost certainly a Tribune since no Praetors were elected until Caesar's return from Spain early in September. See Niccolini, FTP 344.
     </ref>
    </references>
-   <person name="L. Pontius Aquila (*12)"/>
+   <person name="L. Pontius Aquila (17)"/>
    <references>
     <ref>
      A Tribune who refused to rise as a mark of respect to Caesar at his triumph (Suet. Iul. 78.2; cf. on his name, Cic. Att. 1.1.3; 7.2.2; and on the confiscation of his land, Cic. Att. 14.21.3; cf. Suet. Iul. 50.2; Macrob. 2.2.5).
@@ -16127,7 +16126,7 @@
      Legatus pro praetore under Caesar, in charge of assignment of land in Etruria to Caesar's soldiers (Cic. Fam. 13.5).
     </ref>
    </references>
-   <person name="Venuleius (*4)"/>
+   <person name="Venuleius (3)"/>
    <references>
     <ref>
      A Legate under C. Calvisius Sabinus in Africa (Cic. Fam. 12.30.7; cf. Phil. 3.26; see above, on Horatius and Latinus).
@@ -16935,7 +16934,7 @@
      A Legate under Dolabella (see 43, Legates).
     </ref>
    </references>
-   <person name="Pontius Aquila (*12)"/>
+   <person name="Pontius Aquila (17)"/>
    <references>
     <ref>
      A Legate under Decimus Brutus in Cisalpine Gaul (see 43, Legates).
@@ -17864,7 +17863,7 @@
      No title preserved. Probably killed in the fighting about Mutina (Cic. Fam. 10.33.4, in a list of men of rank).
     </ref>
    </references>
-   <person name="Pontius Aquila (*12)"/>
+   <person name="Pontius Aquila (17)"/>
    <references>
     <ref>
      A Legate under Decimus Brutus in Cisalpine Gaul, who drove Antony's Legate Plancus Bursa back from Pollentia (Cic. Phil. 11.14; 13.27; Dio 46.38.3; Zonar. 10.15). He perished in the fighting about Mutina, and a statue was decreed in his honor (Cic. Fam. 10.33.4; 11.31.1; Dio 46.40.2). See R-G. 3.639.
@@ -17924,7 +17923,7 @@
      When Antony took over Transalpine Gaul from Plancus in late summer or autumn of 43 he placed it under the command of Cotyla with six legions (Plut. Ant. 18.4). See R-G. 1.261.
     </ref>
    </references>
-   <person name="Venuleius (*4)"/>
+   <person name="Venuleius (3)"/>
    <references>
     <ref>
      A Legate, probably one left in Africa by Calvisius Sabinus, from whom Cornificius removed his insignia (Cic. Fam. 12.30.7; cf. Phil. 3.26, where Cicero speaks of duos legatos: should Fam. 12.30.7 be punctuated to read Venuleius Latinus, Horatius? See above, on Horatius and Latinus).
@@ -18535,7 +18534,7 @@
      An officer under Brutus and Cassius who perished at Philippi (Vell. 2.71.2; Plut. Brut. 49.5; 6at. Min. 73-74; App. BC 4.135; Zonar. 10.20).
     </ref>
    </references>
-   <person name="L. (Quinctilius) Varus Pat. (*11)" office-xref="Pr. –"/>
+   <person name="L. (Quinctilius) Varus Pat. (8)" office-xref="Pr. –"/>
    <references>
     <ref>
      Cassius placed a L. Varus in command of his garrison at Rhodes (App. BC 4.74), perhaps to be identified with the Quinctilius Varus who after Philippi covered himself with his insignia of office and compelled his freedman to kill him (Vell. 2.71.2).
@@ -19448,7 +19447,7 @@
    </references>
   </office>
   <office name="Quaestors">
-   <person name="Vibius Maximus (*15)"/>
+   <person name="Vibius Maximus (12)"/>
    <references>
     <ref>
      A slave who had become Quaestor Designatus for 38 when he was recognized by his master (Dio 48.34.5; Jerome Chr. ad ann. 41, p. 158 Helm).
@@ -19562,7 +19561,7 @@
      A commander, Legate or Prefect, in Sextus Pompey's fleet (Grueber, CRRBM 2.564f.), who left him for Antony in 35 (App. BC 5.139).
     </ref>
    </references>
-   <person name="C. Pompaedius (Poppaedius) Silo (not in *RE)"/>
+   <person name="Q. Pompaedius (Poppaedius) Silo (not in *RE)"/>
     <references>
     <ref>
      A Legate under Antony and Ventidius, whom the latter summoned from Judaea early in 38 to aid him against the Parthian invasion (Joseph. AJ 14.420-421; BJ 1.309; see 39, Legates).
@@ -19612,7 +19611,7 @@
  </year>
  <year name="37 B.C. A.U.C. 717">
   <office name="Consuls">
-   <person name="M. (Vipsanius) Agrippa L. f. (*3)" office-xref="Cos. 28, 27, Pr. 40"/>
+   <person name="M. (Vipsanius) Agrippa L. f. (2)" office-xref="Cos. 28, 27, Pr. 40"/>
    <person name="L. Caninius L. f. - n. Gallus (4)"/>
    <references>
     <ref>
@@ -19978,7 +19977,7 @@
      Legate under Antony (Vell. 2.82.2-3), who followed the main force bringing supplies and a siege train, but his forces and machines were destroyed by the Parthians (Vell. 2.82.2; Plut. Ant. 38; Dio 49.25.2-26.1, and 44.2; Zonar. 10.26).
     </ref>
    </references>
-   <person name="L. Plinius Rufus (*5.1744)" office-xref="Pr. Desig."/>
+   <person name="L. Plinius Rufus (4)" office-xref="Pr. Desig."/>
    <references>
     <ref>
      Legatus pro praetore (ILS 8891). Held command for Pompey of western Sicily against Lepidus (App. BC 5.97- 98). Summoned to Messana after Naulochus, and surrendered when Pompey fled to the East (App. BC 5.122).
@@ -20049,7 +20048,7 @@
  </year>
  <year name="35 B.C. A.U.C. 719">
   <office name="Consuls">
-   <person name="Sex. Pompeius Sex. f. Sex.? n. (*20)"/>
+   <person name="Sex. Pompeius Sex. f. Sex.? n. (19)"/>
    <person name="L. Cornificius L. f. (5)"/>
    <references>
     <ref>
@@ -20458,7 +20457,7 @@
      Entered office on July 1, and abdicated either September 1 or October 1 (Fast. Ven., Degrassi 251, 254f.; Fast. Nag. Vic., ibid. 283, 288; cf . ibid. 136, 508f.). See PIR² 1. 11, no. 7 1; De Laet no. 4.
     </ref>
    </references>
-   <person name="L. Vinicius M. f. - n. (*2)"/>
+   <person name="L. Vinicius M. f. - n. (cf. 1)"/>
    <references>
     <ref>
      Entered office on September 1 (Fast. Ven., Degrassi 251, 254f.; Fad. Mag. Vic., ibid., 283, 288, cf. ibid. 136, 508f.; CIL 9.1554-1.740; cf. RE 17.2.1429, no. 74). See PIR 3.435, no. 443; Von Premerstemi, JOEAI 28 (1933)

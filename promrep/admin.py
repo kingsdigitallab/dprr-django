@@ -38,13 +38,15 @@ class PostAssertionNoteInline(admin.StackedInline):
 
 
 class PostAssertionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'post', 'person', 'date_start', 'date_end', 'secondary_source', 'created_by', 'created', 'modified')
+    list_display = ('id', 'post', 'person',
+                    'date_start', 'date_end', 'secondary_source', 'review_flag',
+                    'created_by', 'created', 'modified')
 
     readonly_fields = ('id', )
 
     fieldsets = [
             ('Database Info',
-                {'fields': [('id')]}),
+                {'fields': [('id', 'review_flag'), ]}),
             ('', {'fields':
                     [
                         'person',

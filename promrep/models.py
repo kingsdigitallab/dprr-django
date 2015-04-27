@@ -399,6 +399,9 @@ class PostAssertion(TimeStampedModel):
 
     date_info = models.CharField(max_length=1024, blank=True, null=True)
 
+    review_flag = models.BooleanField(verbose_name="Review needed", default=False)
+    review_flag.help_text = "Manual revision needed."
+
     class Meta:
         ordering = ['position', 'id']
 

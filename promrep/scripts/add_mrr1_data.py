@@ -46,7 +46,7 @@ def get_office_obj(office_name):
 
 
 def run():
-    for vol in ['mrr2', ]:
+    for vol in ['mrr1', ]:
     # for vol in ['mrr1', 'mrr2']:
         processXML(vol)
 
@@ -67,7 +67,7 @@ def processXML(volume):
 
     years = soup.findAll('year')
 
-    for year in years[:4]:
+    for year in years[:10]:
     # for year in years:
         year_str = year['name'].split()[0]
         print "\n\n>>>>> Year", year_str, years.index(year), '(',len(year.findAll('footnote')), 'footnotes)\n\n'
@@ -240,8 +240,11 @@ def processXML(volume):
                         post_assertion.date_end = -int(year_str)
 
                         # cases that need manual fixing
-                        if ap_date_info != "?":
+                        if ap_date_info != "":
                             post_assertion.date_info = ap_date_info
+
+                            if "?" in ap_date_info:
+                                 post_assertion.date_end_uncertain = True
 
                         post_assertion.save()
 

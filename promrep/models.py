@@ -205,6 +205,10 @@ class Person(TimeStampedModel):
     extra_info.help_text = "Extra info about the person."
 
     # dates
+    date_display_text = models.CharField(max_length=1024, blank=True, null=True)
+    date_source_text = models.CharField(max_length=1024, blank=True, null=True)
+    date_secondary_source = models.ForeignKey(SecondarySource, blank=True, null=True)
+
     date_first = models.IntegerField(blank=True, null=True)
     date_first_type = models.ForeignKey(DateType, blank=True, null=True, related_name='person_first')
 
@@ -397,7 +401,9 @@ class PostAssertion(TimeStampedModel):
     date_end = models.IntegerField(blank=True, null=True)
     date_end_uncertain = models.BooleanField(default=False)
 
-    date_info = models.CharField(max_length=1024, blank=True, null=True)
+    date_display_text = models.CharField(max_length=1024, blank=True, null=True)
+    date_source_text = models.CharField(max_length=1024, blank=True, null=True)
+    date_secondary_source = models.ForeignKey(SecondarySource, blank=True, null=True, related_name = 'postassertion_date_secondary_source')
 
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Manual revision needed."

@@ -57,7 +57,8 @@ class PostAssertionAdmin(admin.ModelAdmin):
                 }
                 ),
             ('Dates', {'fields': [
-                        ('date_info'),
+                        ('date_display_text'),
+                        ('date_source_text', 'date_secondary_source'),
                         ('date_start', 'date_start_uncertain'),
                         ('date_end', 'date_end_uncertain')
                      ]})
@@ -130,15 +131,16 @@ class PersonInline(admin.StackedInline):
     show_change_link = True
 
     fields = (
-                ['id', 'position'] ,
-                ['person',],
-                ['role', 'uncertain'],
-                ['secondary_source', 'original_text', 'office_xref'],
-                ['date_info'],
-                ['date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'],
-                'notes',
-                'edit_link'
-              )
+        ['id', 'position'] ,
+        ['person',],
+        ['role', 'uncertain'],
+        ['secondary_source', 'original_text', 'office_xref'],
+        ['date_display_text', ],
+        ['date_source_text', 'date_secondary_source', ],
+        ['date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'],
+        'notes',
+        'edit_link'
+    )
 
     sortable_field_name = 'position'
 
@@ -174,7 +176,8 @@ class PostAssertionInline(admin.StackedInline):
             ['role', 'uncertain'],
             ['secondary_source', ],
             ['original_text', 'office_xref'],
-            'date_info',
+            'date_display_text',
+            ['date_source_text', 'date_secondary_source', ],
             ['date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'],
             'notes',
             'edit_link',
@@ -255,6 +258,8 @@ class PersonAdmin(admin.ModelAdmin):
         ('Dates', {
             'classes': ('grp-collapse grp-open',),
             'fields': [
+                ('date_display_text'),
+                ('date_source_text', 'date_secondary_source'),
                 ('date_first', 'date_first_type'),
                 ('date_last', 'date_last_type'),
                 ('era_from', 'era_to'),

@@ -241,10 +241,11 @@ def processXML(volume):
 
                         # cases that need manual fixing
                         if ap_date_info != "":
-                            post_assertion.date_info = ap_date_info
+                            post_assertion.date_source_text = ap_date_info
+                            post_assertion.date_secondary_source = source
 
                             if "?" in ap_date_info:
-                                post_assertion.date_end_uncertain = True
+                                post_assertion.date_start_uncertain = True
 
                                 if ap_date_info != "?":
                                     post_assertion.review_flag = True

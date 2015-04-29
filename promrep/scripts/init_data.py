@@ -32,3 +32,5 @@ def run():
     print '  Tribe Data...'
     call_command('loaddata', 'promrep/fixtures/promrep_tribe.json')
 
+    print '  DateType Data...'
+    call_command('loaddata', 'promrep/fixtures/promrep_datetype.json')

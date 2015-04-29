@@ -11,9 +11,8 @@ Usage:
 
 from bs4 import BeautifulSoup
 
-from promrep.models import Post, PostAssertion, PostNote, PostDate, \
-    Office, Person, RoleType, SecondarySource, PostAssertionNote, \
-    PostAssertionDate, Praenomen, Date
+from promrep.models import Post, PostAssertion, PostNote, Office, Person, \
+    RoleType, SecondarySource, PostAssertionNote, Praenomen
 
 import parsing_aux as aux
 from promrep.scripts.offices_ref import OFFICE_NAMES_DIC
@@ -47,7 +46,7 @@ def get_office_obj(office_name):
 
 
 def run():
-    # for vol in ['mrr2', ]:
+    # for vol in ['mrr1', ]:
     for vol in ['mrr1', 'mrr2']:
         processXML(vol)
 
@@ -68,7 +67,7 @@ def processXML(volume):
 
     years = soup.findAll('year')
 
-#    for year in years[:1]:
+    # for year in years[:10]:
     for year in years:
         year_str = year['name'].split()[0]
         print "\n\n>>>>> Year", year_str, years.index(year), '(',len(year.findAll('footnote')), 'footnotes)\n\n'
@@ -102,14 +101,7 @@ def processXML(volume):
             #  every time a note is found, it is associated with all the post_assertions in the list
             person_ref_queue = []
 
-            try:
-                assertion_date = PostDate.objects.create(year = -int(year_str),)
-                assertion = Post.objects.create(office=office_obj, )
-                assertion_date.post = assertion
-                assertion_date.save()
-
-            except Exception as e:
-                print 'FATAL ERROR CREATING POST: %s' %(e.message)
+            assertion = Post.objects.create(office=office_obj, date_info = year['name'].strip(), date_year = -int(year_str))
 
             # all these notes will be added to the individual PostAssertions
             assertion_notes_queue = []
@@ -244,17 +236,21 @@ def processXML(volume):
                         # PostAssertion Dates
                         ap_date_info = ap_date_info.strip("[:")
 
-                        if ap_date_info:
-                            ap_date = PostAssertionDate.objects.create(
-                                            year = -int(year_str),
-                                            year_uncertain = True,
-                                            interval=Date.DATE_BY,
-                                            post_assertion = post_assertion)
+                        post_assertion.date_start = -int(year_str)
+                        post_assertion.date_end = -int(year_str)
 
-                            # cases that need manual fixing
-                            if ap_date_info != "?":
-                                ap_date.extra_info = ap_date_info
-                                ap_date.save()
+                        # cases that need manual fixing
+                        if ap_date_info != "":
+                            post_assertion.date_source_text = ap_date_info
+                            post_assertion.date_secondary_source = source
+
+                            if "?" in ap_date_info:
+                                post_assertion.date_start_uncertain = True
+
+                                if ap_date_info != "?":
+                                    post_assertion.review_flag = True
+
+                        post_assertion.save()
 
                         # Post Person uncertain
                         if p.has_attr('assertion-certainty') or (assertion_uncertain == True):

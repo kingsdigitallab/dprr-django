@@ -169,6 +169,8 @@ class PostAssertionInline(admin.StackedInline):
 
     show_change_link = True
 
+    ordering = ('-date_start', '-date_end', )
+
     readonly_fields = ('id', )
 
     fields = (['id'] ,

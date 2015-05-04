@@ -17,6 +17,34 @@ from promrep.models import Post, PostAssertion, PostNote, Office, Person, \
 import parsing_aux as aux
 from promrep.scripts.offices_ref import OFFICE_NAMES_DIC
 
+def parse_date_range(date):
+    obj = {'date_source_text': date}
+
+    if "-" in date:
+        date_parts = [x.strip() for x in date.split('-')]
+
+        if len(date_parts) == 2:
+            if "Before" in date_parts[0]:
+                obj['date_start_uncertain'] = True
+                date_parts[0] = date_parts[0].replace('Before', '').strip()
+
+            if "Bef." in date_parts[0]:
+                obj['date_start_uncertain'] = True
+                date_parts[0] = date_parts[0].replace('Bef.', '').strip()
+
+            if date_parts[0].isdigit() and date_parts[1].isdigit():
+                obj['date_start'] = -int(date_parts[0])
+                obj['date_end'] = -int(date_parts[1])
+
+        else:
+            obj['review_flag'] = True
+    else:
+        obj['review_flag'] = True
+
+    return obj
+
+
+
 def get_office_obj(office_name):
     """given a string, returns an office object"""
 
@@ -46,7 +74,7 @@ def get_office_obj(office_name):
 
 
 def run():
-    # for vol in ['mrr1', ]:
+    #  for vol in ['mrr1', ]:
     for vol in ['mrr1', 'mrr2']:
         processXML(vol)
 
@@ -67,7 +95,7 @@ def processXML(volume):
 
     years = soup.findAll('year')
 
-    # for year in years[:10]:
+#    for year in years[70:71]:
     for year in years:
         year_str = year['name'].split()[0]
         print "\n\n>>>>> Year", year_str, years.index(year), '(',len(year.findAll('footnote')), 'footnotes)\n\n'
@@ -235,22 +263,27 @@ def processXML(volume):
 
                         # PostAssertion Dates
                         ap_date_info = ap_date_info.strip("[:")
+                        post_assertion.date_secondary_source = source
 
-                        post_assertion.date_start = -int(year_str)
-                        post_assertion.date_end = -int(year_str)
-
-                        # cases that need manual fixing
-                        if ap_date_info != "":
-                            post_assertion.date_source_text = ap_date_info
-                            post_assertion.date_secondary_source = source
-
-                            if "?" in ap_date_info:
+                        try:
+                            # cases that need manual fixing
+                            if ap_date_info == "":
+                                post_assertion.date_start = -int(year_str)
+                                post_assertion.date_end = -int(year_str)
+                            elif  ap_date_info == "?":
+                                post_assertion.date_source_text = ap_date_info
                                 post_assertion.date_start_uncertain = True
 
-                                if ap_date_info != "?":
-                                    post_assertion.review_flag = True
+                            else:
+                                date_obj = parse_date_range(ap_date_info)
 
-                        post_assertion.save()
+                                for key, value in date_obj.iteritems():
+                                    setattr(post_assertion, key, value)
+
+                            post_assertion.save()
+
+                        except Exception as e:
+                            print 'FATAL ERROR saving extra date info ', year_str, p, e.message
 
                         # Post Person uncertain
                         if p.has_attr('assertion-certainty') or (assertion_uncertain == True):

@@ -131,7 +131,7 @@ class PersonInline(admin.StackedInline):
     show_change_link = True
 
     fields = (
-        ['id', 'position'] ,
+        ['id', 'review_flag', 'position'] ,
         ['person',],
         ['role', 'uncertain'],
         ['secondary_source', 'original_text', 'office_xref'],
@@ -173,7 +173,7 @@ class PostAssertionInline(admin.StackedInline):
 
     readonly_fields = ('id', )
 
-    fields = (['id'] ,
+    fields = (['id', 'review_flag', ] ,
             ['post',],
             ['role', 'uncertain'],
             ['secondary_source', ],

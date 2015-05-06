@@ -18,7 +18,7 @@ import parsing_aux as aux
 from promrep.scripts.offices_ref import OFFICE_NAMES_DIC
 
 def parse_date_range(date):
-    obj = {'date_source_text': date}
+    obj = {'date_source_text': date, 'review_flag': True}
 
     if "-" in date:
         date_parts = [x.strip() for x in date.split('-')]
@@ -35,14 +35,9 @@ def parse_date_range(date):
             if date_parts[0].isdigit() and date_parts[1].isdigit():
                 obj['date_start'] = -int(date_parts[0])
                 obj['date_end'] = -int(date_parts[1])
-
-        else:
-            obj['review_flag'] = True
-    else:
-        obj['review_flag'] = True
+                obj['review_flag'] = False
 
     return obj
-
 
 
 def get_office_obj(office_name):
@@ -271,9 +266,10 @@ def processXML(volume):
                                 post_assertion.date_start = -int(year_str)
                                 post_assertion.date_end = -int(year_str)
                             elif  ap_date_info == "?":
+                                post_assertion.date_start = -int(year_str)
+                                post_assertion.date_end = -int(year_str)
                                 post_assertion.date_source_text = ap_date_info
                                 post_assertion.date_start_uncertain = True
-
                             else:
                                 date_obj = parse_date_range(ap_date_info)
 

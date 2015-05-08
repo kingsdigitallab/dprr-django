@@ -17,25 +17,48 @@ from promrep.models import Post, PostAssertion, PostNote, Office, Person, \
 import parsing_aux as aux
 from promrep.scripts.offices_ref import OFFICE_NAMES_DIC
 
-def parse_date_range(date):
-    obj = {'date_source_text': date, 'review_flag': True}
+def parse_post_assertion_date(ap_date_info, post_year):
 
-    if "-" in date:
-        date_parts = [x.strip() for x in date.split('-')]
+    # default case
+    obj = {'date_source_text': ap_date_info,
+           'review_flag': False,
+           'date_start': -int(post_year),
+           'date_end': -int(post_year)}
 
-        if len(date_parts) == 2:
-            if "Before" in date_parts[0]:
-                obj['date_start_uncertain'] = True
-                date_parts[0] = date_parts[0].replace('Before', '').strip()
+    if ap_date_info == "?":
+        obj['date_start_uncertain'] = True
 
-            if "Bef." in date_parts[0]:
-                obj['date_start_uncertain'] = True
-                date_parts[0] = date_parts[0].replace('Bef.', '').strip()
+    elif "-" in ap_date_info:
+        # these need to be reviewed later...
+        obj['review_flag'] = True
 
-            if date_parts[0].isdigit() and date_parts[1].isdigit():
-                obj['date_start'] = -int(date_parts[0])
-                obj['date_end'] = -int(date_parts[1])
-                obj['review_flag'] = False
+        try:
+            date_parts = [x.strip() for x in ap_date_info.split('-')]
+
+            if len(date_parts) == 2:
+                if "Before" in date_parts[0]:
+                    obj['date_start_uncertain'] = True
+                    date_parts[0] = date_parts[0].replace('Before', '').strip()
+
+                if "Bef." in date_parts[0]:
+                    obj['date_start_uncertain'] = True
+                    date_parts[0] = date_parts[0].replace('Bef.', '').strip()
+
+                if date_parts[0].isdigit():
+                    obj['date_start'] = -int(date_parts[0])
+                else:
+                    obj['date_start_uncertain'] = True
+
+                if date_parts[1].isdigit():
+                    obj['date_end'] = -int(date_parts[1])
+                else:
+                    obj['date_end_uncertain'] = True
+
+                if date_parts[0].isdigit() and date_parts[1].isdigit():
+                    obj['review_flag'] = False
+
+        except Exception as e:
+            print 'FATAL ERROR saving extra date info ', post_year, ap_date_info, e.message
 
     return obj
 
@@ -260,26 +283,10 @@ def processXML(volume):
                         ap_date_info = ap_date_info.strip("[:")
                         post_assertion.date_secondary_source = source
 
-                        try:
-                            # cases that need manual fixing
-                            if ap_date_info == "":
-                                post_assertion.date_start = -int(year_str)
-                                post_assertion.date_end = -int(year_str)
-                            elif  ap_date_info == "?":
-                                post_assertion.date_start = -int(year_str)
-                                post_assertion.date_end = -int(year_str)
-                                post_assertion.date_source_text = ap_date_info
-                                post_assertion.date_start_uncertain = True
-                            else:
-                                date_obj = parse_date_range(ap_date_info)
-
-                                for key, value in date_obj.iteritems():
-                                    setattr(post_assertion, key, value)
-
-                            post_assertion.save()
-
-                        except Exception as e:
-                            print 'FATAL ERROR saving extra date info ', year_str, p, e.message
+                        date_obj = parse_post_assertion_date(ap_date_info, year_str)
+                        for key, value in date_obj.iteritems():
+                            setattr(post_assertion, key, value)
+                        post_assertion.save()
 
                         # Post Person uncertain
                         if p.has_attr('assertion-certainty') or (assertion_uncertain == True):

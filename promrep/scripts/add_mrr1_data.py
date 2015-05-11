@@ -25,11 +25,12 @@ def parse_post_assertion_date(ap_date_info, post_year):
            'date_start': -int(post_year),
            'date_end': -int(post_year)}
 
-    if ap_date_info == "?":
-        # before year
+    if ap_date_info == "":
+        pass
+
+    elif ap_date_info == "?":
+        # by year YYYY
         obj['date_start_uncertain'] = True
-        obj['date_start'] = -int(post_year) - 1
-        obj['date_end'] = -int(post_year) - 1
 
     elif "-" in ap_date_info:
         # these need to be reviewed later...
@@ -69,6 +70,9 @@ def parse_post_assertion_date(ap_date_info, post_year):
 
         except Exception as e:
             print 'FATAL ERROR saving extra date info ', post_year, ap_date_info, e.message
+
+    else:
+        obj['review_flag'] = True
 
     return obj
 

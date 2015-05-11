@@ -26,7 +26,10 @@ def parse_post_assertion_date(ap_date_info, post_year):
            'date_end': -int(post_year)}
 
     if ap_date_info == "?":
+        # before year
         obj['date_start_uncertain'] = True
+        obj['date_start'] = -int(post_year) - 1
+        obj['date_end'] = -int(post_year) - 1
 
     elif "-" in ap_date_info:
         # these need to be reviewed later...
@@ -36,23 +39,30 @@ def parse_post_assertion_date(ap_date_info, post_year):
             date_parts = [x.strip() for x in ap_date_info.split('-')]
 
             if len(date_parts) == 2:
-                if "Before" in date_parts[0]:
-                    obj['date_start_uncertain'] = True
-                    date_parts[0] = date_parts[0].replace('Before', '').strip()
+                date_start = date_parts[0]
+                date_end = date_parts[1]
 
-                if "Bef." in date_parts[0]:
-                    obj['date_start_uncertain'] = True
-                    date_parts[0] = date_parts[0].replace('Bef.', '').strip()
-
-                if date_parts[0].isdigit():
-                    obj['date_start'] = -int(date_parts[0])
+                if date_start.isdigit():
+                    obj['date_start'] = -int(date_start)
                 else:
                     obj['date_start_uncertain'] = True
 
-                if date_parts[1].isdigit():
-                    obj['date_end'] = -int(date_parts[1])
+                if date_end.isdigit():
+                    obj['date_end'] = -int(date_end)
                 else:
                     obj['date_end_uncertain'] = True
+
+                if "Before" or "Bef." in date_start:
+                    date_start = date_start.replace('Before', '').replace('Bef.', '').strip()
+
+                    if date_start.isdigit():
+                        date_start = -int(date_start) - 1
+
+                if "Before" or "Bef." in date_end:
+                    date_end = date_end.replace('Before', '').replace('Bef.', '').strip()
+
+                    if date_end.isdigit():
+                        date_end = -int(date_end) - 1
 
                 if date_parts[0].isdigit() and date_parts[1].isdigit():
                     obj['review_flag'] = False

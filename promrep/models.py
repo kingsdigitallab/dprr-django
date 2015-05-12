@@ -360,11 +360,13 @@ class Post(TimeStampedModel):
 
 
     def print_date(self):
-        if self.date_year < 0:
-            return str(abs(self.date_year)) + " B.C."
+        if self.date_year:
+            if self.date_year < 0:
+                return str(abs(self.date_year)) + " B.C."
+            else:
+                return str(self.date_year) + " A.D."
         else:
-            return str(self.date_year) + " A.D."
-
+            return ""
 
     def __unicode__(self):
         name = self.office.name + " " + self.print_date()

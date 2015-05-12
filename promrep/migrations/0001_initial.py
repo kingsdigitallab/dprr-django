@@ -154,7 +154,7 @@ class Migration(migrations.Migration):
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
                 ('display_text', models.CharField(max_length=1024, blank=True)),
                 ('uncertain', models.BooleanField(default=False, verbose_name=b'Uncertain')),
-                ('date_year', models.IntegerField(blank=True)),
+                ('date_year', models.IntegerField(null=True, blank=True)),
                 ('date_info', models.CharField(max_length=1024, null=True, blank=True)),
                 ('created_by', models.ForeignKey(related_name='post_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
                 ('location', models.ForeignKey(blank=True, to='promrep.Location', null=True)),

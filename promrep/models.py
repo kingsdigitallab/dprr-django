@@ -343,7 +343,7 @@ class Post(TimeStampedModel):
     uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
 
     # date information
-    date_year = models.IntegerField(blank=True, null=False)
+    date_year = models.IntegerField(blank=True, null=True)
     date_info = models.CharField(max_length=1024, blank=True, null=True)
 
     class Meta:

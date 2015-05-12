@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # data import auxiliary functions
-from promrep.models import Person, Praenomen, Sex, Tribe
+from promrep.models import Person, Praenomen, Sex, Tribe, Office
 
 import regex
 import logging
@@ -282,3 +282,32 @@ def parse_brennan_person(text):
         return None
 
     return person
+
+
+
+def get_office_obj(office_name):
+    """given a string, returns an office object"""
+
+    # convert to lowercase
+    office_name = office_name.lower()
+
+    # tries to get the normalized office name from the
+    try:
+        oname = OFFICE_NAMES_DIC[office_name]
+    except:
+        print "WARNING: Unable to normalize office name: '%s'" %(office_name,)
+        oname = office_name
+
+    try:
+        office = Office.objects.get(name=oname)
+    except Office.DoesNotExist:
+
+        # Adding new office
+        #    in MRR all the offices are "civic" except for Vestal Virgin
+        parent = Office.objects.get(name='Civic Offices')
+        office = Office(name=oname, parent = parent)
+        office.save()
+
+        print 'Added Office: %s (id=%i)' % (office.name, office.id)
+
+    return office

@@ -15,12 +15,22 @@ from django.core.urlresolvers import reverse
 from author.decorators import with_author
 
 @with_author
+class DateType(TimeStampedModel):
+    name = models.CharField(max_length=256, unique=True)
+    description = models.CharField(max_length=1024, blank=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+
+@with_author
 class SecondarySource(TimeStampedModel):
 
     name = models.CharField(max_length=256, unique=True)
-
-    abbrev_name = models.CharField(max_length=256, unique=True,
-                                   blank=True)
+    abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
     biblio = models.CharField(max_length=512, unique=True, blank=True)
 
     def __unicode__(self):
@@ -194,6 +204,20 @@ class Person(TimeStampedModel):
     extra_info = models.TextField(blank=True)
     extra_info.help_text = "Extra info about the person."
 
+    # dates
+    date_display_text = models.CharField(max_length=1024, blank=True, null=True)
+    date_source_text = models.CharField(max_length=1024, blank=True, null=True)
+    date_secondary_source = models.ForeignKey(SecondarySource, blank=True, null=True)
+
+    date_first = models.IntegerField(blank=True, null=True)
+    date_first_type = models.ForeignKey(DateType, blank=True, null=True, related_name='person_first')
+
+    date_last = models.IntegerField(blank=True, null=True)
+    date_last_type = models.ForeignKey(DateType, blank=True, null=True, related_name='person_last')
+
+    era_from = models.IntegerField(blank=True, null=True)
+    era_to = models.IntegerField(blank=True, null=True)
+
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Person needs manual revision."
 
@@ -245,7 +269,6 @@ class Person(TimeStampedModel):
 
     class Meta:
         ordering = ['id',]
-
 
 @with_author
 class Office(MPTTModel, TimeStampedModel):
@@ -319,6 +342,10 @@ class Post(TimeStampedModel):
     # ... eg. cases like Broughton's "Augur or Pontifex"
     uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
 
+    # date information
+    date_year = models.IntegerField(blank=True, null=False)
+    date_info = models.CharField(max_length=1024, blank=True, null=True)
+
     class Meta:
         ordering = ['id',]
 
@@ -331,21 +358,16 @@ class Post(TimeStampedModel):
 
     get_persons.short_description = "Persons"
 
-    def get_dates(self):
-        dates = ' '.join([unicode(date) for date in self.dates.all()])
-        return dates.strip()
 
-    get_dates.short_description = 'Dates'
+    def print_date(self):
+        if self.date_year < 0:
+            return str(abs(self.date_year)) + " B.C."
+        else:
+            return str(self.date_year) + " A.D."
+
 
     def __unicode__(self):
-        name = ""
-
-        if self.office != None:
-            name = self.office.name
-
-        if len(self.dates.all()) > 0:
-            name = name + " " + self.get_dates() + " "
-
+        name = self.office.name + " " + self.print_date()
         return name
 
     def related_label(self):
@@ -369,7 +391,22 @@ class PostAssertion(TimeStampedModel):
     notes = models.ManyToManyField(PostAssertionNote, blank=True)
 
     # position field
+    # used to set order in inline position
     position = models.PositiveSmallIntegerField(default=0)
+
+    # date information
+    date_start = models.IntegerField(blank=True, null=True)
+    date_start_uncertain = models.BooleanField(default=False)
+
+    date_end = models.IntegerField(blank=True, null=True)
+    date_end_uncertain = models.BooleanField(default=False)
+
+    date_display_text = models.CharField(max_length=1024, blank=True, null=True)
+    date_source_text = models.CharField(max_length=1024, blank=True, null=True)
+    date_secondary_source = models.ForeignKey(SecondarySource, blank=True, null=True, related_name = 'postassertion_date_secondary_source')
+
+    review_flag = models.BooleanField(verbose_name="Review needed", default=False)
+    review_flag.help_text = "Manual revision needed."
 
     class Meta:
         ordering = ['position', 'id']
@@ -379,103 +416,9 @@ class PostAssertion(TimeStampedModel):
         name = name + " (" + self.secondary_source.abbrev_name + ")"
         return name
 
-    def get_dates(self):
-        dates = ' '.join([unicode(date) for date in self.dates.all()])
-        return dates
 
 
-class IntegerRangeField(models.IntegerField):
-    def __init__(self,
-                 verbose_name=None,
-                 name=None,
-                 min_value=None,
-                 max_value=None,
-                 **kwargs):
-
-        (self.min_value, self.max_value) = (min_value, max_value)
-        models.IntegerField.__init__(self, verbose_name, name, **kwargs)
-
-    def formfield(self, **kwargs):
-        defaults = {'min_value': self.min_value,
-                    'max_value': self.max_value}
-        defaults.update(kwargs)
-        return super(IntegerRangeField, self).formfield(**defaults)
 
 
-from south.modelsinspector import add_introspection_rules
-add_introspection_rules([], ["^promrep\.models\.IntegerRangeField"])
-
-class DateType(models.Model):
-
-    name = models.CharField(max_length=32)
-    created = models.DateTimeField(auto_now_add=True, editable=False)
-    modified = models.DateTimeField(auto_now=True, auto_now_add=True,
-                                    editable=False)
-
-    class Meta:
-
-        ordering = ['name']
-
-    def __unicode__(self):
-        return u'%s' % self.name
 
 
-class Date(models.Model):
-
-    DATE_SINGLE = 0
-    DATE_MIN = 1
-    DATE_MAX = 2
-    DATE_BY = 3
-
-    DATE_INTERVAL_CHOICES = (
-        (DATE_SINGLE, 'on'),
-        (DATE_MIN, 'after'),
-        (DATE_MAX, 'before'),
-        (DATE_BY, 'by'),
-    )
-
-    date_type = models.ForeignKey(DateType, blank=True, null=True)
-    interval = models.SmallIntegerField(choices=DATE_INTERVAL_CHOICES, default=DATE_SINGLE)
-
-    year = IntegerRangeField(min_value=-600, max_value=100, blank=True, null=False)
-    year_uncertain = models.BooleanField(verbose_name='uncertain', default=False)
-
-    circa = models.BooleanField(default=False)
-    extra_info = models.TextField(blank=True, null=True)
-    created = models.DateTimeField(auto_now_add=True, editable=False)
-    modified = models.DateTimeField(auto_now=True, auto_now_add=True, editable=False)
-
-    def __unicode__(self):
-
-        if self.year < 0:
-            bc_ad = "BC"
-        else:
-            bc_ad = "AD"
-
-        if self.year_uncertain:
-            uncertain = "?"
-        else:
-            uncertain = ""
-
-        date_str = u'%s %s%s %s'.strip() % (self.date_type or '', uncertain, abs(self.year), bc_ad)
-
-        if self.circa == True:
-            date_str = "ca. " + date_str
-
-        return date_str
-
-    class Meta:
-        abstract = True
-
-
-@with_author
-class PostDate(Date):
-    post = models.ForeignKey(Post, related_name="dates", related_query_name="date", blank=True, null=True)
-
-@with_author
-class PostAssertionDate(Date):
-    post_assertion = models.ForeignKey(PostAssertion, related_name="dates", related_query_name="date", blank=True, null=True)
-
-@with_author
-class PersonDate(Date):
-    person = models.ForeignKey(Person, related_name="dates", related_query_name="date", blank=True, null=True)

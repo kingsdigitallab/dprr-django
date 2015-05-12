@@ -15,48 +15,10 @@ from promrep.forms import PostInlineForm
 
 from models import Person, Office, Praenomen, PostAssertion, \
     Post, RoleType, DateType, SecondarySource, Gens, PostNote, \
-    PostAssertionNote, Tribe, PostDate, PersonDate, PostAssertionDate, \
-    Location
+    PostAssertionNote, Tribe, Location
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
-admin.site.register(PostDate)
-
-
-# Date Inline Admin
-class DateInline(admin.StackedInline):
-    classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-closed',)
-
-    readonly_fields = ('id', )
-    fields = (['id', 'date_type'], ['interval', 'year', ], ['circa', 'year_uncertain', ], 'extra_info')
-    extra = 0
-
-    show_change_link = True
-
-
-class PostDateInline(DateInline):
-    verbose_name = 'Post Date'
-    verbose_name_plural = 'Post Dates'
-
-    model = PostDate
-
-
-class PostAssertionDateInline(DateInline):
-    verbose_name = 'Post Person Date'
-    verbose_name_plural = 'Post Person Dates'
-
-    model = PostAssertionDate
-
-    extra = 0
-
-
-class PersonDateInline(DateInline):
-    verbose_name = 'Person Date'
-    verbose_name_plural = 'Person Dates'
-
-    model = PersonDate
-
 
 class PostAssertionNoteInline(admin.StackedInline):
     model = PostAssertion.notes.through
@@ -75,40 +37,32 @@ class PostAssertionNoteInline(admin.StackedInline):
     }
 
 
-class PostAssertionDateAdmin(admin.ModelAdmin):
-    model = PostAssertionDate
-    list_display = ('id', 'year', 'created_by', 'created', 'modified')
-
-    readonly_fields = ('id', )
-
-    fields = (['id',],
-            ['interval', 'year', ],
-            ['circa', 'year_uncertain', ],
-            ['post_assertion', ],
-             )
-
-    raw_id_fields = ('post_assertion', )
-    related_lookup_fields = {
-         'fk': ['post_assertion', ],
-    }
-
-admin.site.register(PostAssertionDate, PostAssertionDateAdmin)
-
-
-
 class PostAssertionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'post', 'person', 'secondary_source', 'created_by', 'created', 'modified')
+    list_display = ('id', 'post', 'person',
+                    'date_start', 'date_end', 'secondary_source', 'review_flag',
+                    'created_by', 'created', 'modified')
 
     readonly_fields = ('id', )
 
     fieldsets = [
-            ('Database Info', {'fields': [('id')]}),
+            ('Database Info',
+                {'fields': [('id', 'review_flag'), ]}),
             ('', {'fields':
-             ['person',
-             'post',
-             ('role', 'uncertain'),
-             ('original_text', 'office_xref'),
-             ]}),]
+                    [
+                        'person',
+                        'post',
+                        ('role', 'uncertain'),
+                        ('original_text', 'office_xref'),
+                    ],
+                }
+                ),
+            ('Dates', {'fields': [
+                        ('date_display_text'),
+                        ('date_source_text', 'date_secondary_source'),
+                        ('date_start', 'date_start_uncertain'),
+                        ('date_end', 'date_end_uncertain')
+                     ]})
+            ]
 
     raw_id_fields = ('post', 'person',  )
 
@@ -116,7 +70,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
          'fk': ['post', 'person'],
     }
 
-    inlines = (PostAssertionDateInline, PostAssertionNoteInline, )
+    inlines = (PostAssertionNoteInline, )
 
 admin.site.register(PostAssertion, PostAssertionAdmin)
 
@@ -176,18 +130,21 @@ class PersonInline(admin.StackedInline):
 
     show_change_link = True
 
-    fields = (['id', 'position'] ,
-              'dates_list',
-              ['person',],
-              ['role', 'uncertain'],
-              ['secondary_source', 'original_text', 'office_xref'],
-              'notes',
-              'edit_link'
-              )
+    fields = (
+        ['id', 'review_flag', 'position'] ,
+        ['person',],
+        ['role', 'uncertain'],
+        ['secondary_source', 'original_text', 'office_xref'],
+        ['date_display_text', ],
+        ['date_source_text', 'date_secondary_source', ],
+        ['date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'],
+        'notes',
+        'edit_link'
+    )
 
     sortable_field_name = 'position'
 
-    readonly_fields = ('id', 'dates_list', )
+    readonly_fields = ('id', )
 
     raw_id_fields = ('person', 'notes')
     related_lookup_fields = {
@@ -196,20 +153,6 @@ class PersonInline(admin.StackedInline):
     }
 
     extra = 0
-
-    def dates_list(self, obj):
-        dates = obj.dates.all()
-
-        if dates.count() == 0:
-            return '(None)'
-
-        date_links = []
-
-        for date in dates:
-            change_url = urlresolvers.reverse('admin:promrep_postassertiondate_change', args=(date.id,))
-            date_links.append('<a href="%s">%s</a>' % (change_url, unicode(date)))
-
-        return format_html(', '.join(date_links))
 
 
 class PostAssertionInline(admin.StackedInline):
@@ -226,14 +169,18 @@ class PostAssertionInline(admin.StackedInline):
 
     show_change_link = True
 
-    readonly_fields = ('id', 'dates_list', )
+    ordering = ('-date_start', '-date_end', )
 
-    fields = (['id'] ,
-            'dates_list',
+    readonly_fields = ('id', )
+
+    fields = (['id', 'review_flag', ] ,
             ['post',],
             ['role', 'uncertain'],
             ['secondary_source', ],
             ['original_text', 'office_xref'],
+            'date_display_text',
+            ['date_source_text', 'date_secondary_source', ],
+            ['date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'],
             'notes',
             'edit_link',
             )
@@ -244,24 +191,6 @@ class PostAssertionInline(admin.StackedInline):
         'fk': ['post', ],
         'm2m': ['notes', ],
     }
-
-    def dates_list(self, obj):
-        dates = obj.dates.all()
-
-        if dates.count() == 0:
-            return '(None)'
-
-        date_links = []
-
-        for date in dates:
-            change_url = urlresolvers.reverse('admin:promrep_postassertiondate_change', args=(date.id,))
-            date_links.append('<a href="%s">%s</a>' % (change_url, unicode(date)))
-
-        return format_html(', '.join(date_links))
-
-    dates_list.allow_tags = True
-    dates_list.short_description = 'Date(s)'
-
 
 
 class REUpdatedListFilter(SimpleListFilter):
@@ -288,10 +217,10 @@ class PostYearListFilter(SimpleListFilter):
 
     def lookups(self, request, model_admin):
         lookup = []
-        years = Post.objects.all().values('date__year').distinct()
+        years = Post.objects.all().values('date_year').distinct()
 
         for year in years:
-            item = (year['date__year'], year['date__year'])
+            item = (year['date_year'], year['date_year'])
             if item not in lookup:
                 lookup.append(item)
 
@@ -328,7 +257,15 @@ class PersonAdmin(admin.ModelAdmin):
                     ('re_number', 're_number_old', ),
                 ]}
             ),
-
+        ('Dates', {
+            'classes': ('grp-collapse grp-open',),
+            'fields': [
+                ('date_display_text'),
+                ('date_source_text', 'date_secondary_source'),
+                ('date_first', 'date_first_type'),
+                ('date_last', 'date_last_type'),
+                ('era_from', 'era_to'),
+        ]}),
         ('Patrician', {
             'classes': ('grp-collapse grp-open',),
             'fields': [('patrician', 'patrician_uncertain'),
@@ -366,7 +303,7 @@ class PersonAdmin(admin.ModelAdmin):
                    'review_flag', REUpdatedListFilter, 'patrician', 'novus',
                    'nobilis', 'eques', )
 
-    inlines = (PersonDateInline, PostAssertionInline, )
+    inlines = (PostAssertionInline, )
     exclude = ('assertions', )
 
 admin.site.register(Person, PersonAdmin)
@@ -404,14 +341,15 @@ class PostAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'office',
+        'date_year',
+        'date_info',
         'location',
-        'get_dates',
         'uncertain',
         'modified',
         'created',
     )
 
-    readonly_fields = ('id', 'get_dates', )
+    readonly_fields = ('id', )
     list_display_links = ('id', 'uncertain', 'office', )
 
     raw_id_fields = ('office', 'location')
@@ -424,13 +362,14 @@ class PostAdmin(admin.ModelAdmin):
                         {
                         'fields': [
                                 ( 'office', 'uncertain', ),
+                                ('date_year', 'date_info', ),
                                 ('location', )
                                 ],
                         }
                     ),
             ]
 
-    inlines = [PostDateInline, PersonInline, PostNoteInline, ]
+    inlines = [PersonInline, PostNoteInline, ]
     exclude = ('persons',  )
 
 admin.site.register(Post, PostAdmin)

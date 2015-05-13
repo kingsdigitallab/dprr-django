@@ -10,19 +10,28 @@ from promrep.scripts.offices_ref import OFFICE_NAMES_DIC
 import os
 
 def run():
-    ifname = 'promrep/scripts/data/MRRAppendix2v8.csv'
+    for vol in ['mrr2_a2', 'mrr2_a3']:
+        processCSV(vol)
+
+def processCSV(volume):
+
+    sdict = {
+        'mrr2_a2': ['Broughton MRR2 Appendix 2', 'promrep/scripts/data/MRRAppendix2v8.csv'],
+        'mrr2_a3': ['Broughton MRR2 Appendix 3', 'promrep/scripts/data/MRRAppendix3v7.csv']
+    }
+
+    source = SecondarySource.objects.get( abbrev_name = sdict[volume][0] )
+    ifname = sdict[volume][1]
+
+    print 'Will read', source, 'from file', ifname, '\n\n'
+
     log_fname = os.path.splitext(os.path.basename(ifname))[0] + '.log'
 
     ifile = open(ifname, 'rU')
     reader = csv.reader(ifile, delimiter=';', skipinitialspace=True)
 
-    # skipt first line
+    # skip header line
     reader.next()
-
-    total = 0
-    found = 0
-
-    source = SecondarySource.objects.get(abbrev_name="Broughton MRR2 Appendix 2")
 
     with open(log_fname, 'wb') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -39,6 +48,11 @@ def run():
             ##### print  praenomen_str, nomen, filiation, tribe, re, cognomen
 
             print office_name, date_start, date_end
+
+            post_assertion_uncertain = False
+            if "?" in office_name:
+                office_name = office_name.strip("?")
+                post_assertion_uncertain = True
 
             office_obj = aux.get_office_obj(office_name)
 
@@ -100,7 +114,7 @@ def run():
                             tribe_obj = Tribe.objects.get(abbrev = tribe + ".")
                             person.tribe = tribe_obj
                     except Exception as e:
-                        print "ERROR getting tribe", e
+                        print "ERROR getting tribe", tribe, e
 
                 person.save()
 
@@ -115,6 +129,7 @@ def run():
                 date_start_uncertain=date_start_uncertain,
                 date_end_uncertain=date_end_uncertain,
                 original_text = original_name,
+                uncertain = post_assertion_uncertain
             )
 
             if date_end:

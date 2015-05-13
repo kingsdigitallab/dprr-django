@@ -295,7 +295,6 @@ def get_office_obj(office_name):
     try:
         oname = OFFICE_NAMES_DIC[office_name]
     except:
-        print "WARNING: Unable to normalize office name: '%s'" %(office_name,)
         oname = office_name
 
     try:

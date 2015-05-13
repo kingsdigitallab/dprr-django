@@ -45,7 +45,7 @@
     }
 },
 {
-    "pk": 5,
+    "pk": 6,
     "model": "promrep.secondarysource",
     "fields": {
         "biblio": "",

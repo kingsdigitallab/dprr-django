@@ -7,8 +7,13 @@ from promrep.models import Praenomen, Person, SecondarySource, PostAssertion, Of
 import parsing_aux as aux
 from promrep.scripts.offices_ref import OFFICE_NAMES_DIC
 
+import os
+
 def run():
-    ifile = open('promrep/scripts/data/MRRAppendix2v8.csv', 'rU')
+    ifname = 'promrep/scripts/data/MRRAppendix2v8.csv'
+    log_fname = os.path.splitext(os.path.basename(ifname))[0] + '.log'
+
+    ifile = open(ifname, 'rU')
     reader = csv.reader(ifile, delimiter=';', skipinitialspace=True)
 
     # skipt first line
@@ -19,7 +24,10 @@ def run():
 
     source = SecondarySource.objects.get(abbrev_name="Broughton MRR2 Appendix 2")
 
-    with open('mrr2_appendix_data.csv', 'wb') as csvfile:
+    with open(log_fname, 'wb') as csvfile:
+        spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        spamwriter.writerow(('original_name', 'created', 'person.id', 'post.id', 'post_assertion.id,' 'ap_note.id'))
+
         for original_row in reader:
             # Page  Review Later    Office  Revised Date Format Uncertain Date  Praenomen   Nomen   Filiation   Tribe   RE  Cognomen    Notes
             row = [a.strip() for a in original_row]
@@ -123,7 +131,9 @@ def run():
                 ap_note.save()
                 post_assertion.notes.add(ap_note)
 
+            spamwriter.writerow((original_name, created, person.id, post.id, post_assertion.id, ap_note.id))
 
+    print "Wrote", log_fname
 
 
 

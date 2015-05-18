@@ -77,34 +77,6 @@ def parse_post_assertion_date(ap_date_info, post_year):
     return obj
 
 
-def get_office_obj(office_name):
-    """given a string, returns an office object"""
-
-    # convert to lowercase
-    office_name = office_name.lower()
-
-    # tries to get the normalized office name from the
-    try:
-        oname = OFFICE_NAMES_DIC[office_name]
-    except:
-        print "WARNING: Unable to normalize office name: '%s'" %(office_name,)
-        oname = office_name
-
-    try:
-        office = Office.objects.get(name=oname)
-    except Office.DoesNotExist:
-
-        # Adding new office
-        #    in MRR all the offices are "civic" except for Vestal Virgin
-        parent = Office.objects.get(name='Civic Offices')
-        office = Office(name=oname, parent = parent)
-        office.save()
-
-        print 'Added Office: %s (id=%i)' % (office.name, office.id)
-
-    return office
-
-
 def run():
     #  for vol in ['mrr1', ]:
     for vol in ['mrr1', 'mrr2']:
@@ -156,12 +128,12 @@ def processXML(volume):
                 assertion_uncertain = True
 
             # get office using office name
-            office_obj = get_office_obj(office_name)
+            office_obj = aux.get_office_obj(office_name)
 
             #  every time a note is found, it is associated with all the post_assertions in the list
             person_ref_queue = []
 
-            assertion = Post.objects.create(office=office_obj, date_info = year['name'].strip(), date_year = -int(year_str))
+            assertion = Post.objects.create(date_info = year['name'].strip(), date_year = -int(year_str))
 
             # all these notes will be added to the individual PostAssertions
             assertion_notes_queue = []
@@ -285,6 +257,7 @@ def processXML(volume):
 
                         # TODO: stop creating repeated assertions
                         post_assertion, created = PostAssertion.objects.get_or_create(
+                            office=office_obj,
                             role=RoleType.objects.get(name='Holder'),
                             post=assertion,
                             secondary_source=source,

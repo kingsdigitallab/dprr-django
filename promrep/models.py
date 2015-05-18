@@ -279,8 +279,8 @@ class Office(MPTTModel, TimeStampedModel):
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
 
     class Meta:
-        verbose_name_plural = 'Office List'
-        verbose_name = 'Office List'
+        verbose_name_plural = 'Office'
+        verbose_name = 'Office'
         ordering = ['tree_id', 'lft', 'name']
 
     class MPTTMeta:
@@ -329,13 +329,7 @@ class Location(TimeStampedModel):
 @with_author
 class Post(TimeStampedModel):
     persons = models.ManyToManyField(Person, through='PostAssertion')
-
-    # should these be combined into a single tree
-    office = models.ForeignKey(Office, blank=True, null=True)
-
-    location = models.ForeignKey(Location, blank=True, null=True)
     notes = models.ManyToManyField(PostNote, related_name="posts", blank=True)
-
     display_text = models.CharField(max_length=1024, blank=True)
 
     # if we are uncertain about an assertion
@@ -343,7 +337,7 @@ class Post(TimeStampedModel):
     uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
 
     # date information
-    date_year = models.IntegerField(blank=True, null=False)
+    date_year = models.IntegerField(blank=True, null=True)
     date_info = models.CharField(max_length=1024, blank=True, null=True)
 
     class Meta:
@@ -358,16 +352,17 @@ class Post(TimeStampedModel):
 
     get_persons.short_description = "Persons"
 
-
     def print_date(self):
-        if self.date_year < 0:
-            return str(abs(self.date_year)) + " B.C."
+        if self.date_year:
+            if self.date_year < 0:
+                return str(abs(self.date_year)) + " B.C."
+            else:
+                return str(self.date_year) + " A.D."
         else:
-            return str(self.date_year) + " A.D."
-
+            return ""
 
     def __unicode__(self):
-        name = self.office.name + " " + self.print_date()
+        name = 'PostName'
         return name
 
     def related_label(self):
@@ -379,8 +374,11 @@ class Post(TimeStampedModel):
 @with_author
 class PostAssertion(TimeStampedModel):
     person = models.ForeignKey(Person)
-    post = models.ForeignKey(Post)
+    post = models.ForeignKey(Post, blank=True, null=True)
     secondary_source = models.ForeignKey(SecondarySource)
+
+    office = models.ForeignKey(Office, blank=True, null=True)
+    location = models.ForeignKey(Location, blank=True, null=True)
 
     role = models.ForeignKey(RoleType, default=1)
     original_text = models.CharField(max_length=1024, blank=True)
@@ -412,7 +410,7 @@ class PostAssertion(TimeStampedModel):
         ordering = ['position', 'id']
 
     def __unicode__(self):
-        name = str(self.person.__unicode__()) + ": " + str(self.post.__unicode__())
+        name = str(self.person.__unicode__()) + ": " + self.office.__unicode__()
         name = name + " (" + self.secondary_source.abbrev_name + ")"
         return name
 

@@ -21,13 +21,40 @@
     "pk": 3,
     "model": "promrep.secondarysource",
     "fields": {
+        "biblio": "T. Robert S. Broughton: The Magistrates of the Roman Republic, Vol. II Appendix 2. Published by the American Philological Association. New York 1952.",
+        "name": "Broughton MRR Volume 2 Appendix 2",
+        "abbrev_name": "Broughton MRR2 Appendix 2"
+    }
+},
+{
+    "pk": 4,
+    "model": "promrep.secondarysource",
+    "fields": {
+        "biblio": "T. Robert S. Broughton: The Magistrates of the Roman Republic, Vol. II Appendix 3. Published by the American Philological Association. New York 1952.",
+        "name": "Broughton MRR Volume 2 Appendix 3",
+        "abbrev_name": "Broughton MRR2 Appendix 3"
+    }
+},
+{
+    "pk": 5,
+    "model": "promrep.secondarysource",
+    "fields": {
+        "biblio": "T. Robert S. Broughton: The Magistrates of the Roman Republic, Vol. III. Published by the American Philological Association. New York 1952.",
+        "name": "Broughton MRR Volume 3",
+        "abbrev_name": "Broughton MRR3"
+    }
+},
+{
+    "pk": 6,
+    "model": "promrep.secondarysource",
+    "fields": {
         "biblio": "",
         "name": "Badian Consuls",
         "abbrev_name": "Badian Consuls"
     }
 },
 {
-    "pk": 4,
+    "pk": 7,
     "model": "promrep.secondarysource",
     "fields": {
         "biblio": "T. Corey Brennan, The Praetorship in the Roman Republic. 2 Vols.   Oxford:  Oxford University Press, 2000.  ISBN 0-19-511459-0.  ISBN 0-19-511460-4.",

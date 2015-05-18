@@ -20,6 +20,7 @@ from models import Person, Office, Praenomen, PostAssertion, \
 admin.site.register(DateType)
 admin.site.register(RoleType)
 
+
 class PostAssertionNoteInline(admin.StackedInline):
     model = PostAssertion.notes.through
     extra = 0
@@ -38,9 +39,12 @@ class PostAssertionNoteInline(admin.StackedInline):
 
 
 class PostAssertionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'post', 'person',
+    list_display = ('id', 'office', 'person',
                     'date_start', 'date_end', 'secondary_source', 'review_flag',
                     'created_by', 'created', 'modified')
+
+    list_filter = ('role', 'office', )
+
 
     readonly_fields = ('id', )
 
@@ -50,7 +54,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
             ('', {'fields':
                     [
                         'person',
-                        'post',
+                        'office', 'location',
                         ('role', 'uncertain'),
                         ('original_text', 'office_xref'),
                     ],
@@ -64,10 +68,10 @@ class PostAssertionAdmin(admin.ModelAdmin):
                      ]})
             ]
 
-    raw_id_fields = ('post', 'person',  )
+    raw_id_fields = ('post', 'person', 'office', 'location')
 
     related_lookup_fields = {
-         'fk': ['post', 'person'],
+         'fk': ['post', 'person', 'office', 'location', ],
     }
 
     inlines = (PostAssertionNoteInline, )
@@ -299,7 +303,7 @@ class PersonAdmin(admin.ModelAdmin):
     search_fields = ['id', 'nomen', 'cognomen', 'praenomen__abbrev',
                     'praenomen__name', 'other_names', 're_number', ]
 
-    list_filter = ('postassertion__role', 'nomen', 'postassertion__post__office',
+    list_filter = ('postassertion__role', 'nomen', 'postassertion__office',
                    'review_flag', REUpdatedListFilter, 'patrician', 'novus',
                    'nobilis', 'eques', )
 
@@ -328,42 +332,32 @@ class OfficeAdmin(DjangoMpttAdmin):
         'description',
         )
 
-    inlines = (PostInline, )
-
 admin.site.register(Office, OfficeAdmin)
 
 
 class PostAdmin(admin.ModelAdmin):
 
-    search_fields = ['id', 'postassertion__person__nomen', 'postassertion__person__cognomen', ]
-    list_filter = (PostYearListFilter, 'office')
+    search_fields = ['id', 'postassertion__person__nomen', 'postassertion__person__cognomen', 'postassertion__office']
+    list_filter = (PostYearListFilter, )
 
     list_display = (
         'id',
-        'office',
         'date_year',
         'date_info',
-        'location',
         'uncertain',
         'modified',
         'created',
     )
 
     readonly_fields = ('id', )
-    list_display_links = ('id', 'uncertain', 'office', )
-
-    raw_id_fields = ('office', 'location')
-    autocomplete_lookup_fields = {
-        'fk': ['office', 'location', ],
-    }
+    list_display_links = ('id', 'uncertain', )
 
     fieldsets = [ ('Database Info', {'fields': ['id']}),
-                    ('Post',
+                    ( '' ,
                         {
                         'fields': [
-                                ( 'office', 'uncertain', ),
+                                ( 'uncertain', ),
                                 ('date_year', 'date_info', ),
-                                ('location', )
                                 ],
                         }
                     ),

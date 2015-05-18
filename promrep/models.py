@@ -424,8 +424,6 @@ class PostAssertion(TimeStampedModel):
 
         if self.date_display_text:
             date_str = self.date_display_text
-        elif self.date_source_text:
-            date_str = self.date_source_text
         else:
             date_str = " - ".join(str(abs(item)) for item in [self.date_start, self.date_end] if item)
 

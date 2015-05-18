@@ -138,7 +138,8 @@ class PersonInline(admin.StackedInline):
     fields = (
         ['id', 'review_flag', 'position'] ,
         ['person',],
-        ['role', 'uncertain'],
+        ['office', 'role',],
+        ['uncertain'],
         ['secondary_source', 'original_text', 'office_xref'],
         ['date_display_text', ],
         ['date_source_text', 'date_secondary_source', ],
@@ -169,8 +170,8 @@ class PostAssertionInline(admin.StackedInline):
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-closed',)
 
-    verbose_name = 'Post'
-    verbose_name_plural = 'Person Posts'
+    verbose_name = 'Post Assertion'
+    verbose_name_plural = 'Person Post Assertions'
 
     show_change_link = True
 
@@ -179,9 +180,10 @@ class PostAssertionInline(admin.StackedInline):
     readonly_fields = ('id', )
 
     fields = (['id', 'review_flag', ] ,
-            ['post',],
-            ['role', 'uncertain'],
+            ['office', 'role'],
+            ['uncertain', ],
             ['secondary_source', ],
+            ['post',],
             ['original_text', 'office_xref'],
             'date_display_text',
             ['date_source_text', 'date_secondary_source', ],

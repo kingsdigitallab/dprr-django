@@ -201,27 +201,6 @@ class REUpdatedListFilter(SimpleListFilter):
             return queryset.filter(re_number_old__exact='')
 
 
-class PostYearListFilter(SimpleListFilter):
-    title = 'post year'
-    parameter_name = 'year'
-
-    def lookups(self, request, model_admin):
-        lookup = []
-        years = Post.objects.all().values('date_year').distinct()
-
-        for year in years:
-            item = (year['date_year'], year['date_year'])
-            if item not in lookup:
-                lookup.append(item)
-
-        return sorted(lookup)
-
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(date__year__exact=self.value())
-
-
 class PersonAdmin(admin.ModelAdmin):
 
     fieldsets = [
@@ -324,7 +303,6 @@ admin.site.register(Office, OfficeAdmin)
 class GroupAdmin(admin.ModelAdmin):
 
     search_fields = ['id', 'postassertion__person__nomen', 'postassertion__person__cognomen', 'postassertion__office']
-    list_filter = (PostYearListFilter, )
 
     list_display = (
         'id',

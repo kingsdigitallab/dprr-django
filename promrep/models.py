@@ -355,8 +355,13 @@ class Group(TimeStampedModel):
             return ""
 
     def __unicode__(self):
-        name = 'PostName'
-        return name
+        members = str(self.persons.count())
+        office_list = Office.objects.filter(postassertion__group = Group.objects.first()).distinct().values_list('name', flat=True)
+
+        offices = "; ".join(office_list)
+
+        return "Group: {0} members; Office: {1} ({2})".format(members, offices, self.date_info)
+
 
     def related_label(self):
         url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.module_name), args=[self.id])

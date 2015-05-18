@@ -410,9 +410,32 @@ class PostAssertion(TimeStampedModel):
         ordering = ['position', 'id']
 
     def __unicode__(self):
-        name = str(self.person.__unicode__()) + ": " + self.office.__unicode__()
+
+        off = "No office"
+        if self.office:
+            off = self.office.__unicode__()
+
+        name = str(self.person.__unicode__()) + ": " + off + " " + self.print_date()
         name = name + " (" + self.secondary_source.abbrev_name + ")"
         return name
+
+    def print_date(self):
+        date_str = ""
+
+        if self.date_display_text:
+            date_str = self.date_display_text
+        elif self.date_source_text:
+            date_str = self.date_source_text
+        else:
+            date_str = " - ".join(str(abs(item)) for item in [self.date_start, self.date_end] if item)
+
+            if date_str == "":
+                date_str = "[No date info]"
+            else:
+                date_str = date_str + " B.C."
+
+
+        return date_str
 
 
 

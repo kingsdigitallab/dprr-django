@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import csv
-from promrep.models import Praenomen, Person, SecondarySource, PostAssertion, Office, Post, RoleType, Tribe, PostAssertionNote
+from promrep.models import Praenomen, Person, SecondarySource, PostAssertion, Office, RoleType, Tribe, PostAssertionNote, Location
 
 import parsing_aux as aux
 from promrep.scripts.offices_ref import OFFICE_NAMES_DIC
@@ -35,7 +35,7 @@ def processCSV(volume):
 
     with open(log_fname, 'wb') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        spamwriter.writerow(('original_name', 'created', 'person.id', 'post.id', 'post_assertion.id,' 'ap_note.id'))
+        spamwriter.writerow(('original_name', 'created', 'person.id', 'post_assertion.id,' 'ap_note.id'))
 
         for original_row in reader:
             # Page  Review Later    Office  Revised Date Format Uncertain Date  Praenomen   Nomen   Filiation   Tribe   RE  Cognomen    Notes
@@ -54,14 +54,13 @@ def processCSV(volume):
                 office_name = office_name.strip("?")
                 post_assertion_uncertain = True
 
-            office_obj = aux.get_office_obj(office_name)
+            location = False
 
-            # using the date_end as the date for posts
-            # creating indivivual posts
-            post = Post.objects.create(office=office_obj)
-            if date_end:
-                post.date_end = int(date_end)
-                post.save()
+            if "- Sicily" in office_name:
+                office_name = office_name.strip("- Sicily")
+                location, created = Location.objects.get_or_create(name = "Sicily", location_type=2)
+
+            office_obj = aux.get_office_obj(office_name)
 
             if re:
                 re_str = "(" + re + ")"
@@ -120,8 +119,8 @@ def processCSV(volume):
 
             # creates the PostAssertion
             post_assertion = PostAssertion.objects.create(
+                office=office_obj,
                 role=RoleType.objects.get(name='Holder'),
-                post=post,
                 secondary_source=source,
                 person=person,
                 review_flag=review_later,
@@ -138,6 +137,9 @@ def processCSV(volume):
                 post_assertion.date_start = date_start
             if date_source_text:
                 post_assertion.date_secondary_source = source
+            if location:
+                post_assertion.location = location
+
 
             post_assertion.save()
 
@@ -147,7 +149,7 @@ def processCSV(volume):
                 ap_note.save()
                 post_assertion.notes.add(ap_note)
 
-            spamwriter.writerow((original_name, created, person.id, post.id, post_assertion.id, ap_note.id))
+            spamwriter.writerow((original_name, created, person.id, post_assertion.id, ap_note.id))
 
     print "Wrote", log_fname
 

@@ -133,7 +133,7 @@ def processXML(volume):
             #  every time a note is found, it is associated with all the post_assertions in the list
             person_ref_queue = []
 
-            assertion = Post.objects.create(office=office_obj, date_info = year['name'].strip(), date_year = -int(year_str))
+            assertion = Post.objects.create(date_info = year['name'].strip(), date_year = -int(year_str))
 
             # all these notes will be added to the individual PostAssertions
             assertion_notes_queue = []
@@ -257,6 +257,7 @@ def processXML(volume):
 
                         # TODO: stop creating repeated assertions
                         post_assertion, created = PostAssertion.objects.get_or_create(
+                            office=office_obj,
                             role=RoleType.objects.get(name='Holder'),
                             post=assertion,
                             secondary_source=source,

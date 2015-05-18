@@ -81,8 +81,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['tree_id', 'lft', 'name'],
-                'verbose_name': 'Office List',
-                'verbose_name_plural': 'Office List',
+                'verbose_name': 'Office',
+                'verbose_name_plural': 'Office',
             },
             bases=(models.Model,),
         ),
@@ -157,7 +157,6 @@ class Migration(migrations.Migration):
                 ('date_year', models.IntegerField(null=True, blank=True)),
                 ('date_info', models.CharField(max_length=1024, null=True, blank=True)),
                 ('created_by', models.ForeignKey(related_name='post_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('location', models.ForeignKey(blank=True, to='promrep.Location', null=True)),
             ],
             options={
                 'ordering': ['id'],
@@ -351,8 +350,20 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='postassertion',
+            name='location',
+            field=models.ForeignKey(blank=True, to='promrep.Location', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='postassertion',
             name='notes',
             field=models.ManyToManyField(to='promrep.PostAssertionNote', blank=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='postassertion',
+            name='office',
+            field=models.ForeignKey(blank=True, to='promrep.Office', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -364,7 +375,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='postassertion',
             name='post',
-            field=models.ForeignKey(to='promrep.Post'),
+            field=models.ForeignKey(blank=True, to='promrep.Post', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -389,12 +400,6 @@ class Migration(migrations.Migration):
             model_name='post',
             name='notes',
             field=models.ManyToManyField(related_name='posts', to='promrep.PostNote', blank=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='post',
-            name='office',
-            field=models.ForeignKey(blank=True, to='promrep.Office', null=True),
             preserve_default=True,
         ),
         migrations.AddField(

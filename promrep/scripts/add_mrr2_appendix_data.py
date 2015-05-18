@@ -142,6 +142,7 @@ def processCSV(volume):
             post_assertion.save()
 
             if note_text:
+                note_text = note_text.replace("**", ";").strip('"')
                 ap_note = PostAssertionNote(text = note_text, secondary_source=source)
                 ap_note.save()
                 post_assertion.notes.add(ap_note)

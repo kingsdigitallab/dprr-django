@@ -3,6 +3,7 @@
 
 # data import auxiliary functions
 from promrep.models import Person, Praenomen, Sex, Tribe, Office
+from promrep.scripts.offices_ref import OFFICE_NAMES_DIC
 
 import regex
 import logging

@@ -25,7 +25,8 @@ def run():
 
             for i, line in enumerate(ifile):
 
-                note_text = line.encode('utf-8')
+                note_text = line.encode('utf-8').replace("**", ";").strip('"')
+
                 print str(i) + ":" , note_text
 
                 note = PostAssertionNote.objects.create(text=note_text, secondary_source=source)

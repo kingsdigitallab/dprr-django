@@ -43,8 +43,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
                     'date_start', 'date_end', 'secondary_source', 'review_flag',
                     'created_by', 'created', 'modified')
 
-    list_filter = ('role', 'office', )
-
+    list_filter = ('role', 'office', 'secondary_source', )
 
     readonly_fields = ('id', )
 

@@ -14,7 +14,7 @@ from django.utils.html import format_html
 from promrep.forms import PostInlineForm
 
 from models import Person, Office, Praenomen, PostAssertion, \
-    Post, RoleType, DateType, SecondarySource, Gens, PostNote, \
+    Group, RoleType, DateType, SecondarySource, Gens, \
     PostAssertionNote, Tribe, Location
 
 admin.site.register(DateType)
@@ -69,30 +69,15 @@ class PostAssertionAdmin(admin.ModelAdmin):
                      ]})
             ]
 
-    raw_id_fields = ('post', 'person', 'office', 'location')
+    raw_id_fields = ('group', 'person', 'office', 'location')
 
     related_lookup_fields = {
-         'fk': ['post', 'person', 'office', 'location', ],
+         'fk': ['group', 'person', 'office', 'location', ],
     }
 
     inlines = (PostAssertionNoteInline, )
 
 admin.site.register(PostAssertion, PostAssertionAdmin)
-
-
-class PostNoteInline(admin.StackedInline):
-    model = Post.notes.through
-
-    classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-closed',)
-
-    extra = 0
-
-    verbose_name = 'Post Note'
-    verbose_name_plural = 'Post Notes'
-    raw_id_fields = ('postnote', )
-
-    readonly_fields = ('id', )
 
 
 class NoteAdmin(admin.ModelAdmin):
@@ -105,9 +90,7 @@ class NoteAdmin(admin.ModelAdmin):
 
     show_change_link = True
 
-
 admin.site.register(PostAssertionNote, NoteAdmin)
-admin.site.register(PostNote, NoteAdmin)
 
 
 class LocationAdmin(admin.ModelAdmin):
@@ -130,7 +113,7 @@ class PersonInline(admin.StackedInline):
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-closed',)
 
-    verbose_name_plural = 'Persons on this Post'
+    verbose_name_plural = 'Persons on this Group'
     verbose_name = 'Person:'
 
     show_change_link = True

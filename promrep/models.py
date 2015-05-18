@@ -137,9 +137,6 @@ class Note(TimeStampedModel):
     def __unicode__(self):
         return self.text.strip()
 
-@with_author
-class PostNote(Note):
-    pass
 
 @with_author
 class PostAssertionNote(Note):
@@ -317,7 +314,6 @@ class Location(TimeStampedModel):
     description = models.CharField(max_length=1024, blank=True)
     location_type = models.SmallIntegerField(choices=LOCATION_TYPE_CHOICES, default=LOCATION_PLACE)
 
-
     class Meta:
         verbose_name_plural = 'Place List'
         verbose_name = 'Places'
@@ -327,14 +323,11 @@ class Location(TimeStampedModel):
 
 
 @with_author
-class Post(TimeStampedModel):
+class Group(TimeStampedModel):
     persons = models.ManyToManyField(Person, through='PostAssertion')
-    notes = models.ManyToManyField(PostNote, related_name="posts", blank=True)
     display_text = models.CharField(max_length=1024, blank=True)
 
-    # if we are uncertain about an assertion
-    # ... eg. cases like Broughton's "Augur or Pontifex"
-    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
+    notes = models.TextField(blank=True)
 
     # date information
     date_year = models.IntegerField(blank=True, null=True)
@@ -374,10 +367,11 @@ class Post(TimeStampedModel):
 @with_author
 class PostAssertion(TimeStampedModel):
     person = models.ForeignKey(Person)
-    post = models.ForeignKey(Post, blank=True, null=True)
+    office = models.ForeignKey(Office)
+
+    group = models.ForeignKey(Group, blank=True, null=True)
     secondary_source = models.ForeignKey(SecondarySource)
 
-    office = models.ForeignKey(Office, blank=True, null=True)
     location = models.ForeignKey(Location, blank=True, null=True)
 
     role = models.ForeignKey(RoleType, default=1)

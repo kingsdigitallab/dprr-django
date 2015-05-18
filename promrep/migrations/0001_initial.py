@@ -46,6 +46,23 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
+            name='Group',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('display_text', models.CharField(max_length=1024, blank=True)),
+                ('notes', models.TextField(blank=True)),
+                ('date_year', models.IntegerField(null=True, blank=True)),
+                ('date_info', models.CharField(max_length=1024, null=True, blank=True)),
+                ('created_by', models.ForeignKey(related_name='group_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'ordering': ['id'],
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='Location',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -147,23 +164,6 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Post',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
-                ('display_text', models.CharField(max_length=1024, blank=True)),
-                ('uncertain', models.BooleanField(default=False, verbose_name=b'Uncertain')),
-                ('date_year', models.IntegerField(null=True, blank=True)),
-                ('date_info', models.CharField(max_length=1024, null=True, blank=True)),
-                ('created_by', models.ForeignKey(related_name='post_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-            ],
-            options={
-                'ordering': ['id'],
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
             name='PostAssertion',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -197,23 +197,6 @@ class Migration(migrations.Migration):
                 ('text', models.TextField(blank=True)),
                 ('extra_info', models.TextField(max_length=1024, blank=True)),
                 ('created_by', models.ForeignKey(related_name='postassertionnote_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-            ],
-            options={
-                'ordering': ['id'],
-                'abstract': False,
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='PostNote',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
-                ('note_type', models.IntegerField(default=0, choices=[(0, b'Reference'), (1, b'Footnote'), (2, b'Reference (Office)'), (3, b'Footnote (Office)')])),
-                ('text', models.TextField(blank=True)),
-                ('extra_info', models.TextField(max_length=1024, blank=True)),
-                ('created_by', models.ForeignKey(related_name='postnote_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
                 'ordering': ['id'],
@@ -319,18 +302,6 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.AddField(
-            model_name='postnote',
-            name='secondary_source',
-            field=models.ForeignKey(to='promrep.SecondarySource'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='postnote',
-            name='updated_by',
-            field=models.ForeignKey(related_name='postnote_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
             model_name='postassertionnote',
             name='secondary_source',
             field=models.ForeignKey(to='promrep.SecondarySource'),
@@ -350,6 +321,12 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='postassertion',
+            name='group',
+            field=models.ForeignKey(blank=True, to='promrep.Group', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='postassertion',
             name='location',
             field=models.ForeignKey(blank=True, to='promrep.Location', null=True),
             preserve_default=True,
@@ -363,19 +340,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='postassertion',
             name='office',
-            field=models.ForeignKey(blank=True, to='promrep.Office', null=True),
+            field=models.ForeignKey(to='promrep.Office'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='postassertion',
             name='person',
             field=models.ForeignKey(to='promrep.Person'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='postassertion',
-            name='post',
-            field=models.ForeignKey(blank=True, to='promrep.Post', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -394,24 +365,6 @@ class Migration(migrations.Migration):
             model_name='postassertion',
             name='updated_by',
             field=models.ForeignKey(related_name='postassertion_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='post',
-            name='notes',
-            field=models.ManyToManyField(related_name='posts', to='promrep.PostNote', blank=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='post',
-            name='persons',
-            field=models.ManyToManyField(to='promrep.Person', through='promrep.PostAssertion'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='post',
-            name='updated_by',
-            field=models.ForeignKey(related_name='post_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -454,6 +407,18 @@ class Migration(migrations.Migration):
             model_name='person',
             name='updated_by',
             field=models.ForeignKey(related_name='person_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='group',
+            name='persons',
+            field=models.ManyToManyField(to='promrep.Person', through='promrep.PostAssertion'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='group',
+            name='updated_by',
+            field=models.ForeignKey(related_name='group_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
             preserve_default=True,
         ),
     ]

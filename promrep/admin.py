@@ -166,7 +166,7 @@ class PostAssertionInline(admin.StackedInline):
             ['office', 'role'],
             ['uncertain', ],
             ['secondary_source', ],
-            ['post',],
+            ['group',],
             ['original_text', 'office_xref'],
             'date_display_text',
             ['date_source_text', 'date_secondary_source', ],
@@ -175,11 +175,11 @@ class PostAssertionInline(admin.StackedInline):
             'edit_link',
             )
 
-    raw_id_fields = ('notes', 'post', )
+    raw_id_fields = ('notes', 'group', )
 
     related_lookup_fields = {
-        'fk': ['post', ],
-        'm2m': ['notes', ],
+        'fk': ['group', ],
+        'm2m': ['group', ],
     }
 
 
@@ -300,7 +300,7 @@ admin.site.register(Person, PersonAdmin)
 
 
 class PostInline(admin.TabularInline):
-    model = Post
+    model = Group
     classes = ('grp-collapse grp-open',)
 
     readonly_fields = ('id', 'get_persons', 'related_label')
@@ -321,7 +321,7 @@ class OfficeAdmin(DjangoMpttAdmin):
 admin.site.register(Office, OfficeAdmin)
 
 
-class PostAdmin(admin.ModelAdmin):
+class GroupAdmin(admin.ModelAdmin):
 
     search_fields = ['id', 'postassertion__person__nomen', 'postassertion__person__cognomen', 'postassertion__office']
     list_filter = (PostYearListFilter, )
@@ -330,29 +330,29 @@ class PostAdmin(admin.ModelAdmin):
         'id',
         'date_year',
         'date_info',
-        'uncertain',
+        'notes',
         'modified',
         'created',
     )
 
     readonly_fields = ('id', )
-    list_display_links = ('id', 'uncertain', )
+    list_display_links = ('id', 'notes', )
 
     fieldsets = [ ('Database Info', {'fields': ['id']}),
                     ( '' ,
                         {
                         'fields': [
-                                ( 'uncertain', ),
                                 ('date_year', 'date_info', ),
+                                ( 'notes', ),
                                 ],
                         }
                     ),
             ]
 
-    inlines = [PersonInline, PostNoteInline, ]
+    inlines = [PersonInline, ]
     exclude = ('persons',  )
 
-admin.site.register(Post, PostAdmin)
+admin.site.register(Group, GroupAdmin)
 
 
 class GensAdmin(admin.ModelAdmin):

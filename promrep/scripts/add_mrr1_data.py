@@ -257,7 +257,7 @@ def processXML(volume):
                         post_assertion, created = PostAssertion.objects.get_or_create(
                             office=office_obj,
                             role=RoleType.objects.get(name='Holder'),
-                            post=assertion,
+                            group=assertion,
                             secondary_source=source,
                             person=person,
                             original_text = name_str,

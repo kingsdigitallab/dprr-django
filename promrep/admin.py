@@ -40,7 +40,8 @@ class PostAssertionNoteInline(admin.StackedInline):
 
 class PostAssertionAdmin(admin.ModelAdmin):
     list_display = ('id', 'person', 'office',
-                    'date_start', 'date_end', 'secondary_source', 'review_flag',
+                    'date_start', 'date_end', 'secondary_source',
+                    'review_flag',
                     'created_by', 'created', 'modified')
 
     list_filter = ('role', 'office', 'secondary_source', )
@@ -54,9 +55,10 @@ class PostAssertionAdmin(admin.ModelAdmin):
                     [
                         'person',
                         'office',
-                        'secondary_source',
                         'location',
+                        'secondary_source',
                         ('role', 'uncertain'),
+                        'group',
                         ('original_text', 'office_xref'),
                     ],
                 }

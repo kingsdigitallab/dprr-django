@@ -179,7 +179,7 @@ class PostAssertionInline(admin.StackedInline):
 
     related_lookup_fields = {
         'fk': ['group', ],
-        'm2m': ['group', ],
+        'm2m': ['notes', ],
     }
 
 

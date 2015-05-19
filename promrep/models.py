@@ -356,7 +356,7 @@ class Group(TimeStampedModel):
 
     def __unicode__(self):
         members = str(self.persons.count())
-        office_list = Office.objects.filter(postassertion__group = Group.objects.first()).distinct().values_list('name', flat=True)
+        office_list = Office.objects.filter(postassertion__group = self).distinct().values_list('name', flat=True)
 
         offices = "; ".join(office_list)
 

@@ -165,7 +165,7 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP['is_staff'] = 'cn=dprr,' + LDAP_BASE_OU
 AUTH_LDAP_USER_FLAGS_BY_GROUP['is_superuser'] = 'cn=dprr,' + LDAP_BASE_OU
 
 LOGIN_URL = 'django.contrib.auth.views.login'
-# LOGIN_REDIRECT_URL = 'wagtailadmin_home'
+LOGIN_REDIRECT_URL = 'wagtailadmin_home'
 
 
 
@@ -205,7 +205,7 @@ if not os.path.exists(MEDIA_ROOT):
 # CMS
 #------------------------------------------------------------------------------
 
-# ITEMS_PER_PAGE = ws.ITEMS_PER_PAGE
+ITEMS_PER_PAGE = ws.ITEMS_PER_PAGE
 
 
 #------------------------------------------------------------------------------
@@ -220,7 +220,7 @@ COMPRESS_PRECOMPILERS = ws.COMPRESS_PRECOMPILERS
 # http://wagtail.readthedocs.org/en/latest/
 #------------------------------------------------------------------------------
 
-# WAGTAIL_SITE_NAME = PROJECT_TITLE
+WAGTAIL_SITE_NAME = PROJECT_TITLE
 
 #------------------------------------------------------------------------------
 # Django Grappelli

@@ -1,0 +1,46 @@
+{% extends "wagtailbase/rich_text_page.html" %}
+{% load wagtailcore_tags wagtailbase_tags %}
+
+{% block title %}{% endblock %}
+
+{% block main %}
+
+<div class="row">
+	<div class="large-12 columns">
+		<h1 class="list-page-title"><a href="../">{{ self.get_parent }}</a></h1>
+	</div>
+</div>
+
+<div class="row" data-equalizer>
+	<div class="large-8 columns" data-equalizer-watch>
+		{% include "wagtailbase/includes/blog_post_body.html" with post=self %}
+
+		{% block attachments %}
+		{{ block.super }}
+		{% endblock %}
+
+		{% block related_links %}
+		{{ block.super }}
+		{% endblock %}
+
+		{% are_comments_allowed as allow_comments %}
+		{% if allow_comments %}
+		{% block comments %}
+		<div id="disqus_thread"></div>
+		{% endblock %}
+		{% endif %}
+	</div>
+	<div class="large-4 columns sidebar" data-equalizer-watch>
+		<h3>More posts</h3>
+		
+	</div>
+</div>
+
+{% endblock %}
+
+{% are_comments_allowed as allow_comments %}
+{% if allow_comments %}
+{% block footer_scripts %}
+{% include "wagtailbase/includes/disqus_setup.html" %}
+{% endblock %}
+{% endif %}

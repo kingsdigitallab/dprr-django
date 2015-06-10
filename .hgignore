@@ -11,4 +11,5 @@ bower.json
 db.*
 local.py
 design-files
-^logs
+logs
+static

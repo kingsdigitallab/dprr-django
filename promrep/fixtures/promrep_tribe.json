@@ -334,5 +334,21 @@
         "abbrev": "Vot.",
         "name": "Voturia"
     }
+},
+{
+    "pk": 43,
+    "model": "promrep.tribe",
+    "fields": {
+        "abbrev": "Pop.",
+        "name": "Popillia"
+    }
+},
+{
+    "pk": 44,
+    "model": "promrep.tribe",
+    "fields": {
+        "abbrev": "Pub.",
+        "name": "Publilia"
+    }
 }
 ]

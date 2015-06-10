@@ -11,43 +11,74 @@ Usage:
 
 from bs4 import BeautifulSoup
 
-from promrep.models import Post, PostAssertion, PostNote, PostDate, \
-    Office, Person, RoleType, SecondarySource, PostAssertionNote, \
-    PostAssertionDate, Praenomen, Date
+from promrep.models import Group, PostAssertion, Office, Person, \
+    RoleType, SecondarySource, PostAssertionNote, Praenomen
 
 import parsing_aux as aux
 from promrep.scripts.offices_ref import OFFICE_NAMES_DIC
 
-def get_office_obj(office_name):
-    """given a string, returns an office object"""
+def parse_post_assertion_date(ap_date_info, post_year):
 
-    # convert to lowercase
-    office_name = office_name.lower()
+    # default case
+    obj = {'date_source_text': ap_date_info,
+           'review_flag': False,
+           'date_start': -int(post_year),
+           'date_end': -int(post_year)}
 
-    # tries to get the normalized office name from the
-    try:
-        oname = OFFICE_NAMES_DIC[office_name]
-    except:
-        print "WARNING: Unable to normalize office name: '%s'" %(office_name,)
-        oname = office_name
+    if ap_date_info == "":
+        pass
 
-    try:
-        office = Office.objects.get(name=oname)
-    except Office.DoesNotExist:
+    elif ap_date_info == "?":
+        # by year YYYY
+        obj['date_start_uncertain'] = True
 
-        # Adding new office
-        #    in MRR all the offices are "civic" except for Vestal Virgin
-        parent = Office.objects.get(name='Civic Offices')
-        office = Office(name=oname, parent = parent)
-        office.save()
+    elif "-" in ap_date_info:
+        # these need to be reviewed later...
+        obj['review_flag'] = True
 
-        print 'Added Office: %s (id=%i)' % (office.name, office.id)
+        try:
+            date_parts = [x.strip() for x in ap_date_info.split('-')]
 
-    return office
+            if len(date_parts) == 2:
+                date_start = date_parts[0]
+                date_end = date_parts[1]
+
+                if date_start.isdigit():
+                    obj['date_start'] = -int(date_start)
+                else:
+                    obj['date_start_uncertain'] = True
+
+                if date_end.isdigit():
+                    obj['date_end'] = -int(date_end)
+                else:
+                    obj['date_end_uncertain'] = True
+
+                if "Before" or "Bef." in date_start:
+                    date_start = date_start.replace('Before', '').replace('Bef.', '').strip()
+
+                    if date_start.isdigit():
+                        date_start = -int(date_start) - 1
+
+                if "Before" or "Bef." in date_end:
+                    date_end = date_end.replace('Before', '').replace('Bef.', '').strip()
+
+                    if date_end.isdigit():
+                        date_end = -int(date_end) - 1
+
+                if date_parts[0].isdigit() and date_parts[1].isdigit():
+                    obj['review_flag'] = False
+
+        except Exception as e:
+            print 'FATAL ERROR saving extra date info ', post_year, ap_date_info, e.message
+
+    else:
+        obj['review_flag'] = True
+
+    return obj
 
 
 def run():
-    # for vol in ['mrr2', ]:
+    #  for vol in ['mrr1', ]:
     for vol in ['mrr1', 'mrr2']:
         processXML(vol)
 
@@ -68,7 +99,7 @@ def processXML(volume):
 
     years = soup.findAll('year')
 
-#    for year in years[:1]:
+#    for year in years[70:71]:
     for year in years:
         year_str = year['name'].split()[0]
         print "\n\n>>>>> Year", year_str, years.index(year), '(',len(year.findAll('footnote')), 'footnotes)\n\n'
@@ -79,8 +110,6 @@ def processXML(volume):
 
         for fnote in year.findAll('footnote'):
             fnote_dict[fnote['ref']] = fnote
-
-        # print fnote_dict
 
         # a post is defined by year and office
         for office_tag in year.findAll('office'):
@@ -97,19 +126,12 @@ def processXML(volume):
                 assertion_uncertain = True
 
             # get office using office name
-            office_obj = get_office_obj(office_name)
+            office_obj = aux.get_office_obj(office_name)
 
             #  every time a note is found, it is associated with all the post_assertions in the list
             person_ref_queue = []
 
-            try:
-                assertion_date = PostDate.objects.create(year = -int(year_str),)
-                assertion = Post.objects.create(office=office_obj, )
-                assertion_date.post = assertion
-                assertion_date.save()
-
-            except Exception as e:
-                print 'FATAL ERROR CREATING POST: %s' %(e.message)
+            assertion = Group.objects.create(date_info = year['name'].strip(), date_year = -int(year_str))
 
             # all these notes will be added to the individual PostAssertions
             assertion_notes_queue = []
@@ -233,8 +255,9 @@ def processXML(volume):
 
                         # TODO: stop creating repeated assertions
                         post_assertion, created = PostAssertion.objects.get_or_create(
+                            office=office_obj,
                             role=RoleType.objects.get(name='Holder'),
-                            post=assertion,
+                            group=assertion,
                             secondary_source=source,
                             person=person,
                             original_text = name_str,
@@ -243,18 +266,12 @@ def processXML(volume):
 
                         # PostAssertion Dates
                         ap_date_info = ap_date_info.strip("[:")
+                        post_assertion.date_secondary_source = source
 
-                        if ap_date_info:
-                            ap_date = PostAssertionDate.objects.create(
-                                            year = -int(year_str),
-                                            year_uncertain = True,
-                                            interval=Date.DATE_BY,
-                                            post_assertion = post_assertion)
-
-                            # cases that need manual fixing
-                            if ap_date_info != "?":
-                                ap_date.extra_info = ap_date_info
-                                ap_date.save()
+                        date_obj = parse_post_assertion_date(ap_date_info, year_str)
+                        for key, value in date_obj.iteritems():
+                            setattr(post_assertion, key, value)
+                        post_assertion.save()
 
                         # Post Person uncertain
                         if p.has_attr('assertion-certainty') or (assertion_uncertain == True):

@@ -11,7 +11,7 @@ Usage:
 
 from bs4 import BeautifulSoup
 
-from promrep.models import Post, PostAssertion, PostNote, Office, Person, \
+from promrep.models import Group, PostAssertion, Office, Person, \
     RoleType, SecondarySource, PostAssertionNote, Praenomen
 
 import parsing_aux as aux
@@ -111,8 +111,6 @@ def processXML(volume):
         for fnote in year.findAll('footnote'):
             fnote_dict[fnote['ref']] = fnote
 
-        # print fnote_dict
-
         # a post is defined by year and office
         for office_tag in year.findAll('office'):
 
@@ -133,7 +131,7 @@ def processXML(volume):
             #  every time a note is found, it is associated with all the post_assertions in the list
             person_ref_queue = []
 
-            assertion = Post.objects.create(date_info = year['name'].strip(), date_year = -int(year_str))
+            assertion = Group.objects.create(date_info = year['name'].strip(), date_year = -int(year_str))
 
             # all these notes will be added to the individual PostAssertions
             assertion_notes_queue = []
@@ -259,7 +257,7 @@ def processXML(volume):
                         post_assertion, created = PostAssertion.objects.get_or_create(
                             office=office_obj,
                             role=RoleType.objects.get(name='Holder'),
-                            post=assertion,
+                            group=assertion,
                             secondary_source=source,
                             person=person,
                             original_text = name_str,

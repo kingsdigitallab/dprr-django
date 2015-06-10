@@ -137,9 +137,6 @@ class Note(TimeStampedModel):
     def __unicode__(self):
         return self.text.strip()
 
-@with_author
-class PostNote(Note):
-    pass
 
 @with_author
 class PostAssertionNote(Note):
@@ -317,7 +314,6 @@ class Location(TimeStampedModel):
     description = models.CharField(max_length=1024, blank=True)
     location_type = models.SmallIntegerField(choices=LOCATION_TYPE_CHOICES, default=LOCATION_PLACE)
 
-
     class Meta:
         verbose_name_plural = 'Place List'
         verbose_name = 'Places'
@@ -327,14 +323,11 @@ class Location(TimeStampedModel):
 
 
 @with_author
-class Post(TimeStampedModel):
+class Group(TimeStampedModel):
     persons = models.ManyToManyField(Person, through='PostAssertion')
-    notes = models.ManyToManyField(PostNote, related_name="posts", blank=True)
     display_text = models.CharField(max_length=1024, blank=True)
 
-    # if we are uncertain about an assertion
-    # ... eg. cases like Broughton's "Augur or Pontifex"
-    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
+    notes = models.TextField(blank=True)
 
     # date information
     date_year = models.IntegerField(blank=True, null=True)
@@ -362,8 +355,13 @@ class Post(TimeStampedModel):
             return ""
 
     def __unicode__(self):
-        name = 'PostName'
-        return name
+        members = str(self.persons.count())
+        office_list = Office.objects.filter(postassertion__group = self).distinct().values_list('name', flat=True)
+
+        offices = "; ".join(office_list)
+
+        return "Group: {0} members; Office: {1} ({2})".format(members, offices, self.date_info)
+
 
     def related_label(self):
         url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.module_name), args=[self.id])
@@ -374,10 +372,11 @@ class Post(TimeStampedModel):
 @with_author
 class PostAssertion(TimeStampedModel):
     person = models.ForeignKey(Person)
-    post = models.ForeignKey(Post, blank=True, null=True)
+    office = models.ForeignKey(Office)
+
+    group = models.ForeignKey(Group, blank=True, null=True)
     secondary_source = models.ForeignKey(SecondarySource)
 
-    office = models.ForeignKey(Office, blank=True, null=True)
     location = models.ForeignKey(Location, blank=True, null=True)
 
     role = models.ForeignKey(RoleType, default=1)
@@ -410,9 +409,30 @@ class PostAssertion(TimeStampedModel):
         ordering = ['position', 'id']
 
     def __unicode__(self):
-        name = str(self.person.__unicode__()) + ": " + self.office.__unicode__()
+
+        off = "No office"
+        if self.office:
+            off = self.office.__unicode__()
+
+        name = str(self.person.__unicode__()) + ": " + off + " " + self.print_date()
         name = name + " (" + self.secondary_source.abbrev_name + ")"
         return name
+
+    def print_date(self):
+        date_str = ""
+
+        if self.date_display_text:
+            date_str = self.date_display_text
+        else:
+            date_str = " - ".join(str(abs(item)) for item in [self.date_start, self.date_end] if item)
+
+            if date_str == "":
+                date_str = "[No date info]"
+            else:
+                date_str = date_str + " B.C."
+
+
+        return date_str
 
 
 

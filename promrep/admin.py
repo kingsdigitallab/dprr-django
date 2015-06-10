@@ -14,7 +14,7 @@ from django.utils.html import format_html
 from promrep.forms import PostInlineForm
 
 from models import Person, Office, Praenomen, PostAssertion, \
-    Post, RoleType, DateType, SecondarySource, Gens, PostNote, \
+    Group, RoleType, DateType, SecondarySource, Gens, \
     PostAssertionNote, Tribe, Location
 
 admin.site.register(DateType)
@@ -39,12 +39,12 @@ class PostAssertionNoteInline(admin.StackedInline):
 
 
 class PostAssertionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'office', 'person',
-                    'date_start', 'date_end', 'secondary_source', 'review_flag',
+    list_display = ('id', 'person', 'office',
+                    'date_start', 'date_end', 'secondary_source',
+                    'review_flag',
                     'created_by', 'created', 'modified')
 
-    list_filter = ('role', 'office', )
-
+    list_filter = ('role', 'office', 'secondary_source', )
 
     readonly_fields = ('id', )
 
@@ -54,8 +54,11 @@ class PostAssertionAdmin(admin.ModelAdmin):
             ('', {'fields':
                     [
                         'person',
-                        'office', 'location',
+                        'office',
+                        'location',
+                        'secondary_source',
                         ('role', 'uncertain'),
+                        'group',
                         ('original_text', 'office_xref'),
                     ],
                 }
@@ -68,30 +71,15 @@ class PostAssertionAdmin(admin.ModelAdmin):
                      ]})
             ]
 
-    raw_id_fields = ('post', 'person', 'office', 'location')
+    raw_id_fields = ('group', 'person', 'office', 'location')
 
     related_lookup_fields = {
-         'fk': ['post', 'person', 'office', 'location', ],
+         'fk': ['group', 'person', 'office', 'location', ],
     }
 
     inlines = (PostAssertionNoteInline, )
 
 admin.site.register(PostAssertion, PostAssertionAdmin)
-
-
-class PostNoteInline(admin.StackedInline):
-    model = Post.notes.through
-
-    classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-closed',)
-
-    extra = 0
-
-    verbose_name = 'Post Note'
-    verbose_name_plural = 'Post Notes'
-    raw_id_fields = ('postnote', )
-
-    readonly_fields = ('id', )
 
 
 class NoteAdmin(admin.ModelAdmin):
@@ -104,9 +92,7 @@ class NoteAdmin(admin.ModelAdmin):
 
     show_change_link = True
 
-
 admin.site.register(PostAssertionNote, NoteAdmin)
-admin.site.register(PostNote, NoteAdmin)
 
 
 class LocationAdmin(admin.ModelAdmin):
@@ -129,7 +115,7 @@ class PersonInline(admin.StackedInline):
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-closed',)
 
-    verbose_name_plural = 'Persons on this Post'
+    verbose_name_plural = 'Persons on this Group'
     verbose_name = 'Person:'
 
     show_change_link = True
@@ -137,7 +123,8 @@ class PersonInline(admin.StackedInline):
     fields = (
         ['id', 'review_flag', 'position'] ,
         ['person',],
-        ['role', 'uncertain'],
+        ['office', 'role',],
+        ['uncertain'],
         ['secondary_source', 'original_text', 'office_xref'],
         ['date_display_text', ],
         ['date_source_text', 'date_secondary_source', ],
@@ -168,8 +155,8 @@ class PostAssertionInline(admin.StackedInline):
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-closed',)
 
-    verbose_name = 'Post'
-    verbose_name_plural = 'Person Posts'
+    verbose_name = 'Post Assertion'
+    verbose_name_plural = 'Person Post Assertions'
 
     show_change_link = True
 
@@ -178,9 +165,10 @@ class PostAssertionInline(admin.StackedInline):
     readonly_fields = ('id', )
 
     fields = (['id', 'review_flag', ] ,
-            ['post',],
-            ['role', 'uncertain'],
+            ['office', 'role'],
+            ['uncertain', ],
             ['secondary_source', ],
+            ['group',],
             ['original_text', 'office_xref'],
             'date_display_text',
             ['date_source_text', 'date_secondary_source', ],
@@ -189,10 +177,10 @@ class PostAssertionInline(admin.StackedInline):
             'edit_link',
             )
 
-    raw_id_fields = ('notes', 'post', )
+    raw_id_fields = ('notes', 'group', )
 
     related_lookup_fields = {
-        'fk': ['post', ],
+        'fk': ['group', ],
         'm2m': ['notes', ],
     }
 
@@ -213,27 +201,6 @@ class REUpdatedListFilter(SimpleListFilter):
 
         if self.value() == 'no':
             return queryset.filter(re_number_old__exact='')
-
-
-class PostYearListFilter(SimpleListFilter):
-    title = 'post year'
-    parameter_name = 'year'
-
-    def lookups(self, request, model_admin):
-        lookup = []
-        years = Post.objects.all().values('date_year').distinct()
-
-        for year in years:
-            item = (year['date_year'], year['date_year'])
-            if item not in lookup:
-                lookup.append(item)
-
-        return sorted(lookup)
-
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(date__year__exact=self.value())
 
 
 class PersonAdmin(admin.ModelAdmin):
@@ -314,7 +281,7 @@ admin.site.register(Person, PersonAdmin)
 
 
 class PostInline(admin.TabularInline):
-    model = Post
+    model = Group
     classes = ('grp-collapse grp-open',)
 
     readonly_fields = ('id', 'get_persons', 'related_label')
@@ -335,38 +302,37 @@ class OfficeAdmin(DjangoMpttAdmin):
 admin.site.register(Office, OfficeAdmin)
 
 
-class PostAdmin(admin.ModelAdmin):
+class GroupAdmin(admin.ModelAdmin):
 
     search_fields = ['id', 'postassertion__person__nomen', 'postassertion__person__cognomen', 'postassertion__office']
-    list_filter = (PostYearListFilter, )
 
     list_display = (
         'id',
         'date_year',
         'date_info',
-        'uncertain',
+        'notes',
         'modified',
         'created',
     )
 
     readonly_fields = ('id', )
-    list_display_links = ('id', 'uncertain', )
+    list_display_links = ('id', 'notes', )
 
     fieldsets = [ ('Database Info', {'fields': ['id']}),
                     ( '' ,
                         {
                         'fields': [
-                                ( 'uncertain', ),
                                 ('date_year', 'date_info', ),
+                                ( 'notes', ),
                                 ],
                         }
                     ),
             ]
 
-    inlines = [PersonInline, PostNoteInline, ]
+    inlines = [PersonInline, ]
     exclude = ('persons',  )
 
-admin.site.register(Post, PostAdmin)
+admin.site.register(Group, GroupAdmin)
 
 
 class GensAdmin(admin.ModelAdmin):

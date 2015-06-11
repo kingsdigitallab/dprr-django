@@ -22,8 +22,6 @@ from django.views.generic.base import RedirectView
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', views.index, name='index'),
-    # url(r'^about/', views.about, name='about'),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', include(admin.site.urls)),
     )

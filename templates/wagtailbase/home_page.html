@@ -1,3 +1,82 @@
 {% extends "wagtailbase/base.html" %}
 
-{% block title %}{% endblock %}
+{% block meta_title %}Home{% endblock %}
+
+{% block main %}
+<div class="row">
+    <div class="large-12 columns">
+        <div data-alert class="alert-box secondary radius">
+            <i class="fa fa-warning"></i> <strong>Site released in beta.</strong> Enjoy data on the Roman Republic responsibly and bear with us while we complete the work.
+            <a href="#" class="close">&times;</a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="large-12 columns">
+        <ul data-orbit>
+            <li>
+            <img src="/static/images/slide-1-Detail_from_the_Fasti_Antiates_Palazzo_Massimo_alle_Terme_Rome.jpg" alt="Detail from the Fasti Antiates, Palazzo Massimo alle Terme, Rome" />
+                <div class="orbit-caption">
+                    Detail from the Fasti Antiates, Palazzo Massimo alle Terme, Rome. Photo by Juliana Bastos Marques (CC BY-SA 3.0).
+                </div>
+            </li>
+            <li class="active">
+                <img src="/static/images/placeholder-slide.png" alt="slide 2" />
+                <div class="orbit-caption">
+                    Caption Two.
+                </div>
+            </li>
+            <li>
+                <img src="/static/images/placeholder-slide.png" alt="slide 3" />
+                <div class="orbit-caption">
+                    Caption Three.
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="row" data-equalizer>
+    <div class="large-4 columns">
+        <div class="panel radius" data-equalizer-watch>
+            <h3><i class="fa fa-info-circle"></i> What's DPRR?</h3>
+            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+        </div>
+        <a href="/about/" class="button radius expand">Find out more</a>
+    </div>
+    <div class="large-4 columns">
+        <div class="panel radius" data-equalizer-watch>
+            <h3><i class="fa fa-database"></i> DPRR database explained</h3>
+            <p>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et <a href="#">dolore magnam</a> aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis.</p>
+        </div>
+        <a href="/about/database/" class="button radius expand">More info</a>
+    </div>
+    <div class="large-4 columns">
+        <div class="panel radius" data-equalizer-watch>
+            <h3><i class="fa fa-pencil"></i> Blog</h3>
+            <ul class="no-bullet blog">
+                <li>
+                    <h4><a href="#">Blog post 1</a></h4>
+                    <p class="meta">Posted 1 March 2015 by <a href="#">Luis Figueira</a></p>
+                    <p>Excerpt for blog post 1, qui dolorem ipsum quia dolor sit amet.</p>
+                    <p><a href="#" class="right">Read more <i class="fa fa-angle-double-right"></i></a></p>
+                </li>
+                <li>
+                    <h4><a href="#">Blog post 2</a></h4>
+                    <p class="meta">Posted 13 February 2015 by <a href="#">Ginestra Ferraro</a></p>
+                    <p>Excerpt for blog post 2 aliquam quaerat voluptatem.</p>
+                    <p><a href="#" class="right">Read more <i class="fa fa-angle-double-right"></i></a></p>
+                </li>
+            </ul>
+        </div>
+        <a href="/blog/" class="button radius expand">All entries</a>
+    </div>
+</div>
+<div class="row">
+    <div class="large-12 columns">
+        <h3><i class="fa fa-comments"></i> Feedback</h3>
+        <p>We value our users' feedback and we'd like to hear from you. It would help us improve the site. So, don't be shy and <a href="/contact/">drop us a line</a>.</p>
+    </div>
+</div>
+
+{% endblock %}
+

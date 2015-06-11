@@ -13,3 +13,4 @@ local.py
 design-files
 logs
 static
+*.ipynb

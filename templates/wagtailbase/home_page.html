@@ -1,4 +1,5 @@
 {% extends "wagtailbase/base.html" %}
+{% load wagtailbase_tags %}
 
 {% block meta_title %}Home{% endblock %}
 
@@ -53,20 +54,9 @@
     <div class="large-4 columns">
         <div class="panel radius" data-equalizer-watch>
             <h3><i class="fa fa-pencil"></i> Blog</h3>
-            <ul class="no-bullet blog">
-                <li>
-                    <h4><a href="#">Blog post 1</a></h4>
-                    <p class="meta">Posted 1 March 2015 by <a href="#">Luis Figueira</a></p>
-                    <p>Excerpt for blog post 1, qui dolorem ipsum quia dolor sit amet.</p>
-                    <p><a href="#" class="right">Read more <i class="fa fa-angle-double-right"></i></a></p>
-                </li>
-                <li>
-                    <h4><a href="#">Blog post 2</a></h4>
-                    <p class="meta">Posted 13 February 2015 by <a href="#">Ginestra Ferraro</a></p>
-                    <p>Excerpt for blog post 2 aliquam quaerat voluptatem.</p>
-                    <p><a href="#" class="right">Read more <i class="fa fa-angle-double-right"></i></a></p>
-                </li>
-            </ul>
+            {% block latest_blog_post %}
+                {% latest_n_blog_posts 2 %}
+            {% endblock %}
         </div>
         <a href="/blog/" class="button radius expand">All entries</a>
     </div>

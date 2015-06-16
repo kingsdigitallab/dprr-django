@@ -1,0 +1,11 @@
+{% load wagtailcore_tags %}
+<ul class="no-bullet blog">
+{% for post in posts %}
+        <li>
+            <h4><a href="{% pageurl post %}">{{ post.title }}</a></h4>
+            <p class="meta">Posted <time datetime="{{ post.date|date:'c' }}">{{ post.date }}</time> by <a href="{% pageurl post.blog_index %}?author={{ post.owner.username }}">{{ post.owner }}</a>
+            <p>{{ post.content|richtext|truncatewords_html:75 }}</p>
+            <p><a href="{% pageurl post %}" class="right">Read more <i class="fa fa-angle-double-right"></i></a></p>
+        </li>
+{% endfor %}
+</ul>

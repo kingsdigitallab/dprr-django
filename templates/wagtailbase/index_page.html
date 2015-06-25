@@ -7,15 +7,13 @@
 {% endblock %}
 
 <div class="row" data-equalizer>
-	<div class="large-4 columns sidebar" data-equalizer-watch>
-		{% block sidebar %}
-		{% block index_page_children %}
-		{% include "wagtailbase/includes/index_page_children.html" with title="In this section" %}
-		{% endblock %}
-		{% endblock %}
+	<div class="large-3 columns sidebar" data-equalizer-watch>
+		{% block local_menu %}
+        {% include 'includes/local_menu.html' %}
+        {% endblock %}
 	</div>
 
-	<div class="large-8 columns" data-equalizer-watch>
+	<div class="large-9 columns" data-equalizer-watch>
 
 		<h1>{% block title %} {{ self.title }} {% endblock %}</h1>
 

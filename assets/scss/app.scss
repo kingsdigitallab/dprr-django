@@ -27,6 +27,10 @@ li.greyed-out a {
 	padding-bottom: 1rem;
 }
 
+.active {
+	font-weight: 700;
+}
+
 /*** Header ***/
 
 header.main-header {
@@ -133,10 +137,36 @@ p.meta,
 	font-style: italic;
 }
 
+.caption {
+	font-size: .875rem;
+	color: #666;
+	padding: .5rem 0 1rem;
+}
+
 /*** Sidebar ***/
 .sidebar {
 	background: $sand;
 	padding: 1rem;
+}
+
+ul.local-navigation {
+	list-style: none;
+	margin-left: 0;
+	font-family: 'Open Sans Condensed Light', sans-serif;
+	font-size: 1.125rem;
+}
+
+.local-navigation li {
+	border-bottom: 1px solid scale-color($royal-blue, $lightness: 60%);
+}
+
+.local-navigation li a {
+	padding: .5rem 0;
+	display: block;
+}
+
+.local-navigation li a:hover {
+	background-color: scale-color($royal-blue, $lightness: 70%);
 }
 
 /*** Footer ***/

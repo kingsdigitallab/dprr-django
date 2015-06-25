@@ -15,7 +15,7 @@ from wagtailbase import settings as ws
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..')
 
 PROJECT_NAME = 'dprr'
 PROJECT_TITLE = 'Digitising the Prosopography of the Roman Republic'
@@ -82,6 +82,8 @@ INSTALLED_APPS += (
 INTERNAL_IPS = ('127.0.0.1',)
 
 # https://docs.djangoproject.com/en/1.6/topics/logging/
+import logging
+
 LOGGING_ROOT = os.path.join(BASE_DIR, 'logs')
 LOGGING_LEVEL = 'WARN'
 
@@ -96,6 +98,9 @@ LOGGING = {
             'format': ('%(levelname)s %(asctime)s %(module)s '
                        '%(process)d %(thread)d %(message)s')
         },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        }
     },
     'handlers': {
         'file': {
@@ -104,6 +109,11 @@ LOGGING = {
             'filename': os.path.join(LOGGING_ROOT, 'django.log'),
             'formatter': 'verbose'
         },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        }
     },
     'loggers': {
         'django': {
@@ -111,6 +121,16 @@ LOGGING = {
             'level': LOGGING_LEVEL,
             'propagate': True,
         },
+        'django_auth_ldap': {
+            'handlers': ['file'],
+            'level': LOGGING_LEVEL,
+            'propagate': True
+        },
+        'promrep': {
+            'handlers': ['file', 'console'],
+            'level': LOGGING_LEVEL,
+            'propagate': True
+        }
     },
 }
 
@@ -166,7 +186,6 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP['is_superuser'] = 'cn=dprr,' + LDAP_BASE_OU
 
 LOGIN_URL = 'django.contrib.auth.views.login'
 LOGIN_REDIRECT_URL = 'wagtailadmin_home'
-
 
 
 #------------------------------------------------------------------------------
@@ -237,53 +256,3 @@ GRAPPELLI_ADMIN_TITLE = PROJECT_TITLE
 MIDDLEWARE_CLASSES += ('author.middlewares.AuthorDefaultBackendMiddleware', )
 
 AUTHOR_CREATED_BY_FIELD_NAME = 'created_by'
-
-#------------------------------------------------------------------------------
-# Development Installed Applications Settings
-#------------------------------------------------------------------------------
-
-#------------------------------------------------------------------------------
-# Django Extensions
-# http://django-extensions.readthedocs.org/en/latest/
-#------------------------------------------------------------------------------
-
-try:
-    import django_extensions
-    INSTALLED_APPS = INSTALLED_APPS + ('django_extensions',)
-except ImportError:
-    pass
-
-#------------------------------------------------------------------------------
-# Django Debug Toolbar
-# http://django-debug-toolbar.readthedocs.org/en/latest/
-#------------------------------------------------------------------------------
-
-try:
-    import debug_toolbar
-    INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
-    MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + ('debug_toolbar.middleware.DebugToolbarMiddleware',)
-    DEBUG_TOOLBAR_PATCH_SETTINGS = False
-
-    DEBUG_TOOLBAR_PANELS = [
-        'debug_toolbar.panels.versions.VersionsPanel',
-        'debug_toolbar.panels.timer.TimerPanel',
-        'debug_toolbar.panels.headers.HeadersPanel',
-        'debug_toolbar.panels.request.RequestPanel',
-        'debug_toolbar.panels.sql.SQLPanel',
-        'debug_toolbar.panels.templates.TemplatesPanel',
-        'debug_toolbar.panels.cache.CachePanel',
-        'debug_toolbar.panels.profiling.ProfilingPanel',
-    ]
-
-except ImportError:
-    pass
-
-
-#------------------------------------------------------------------------------
-# Local settings
-# Ignored in version control to allowing for settings to be defined per machine
-#------------------------------------------------------------------------------
-try:
-    from local_settings import *
-except ImportError:
-    pass

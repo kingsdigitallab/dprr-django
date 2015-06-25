@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block meta_title %}About{% endblock %}
+{% block main %}
+{% block breadcrumbs %}
+{% include "includes/breadcrumbs.html" %}
+{% endblock %}
+<div class="row" data-equalizer>
+    <div class="large-4 columns sidebar" data-equalizer-watch>
+        <ul class="side-nav">
+        	<li class="active"><a href="#">About the project</a></li>
+        	<li><a href="database/">DPRR database explained</a></li>
+        	<li><a href="events/">Events</a></li>
+        	<li><a href="project-team/">Project team</a></li>
+        	<li><a href="biblio-sources/">Bibliographic sources</a></li>
+        	<li><a href="copyright/">Copyright and sharing the work</a></li>
+        </ul>
+    </div>
+    <div class="large-8 columns" data-equalizer-watch>
+        <h1>About</h1>
+        <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>
+    </div>
+</div>
+{% endblock %}

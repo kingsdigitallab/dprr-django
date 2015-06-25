@@ -100,34 +100,36 @@ $include-html-global-classes: $include-html-classes;
 // $white       : #FFFFFF;
 // $ghost       : #FAFAFA;
 // $snow        : #F9F9F9;
+$sand 			: #eae3dd;
 // $vapor       : #F6F6F6;
 // $white-smoke : #F5F5F5;
 // $silver      : #EFEFEF;
 // $smoke       : #EEEEEE;
 // $gainsboro   : #DDDDDD;
-// $iron        : #CCCCCC;
+$iron        : #CCCCCC;
 // $base        : #AAAAAA;
 // $aluminum    : #999999;
-// $jumbo       : #888888;
+$jumbo       : #888888;
 // $monsoon     : #777777;
-// $steel       : #666666;
+$steel       : #666666;
 // $charcoal    : #555555;
 // $tuatara     : #444444;
 // $oil         : #333333;
 $dark-gold		: #4A412A;
+$royal-blue		: #607a7a;
 // $jet         : #222222;
 // $black       : #000000;
 
 // We use these as default colors throughout
-$primary-color: #aa8a00;
-// $secondary-color: #e7e7e7;
+$primary-color: $royal-blue;
+// $secondary-color: $dark-gold;
 // $alert-color: #f04124;
 // $success-color: #43AC6A;
 // $warning-color: #f08a24;
 // $info-color: #a0d3e8;
 
 // We use these to control various global styles
-$body-bg: $dark-gold;
+$body-bg: scale-color($primary-color, $lightness: 40%);
 // $body-font-color: $jet;
 // $body-font-family: $font-family-sans-serif;
 // $body-font-weight: $font-weight-normal;
@@ -154,9 +156,9 @@ $body-bg: $dark-gold;
 // d. Media Query Ranges
 // - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// $small-range: (0em, 40em);
-// $medium-range: (40.063em, 64em);
-// $large-range: (64.063em, 90em);
+$small-range: (0em, 40em);
+$medium-range: (40.063em, 50em);
+$large-range: (50.063em, 90em);
 // $xlarge-range: (90.063em, 120em);
 // $xxlarge-range: (120.063em, 99999999em);
 
@@ -247,7 +249,7 @@ $body-bg: $dark-gold;
 // $paragraph-text-rendering: optimizeLegibility;
 
 // We use these to style <code> tags
-$code-color: $dark-gold;
+$code-color: $royal-blue;
 // $code-font-family: $font-family-monospace;
 // $code-font-weight: $font-weight-normal;
 // $code-background-color: scale-color($secondary-color, $lightness: 70%);
@@ -359,12 +361,12 @@ $code-color: $dark-gold;
 // $alert-bottom-margin: rem-calc(20);
 
 // We use these to style the close buttons
-$alert-close-color: $dark-gold;
+$alert-close-color: $royal-blue;
 // $alert-close-top: 50%;
 // $alert-close-position: rem-calc(4);
 // $alert-close-font-size: rem-calc(22);
-// $alert-close-opacity: 0.3;
-// $alert-close-opacity-hover: 0.5;
+// $alert-close-opacity: 0.5;
+// $alert-close-opacity-hover: 0.7;
 // $alert-close-padding: 9px 6px 4px;
 // $alert-close-background: inherit;
 
@@ -397,6 +399,7 @@ $alert-close-color: $dark-gold;
 
 // We use this to set the background color for the breadcrumb container.
 // $crumb-bg: scale-color($secondary-color, $lightness: 55%);
+$crumb-bg: rgba(0, 0, 0, 0);
 
 // We use these to set the padding around the breadcrumbs.
 // $crumb-padding: rem-calc(9 14 9);
@@ -404,15 +407,15 @@ $alert-close-color: $dark-gold;
 
 // We use these to control border styles.
 // $crumb-function-factor: -10%;
-// $crumb-border-size: 1px;
-// $crumb-border-style: solid;
+$crumb-border-size: 0;
+$crumb-border-style: none;
 // $crumb-border-color: scale-color($crumb-bg, $lightness: $crumb-function-factor);
 // $crumb-radius: $global-radius;
 
 // We use these to set various text styles for breadcrumbs.
 // $crumb-font-size: rem-calc(11);
 // $crumb-font-color: $primary-color;
-$crumb-font-color-current: $dark-gold;
+$crumb-font-color-current: $jumbo;
 // $crumb-font-color-unavailable: $aluminum;
 // $crumb-font-transform: uppercase;
 // $crumb-link-decor: underline;
@@ -439,7 +442,7 @@ $crumb-font-color-current: $dark-gold;
 // We use these to control button text styles.
 // $button-font-family: $body-font-family;
 // $button-font-color: $white;
-$button-font-color-alt: $dark-gold;
+$button-font-color-alt: $royal-blue;
 // $button-font-tny: rem-calc(11);
 // $button-font-sml: rem-calc(13);
 // $button-font-med: rem-calc(16);
@@ -490,7 +493,7 @@ $button-font-color-alt: $dark-gold;
 // $include-html-clearing-classes: $include-html-classes;
 
 // We use these to set the background colors for parts of Clearing.
-$clearing-bg: $dark-gold;
+$clearing-bg: $royal-blue;
 // $clearing-caption-bg: $clearing-bg;
 // $clearing-carousel-bg: rgba(51,51,51,0.8);
 // $clearing-img-bg: $clearing-bg;
@@ -572,7 +575,7 @@ $clearing-bg: $dark-gold;
 
 // We use these to set the color of the pip in dropdown buttons
 // $dropdown-button-pip-color: $white;
-$dropdown-button-pip-color-alt: $dark-gold;
+$dropdown-button-pip-color-alt: $royal-blue;
 
 // We use these to set the size of the pip in dropdown buttons
 // $button-pip-tny: rem-calc(6);
@@ -666,7 +669,7 @@ $dropdown-button-pip-color-alt: $dark-gold;
 // $input-prefix-border-size: 1px;
 // $input-prefix-border-type: solid;
 // $input-prefix-overflow: hidden;
-$input-prefix-font-color: $dark-gold;
+$input-prefix-font-color: $royal-blue;
 // $input-prefix-font-color-alt: $white;
 
 // We use this setting to turn on/off HTML5 number spinners (the up/down arrows)
@@ -680,7 +683,7 @@ $input-prefix-font-color: $dark-gold;
 // $input-error-message-font-style: italic;
 // $input-error-message-font-color: $white;
 // $input-error-message-bg-color: $alert-color;
-$input-error-message-font-color-alt: $dark-gold;
+$input-error-message-font-color-alt: $royal-blue;
 
 // We use this to style the glowing effect of inputs when focused
 // $glowing-effect-fade-time: 0.45s;
@@ -695,7 +698,7 @@ $input-error-message-font-color-alt: $dark-gold;
 // - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // We use these to style the icon-bar and items
-$icon-bar-bg: $dark-gold;
+$icon-bar-bg: $royal-blue;
 // $icon-bar-font-color: $white;
 // $icon-bar-font-color-hover: $icon-bar-font-color;
 // $icon-bar-font-size: 1rem;
@@ -740,7 +743,7 @@ $icon-bar-bg: $dark-gold;
 // $include-html-joyride-classes: $include-html-classes;
 
 // Controlling default Joyride styles
-$joyride-tip-bg: $dark-gold;
+$joyride-tip-bg: $royal-blue;
 // $joyride-tip-default-width: 300px;
 // $joyride-tip-padding: rem-calc(18 20 24);
 // $joyride-tip-border: solid 1px $charcoal;
@@ -802,7 +805,7 @@ $joyride-tip-bg: $dark-gold;
 // We use these to style the label text
 // $label-font-sizing: rem-calc(11);
 // $label-font-weight: $font-weight-normal;
-$label-font-color: $dark-gold;
+$label-font-color: $royal-blue;
 // $label-font-color-alt: $white;
 // $label-font-family: $body-font-family;
 
@@ -820,7 +823,7 @@ $label-font-color: $dark-gold;
 // Off Canvas Tab Bar Variables
 // $include-html-off-canvas-classes: $include-html-classes;
 
-$tabbar-bg: $dark-gold;
+$tabbar-bg: $royal-blue;
 // $tabbar-height: rem-calc(45);
 // $tabbar-icon-width: $tabbar-height;
 // $tabbar-line-height: $tabbar-height;
@@ -840,7 +843,7 @@ $tabbar-bg: $dark-gold;
 
 // Off Canvas Menu Variables
 // $off-canvas-width: rem-calc(250);
-$off-canvas-bg: $dark-gold;
+$off-canvas-bg: $royal-blue;
 
 // Off Canvas Menu List Variables
 // $off-canvas-label-padding: 0.3rem rem-calc(15);
@@ -970,6 +973,7 @@ $off-canvas-bg: $dark-gold;
 
 // We use these to control the background and border styles
 // $panel-bg: scale-color($white, $lightness: -5%);
+$panel-bg: scale-color($sand, $lightness: 15%);
 // $panel-border-style: solid;
 // $panel-border-size: 1px;
 
@@ -1001,7 +1005,7 @@ $panel-font-color: $dark-gold;
 // $price-table-margin-bottom: rem-calc(20);
 
 // We use these to control the title styles
-$price-title-bg: $dark-gold;
+$price-title-bg: $royal-blue;
 // $price-title-padding: rem-calc(15 20);
 // $price-title-align: center;
 // $price-title-color: $smoke;
@@ -1013,7 +1017,7 @@ $price-title-bg: $dark-gold;
 // $price-money-bg: $vapor;
 // $price-money-padding: rem-calc(15 20);
 // $price-money-align: center;
-$price-money-color: $dark-gold;
+$price-money-color: $royal-blue;
 // $price-money-weight: $font-weight-normal;
 // $price-money-size: rem-calc(32);
 // $price-money-font-family: $body-font-family;
@@ -1030,7 +1034,7 @@ $price-money-color: $dark-gold;
 // $price-desc-bottom-border: dotted 1px $gainsboro;
 
 // We use these to control the list item styles
-$price-item-color: $dark-gold;
+$price-item-color: $royal-blue;
 // $price-item-padding: rem-calc(15);
 // $price-item-align: center;
 // $price-item-font-size: rem-calc(14);
@@ -1184,7 +1188,7 @@ $price-item-color: $dark-gold;
 // We use these to control different shared styles for Split Buttons
 // $split-button-function-factor: 10%;
 // $split-button-pip-color: $white;
-$split-button-pip-color-alt: $dark-gold;
+$split-button-pip-color-alt: $royal-blue;
 // $split-button-active-bg-tint: rgba(0,0,0,0.1);
 
 // We use these to control tiny split buttons
@@ -1356,13 +1360,13 @@ $split-button-pip-color-alt: $dark-gold;
 
 // $has-tip-border-bottom: dotted 1px $iron;
 // $has-tip-font-weight: $font-weight-bold;
-$has-tip-font-color: $dark-gold;
+$has-tip-font-color: $royal-blue;
 // $has-tip-border-bottom-hover: dotted 1px scale-color($primary-color, $lightness: -55%);
 // $has-tip-font-color-hover: $primary-color;
 // $has-tip-cursor-type: help;
 
 // $tooltip-padding: rem-calc(12);
-$tooltip-bg: $dark-gold;
+$tooltip-bg: $royal-blue;
 // $tooltip-font-size: rem-calc(14);
 // $tooltip-font-weight: $font-weight-normal;
 // $tooltip-font-color: $white;
@@ -1382,7 +1386,7 @@ $tooltip-bg: $dark-gold;
 // $include-html-top-bar-classes: $include-html-classes;
 
 // Background color for the top bar
-$topbar-bg-color: $dark-gold;
+$topbar-bg-color: $royal-blue;
 // $topbar-bg: $topbar-bg-color;
 
 // Height and margin
@@ -1402,10 +1406,10 @@ $topbar-bg-color: $dark-gold;
 // $topbar-link-font-size: rem-calc(13);
 // $topbar-link-hover-lightness: -10%; // Darken by 10%
 // $topbar-link-bg: $topbar-bg;
-$topbar-link-bg-hover: scale-color($primary-color, $lightness: -25%);
+$topbar-link-bg-hover: scale-color($topbar-bg-color, $lightness: -15%);
 // $topbar-link-bg-color-hover: $charcoal;
-// $topbar-link-bg-active: $primary-color;
-// $topbar-link-bg-active-hover: scale-color($primary-color, $lightness: -14%);
+$topbar-link-bg-active: scale-color($topbar-bg-color, $lightness: -25%);
+$topbar-link-bg-active-hover: scale-color($topbar-bg-color, $lightness: -14%);
 // $topbar-link-font-family: $body-font-family;
 // $topbar-link-text-transform: none;
 // $topbar-link-padding: ($topbar-height / 3);
@@ -1415,11 +1419,11 @@ $topbar-link-bg-hover: scale-color($primary-color, $lightness: -25%);
 // $topbar-button-top: 7px;
 
 // Style the top bar dropdown elements
-$topbar-dropdown-bg: $dark-gold;
+$topbar-dropdown-bg: $royal-blue;
 // $topbar-dropdown-link-color: $white;
 // $topbar-dropdown-link-color-hover: $topbar-link-color-hover;
-$topbar-dropdown-link-bg: $dark-gold;
-$topbar-dropdown-link-bg-hover: $dark-gold;
+$topbar-dropdown-link-bg: $royal-blue;
+$topbar-dropdown-link-bg-hover: $royal-blue;
 // $topbar-dropdown-link-weight: $font-weight-normal;
 // $topbar-dropdown-toggle-size: 5px;
 // $topbar-dropdown-toggle-color: $white;
@@ -1429,7 +1433,7 @@ $topbar-dropdown-link-bg-hover: $dark-gold;
 // $topbar-dropdown-label-text-transform: uppercase;
 // $topbar-dropdown-label-font-weight: $font-weight-bold;
 // $topbar-dropdown-label-font-size: rem-calc(10);
-$topbar-dropdown-label-bg: $dark-gold;
+$topbar-dropdown-label-bg: $royal-blue;
 
 // Top menu icon styles
 // $topbar-menu-link-transform: uppercase;

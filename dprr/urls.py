@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from dprr import views
 
 from wagtail.wagtailcore import urls as wagtail_urls
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
@@ -22,7 +21,6 @@ from django.views.generic.base import RedirectView
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', views.index, name='index'),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', include(admin.site.urls)),
     )

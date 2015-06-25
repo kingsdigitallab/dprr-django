@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailbase_tags %}
+
+{% block meta_title %}{{ self.title }}{% endblock %}
+
+{% block title %}{{ self.title }}{% endblock %}
+
+{% block main_menu %}
+{% get_site_root as site_root %}
+{% main_menu root=site_root current_page=self %}
+{% endblock %}
+
+{% block main %}{{ self.content | richtext }}{% endblock %}
+
+{% block local_menu %}
+{% local_menu current_page=self %}
+{% endblock %}
+
+{% block latest_blog_post %}
+{% latest_blog_post %}
+{% endblock %}
+
+{% block footer_scripts %}{% endblock %}

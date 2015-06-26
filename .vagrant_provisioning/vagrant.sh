@@ -56,6 +56,7 @@ pip install -U wagtail==0.7
 pip install -U django==1.7.5
 pip install -U django-compressor==1.4
 pip install -U libsass==0.5.1
+pip install -U django-libsass==0.3
 
 python /vagrant/manage.py migrate
 sudo chown -R vagrant /home/vagrant/venv/

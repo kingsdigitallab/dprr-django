@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Update sources
+# Update apt sources
 sudo echo 'deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main' >> /etc/apt/sources.list
 sudo wget -O- https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 apt-get update
@@ -44,12 +44,17 @@ for tbl in `sudo su - postgres -c "psql -qAt -c \"select table_name from informa
 do  sudo su - postgres -c "psql -c \"alter table $tbl owner to app_dprr;\" app_dprr_local"
 done
 
+# copies the local_settings file to the DPRR settings folder
+cp /vagrant/.vagrant_provisioning/local_settings.py /vagrant/dprr/settings/local.py
+
 virtualenv /home/vagrant/venv
 source /home/vagrant/venv/bin/activate
 pip install -r /vagrant/requirements/dev.txt
+
 pip install -U wagtail==0.7
 pip install -U django==1.7.5
 pip install -U django-compressor==1.4
 pip install -U libsass==0.5.1
+
 # python /vagrant/manage.py migrate
 sudo chown -R vagrant /home/vagrant/venv/

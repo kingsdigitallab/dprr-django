@@ -19,7 +19,7 @@ sudo easy_install pip
 sudo pip install virtualenv
 
 apt-get -y install binutils libproj-dev gdal-bin
-apt-get -y install postgresql-9.3 postgresql-client-9.3 libpq-dev postgresql-contrib-9.3 postgis postgresql-9.3-postgis-2.1
+apt-get -y install postgresql-9.3 postgresql-client-9.3 libpq-dev postgresql-contrib-9.3
 
 apt-get -y install libjpeg-dev
 apt-get -y install libldap-dev libsasl2-dev
@@ -47,14 +47,15 @@ done
 # copies the local_settings file to the DPRR settings folder
 cp /vagrant/.vagrant_provisioning/local_settings.py /vagrant/dprr/settings/local.py
 
+
 virtualenv /home/vagrant/venv
 source /home/vagrant/venv/bin/activate
-pip install -r /vagrant/requirements/dev.txt
 
+pip install -r /vagrant/requirements/dev.txt
 pip install -U wagtail==0.7
 pip install -U django==1.7.5
 pip install -U django-compressor==1.4
 pip install -U libsass==0.5.1
 
-# python /vagrant/manage.py migrate
+python /vagrant/manage.py migrate
 sudo chown -R vagrant /home/vagrant/venv/

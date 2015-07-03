@@ -1,0 +1,22 @@
+<h1>{{person}}</h1>
+
+{% if person.review_flag %}
+    <p><b>Warning: person needs revision</b></p>
+{% endif %}
+
+<p>
+    Database ID: {{person.id}} <br />
+    RE ID: {{person.re_number}}
+</p>
+
+<p>Name: {{person.praenomen.abbrev}} {{person.nomen}} {{person.cognomen}}</p>
+<p>Patrician: {% if person.patrician_uncertainty %}?{% endif %}{{person.patrician}}</p>
+
+<h2>Posts</h2>
+
+<ul>
+    {% for pa in post_assertions %}
+        <li> {{pa.date_start}} - {{pa.date_end}} {{pa.id}} {{pa.office}}</li>
+    {% endfor %}
+</ul>
+

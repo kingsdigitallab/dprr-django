@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block meta_title %}Search Results{% endblock %}
+
+{% block content %}
+
+<div class="large-9 columns">
+    <h1>Search Results <small>(in order of relevance)</small></h1>
+    {% block main %}
+
+    <p>Total results found: {{total_persons}}</p>
+
+    <ul class="search-results">
+        {% for person in persons %}
+             <li><a href="{% url 'person_detail' person.id %}">{{ person }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if persons.has_previous %}
+                <a href="?page={{ persons.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ persons.number }} of {{ persons.paginator.num_pages }}.
+            </span>
+
+            {% if persons.has_next %}
+                <a href="?page={{ persons.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
+
+    {% endblock %}
+
+
+</div>
+{% endblock %}

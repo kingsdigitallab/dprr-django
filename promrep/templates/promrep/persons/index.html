@@ -1,13 +1,18 @@
 {% extends "base.html" %}
+
 {% load wagtailcore_tags %}
 
 {% block meta_title %}Search Results{% endblock %}
 
-{% block content %}
+{% block main %}
 
-<div class="large-9 columns">
-    <h1>Search Results <small>(in order of relevance)</small></h1>
-    {% block main %}
+
+
+    <form method="get">
+        <label for="Office">Your name: </label>
+        <input id="input-office" type="text" name="office" value="{{ office }}">
+        <input type="submit" value="OK">
+    </form>
 
     <p>Total results found: {{total_persons}}</p>
 
@@ -33,8 +38,6 @@
         </span>
     </div>
 
-    {% endblock %}
 
-
-</div>
 {% endblock %}
+

@@ -3,15 +3,15 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-
 from promrep.models import PostAssertion, Person
-
 
 def person_index(request):
     person_list = Person.objects.select_related().order_by()
     paginator = Paginator(person_list, 25)
 
     page = request.GET.get('page')
+    office_name = request.GET.get('office')
+
     try:
         persons = paginator.page(page)
     except PageNotAnInteger:
@@ -22,7 +22,8 @@ def person_index(request):
         persons = paginator.page(paginator.num_pages)
 
     return render_to_response('promrep/persons/index.html',
-                              {"persons": persons,
+                              {"office": office_name,
+                              "persons": persons,
                                "total_persons": paginator.count})
 
 

@@ -55,7 +55,6 @@ class PostAssertionAdmin(admin.ModelAdmin):
                     [
                         'person',
                         'office',
-                        'location',
                         'secondary_source',
                         ('role', 'uncertain'),
                         'group',
@@ -71,10 +70,10 @@ class PostAssertionAdmin(admin.ModelAdmin):
                      ]})
             ]
 
-    raw_id_fields = ('group', 'person', 'office', 'location')
+    raw_id_fields = ('group', 'person', 'office', )
 
     related_lookup_fields = {
-         'fk': ['group', 'person', 'office', 'location', ],
+         'fk': ['group', 'person', 'office', ],
     }
 
     inlines = (PostAssertionNoteInline, )

@@ -380,9 +380,9 @@ class PostAssertion(TimeStampedModel):
     # should be removed after migration
     old_location = models.ForeignKey(Location, blank=True, null=True, related_name='old_location')
 
-    # locations = models.ManyToManyField(Location, blank=True, null=True, through='PostLocation')
-    # location_original = models.CharField(max_length=1024, blank=True)
-    # location_note = models.CharField(max_length=1024, blank=True)
+    locations = models.ManyToManyField(Location, blank=True, null=True, through='PostLocation')
+    location_original = models.CharField(max_length=1024, blank=True)
+    location_note = models.CharField(max_length=1024, blank=True)
 
     role = models.ForeignKey(RoleType, default=1)
     original_text = models.CharField(max_length=1024, blank=True)
@@ -440,9 +440,9 @@ class PostAssertion(TimeStampedModel):
         return date_str
 
 
-# @with_author
-# class PostLocation(models.Model):
-#     post_assertion = models.ForeignKey(PostAssertion)
-#     location = models.ForeignKey(Location)
-#     uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
-#     note = models.CharField(max_length=1024, blank=True)
+@with_author
+class PostLocation(models.Model):
+    post_assertion = models.ForeignKey(PostAssertion)
+    location = models.ForeignKey(Location)
+    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
+    note = models.CharField(max_length=1024, blank=True)

@@ -377,9 +377,6 @@ class PostAssertion(TimeStampedModel):
     group = models.ForeignKey(Group, blank=True, null=True)
     secondary_source = models.ForeignKey(SecondarySource)
 
-    # should be removed after migration
-    old_location = models.ForeignKey(Location, blank=True, null=True, related_name='old_location')
-
     locations = models.ManyToManyField(Location, blank=True, null=True, through='PostLocation')
     location_original = models.CharField(max_length=1024, blank=True)
     location_note = models.CharField(max_length=1024, blank=True)

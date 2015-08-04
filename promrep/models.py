@@ -407,6 +407,17 @@ class PostAssertion(TimeStampedModel):
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Manual revision needed."
 
+    def print_locations(self):
+        if self.id:
+            locations = [loc for loc in self.locations.all()]
+        else:
+            locations = []
+
+        return  ", ".join(locations)
+
+    print_locations.allow_tags = True
+    print_locations.short_description = 'Locations'
+
     class Meta:
         ordering = ['position', 'id']
 

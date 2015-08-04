@@ -12,8 +12,9 @@ class ModelLinkWidget(forms.Widget):
         self.object = obj
 
     def render(self, name, value, attrs=None):
-        edit_link = '<a href="../../../%s/%s/%s/">Add information to %s</a>' % \
-            (self.object._meta.app_label, self.object._meta.object_name.lower(), self.object.pk, self.object._meta.verbose_name.lower())
+        edit_link = '<a href="../../../%s/%s/%s/">Edit %s</a>' % \
+            (self.object._meta.app_label, self.object._meta.object_name.lower(),
+             self.object.pk, self.object._meta.verbose_name.lower())
 
         if self.object.pk:
             return mark_safe(u'%s' % (edit_link))
@@ -22,6 +23,7 @@ class ModelLinkWidget(forms.Widget):
 
 
 class PostAssertionDatesWidget(forms.Widget):
+
     def __init__(self, obj, attrs=None):
         super(PostAssertionDatesWidget, self).__init__(attrs)
         self.object = obj
@@ -29,6 +31,16 @@ class PostAssertionDatesWidget(forms.Widget):
     def render(self, name, value, attrs=None):
         return self.object.get_dates()
 
+
+class PostAssertionLocationsWidget(forms.Widget):
+
+    def __init__(self, obj, attrs=None):
+        super(PostAssertionLocationsWidget, self).__init__(attrs)
+        self.object = obj
+
+    def render(self, name, value, attrs=None):
+        loc = self.object.print_locations()
+        return self.object.print_locations()
 
 class PostInlineForm(forms.ModelForm):
 
@@ -38,6 +50,7 @@ class PostInlineForm(forms.ModelForm):
 
     edit_link = forms.CharField(label='Edit', required=False)
     print_dates = forms.CharField(label='Post Person Dates', required=False)
+    locations_list = forms.CharField(label='Location List', required=False)
 
     # verbose_name = 'Post'
 
@@ -50,7 +63,9 @@ class PostInlineForm(forms.ModelForm):
 
         # instance is always available, it just does or doesn't have pk.
         self.fields['edit_link'].widget = ModelLinkWidget(self.instance)
-        self.fields['print_dates'].widget = PostAssertionDatesWidget(self.instance)
+        self.fields['print_dates'].widget = PostAssertionDatesWidget(
+            self.instance)
+        self.fields['locations_list'].widget = PostAssertionLocationsWidget(self.instance)
 
 
 class PersonInlineForm(forms.ModelForm):

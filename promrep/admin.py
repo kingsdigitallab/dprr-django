@@ -15,10 +15,29 @@ from promrep.forms import PostInlineForm
 
 from models import Person, Office, Praenomen, PostAssertion, \
     Group, RoleType, DateType, SecondarySource, Gens, \
-    PostAssertionNote, Tribe, Location
+    PostAssertionNote, Tribe, Location, PostLocation
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
+
+
+class PostLocationInline(admin.StackedInline):
+    model = PostAssertion.locations.through
+    extra = 0
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-open',)
+
+    verbose_name = 'Post Location'
+    verbose_name_plural = 'Post Locations'
+
+    raw_id_fields = ('post_assertion', 'location', )
+
+    related_lookup_fields = {
+        'fk': ['post_assertion', 'location', ],
+    }
+
+
 
 
 class PostAssertionNoteInline(admin.StackedInline):
@@ -39,10 +58,10 @@ class PostAssertionNoteInline(admin.StackedInline):
 
 
 class PostAssertionAdmin(admin.ModelAdmin):
+
     list_display = ('id', 'person', 'office',
-                    'date_start', 'date_end', 'secondary_source',
-                    'review_flag',
-                    'created_by', 'created', 'modified')
+                    'date_start', 'print_locations', 'date_end', 'secondary_source',
+                    'review_flag', 'created_by', 'created', 'modified')
 
     list_filter = ('role', 'office', 'secondary_source', )
 
@@ -76,7 +95,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
          'fk': ['group', 'person', 'office', ],
     }
 
-    inlines = (PostAssertionNoteInline, )
+    inlines = (PostAssertionNoteInline, PostLocationInline)
 
 admin.site.register(PostAssertion, PostAssertionAdmin)
 
@@ -146,6 +165,7 @@ class PersonInline(admin.StackedInline):
 
 
 class PostAssertionInline(admin.StackedInline):
+    """Included in the Person Admin"""
     model = PostAssertion
     form = PostInlineForm
 
@@ -158,12 +178,10 @@ class PostAssertionInline(admin.StackedInline):
     verbose_name_plural = 'Person Post Assertions'
 
     show_change_link = True
-
     ordering = ('-date_start', '-date_end', )
-
     readonly_fields = ('id', )
 
-    fields = (['id', 'review_flag', ] ,
+    fields = (['id', 'review_flag', ],
             ['office', 'role'],
             ['uncertain', ],
             ['secondary_source', ],
@@ -173,15 +191,17 @@ class PostAssertionInline(admin.StackedInline):
             ['date_source_text', 'date_secondary_source', ],
             ['date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'],
             'notes',
+            'locations_list',
             'edit_link',
             )
 
-    raw_id_fields = ('notes', 'group', )
+    raw_id_fields = ('notes', 'group',)
 
     related_lookup_fields = {
         'fk': ['group', ],
-        'm2m': ['notes', ],
+        'm2m': ['notes',],
     }
+
 
 
 class REUpdatedListFilter(SimpleListFilter):

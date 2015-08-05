@@ -409,7 +409,7 @@ class PostAssertion(TimeStampedModel):
 
     def print_locations(self):
         if self.id:
-            locations = [loc for loc in self.locations.all()]
+            locations = [str(loc) for loc in self.locations.all()]
         else:
             locations = []
 
@@ -454,3 +454,10 @@ class PostLocation(models.Model):
     location = models.ForeignKey(Location)
     uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
     note = models.CharField(max_length=1024, blank=True)
+
+    def __unicode__(self):
+        un = ""
+        if self.uncertain:
+            un = "?"
+
+        return self.location.name + " " + un

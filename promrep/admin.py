@@ -28,14 +28,19 @@ class PostLocationInline(admin.StackedInline):
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-open',)
 
-    verbose_name = 'Post Location'
-    verbose_name_plural = 'Post Locations'
+    verbose_name = 'Location:'
+    verbose_name_plural = 'Locations'
 
-    raw_id_fields = ('post_assertion', 'location', )
+    raw_id_fields = ('location', )
 
     related_lookup_fields = {
-        'fk': ['post_assertion', 'location', ],
+        'fk': ['location', ],
     }
+
+    fields = (
+       ['location', 'uncertain'] ,
+       ['note',]
+       )
 
 
 

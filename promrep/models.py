@@ -408,10 +408,15 @@ class PostAssertion(TimeStampedModel):
     review_flag.help_text = "Manual revision needed."
 
     def print_locations(self):
+        locations = []
+
         if self.id:
-            locations = [str(loc) for loc in self.locations.all()]
-        else:
-            locations = []
+            for loc in self.postlocation_set.all():
+                name = str(loc.location)
+                if loc.uncertain:
+                    name = name + "?"
+
+                locations.append(name)
 
         return  ", ".join(locations)
 

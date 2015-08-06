@@ -32,15 +32,14 @@ class PostAssertionDatesWidget(forms.Widget):
         return self.object.get_dates()
 
 
-class PostAssertionLocationsWidget(forms.Widget):
+class PostAssertionProvincesWidget(forms.Widget):
 
     def __init__(self, obj, attrs=None):
-        super(PostAssertionLocationsWidget, self).__init__(attrs)
+        super(PostAssertionProvincesWidget, self).__init__(attrs)
         self.object = obj
 
     def render(self, name, value, attrs=None):
-        loc = self.object.print_locations()
-        return self.object.print_locations()
+        return self.object.print_provinces()
 
 class PostInlineForm(forms.ModelForm):
 
@@ -50,7 +49,7 @@ class PostInlineForm(forms.ModelForm):
 
     edit_link = forms.CharField(label='Edit', required=False)
     print_dates = forms.CharField(label='Post Person Dates', required=False)
-    locations_list = forms.CharField(label='Location List', required=False)
+    provinces_list = forms.CharField(label='Province(s)', required=False)
 
     # verbose_name = 'Post'
 
@@ -65,7 +64,7 @@ class PostInlineForm(forms.ModelForm):
         self.fields['edit_link'].widget = ModelLinkWidget(self.instance)
         self.fields['print_dates'].widget = PostAssertionDatesWidget(
             self.instance)
-        self.fields['locations_list'].widget = PostAssertionLocationsWidget(self.instance)
+        self.fields['provinces_list'].widget = PostAssertionProvincesWidget(self.instance)
 
 
 class PersonInlineForm(forms.ModelForm):

@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('promrep', '0004_create_postlocation_copy_locations'),
+        ('promrep', '0005_create_postassertionprovince'),
     ]
 
     operations = [

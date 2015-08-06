@@ -7,12 +7,12 @@ from django.conf import settings
 def copy_old_locations_to_new(apps, schema_editor):
     """Adds the old locations as new locations"""
     postassertion_model = apps.get_model('promrep', 'PostAssertion')
-    postlocation_model = apps.get_model('promrep', 'PostLocation')
+    postassertinoprovince_model = apps.get_model('promrep', 'PostAssertionProvince')
 
     for pa in postassertion_model.objects.all():
         if pa.old_location:
-            location = pa.old_location
-            pal = postlocation_model(post_assertion = pa, location = location)
+            province = pa.old_location
+            pal = postassertinoprovince_model(post_assertion = pa, province = province)
             pal.save()
         else:
             pass
@@ -22,31 +22,31 @@ def revert_locations_to_old(apps, schema_editor):
     postassertion_model = apps.get_model('promrep', 'PostAssertion')
 
     for pa in postassertion_model.objects.all():
-        if pa.locations:
+        if pa.provinces:
             # we can safely assume only the first element needs to be copied
-            location = pa.locations.first()
+            province = pa.provinces.first()
             if not pa.old_location:
-                pa.old_location = location
+                pa.old_location = province
                 pa.save()
 
 class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('promrep', '0003_alter_field_post_assertion__old_location'),
+        ('promrep', '0004_rename_location_province'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PostLocation',
+            name='PostAssertionProvince',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('uncertain', models.BooleanField(default=False, verbose_name=b'Uncertain')),
                 ('note', models.CharField(max_length=1024, blank=True)),
-                ('created_by', models.ForeignKey(related_name='postlocation_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('location', models.ForeignKey(to='promrep.Location')),
+                ('created_by', models.ForeignKey(related_name='postassertionprovince_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('province', models.ForeignKey(to='promrep.Province')),
                 ('post_assertion', models.ForeignKey(to='promrep.PostAssertion')),
-                ('updated_by', models.ForeignKey(related_name='postlocation_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('updated_by', models.ForeignKey(related_name='postassertionprovince_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
             },
@@ -54,20 +54,20 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='postassertion',
-            name='location_note',
-            field=models.CharField(max_length=1024, blank=True),
+            name='province_original_expanded',
+            field=models.CharField(max_length=512, blank=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='postassertion',
-            name='location_original',
-            field=models.CharField(max_length=1024, blank=True),
+            name='province_original',
+            field=models.CharField(max_length=512, blank=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='postassertion',
-            name='locations',
-            field=models.ManyToManyField(to='promrep.Location', null=True, through='promrep.PostLocation', blank=True),
+            name='provinces',
+            field=models.ManyToManyField(to='promrep.Province', null=True, through='promrep.PostAssertionProvince', blank=True),
             preserve_default=True,
         ),
 

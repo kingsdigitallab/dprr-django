@@ -301,22 +301,13 @@ class Relationship(TimeStampedModel):
 
 
 @with_author
-class Location(TimeStampedModel):
-    LOCATION_PLACE = 0
-    LOCATION_REGION = 1
-
-    LOCATION_TYPE_CHOICES = (
-        (LOCATION_PLACE, 'place'),
-        (LOCATION_REGION, 'province'),
-    )
-
+class Province(TimeStampedModel):
     name = models.CharField(max_length=256, unique=True)
     description = models.CharField(max_length=1024, blank=True)
-    location_type = models.SmallIntegerField(choices=LOCATION_TYPE_CHOICES, default=LOCATION_PLACE)
 
     class Meta:
-        verbose_name_plural = 'Place List'
-        verbose_name = 'Places'
+        verbose_name_plural = 'Provinces'
+        verbose_name = 'Province'
 
     def __unicode__(self):
         return self.name
@@ -377,9 +368,9 @@ class PostAssertion(TimeStampedModel):
     group = models.ForeignKey(Group, blank=True, null=True)
     secondary_source = models.ForeignKey(SecondarySource)
 
-    locations = models.ManyToManyField(Location, blank=True, null=True, through='PostLocation')
-    location_original = models.CharField(max_length=1024, blank=True)
-    location_note = models.CharField(max_length=1024, blank=True)
+    provinces = models.ManyToManyField(Province, blank=True, null=True, through='PostAssertionProvince')
+    province_original = models.CharField(max_length=512, blank=True)
+    province_original_expanded = models.CharField(max_length=512, blank=True)
 
     role = models.ForeignKey(RoleType, default=1)
     original_text = models.CharField(max_length=1024, blank=True)
@@ -407,21 +398,21 @@ class PostAssertion(TimeStampedModel):
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Manual revision needed."
 
-    def print_locations(self):
-        locations = []
+    def print_provinces(self):
+        provinces = []
 
         if self.id:
-            for loc in self.postlocation_set.all():
-                name = str(loc.location)
-                if loc.uncertain:
+            for prov in self.postassertionprovince_set.all():
+                name = str(prov.province)
+                if prov.uncertain:
                     name = name + "?"
 
-                locations.append(name)
+                provinces.append(name)
 
-        return  ", ".join(locations)
+        return  ", ".join(provinces)
 
-    print_locations.allow_tags = True
-    print_locations.short_description = 'Locations'
+    print_provinces.allow_tags = True
+    print_provinces.short_description = 'Provinces'
 
     class Meta:
         ordering = ['position', 'id']
@@ -454,9 +445,9 @@ class PostAssertion(TimeStampedModel):
 
 
 @with_author
-class PostLocation(models.Model):
+class PostAssertionProvince(models.Model):
     post_assertion = models.ForeignKey(PostAssertion)
-    location = models.ForeignKey(Location)
+    province = models.ForeignKey(Province)
     uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
     note = models.CharField(max_length=1024, blank=True)
 
@@ -465,4 +456,4 @@ class PostLocation(models.Model):
         if self.uncertain:
             un = "?"
 
-        return self.location.name + " " + un
+        return self.province.name + " " + un

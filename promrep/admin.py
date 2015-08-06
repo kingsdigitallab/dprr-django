@@ -15,34 +15,32 @@ from promrep.forms import PostInlineForm
 
 from models import Person, Office, Praenomen, PostAssertion, \
     Group, RoleType, DateType, SecondarySource, Gens, \
-    PostAssertionNote, Tribe, Location, PostLocation
+    PostAssertionNote, Tribe, Province, PostAssertionProvince
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
 
 
-class PostLocationInline(admin.StackedInline):
-    model = PostAssertion.locations.through
+class PostAssertionProvincesInline(admin.StackedInline):
+    model = PostAssertion.provinces.through
     extra = 0
 
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-open',)
 
-    verbose_name = 'Location:'
-    verbose_name_plural = 'Locations'
+    verbose_name = 'Province:'
+    verbose_name_plural = 'Provinces'
 
-    raw_id_fields = ('location', )
+    raw_id_fields = ('province', )
 
     related_lookup_fields = {
-        'fk': ['location', ],
+        'fk': ['province', ],
     }
 
     fields = (
-       ['location', 'uncertain'] ,
+       ['province', 'uncertain'] ,
        ['note',]
        )
-
-
 
 
 class PostAssertionNoteInline(admin.StackedInline):
@@ -65,7 +63,7 @@ class PostAssertionNoteInline(admin.StackedInline):
 class PostAssertionAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'person', 'office',
-                    'date_start', 'print_locations', 'date_end', 'secondary_source',
+                    'date_start', 'print_provinces', 'date_end', 'secondary_source',
                     'review_flag', 'created_by', 'created', 'modified')
 
     list_filter = ('role', 'office', 'secondary_source', )
@@ -100,7 +98,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
          'fk': ['group', 'person', 'office', ],
     }
 
-    inlines = (PostAssertionNoteInline, PostLocationInline)
+    inlines = (PostAssertionNoteInline, PostAssertionProvincesInline)
 
 admin.site.register(PostAssertion, PostAssertionAdmin)
 
@@ -118,17 +116,17 @@ class NoteAdmin(admin.ModelAdmin):
 admin.site.register(PostAssertionNote, NoteAdmin)
 
 
-class LocationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'location_type', 'created', 'modified')
-    list_display_links = ('id', 'name', 'location_type', )
+class ProvinceAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'created', 'modified', )
+    list_display_links = ('id', 'name', )
     readonly_fields = ('id', 'created', 'modified')
 
     search_fields = ['id', 'name', ]
-    fields = ('id', ['name', 'location_type'], 'description' )
+    fields = ('id', 'name', 'description' )
 
     show_change_link = True
 
-admin.site.register(Location, LocationAdmin)
+admin.site.register(Province, ProvinceAdmin)
 
 
 class PersonInline(admin.StackedInline):
@@ -196,7 +194,7 @@ class PostAssertionInline(admin.StackedInline):
             ['date_source_text', 'date_secondary_source', ],
             ['date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'],
             'notes',
-            'locations_list',
+            'provinces_list',
             'edit_link',
             )
 

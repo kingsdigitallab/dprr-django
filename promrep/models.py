@@ -271,6 +271,7 @@ class Person(TimeStampedModel):
 class Office(MPTTModel, TimeStampedModel):
 
     name = models.CharField(max_length=256, unique=True)
+    abbrev_name = models.CharField(max_length=128, blank=True)
     description = models.CharField(max_length=1024, blank=True)
 
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')

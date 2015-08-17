@@ -318,6 +318,7 @@ class OfficeAdmin(DjangoMpttAdmin):
     list_display = (
         'id',
         'name',
+        'abbrev_name',
         'description',
         )
 

@@ -222,6 +222,8 @@ class Person(TimeStampedModel):
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Person needs manual revision."
 
+    review_notes = models.TextField(blank=True)
+
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.module_name), args=[self.id])
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())

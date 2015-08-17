@@ -232,8 +232,9 @@ class REUpdatedListFilter(SimpleListFilter):
 class PersonAdmin(admin.ModelAdmin):
 
     fieldsets = [
-            ('Database',
-                 {'fields': [('id', 'review_flag')]},),
+            ('Database', {
+                'fields': [('id', 'review_flag'), 'review_notes']},
+            ),
             ('General Info',
                 {
                 'classes': ('grp-collapse grp-open',),

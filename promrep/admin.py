@@ -243,7 +243,7 @@ class PersonAdmin(admin.ModelAdmin):
                     ('nomen', 'nomen_uncertain'),
                     ('filiation', 'filiation_uncertain'),
                     ('cognomen', 'cognomen_uncertain'),
-                    ('other_names', ),
+                    ('other_names', 'other_names_uncertain',),
                     ('gens', 'gens_uncertain',),
                     ('tribe', 'tribe_uncertain'),
                     ('origin', ),

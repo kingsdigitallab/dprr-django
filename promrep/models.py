@@ -162,6 +162,7 @@ class Person(TimeStampedModel):
     cognomen_uncertain = models.BooleanField(verbose_name='Uncertain Cognomen', default=False)
 
     other_names = models.CharField(max_length=128, blank=True)
+    other_names_uncertain = models.BooleanField(verbose_name='Uncertain Other Names', default=False)
 
     filiation = models.CharField(max_length=256, blank=True)
     filiation_uncertain = models.BooleanField(verbose_name='Uncertain Filiation', default=False)

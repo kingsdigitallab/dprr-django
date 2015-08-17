@@ -89,6 +89,9 @@ class PostAssertionAdmin(admin.ModelAdmin):
                         ('date_source_text', 'date_secondary_source'),
                         ('date_start', 'date_start_uncertain'),
                         ('date_end', 'date_end_uncertain')
+                     ]}),
+            ('Provinces', {'fields': [
+                        ('province_original', 'province_original_expanded'),
                      ]})
             ]
 
@@ -194,6 +197,7 @@ class PostAssertionInline(admin.StackedInline):
             ['date_source_text', 'date_secondary_source', ],
             ['date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'],
             'notes',
+            ['province_original', 'province_original_expanded'],
             'provinces_list',
             'edit_link',
             )

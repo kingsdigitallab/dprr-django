@@ -154,6 +154,9 @@ class Person(TimeStampedModel):
 
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
     praenomen_uncertain = models.BooleanField(verbose_name='Uncertain Praenomen', default=False)
+    alt_praenomen = models.ForeignKey(Praenomen, blank=True, null=True,
+                                      related_name='person_alt_praenomen_set',
+                                      verbose_name='Alternative Praenomen')
 
     nomen = models.CharField(max_length=128, blank=True)
     nomen_uncertain = models.BooleanField(verbose_name='Uncertain Nomen', default=False)
@@ -162,6 +165,7 @@ class Person(TimeStampedModel):
     cognomen_uncertain = models.BooleanField(verbose_name='Uncertain Cognomen', default=False)
 
     other_names = models.CharField(max_length=128, blank=True)
+    other_names_uncertain = models.BooleanField(verbose_name='Uncertain Other Names', default=False)
 
     filiation = models.CharField(max_length=256, blank=True)
     filiation_uncertain = models.BooleanField(verbose_name='Uncertain Filiation', default=False)
@@ -218,6 +222,8 @@ class Person(TimeStampedModel):
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Person needs manual revision."
 
+    review_notes = models.TextField(blank=True)
+
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.module_name), args=[self.id])
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
@@ -271,6 +277,7 @@ class Person(TimeStampedModel):
 class Office(MPTTModel, TimeStampedModel):
 
     name = models.CharField(max_length=256, unique=True)
+    abbrev_name = models.CharField(max_length=128, blank=True)
     description = models.CharField(max_length=1024, blank=True)
 
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
@@ -301,22 +308,13 @@ class Relationship(TimeStampedModel):
 
 
 @with_author
-class Location(TimeStampedModel):
-    LOCATION_PLACE = 0
-    LOCATION_REGION = 1
-
-    LOCATION_TYPE_CHOICES = (
-        (LOCATION_PLACE, 'place'),
-        (LOCATION_REGION, 'province'),
-    )
-
+class Province(TimeStampedModel):
     name = models.CharField(max_length=256, unique=True)
     description = models.CharField(max_length=1024, blank=True)
-    location_type = models.SmallIntegerField(choices=LOCATION_TYPE_CHOICES, default=LOCATION_PLACE)
 
     class Meta:
-        verbose_name_plural = 'Place List'
-        verbose_name = 'Places'
+        verbose_name_plural = 'Provinces'
+        verbose_name = 'Province'
 
     def __unicode__(self):
         return self.name
@@ -377,7 +375,9 @@ class PostAssertion(TimeStampedModel):
     group = models.ForeignKey(Group, blank=True, null=True)
     secondary_source = models.ForeignKey(SecondarySource)
 
-    location = models.ForeignKey(Location, blank=True, null=True)
+    provinces = models.ManyToManyField(Province, blank=True, null=True, through='PostAssertionProvince')
+    province_original = models.CharField(max_length=512, blank=True)
+    province_original_expanded = models.CharField(max_length=512, blank=True)
 
     role = models.ForeignKey(RoleType, default=1)
     original_text = models.CharField(max_length=1024, blank=True)
@@ -404,6 +404,22 @@ class PostAssertion(TimeStampedModel):
 
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
     review_flag.help_text = "Manual revision needed."
+
+    def print_provinces(self):
+        provinces = []
+
+        if self.id:
+            for prov in self.postassertionprovince_set.all():
+                name = str(prov.province)
+                if prov.uncertain:
+                    name = name + "?"
+
+                provinces.append(name)
+
+        return  ", ".join(provinces)
+
+    print_provinces.allow_tags = True
+    print_provinces.short_description = 'Provinces'
 
     class Meta:
         ordering = ['position', 'id']
@@ -435,8 +451,16 @@ class PostAssertion(TimeStampedModel):
         return date_str
 
 
+@with_author
+class PostAssertionProvince(models.Model):
+    post_assertion = models.ForeignKey(PostAssertion)
+    province = models.ForeignKey(Province)
+    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
+    note = models.CharField(max_length=1024, blank=True)
 
+    def __unicode__(self):
+        un = ""
+        if self.uncertain:
+            un = "?"
 
-
-
-
+        return self.province.name + " " + un

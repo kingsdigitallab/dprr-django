@@ -240,6 +240,7 @@ class PersonAdmin(admin.ModelAdmin):
                 'fields': [
                     ('sex',),
                     ('praenomen', 'praenomen_uncertain'),
+                    'alt_praenomen',
                     ('nomen', 'nomen_uncertain'),
                     ('filiation', 'filiation_uncertain'),
                     ('cognomen', 'cognomen_uncertain'),

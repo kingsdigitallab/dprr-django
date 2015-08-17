@@ -154,6 +154,9 @@ class Person(TimeStampedModel):
 
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
     praenomen_uncertain = models.BooleanField(verbose_name='Uncertain Praenomen', default=False)
+    alt_praenomen = models.ForeignKey(Praenomen, blank=True, null=True,
+                                      related_name='person_alt_praenomen_set',
+                                      verbose_name='Alternative Praenomen')
 
     nomen = models.CharField(max_length=128, blank=True)
     nomen_uncertain = models.BooleanField(verbose_name='Uncertain Nomen', default=False)

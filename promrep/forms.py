@@ -84,3 +84,19 @@ class PersonInlineForm(forms.ModelForm):
 
         # instance is always available, it just does or doesn't have pk.
         self.fields['edit_link'].widget = ModelLinkWidget(self.instance)
+
+
+
+from haystack.forms import FacetedSearchForm
+
+class PromrepFacetedSearchForm(FacetedSearchForm):
+
+        def no_query_found(self):
+            """
+            Determines the behavior when no query was found.
+            By default, no results are returned (``EmptySearchQuerySet``).
+            Should you want to show all results, override this method in your
+            own ``SearchForm`` subclass and do ``return self.searchqueryset.all()``.
+            """
+
+            return self.searchqueryset.all()

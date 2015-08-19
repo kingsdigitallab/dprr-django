@@ -5,26 +5,35 @@ from django.shortcuts import render, get_object_or_404
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from promrep.models import PostAssertion, Person
 
-def person_index(request):
-    person_list = Person.objects.select_related().order_by()
-    paginator = Paginator(person_list, 25)
+from haystack.views import FacetedSearchView
 
-    page = request.GET.get('page')
-    office_name = request.GET.get('office')
+class PromrepFacetedSearchView(FacetedSearchView):
 
-    try:
-        persons = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        persons = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        persons = paginator.page(paginator.num_pages)
+    def create_response(self):
+        print "will create the response!"
 
-    return render_to_response('promrep/persons/index.html',
-                              {"office": office_name,
-                              "persons": persons,
-                               "total_persons": paginator.count})
+        res = super(PromrepFacetedSearchView, self).create_response()
+
+        print "created response"
+
+        return res
+
+    def build_page(self):
+        print "[DEBUG] build_page", str(self.results.count())
+
+        paginator = Paginator(self.results, self.results_per_page)
+        page_number = self.request.GET.get('page')
+
+        try:
+            page = paginator.page(page_number)
+        except PageNotAnInteger:
+            page = paginator.page(1)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+
+        return (paginator, page)
+
+
 
 
 def person_detail(request, person_id):
@@ -35,3 +44,5 @@ def person_detail(request, person_id):
     return render(request, 'promrep/persons/detail.html',
                   {'person': person,
                    'post_assertions': post_assertions})
+
+

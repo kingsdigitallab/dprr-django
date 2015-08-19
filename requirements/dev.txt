@@ -41,3 +41,5 @@ tzlocal==1.0
 unicodecsv==0.9.4
 wagtail==0.7
 wsgiref
+django-haystack
+pysolr

@@ -67,6 +67,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'ddhldap',
+    'haystack',
     'mptt',
     'django_mptt_admin',
     'author',

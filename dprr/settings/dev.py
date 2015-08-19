@@ -30,6 +30,21 @@ TEMPLATE_DEBUG = True
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
+# Haystack Config
+#------------------------------------------------------------------------------
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        # 'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        'ENGINE': 'promrep.solr_backends.solr_backend_field_collapsing.GroupedSolrEngine',
+        'URL': 'http://127.0.0.1:8983/solr'
+        # ...or for multicore...
+        # 'URL': 'http://127.0.0.1:8983/solr/mysite',
+    },
+}
+
+
+#------------------------------------------------------------------------------
 # Django Extensions
 # http://django-extensions.readthedocs.org/en/latest/
 #------------------------------------------------------------------------------

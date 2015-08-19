@@ -26,6 +26,13 @@ apt-get -y install libldap-dev libsasl2-dev
 apt-get -y install libxml2-dev libxslt1-dev
 apt-get -y install redis-server
 
+# Java and SOLR
+sudo apt-get -y install openjdk-7-jdk
+mkdir /usr/java
+ln -s /usr/lib/jvm/java-7-openjdk-amd64 /usr/java/default
+
+# TODO: install SOLR
+
 sudo su - postgres -c "psql -c \"create user vagrant with superuser password 'vagrant';\""
 sudo su - postgres -c "psql -c \"create user app_dprr password 'app_dprr';\""
 sudo su - postgres -c "createdb app_dprr_local -E UTF-8 -T template0 -O app_dprr"

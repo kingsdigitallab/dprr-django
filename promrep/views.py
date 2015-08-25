@@ -59,10 +59,10 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 selected_facets[field] = value
 
 
+        office_options = [ {'value': '', 'label': '--- Please select office name ---', 'is_selected' : False} ]
+
         if 'office' not in selected_facets.keys():
-            offices = [ {'value': 'office:', 'label': '--- Please select office name ---', 'is_selected' : True}, ]
-        else:
-            offices = [ {'value': '', 'label': '--- Please select office name ---', 'is_selected' : False} ]
+            office_options[0]['is_selected'] = True
 
         # TODO: should use facet_counts
         for o in Office.objects.all():
@@ -72,15 +72,26 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 if selected_facets['office'] == o.name:
                     odict['is_selected'] = True
 
-            offices.append(odict)
+            office_options.append(odict)
 
+        date_st_options = [ {'value': 'date_st:', 'label': '--- Please select start date ---', 'is_selected' : False}, ]
 
+        if 'date_st' not in selected_facets.keys():
+            date_st_options[0]['is_selected'] = True
 
+        # TODO: should use facet_counts
+        for d in range(-510, 0, 10):
+            ddict = {'value': 'date_st:' + str(d), 'label': d, 'is_selected' : False}
 
-        date_array = [i for i in range(-510, 0, 10)]
+            if 'date_st' in selected_facets.keys():
+                if selected_facets['date_st'] == str(d):
+                    ddict['is_selected'] = True
 
-        context['offices'] = offices
-        context['date_array'] = date_array
+            date_st_options.append(ddict)
+
+        # TODO: should go as a separate object
+        context['office_options'] = office_options
+        context['date_st_options'] = date_st_options
 
         return context
 

@@ -13,11 +13,12 @@
 
         <select name="selected_facets">
             {% for office in offices %}
-                <option value="office:{{office}}">{{office}}</option>
+                <option value="{{office.value}}" {% if office.is_selected%}selected=selected{% endif %}>{{office.label}}</option>
             {% endfor %}
         </select>
 
         <select name="selected_facets">
+            <option value="" selected="selected"> --- </option>
             {% for d in date_array %}
                 <option value="date_st:{{d}}">{{d}}</option>
             {% endfor %}

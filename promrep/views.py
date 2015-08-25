@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from promrep.models import PostAssertion, Person
+from promrep.models import PostAssertion, Person, Office
 
 from haystack.views import FacetedSearchView
 
@@ -38,27 +38,47 @@ class PromrepFacetedSearchView(FacetedSearchView):
     #       see https://github.com/django-haystack/django-haystack/pull/1130
     def extra_context(self):
         context = super(PromrepFacetedSearchView, self).extra_context()
-        print "ALL ABOUT context"
 
-        ### this should be applied elsewhere, no??
+        ### TODO: this should be applied elsewhere, no??
         for f in ['office']:
             self.searchqueryset = self.searchqueryset.facet(f, mincount=1)
 
         # print context
         self.results = self.results.facet('office')
 
-        facet_counts = self.results.facet_counts()
+        selected_facets = {}
 
-        offices = [o[0] for o in facet_counts['fields']['office']]
+        if self.request.GET.getlist('selected_facets'):
+            selected_facets_list = self.request.GET.getlist('selected_facets')
+
+            for facet in selected_facets_list:
+                if ":" not in facet:
+                    continue
+
+                (field, value) = facet.split(":", 1)
+                selected_facets[field] = value
+
+
+        if 'office' not in selected_facets.keys():
+            offices = [ {'value': 'office:', 'label': '--- Please select office name ---', 'is_selected' : True}, ]
+        else:
+            offices = [ {'value': '', 'label': '--- Please select office name ---', 'is_selected' : False} ]
+
+        # TODO: should use facet_counts
+        for o in Office.objects.all():
+            odict = {'value': 'office:' + o.name, 'label': o.name, 'is_selected' : False}
+
+            if 'office' in selected_facets.keys():
+                if selected_facets['office'] == o.name:
+                    odict['is_selected'] = True
+
+            offices.append(odict)
+
+
+
+
         date_array = [i for i in range(-510, 0, 10)]
 
-        print self.request.GET
-
-#        if self.request.GET['selected_facets']:
-#            if 'office:' in self.request.GET['selected_facets']:
-#                print
-
-        # print self.queryset.facet_counts()
         context['offices'] = offices
         context['date_array'] = date_array
 

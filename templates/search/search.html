@@ -10,15 +10,22 @@
     {% block main %}
 
     <form method="get" action=".">
-        <table>
-            {{ form.as_table }}
-            <tr>
-                <td>&nbsp;</td>
-                <td>
-                    <input type="submit" value="Search">
-                </td>
-            </tr>
-        </table>
+
+        <select name="selected_facets">
+            {% for office in offices %}
+                <option value="office:{{office}}">{{office}}</option>
+            {% endfor %}
+        </select>
+
+        <select name="selected_facets">
+            {% for d in date_array %}
+                <option value="date_st:{{d}}">{{d}}</option>
+            {% endfor %}
+        </select>
+
+        <input type="submit" value="Search">
+
+    </form>
 
     <p>Total results found: {{page.paginator.count}}</p>
 
@@ -40,8 +47,6 @@
             {% if page.has_next %}</a>{% endif %}
         </div>
     {% endif %}
-
-    </form>
 
 {% endblock %}
 </div>

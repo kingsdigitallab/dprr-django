@@ -31,6 +31,6 @@ def show_toolbar(request):
     return True
 
 DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': 'dprr.local_settings.show_toolbar',
+    'SHOW_TOOLBAR_CALLBACK': 'dprr.settings.local.show_toolbar',
 }
 

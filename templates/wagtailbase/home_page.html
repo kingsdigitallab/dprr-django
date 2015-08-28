@@ -26,35 +26,38 @@
 </div>
 <div class="row" data-equalizer>
     <div class="large-4 columns">
+        <!-- <div class="panel radius" data-equalizer-watch> -->
+            <h3 class="quick-home"><i class="fa fa-bookmark"></i> Quick links</h3>
+            <ul class="side-nav quick-home">
+                <li><a href="/project/" class="small button radius expand">Project</a></li>
+                <li><a href="/events/" class="small button radius expand">Events</a></li>
+                <li><a href="/blog/" class="small button radius expand">Blog</a></li>
+            </ul>
+        <!-- </div> -->
+    </div>
+    <div class="large-8 columns">
         <div class="panel radius" data-equalizer-watch>
             <h3><i class="fa fa-info-circle"></i> What's DPRR?</h3>
-            <p>DPRR is an online prosopography of the elite of the Roman Republic. The backbone of our database is the information contained in Broughton’s Magistrates of the Roman Republic.</p>
-        </div>
-        <a href="/about/" class="button radius expand">Find out more</a>
-    </div>
-    <div class="large-4 columns">
-        <div class="panel radius" data-equalizer-watch>
-            <h3><i class="fa fa-database"></i> What is the database about?</h3>
+            <p>DPRR is an online prosopography of the elite of the Roman Republic. It is a collaborative project, sponsored by the AHRC, between the departments of Classics and Digital Humanities at King's College London. The aim is to produce a comprehensive digital database of the Roman Republican elite. The backbone of the prosopography is provided by Broughton's Magistrates of the Roman Republic, which will be supplemented by material from Ruepke's Fasti Sacerdotum and Zmeskal's Adfinitas. The elite will be defined broadly and include also those who did not hold public office such as women and members of the equestrian class.</p>
             <p>The history of the Roman Republic (c. 509 to 31 BCE) was shaped by a highly competitive aristocratic elite, which oversaw Rome's remarkable transformation from middling Italian city-state to ruler of a Mediterranean empire. The DPRR project seeks to enhance our understanding of the structure and dynamics of this elite through prosopographical study of its attested individuals, including its familial composition, office-holding patterns, internal hierarchies and property and wealth. This website allows visitors to search for information about the individuals, families, offices, dates and relationships contained in our database.</p>
         </div>
-        <a href="/about/database/" class="button radius expand">More info</a>
     </div>
-    <div class="large-4 columns">
+    <!-- <div class="large-4 columns">
         <div class="panel radius" data-equalizer-watch>
             <h3><i class="fa fa-pencil"></i> Blog</h3>
-            {% block latest_blog_post %}
-                {% latest_n_blog_posts 2 %}
-            {% endblock %}
+            {# block latest_blog_post #}
+                {# latest_n_blog_posts 2 #}
+            {# endblock #}
         </div>
         <a href="/blog/" class="button radius expand">All entries</a>
-    </div>
+    </div> -->
 </div>
-<div class="row">
+<!-- <div class="row">
     <div class="large-12 columns">
         <h3><i class="fa fa-comments"></i> Feedback</h3>
         <p>We value our users' feedback and we'd like to hear from you. It would help us improve the site. So, don't be shy and <a href="/contact/">drop us a line</a>.</p>
     </div>
-</div>
+</div> -->
 
 {% endblock %}
 

@@ -1,33 +1,29 @@
 {% extends "wagtailbase/base.html" %}
 
 {% block main %}
+<section class="main">
+	<div class="row" data-equalizer>
 
-{% block breadcrumbs %}
-{% include "includes/breadcrumbs.html" %}
-{% endblock %}
+		<div class="large-3 columns sidebar" data-equalizer-watch>
+			{% block local_menu %}
+	        {% include 'includes/local_menu.html' %}
+	        {% endblock %}
+		</div>
 
-<div class="row" data-equalizer>
+		<div class="large-9 columns" data-equalizer-watch>
 
-	<div class="large-3 columns sidebar" data-equalizer-watch>
-		{% block local_menu %}
-        {% include 'includes/local_menu.html' %}
-        {% endblock %}
+			<h1>{% block title %} {{ self.title }} {% endblock %}</h1>
+			{{ block.super }}
+
+			{% block related_links %}
+			{% include "wagtailbase/includes/related_links.html" with related_links=self.related_links.all title="Related links" %}
+			{% endblock %}
+
+			{% block attachments %}
+			{% include "wagtailbase/includes/attachments.html" with attachments=self.attachments.all title="Attachments" %}
+			{% endblock %}
+
+		</div>
 	</div>
-
-	<div class="large-9 columns" data-equalizer-watch>
-
-		<h1>{% block title %} {{ self.title }} {% endblock %}</h1>
-		{{ block.super }}
-
-		{% block related_links %}
-		{% include "wagtailbase/includes/related_links.html" with related_links=self.related_links.all title="Related links" %}
-		{% endblock %}
-
-		{% block attachments %}
-		{% include "wagtailbase/includes/attachments.html" with attachments=self.attachments.all title="Attachments" %}
-		{% endblock %}
-
-	</div>
-</div>
 </section>
 {% endblock %}

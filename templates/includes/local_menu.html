@@ -2,7 +2,7 @@
 
 {% dprr_has_local_menu current_page=self as print_local_menu %}
 {% if print_local_menu %}
-	<h3>In this section</h3>
+	<h3><a href="../">In this section</a></h3>
     {% block local_menu %}
     {% local_menu current_page=self %}
     {% endblock %}

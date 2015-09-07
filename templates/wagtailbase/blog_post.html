@@ -4,7 +4,7 @@
 {% block title %}{% endblock %}
 
 {% block pageclass %}
-{% if self.get_parent.id == 14 %} class="events"{% endif %}
+{% if self.get_parent.slug == "events" %} class="events"{% endif %}
 {% endblock %}
 
 {% block main %}
@@ -15,8 +15,8 @@
 	</div>
 </div>
 
-<div class="row"{% if self.get_parent.id != 14 %} data-equalizer{% endif %}>
-	{% if self.get_parent.id == 14 %}
+<div class="row"{% if self.get_parent.slug != "events" %} data-equalizer{% endif %}>
+	{% if self.get_parent.slug == "events" %}
 	<div class="large-12 columns">
 	{% else %}
 	<div class="large-8 columns" data-equalizer-watch>
@@ -39,7 +39,7 @@
 		{% endblock %}
 		{% endif %}
 	</div>
-	{% if self.get_parent.id == 14 %}
+	{% if self.get_parent.slug == "events" %}
 	{% else %}
 	<div class="large-4 columns sidebar" data-equalizer-watch>
 		<h3>More posts</h3>

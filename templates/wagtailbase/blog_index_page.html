@@ -2,6 +2,10 @@
 
 {% load wagtailcore_tags wagtailbase_tags %}
 
+{% block pageclass %}
+{% if self.id == 14 %} class="events"{% endif %}
+{% endblock %}
+
 {% block main %}
 
 <div class="row">

@@ -7,7 +7,8 @@ def delete_parent_group(sender, instance, *args, **kwargs):
     that post only has that post assertion
     """
 
-    if instance.group.postassertion_set.count() == 0:
-        instance.group.delete()
+    if instance.group:
+        if instance.group.postassertion_set.count() == 0:
+            instance.group.delete()
 
 post_delete.connect(delete_parent_group, sender=PostAssertion)

@@ -422,7 +422,7 @@ class PostAssertion(TimeStampedModel):
     print_provinces.short_description = 'Provinces'
 
     class Meta:
-        ordering = ['position', 'id']
+        ordering = ['id']
 
     def __unicode__(self):
 

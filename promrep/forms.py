@@ -91,7 +91,8 @@ class PersonInlineForm(forms.ModelForm):
 
 class PromrepFacetedSearchForm(SearchForm):
     """reimplements the Faceted Search Form Class, as we have
-    special requirements in terms of facet handling"""
+    special requirements in terms of facet handling
+    """
 
     def __init__(self, *args, **kwargs):
         self.selected_facets = kwargs.pop("selected_facets", [])

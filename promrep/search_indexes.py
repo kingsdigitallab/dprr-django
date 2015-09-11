@@ -12,9 +12,12 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     # person link used in indexe pages
     person_uniq_link = indexes.FacetCharField()
 
+    uncertain = indexes.FacetBooleanField(model_attr='uncertain')
     item_id = indexes.CharField(model_attr='id')
-
     office = indexes.FacetCharField(model_attr='office__name')
+
+    nomen = indexes.FacetCharField(model_attr = 'person__nomen', default="")
+    cognomen = indexes.FacetCharField(model_attr='person__cognomen', default="")
 
     date_st = indexes.FacetIntegerField()
 
@@ -43,3 +46,4 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
             date_start = object.date_start
 
         return date_start
+

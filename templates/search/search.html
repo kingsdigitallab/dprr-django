@@ -18,6 +18,12 @@
         </select>
 
         <select name="selected_facets">
+            {% for office in office_options %}
+                <option value="{{office.value}}" {% if office.is_selected%}selected=selected{% endif %}>{{office.label}}</option>
+            {% endfor %}
+        </select>
+
+        <select name="selected_facets">
             {% for d in date_st_options %}
                 <option value="{{d.value}}" {% if d.is_selected%}selected=selected{% endif %}>{{d.label}}</option>
             {% endfor %}

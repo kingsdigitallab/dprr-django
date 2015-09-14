@@ -83,5 +83,5 @@ sudo chown -R vagrant /home/vagrant/venv/
 python /vagrant/manage.py build_solr_schema > schema.xml
 sudo mv schema.xml /var/lib/tomcat7/solr/collection1/conf/schema.xml
 sudo /etc/init.d/tomcat7 restart
-python /vagrant/manage.py rebuild_index
+python /vagrant/manage.py rebuild_index --noinput
 

@@ -110,6 +110,15 @@ class RoleType(TimeStampedModel):
     def __unicode__(self):
         return self.name
 
+
+class NoteType(TimeStampedModel):
+    name = models.CharField(max_length=128, unique=True)
+    description = models.TextField(max_length=1024, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Note(TimeStampedModel):
     REFERENCE_NOTE = 0
     FOOTNOTE = 1

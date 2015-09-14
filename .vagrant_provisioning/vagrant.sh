@@ -31,7 +31,11 @@ sudo apt-get -y install openjdk-7-jdk
 mkdir /usr/java
 ln -s /usr/lib/jvm/java-7-openjdk-amd64 /usr/java/default
 
-# TODO: install SOLR
+wget http://mirror.catn.com/pub/apache/lucene/solr/4.10.4/solr-4.10.4.tgz
+tar xvzf solr-4.10.2.tgz
+rm solr-4.10.2.tgz
+sudo mv solr-4.10.2/ /usr/share/
+
 
 sudo su - postgres -c "psql -c \"create user vagrant with superuser password 'vagrant';\""
 sudo su - postgres -c "psql -c \"create user app_dprr password 'app_dprr';\""

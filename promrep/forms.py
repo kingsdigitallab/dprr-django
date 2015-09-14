@@ -2,7 +2,8 @@ from django import forms
 from django.contrib.admin.widgets import AdminFileWidget
 from django.utils.safestring import mark_safe
 
-from haystack.forms import SearchForm
+from haystack.forms import FacetedSearchForm
+
 
 class ModelLinkWidget(forms.Widget):
 
@@ -89,55 +90,29 @@ class PersonInlineForm(forms.ModelForm):
         self.fields['edit_link'].widget = ModelLinkWidget(self.instance)
 
 
-class PromrepFacetedSearchForm(SearchForm):
-    """reimplements the Faceted Search Form Class, as we have
-    special requirements in terms of facet handling
-    """
+class PromrepFacetedSearchForm(FacetedSearchForm):
 
-    def __init__(self, *args, **kwargs):
-        self.selected_facets = kwargs.pop("selected_facets", [])
-        super(PromrepFacetedSearchForm, self).__init__(*args, **kwargs)
+    """Extends FacetedSearchForm, as we have special requirements in terms of
+    facet handling and date filtering."""
+
+    date_start = forms.IntegerField(required=False)
+    date_end = forms.IntegerField(required=False)
 
     def no_query_found(self):
-        """
-        Determines the behavior when no query was found.
-        By default, no results are returned (``EmptySearchQuerySet``).
-        Should you want to show all results, override this method in your
-        own ``SearchForm`` subclass and do ``return self.searchqueryset.all()``.
-        """
-        print "Noqueryfoundstuff"
-        print self.__dict__
-        print self
-
+        """Determines the behaviour when no query was found; returns all the
+        results."""
         return self.searchqueryset.all()
 
     def search(self):
         sqs = super(PromrepFacetedSearchForm, self).search()
 
-        # We need to process each facet to ensure that the field name and the
-        # value are quoted correctly and separately:
-        for facet in self.selected_facets:
+        if not self.is_valid():
+            return self.no_query_found()
 
-            print "selected facets->", facet
+        if self.cleaned_data['date_start']:
+            sqs = sqs.filter(pub_date__gte=self.cleaned_data['date_start'])
 
-            if ":" not in facet:
-                continue
-
-            field, value = facet.split(":", 1)
-
-            if field in ["date_st", ]:
-                if value:
-                    # TODO: review usage of filter vs narrow
-                    sqs = sqs.filter(date_st__gt=value)
-
-            else:
-                if value:
-                    sqs = sqs.narrow(
-                        u'%s:"%s"' % (field, sqs.query.clean(value)))
-
-        print "[DEBUG] ", sqs.count()
-        print sqs.count()
-
-        print sqs
+        if self.cleaned_data['date_end']:
+            sqs = sqs.filter(pub_date__lte=self.cleaned_data['date_end'])
 
         return sqs

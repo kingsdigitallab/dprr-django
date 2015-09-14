@@ -12,11 +12,7 @@ from pprint import pprint
 class PromrepFacetedSearchView(FacetedSearchView):
 
     def create_response(self):
-        print "will create the response!"
-
         res = super(PromrepFacetedSearchView, self).create_response()
-        print "created response"
-
         return res
 
     def build_page(self):
@@ -40,10 +36,11 @@ class PromrepFacetedSearchView(FacetedSearchView):
         context = super(PromrepFacetedSearchView, self).extra_context()
 
         ### TODO: this should be applied elsewhere, no??
-        for f in ['office']:
+        for f in ['office', 'nomen']:
             self.searchqueryset = self.searchqueryset.facet(f, mincount=1)
 
         # print context
+        # TODO: is this necessary??
         self.results = self.results.facet('office')
 
         selected_facets = {}
@@ -74,6 +71,22 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
             office_options.append(odict)
 
+
+        nomen_options = [ {'value': '', 'label': '--- Please select nomen ---', 'is_selected' : False} ]
+        if 'nomen' not in selected_facets.keys():
+            nomen_options[0]['is_selected'] = True
+
+        # TODO: should use facet_counts
+        for nomen in Person.objects.distinct('nomen').values_list('nomen', flat=True).order_by('nomen'):
+            ndict = {'value': 'nomen:' + nomen, 'label': nomen, 'is_selected' : False}
+
+            if 'nomen' in selected_facets.keys():
+                if selected_facets['nomen'] == nomen:
+                    ndict['nomen'] = True
+
+            nomen_options.append(ndict)
+
+
         date_st_options = [ {'value': 'date_st:', 'label': '--- Please select start date ---', 'is_selected' : False}, ]
 
         if 'date_st' not in selected_facets.keys():
@@ -92,6 +105,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
         # TODO: should go as a separate object
         context['office_options'] = office_options
         context['date_st_options'] = date_st_options
+        context['nomen_options'] = nomen_options
 
         return context
 

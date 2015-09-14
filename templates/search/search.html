@@ -12,8 +12,8 @@
     <form method="get" action=".">
 
         <select name="selected_facets">
-            {% for office in office_options %}
-                <option value="{{office.value}}" {% if office.is_selected%}selected=selected{% endif %}>{{office.label}}</option>
+            {% for nomen in nomen_options %}
+                <option value="{{nomen.value}}" {% if nomen.is_selected%}selected=selected{% endif %}>{{nomen.label}}</option>
             {% endfor %}
         </select>
 

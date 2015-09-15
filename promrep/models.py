@@ -133,7 +133,7 @@ class Note(TimeStampedModel):
     )
 
     old_note_type = models.IntegerField(choices=NOTE_TYPES, default=REFERENCE_NOTE)
-    # note_type = models.ForeignKey(NoteType, default=1, )
+    note_type = models.ForeignKey(NoteType, default=1, )
     secondary_source = models.ForeignKey(SecondarySource)
 
     # useful to store the bookmark number, for instance

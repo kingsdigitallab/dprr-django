@@ -15,7 +15,8 @@ from promrep.forms import PostInlineForm
 
 from models import Person, Office, Praenomen, PostAssertion, \
     Group, RoleType, DateType, SecondarySource, Gens, \
-    PostAssertionNote, Tribe, Province, PostAssertionProvince
+    PostAssertionNote, Tribe, Province, PostAssertionProvince, \
+    PersonNote
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
@@ -117,6 +118,7 @@ class NoteAdmin(admin.ModelAdmin):
     show_change_link = True
 
 admin.site.register(PostAssertionNote, NoteAdmin)
+admin.site.register(PersonNote, NoteAdmin)
 
 
 class ProvinceAdmin(admin.ModelAdmin):
@@ -130,6 +132,23 @@ class ProvinceAdmin(admin.ModelAdmin):
     show_change_link = True
 
 admin.site.register(Province, ProvinceAdmin)
+
+
+class PersonNoteInline(admin.StackedInline):
+    model = Person.notes.through
+    extra = 0
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-open',)
+
+    verbose_name = 'Person Note'
+    verbose_name_plural = 'Person Notes'
+
+    raw_id_fields = ('personnote', )
+
+    related_lookup_fields = {
+        'fk': ['personnote', ],
+    }
 
 
 class PersonInline(admin.StackedInline):
@@ -302,7 +321,7 @@ class PersonAdmin(admin.ModelAdmin):
                    'review_flag', REUpdatedListFilter, 'patrician', 'novus',
                    'nobilis', 'eques', )
 
-    inlines = (PostAssertionInline, )
+    inlines = (PostAssertionInline, PersonNoteInline)
     exclude = ('assertions', )
 
 admin.site.register(Person, PersonAdmin)

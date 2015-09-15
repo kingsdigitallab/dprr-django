@@ -147,6 +147,17 @@ class PostAssertionNote(Note):
 
 
 @with_author
+class PersonNote(Note):
+
+    def url_to_edit_note(self):
+        url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.model_name), args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.__unicode__())
+
+    def related_label(self):
+        return u"[%s - %s] %s<br /><br />" % (self.get_note_type_display(), self.secondary_source.abbrev_name , self.text)
+
+
+@with_author
 class Person(TimeStampedModel):
 
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
@@ -201,6 +212,8 @@ class Person(TimeStampedModel):
 
     extra_info = models.TextField(blank=True)
     extra_info.help_text = "Extra info about the person."
+
+    notes = models.ManyToManyField(PersonNote, blank=True)
 
     # dates
     date_display_text = models.CharField(max_length=1024, blank=True, null=True)

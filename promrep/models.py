@@ -120,19 +120,6 @@ class NoteType(TimeStampedModel):
 
 
 class Note(TimeStampedModel):
-    REFERENCE_NOTE = 0
-    FOOTNOTE = 1
-    OFFICE_NOTE = 2
-    OFFICE_FOOTNOTE = 3
-
-    NOTE_TYPES = (
-        (REFERENCE_NOTE, 'Reference'),
-        (FOOTNOTE, 'Footnote'),
-        (OFFICE_NOTE, 'Reference (Office)'),
-        (OFFICE_FOOTNOTE, 'Footnote (Office)')
-    )
-
-    old_note_type = models.IntegerField(choices=NOTE_TYPES, default=REFERENCE_NOTE)
     note_type = models.ForeignKey(NoteType, default=1, )
     secondary_source = models.ForeignKey(SecondarySource)
 

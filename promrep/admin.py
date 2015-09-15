@@ -107,12 +107,12 @@ admin.site.register(PostAssertion, PostAssertionAdmin)
 
 
 class NoteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'note_type', 'secondary_source', 'text', 'extra_info', 'created', 'modified')
-    list_display_links = ('note_type', 'secondary_source', 'text', 'extra_info')
+    list_display = ('id', 'old_note_type', 'secondary_source', 'text', 'extra_info', 'created', 'modified')
+    list_display_links = ('old_note_type', 'secondary_source', 'text', 'extra_info')
     readonly_fields = ('id', 'created', 'modified')
 
-    search_fields = ['id', 'note_type', 'text']
-    fields = ('id', ['secondary_source', 'note_type'], 'text', 'extra_info', )
+    search_fields = ['id', 'text']
+    fields = ('id', ['secondary_source', 'old_note_type'], 'text', 'extra_info', )
 
     show_change_link = True
 

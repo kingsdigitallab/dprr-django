@@ -22,7 +22,6 @@ LOGGING_LEVEL = logging.DEBUG
 LOGGING['loggers']['django']['level'] = LOGGING_LEVEL
 LOGGING['loggers']['django_auth_ldap']['level'] = LOGGING_LEVEL
 LOGGING['loggers']['promrep']['level'] = LOGGING_LEVEL
-LOGGING['loggers']['haystack']['level'] = LOGGING_LEVEL
 
 TEMPLATE_DEBUG = True
 

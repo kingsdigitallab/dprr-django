@@ -1,59 +1,75 @@
 {% extends "base.html" %}
-{% load highlight wagtailcore_tags %}
+{% load ddh_utils_tags wagtailbase_tags wagtailcore_tags %}
 
 {% block meta_title %}Search Results{% if query %} for {{ query }}{% endif %}{% endblock %}
 
-{% block content %}
+{% block main %}
+<div class="row">
+    <div class="large-3 columns facets">
+        <form method="get" action=".">
+            <section data-section="non-expandable" data-expandable-group-member="facets" class="expandable-list fixed-open" id="dprr-filter">
+            {% for facet in facets.fields %}
+            <div class="list-item no">
+                <div class="list-header no-link">
+                    <h4><span class="header">Filter by {{ facet }}</span></h4>
+                </div>
+                <div class="list-content">
+                    <ul>
+                        {% for term in facets.fields|get_item:facet %}
+                        {% with value=term.0 count=term.1 %}
+                        {% if count > 0 %}
+                        <li>
+                            <a href="{% add_facet_link querydict facet value %}">
+                                {{ value }}
+                                <span class="label radius right">{{ count }}</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endwith %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+    </form>
+</div>
 
 <div class="large-9 columns">
     <h1>Search Results <small>(in order of relevance)</small></h1>
-    {% block main %}
+    <h2>Total results found: {{ paginator.count }}</h2>
 
-    <form method="get" action=".">
-
-        <select name="selected_facets">
-            {% for nomen in nomen_options %}
-                <option value="{{nomen.value}}" {% if nomen.is_selected%}selected=selected{% endif %}>{{nomen.label}}</option>
-            {% endfor %}
-        </select>
-
-        <select name="selected_facets">
-            {% for office in office_options %}
-                <option value="{{office.value}}" {% if office.is_selected%}selected=selected{% endif %}>{{office.label}}</option>
-            {% endfor %}
-        </select>
-
-        <select name="selected_facets">
-            {% for d in date_st_options %}
-                <option value="{{d.value}}" {% if d.is_selected%}selected=selected{% endif %}>{{d.label}}</option>
-            {% endfor %}
-        </select>
-
-        <input type="submit" value="Search">
-
-    </form>
-
-    <p>Total results found: {{page.paginator.count}}</p>
+    {% if selected_facets %}
+    <div class="large-12 columns">
+        <dl class="dl-horizontal">
+            <dt><span class="inline-title">Filtering By: </span></dt>
+            <dd>
+            {% for facet in selected_facets %}
+            <span class="facet-selected">{{ facet }}
+                <a href="{% remove_facet_link querydict facet %}">
+                    <i class="icon icon-remove">x</i>
+                </a>
+             </span>
+             {% endfor %}
+            </dd>
+        </dl>
+    </div>
+    {% endif %}
 
     <ul class="search-results">
-        {% for result in page.object_list %}
-             <li>{{ result.key |safe }}</li>
+        {% for result in object_list %}
+        {% with doc=result.documents.0 %}
+        <li>
+            <a href="{% url 'person_detail' doc.person_id %}">{{ doc.person }}</a>
+        </li>
+        {% endwith %}
+        {% empty %}
+        <li>No results found!</li>
         {% endfor %}
     </ul>
 
-    <p>Page {{page.number}} of {{page.paginator.num_pages}}</p>
-
-    {% if page.has_previous or page.has_next %}
-        <div>
-            {% if page.has_previous %}
-                <a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">
-            {% endif %}&laquo; Previous {% if page.has_previous %}</a>{% endif %}
-            |
-            {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;
-            {% if page.has_next %}</a>{% endif %}
-        </div>
-    {% endif %}
-
-{% endblock %}
+    {% display_pagination querydict page_obj %}
 </div>
-{% endblock %}
+
+</div>
+{% endblock main %}

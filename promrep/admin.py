@@ -317,7 +317,7 @@ class PersonAdmin(admin.ModelAdmin):
     search_fields = ['id', 'nomen', 'cognomen', 'praenomen__abbrev',
                     'praenomen__name', 'other_names', 're_number', ]
 
-    list_filter = ('postassertion__role', 'nomen', 'postassertion__office',
+    list_filter = ('nomen',
                    'review_flag', REUpdatedListFilter, 'patrician', 'novus',
                    'nobilis', 'eques', )
 

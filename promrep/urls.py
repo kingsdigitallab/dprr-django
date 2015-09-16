@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 
-from promrep.views import person_detail, PromrepFacetedSearchView
+from promrep.views import PersonDetailView, PromrepFacetedSearchView
 
 
 urlpatterns = patterns('',
@@ -10,7 +10,7 @@ urlpatterns = patterns('',
                        )
 
 urlpatterns += patterns('',
-                        url(r'^person/(?P<person_id>[0-9]+)/$',
-                            person_detail,
-                            name='person_detail'),
+                        url(r'^person/(?P<pk>\d+)/$',
+                            PersonDetailView.as_view(),
+                            name='person-detail'),
                         )

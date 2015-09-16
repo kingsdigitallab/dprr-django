@@ -51,8 +51,8 @@ class PostAssertionNoteInline(admin.StackedInline):
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-open',)
 
-    verbose_name = 'Post Person Note'
-    verbose_name_plural = 'Post Person Notes'
+    verbose_name = 'Post Assertion Note'
+    verbose_name_plural = 'Post Assertion Notes'
 
     raw_id_fields = ('postassertionnote', )
 

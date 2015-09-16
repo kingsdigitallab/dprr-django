@@ -17,6 +17,19 @@ DATABASES = {
 }
 
 #------------------------------------------------------------------------------
+# Django Extensions
+# http://django-extensions.readthedocs.org/en/latest/
+#------------------------------------------------------------------------------
+
+try:
+    import django_extensions
+    INSTALLED_APPS = INSTALLED_APPS + ('django_extensions',)
+except ImportError:
+    pass
+
+
+
+#------------------------------------------------------------------------------
 # Local settings
 #------------------------------------------------------------------------------
 

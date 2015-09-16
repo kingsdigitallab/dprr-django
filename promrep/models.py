@@ -110,20 +110,17 @@ class RoleType(TimeStampedModel):
     def __unicode__(self):
         return self.name
 
+
+class NoteType(TimeStampedModel):
+    name = models.CharField(max_length=128, unique=True)
+    description = models.TextField(max_length=1024, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Note(TimeStampedModel):
-    REFERENCE_NOTE = 0
-    FOOTNOTE = 1
-    OFFICE_NOTE = 2
-    OFFICE_FOOTNOTE = 3
-
-    NOTE_TYPES = (
-        (REFERENCE_NOTE, 'Reference'),
-        (FOOTNOTE, 'Footnote'),
-        (OFFICE_NOTE, 'Reference (Office)'),
-        (OFFICE_FOOTNOTE, 'Footnote (Office)')
-    )
-
-    note_type = models.IntegerField(choices=NOTE_TYPES, default=REFERENCE_NOTE)
+    note_type = models.ForeignKey(NoteType, default=1, )
     secondary_source = models.ForeignKey(SecondarySource)
 
     # useful to store the bookmark number, for instance
@@ -146,7 +143,18 @@ class PostAssertionNote(Note):
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     def related_label(self):
-        return u"[%s - %s] %s<br /><br />" % (self.get_note_type_display(), self.secondary_source.abbrev_name , self.text)
+        return u"[%s - %s] %s<br /><br />" % (self.note_type, self.secondary_source.abbrev_name , self.text)
+
+
+@with_author
+class PersonNote(Note):
+
+    def url_to_edit_note(self):
+        url = reverse('admin:%s_%s_change' % (self._meta.app_label, self._meta.model_name), args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.__unicode__())
+
+    def related_label(self):
+        return u"[%s - %s] %s<br /><br />" % (self.note_type, self.secondary_source.abbrev_name , self.text)
 
 
 @with_author
@@ -204,6 +212,8 @@ class Person(TimeStampedModel):
 
     extra_info = models.TextField(blank=True)
     extra_info.help_text = "Extra info about the person."
+
+    notes = models.ManyToManyField(PersonNote, blank=True)
 
     # dates
     date_display_text = models.CharField(max_length=1024, blank=True, null=True)
@@ -422,7 +432,7 @@ class PostAssertion(TimeStampedModel):
     print_provinces.short_description = 'Provinces'
 
     class Meta:
-        ordering = ['position', 'id']
+        ordering = ['id']
 
     def __unicode__(self):
 

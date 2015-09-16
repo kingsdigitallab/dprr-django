@@ -143,7 +143,7 @@ class PostAssertionNote(Note):
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     def related_label(self):
-        return u"[%s - %s] %s<br /><br />" % (self.get_note_type_display(), self.secondary_source.abbrev_name , self.text)
+        return u"[%s - %s] %s<br /><br />" % (self.note_type, self.secondary_source.abbrev_name , self.text)
 
 
 @with_author
@@ -154,7 +154,7 @@ class PersonNote(Note):
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     def related_label(self):
-        return u"[%s - %s] %s<br /><br />" % (self.get_note_type_display(), self.secondary_source.abbrev_name , self.text)
+        return u"[%s - %s] %s<br /><br />" % (self.note_type, self.secondary_source.abbrev_name , self.text)
 
 
 @with_author

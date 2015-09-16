@@ -379,7 +379,7 @@ class Group(TimeStampedModel):
 
 @with_author
 class PostAssertion(TimeStampedModel):
-    person = models.ForeignKey(Person)
+    person = models.ForeignKey(Person, related_name='post_assertions')
     office = models.ForeignKey(Office)
 
     group = models.ForeignKey(Group, blank=True, null=True)

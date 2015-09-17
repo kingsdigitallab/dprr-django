@@ -11,7 +11,7 @@ from promrep.solr_backends.solr_backend_field_collapsing import (
 class PromrepFacetedSearchView(FacetedSearchView):
     # TODO: check how to set facet.mincount, can facet_fields be declared as a
     # dictionary?
-    facet_fields = ['nomen', 'office', 'date_start']
+    facet_fields = ['patrician', 'nomen', 'office', ]
     form_class = PromrepFacetedSearchForm
     load_all = True
     queryset = GroupedSearchQuerySet().models(

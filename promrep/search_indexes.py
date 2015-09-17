@@ -11,6 +11,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     person_id = indexes.IntegerField(model_attr='person__id')
     nomen = indexes.CharField(model_attr='person__nomen', faceted=True)
     cognomen = indexes.CharField(model_attr='person__cognomen', faceted=True)
+    patrician = indexes.BooleanField(model_attr='person__patrician', default=False, faceted=True)
 
     office = indexes.CharField(model_attr='office__name', faceted=True)
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)

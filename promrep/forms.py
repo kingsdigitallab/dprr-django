@@ -110,9 +110,9 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
             return self.no_query_found()
 
         if self.cleaned_data['date_start']:
-            sqs = sqs.filter(date_start__gte=self.cleaned_data['date_start'])
+            sqs = sqs.filter(post_date__gte=self.cleaned_data['date_start'])
 
         if self.cleaned_data['date_end']:
-            sqs = sqs.filter(date_end__lte=self.cleaned_data['date_end'])
+            sqs = sqs.filter(post_date__lte=self.cleaned_data['date_end'])
 
         return sqs

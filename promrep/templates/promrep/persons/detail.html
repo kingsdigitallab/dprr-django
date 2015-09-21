@@ -20,13 +20,16 @@
         </p>
 
         <p>Name: {{ person.praenomen.abbrev }} {{ person.nomen }} {{ person.cognomen }} {{ person.other_names }}</p>
-        <p>Patrician: {% if person.patrician_uncertainty %}?{% endif %}{{ person.patrician }}</p>
+
+        {% if person.patrician %}
+            <p>Patrician: {% if person.patrician_uncertainty %}?{% endif %}{{ person.patrician }}</p>
+        {% endif %}
 
         <h2>Posts</h2>
 
         <ul>
             {% for pa in person.post_assertions.all %}
-                <li>{{ pa.print_date}} {{ pa.office | title}} {% if pa.provinces %} in {{pa.print_provinces}} {% endif %}({{pa.secondary_source.abbrev_name}})</li>
+                <li>{{ pa.print_date}} {{ pa.office | title}} {% if pa.provinces %} {{pa.print_provinces}} {% endif %}({{pa.secondary_source.abbrev_name}})</li>
             {% endfor %}
         </ul>
 

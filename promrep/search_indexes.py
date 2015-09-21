@@ -26,6 +26,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     office = indexes.CharField(model_attr='office__name', faceted=True)
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
 
+    province = indexes.MultiValueField(faceted=True)
     post_date = MultiValueIntegerField(faceted=True)
 
     def get_model(self):
@@ -51,3 +52,6 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         res = range(start, end + 1, 1)
 
         return res
+
+    def prepare_province(self, object):
+        return [p.name for p in object.provinces.all()]

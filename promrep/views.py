@@ -12,10 +12,20 @@ class PromrepFacetedSearchView(FacetedSearchView):
     # TODO: check how to set facet.mincount, can facet_fields be declared as a
     # dictionary?
     facet_fields = ['patrician', 'nomen', 'office', 'province', ]
+    alpha_facet_fields = ['nomen', 'office', 'province', ]
     form_class = PromrepFacetedSearchForm
     load_all = True
     queryset = GroupedSearchQuerySet().models(
         PostAssertion).group_by('person_id')
+
+
+    def get_queryset(self):
+        queryset = super(PromrepFacetedSearchView, self).get_queryset()
+
+        for facet in self.alpha_facet_fields:
+            queryset = queryset.facet(facet, sort='index')
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super(

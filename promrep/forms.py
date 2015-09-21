@@ -6,7 +6,8 @@ from django.core.validators import RegexValidator
 from haystack.forms import FacetedSearchForm
 
 validate_range = RegexValidator(
-    r'^-?\d+\s-\s-?\d+$', 'Incorrect format; use the slider to select values.')
+    r'^-?\d+\s-\s-?\d+$', 'Incorrect format; Please enter range in the format "date_from - date_end".')
+
 
 def get_range_parts(value_range):
     """Returns a tuple of start value and end value extracted from
@@ -126,22 +127,11 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
 
         # Narrow the search by the ranges of dates
         # Requires, of course, that the form be bound.
-        # if self.is_bound:
-        if True:
+        if self.is_bound:
             for field in self.range_facet_fields:
                 field_data = self.cleaned_data.get(field)
-                print "GOTCHA>> {}".format(field_data)
                 if field_data:
                     start, end = get_range_parts(field_data)
                     sqs = sqs.narrow(u'%s:[%s TO %s]' % (field, start, end))
-
-
-#        if self.cleaned_data['date_start']:
-#            print "Date start: {0}".format(self.cleaned_data['date_start'])
-#            sqs = sqs.filter(post_date__gte=self.cleaned_data['date_start'])
-#
-#        if self.cleaned_data['date_end']:
-#            print "Date end: {0}".format(self.cleaned_data['date_end'])
-#            sqs = sqs.filter(post_date__lte=self.cleaned_data['date_end'])
 
         return sqs

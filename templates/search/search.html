@@ -7,11 +7,23 @@
 <div class="row">
     <div class="large-3 columns facets">
         <form method="get" action=".">
+
             <section data-section="non-expandable" data-expandable-group-member="facets" class="expandable-list fixed-open" id="dprr-filter">
+
+            <div class="list-item no">
+              <div class="list-header no-link">
+                <h4>Filter by Post Date</h4>
+                    {{ form.post_date.errors }}
+                    <p>{{ form.post_date }}</p>
+                    <input type="submit" value="Update search">
+                </div>
+            </div>
+
+
             {% for facet in facets.fields %}
             <div class="list-item no">
                 <div class="list-header no-link">
-                    <h4><span class="header">Filter by {{ facet }}</span></h4>
+                    <h4>Filter by {{ facet }}</h4>
                 </div>
                 <div class="list-content">
                     <ul>
@@ -36,8 +48,8 @@
 </div>
 
 <div class="large-9 columns">
-    <h1>Search Results <small>(in order of relevance)</small></h1>
-    <h2>Total results found: {{ paginator.count }}</h2>
+    <h1>Search Results</h1>
+    <h2>Total persons found: {{ paginator.count }}</h2>
 
     {% if selected_facets %}
     <div class="large-12 columns">

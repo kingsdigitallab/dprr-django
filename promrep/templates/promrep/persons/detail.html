@@ -26,7 +26,7 @@
 
         <ul>
             {% for pa in person.post_assertions.all %}
-                <li>{{ pa.date_start }} - {{ pa.date_end }} {{ pa.office | title}} ({{pa.secondary_source.abbrev_name}})</li>
+                <li>{{ pa.print_date}} {{ pa.office | title}} ({{pa.secondary_source.abbrev_name}})</li>
             {% endfor %}
         </ul>
 

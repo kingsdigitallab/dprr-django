@@ -1,8 +1,21 @@
 from django import forms
 from django.contrib.admin.widgets import AdminFileWidget
 from django.utils.safestring import mark_safe
+from django.core.validators import RegexValidator
 
 from haystack.forms import FacetedSearchForm
+
+validate_range = RegexValidator(
+    r'^-?\d+\s-\s-?\d+$', 'Incorrect format; use the slider to select values.')
+
+def get_range_parts(value_range):
+    """Returns a tuple of start value and end value extracted from
+    `value_range`.
+
+    `value_range` should be in the format "<int> - <int>".
+
+    """
+    return value_range.split(' - ', 1)
 
 
 class ModelLinkWidget(forms.Widget):
@@ -95,8 +108,10 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     """Extends FacetedSearchForm, as we have special requirements in terms of
     facet handling and date filtering."""
 
-    date_start = forms.IntegerField(required=False)
-    date_end = forms.IntegerField(required=False)
+    post_date = forms.CharField(
+        max_length=13, required=False, validators=[validate_range])
+
+    range_facet_fields = ['post_date', ]
 
     def no_query_found(self):
         """Determines the behaviour when no query was found; returns all the
@@ -109,10 +124,24 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
         if not self.is_valid():
             return self.no_query_found()
 
-        if self.cleaned_data['date_start']:
-            sqs = sqs.filter(post_date__gte=self.cleaned_data['date_start'])
+        # Narrow the search by the ranges of dates
+        # Requires, of course, that the form be bound.
+        # if self.is_bound:
+        if True:
+            for field in self.range_facet_fields:
+                field_data = self.cleaned_data.get(field)
+                print "GOTCHA>> {}".format(field_data)
+                if field_data:
+                    start, end = get_range_parts(field_data)
+                    sqs = sqs.narrow(u'%s:[%s TO %s]' % (field, start, end))
 
-        if self.cleaned_data['date_end']:
-            sqs = sqs.filter(post_date__lte=self.cleaned_data['date_end'])
+
+#        if self.cleaned_data['date_start']:
+#            print "Date start: {0}".format(self.cleaned_data['date_start'])
+#            sqs = sqs.filter(post_date__gte=self.cleaned_data['date_start'])
+#
+#        if self.cleaned_data['date_end']:
+#            print "Date end: {0}".format(self.cleaned_data['date_end'])
+#            sqs = sqs.filter(post_date__lte=self.cleaned_data['date_end'])
 
         return sqs

@@ -2,6 +2,15 @@ from haystack import indexes
 from promrep.models import PostAssertion
 
 
+class MultiValueIntegerField (indexes.MultiValueField):
+    field_type = 'integer'
+
+    def convert(self, value):
+        if value is None:
+            return None
+        return list([int(x) for x in value])
+
+
 class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     item_id = indexes.CharField(model_attr='id')
 
@@ -17,7 +26,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     office = indexes.CharField(model_attr='office__name', faceted=True)
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
 
-    post_date = indexes.MultiValueField(faceted=True)
+    post_date = MultiValueIntegerField(faceted=True)
 
     def get_model(self):
         return PostAssertion
@@ -38,6 +47,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         if object.date_end:
             end = object.date_end
 
-        return range(start, end, 1)
+        # need to increment the last point
+        res = range(start, end + 1, 1)
 
-        return 0
+        return res

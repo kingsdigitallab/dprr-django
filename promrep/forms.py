@@ -6,7 +6,7 @@ from django.core.validators import RegexValidator
 from haystack.forms import FacetedSearchForm
 
 validate_range = RegexValidator(
-    r'^-?\d+\s-\s-?\d+$', 'Incorrect format; Please enter range in the format "date_from - date_end".')
+    r'^-?\d+\s-\s-?\d+$', 'Incorrect format; Please enter range in the format "date_from - date_end", e.g.: "-100 - -80".')
 
 
 def get_range_parts(value_range):
@@ -110,7 +110,8 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     facet handling and date filtering."""
 
     post_date = forms.CharField(
-        max_length=13, required=False, validators=[validate_range])
+        max_length=13, required=False, validators=[validate_range],
+        widget=forms.TextInput(attrs={'placeholder': 'from - to'}))
 
     range_facet_fields = ['post_date', ]
 

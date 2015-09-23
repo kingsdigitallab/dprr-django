@@ -18,12 +18,11 @@ class PromrepFacetedSearchView(FacetedSearchView):
     queryset = GroupedSearchQuerySet().models(
         PostAssertion).group_by('person_id')
 
-
     def get_queryset(self):
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
 
         for facet in self.alpha_facet_fields:
-            queryset = queryset.facet(facet, sort='index')
+            queryset = queryset.facet(facet, sort='index', limit=-1)
 
         return queryset
 

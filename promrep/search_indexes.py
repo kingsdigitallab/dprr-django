@@ -1,6 +1,6 @@
 from haystack import indexes
 from promrep.models import PostAssertion
-
+import re
 
 class MultiValueIntegerField (indexes.MultiValueField):
     field_type = 'integer'
@@ -18,7 +18,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
     person = indexes.CharField(model_attr='person', faceted=True)
     person_id = indexes.IntegerField(model_attr='person__id')
-    nomen = indexes.CharField(model_attr='person__nomen', faceted=True)
+    nomen = indexes.CharField(faceted=True, null=True)
     cognomen = indexes.CharField(model_attr='person__cognomen', faceted=True)
     patrician = indexes.BooleanField(
         model_attr='person__patrician', default=False, faceted=True)
@@ -55,3 +55,9 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_province(self, object):
         return [p.name for p in object.provinces.all()]
+
+    def prepare_nomen(self, object):
+        """The list of nomens to filter on should not show parentheses or brackets."""
+
+        nomen = object.person.nomen
+        return re.sub(r'[\?\[\]\(\)]', '', nomen)

@@ -57,7 +57,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         return res
 
     def prepare_province(self, object):
-        return [p.name for p in object.provinces.all()]
+        return [re.sub(r'[\?\[\]\(\)]', '', p.name.strip().capitalize()) for p in object.provinces.all()]
 
     def prepare_nomen(self, object):
         """The list of nomens to filter on should not show parentheses or brackets."""

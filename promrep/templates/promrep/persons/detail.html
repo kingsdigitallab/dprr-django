@@ -16,10 +16,12 @@
 
         <p>
             ID: {{ person.id }} <br />
-            RE: {{ person.re_number }} <br />
 
             {% if person.patrician %}
-                Patrician: {% if person.patrician_uncertainty %}?{% endif %}{{ person.patrician }}
+                Patrician: {% if person.patrician_uncertainty %}?{% endif %}{{ person.patrician }} <br />
+            {% endif %}
+            {% if person.gens %}
+                Gens: {% if person.gens_uncertainty %}?{% endif %}{{ person.gens }} <br />
             {% endif %}
         </p>
 

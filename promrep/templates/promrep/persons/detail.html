@@ -15,21 +15,27 @@
         {% endif %}
 
         <p>
-            Database ID: {{ person.id }} <br />
-            RE ID: {{ person.re_number }}
+            ID: {{ person.id }} <br />
+            RE: {{ person.re_number }} <br />
+
+            {% if person.patrician %}
+                Patrician: {% if person.patrician_uncertainty %}?{% endif %}{{ person.patrician }}
+            {% endif %}
         </p>
 
-        <p>Name: {{ person.praenomen.abbrev }} {{ person.nomen }} {{ person.cognomen }} {{ person.other_names }}</p>
-
-        {% if person.patrician %}
-            <p>Patrician: {% if person.patrician_uncertainty %}?{% endif %}{{ person.patrician }}</p>
-        {% endif %}
-
-        <h2>Posts</h2>
+        <h2>Offices</h2>
 
         <ul>
             {% for pa in person.post_assertions.all %}
-                <li>{{ pa.print_date}} {{ pa.office | title}} {% if pa.provinces %} {{pa.print_provinces}} {% endif %}({{pa.secondary_source.abbrev_name}})</li>
+                <li>{{ pa.print_date |safe}} {{ pa.office | title}} {% if pa.provinces %} {{pa.print_provinces}} {% endif %}</li>
+
+                {% if pa.notes.count %}
+                <ul>
+                    {% for note in pa.notes.all %}
+                        <li>{{note.text}} (in <i>{{note.secondary_source.abbrev_name}}</i>)</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
             {% endfor %}
         </ul>
 

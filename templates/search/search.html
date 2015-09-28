@@ -5,83 +5,94 @@
 
 {% block main %}
 <div class="row">
-    <div class="large-3 columns facets">
+    <div class="large-4 columns facets">
         <form method="get" action=".">
+            <section data-section="non-expandable" data-expandable-group-member="facets" id="dprr-filter">
+                <h4>Filter by <strong>post date</strong></h4>
+                <!-- {{ form.post_date.errors }}
+                <p>{{ form.post_date }}</p>
 
-            <section data-section="non-expandable" data-expandable-group-member="facets" class="expandable-list fixed-open" id="dprr-filter">
+                <button type="submit" class="radius expand less-padding secondary">Update search</button> -->
 
-            <div class="list-item no">
-              <div class="list-header no-link">
-                <h4>Filter by Post Date</h4>
-                    {{ form.post_date.errors }}
-                    <p>{{ form.post_date }}</p>
-                    <input type="submit" value="Update search">
+                <div class="row range">
+                    <div class="small-6 columns">
+                        <label>From</label>
+                        <input type="number" id="year-from" value="-509" name="q">
+                    </div>
+                    <div class="small-6 columns">
+                        <label>To</label>
+                        <input type="number" id="year-to" value="-31" name="q">
+                    </div>
                 </div>
-            </div>
-
-
-            {% for facet in facets.fields %}
-            <div class="list-item no">
-                <div class="list-header no-link">
-                    <h4>Filter by {{ facet }}</h4>
+                <div class="row range">
+                    <div class="large-12 columns">
+                        <button type="submit" class="radius expand less-padding secondary">Update search</button>
+                    </div>
                 </div>
-                <div class="list-content">
-                    <ul>
-                        {% for term in facets.fields|get_item:facet %}
-                        {% with value=term.0 count=term.1 %}
-                        {% if count > 0 %}
-                        <li>
-                            <a href="{% add_facet_link querydict facet value %}">
-                                {{ value }}
-                                <span class="label radius right">{{ count }}</span>
-                            </a>
-                        </li>
-                        {% endif %}
-                        {% endwith %}
-                        {% endfor %}
-                    </ul>
+
+                {% for facet in facets.fields %}
+                <div class="panel">
+                    <div class="panel-head">
+                        <h4><i class="fa fa-caret-right right"></i> Filter by <strong>{{ facet }}</strong> <span class="label radius secondary">tot. count</span></h4>
+                    </div>
+                    <div class="panel-body hidden">
+                        <ul class="no-bullet">
+                            {% for term in facets.fields|get_item:facet %}
+                            {% with value=term.0 count=term.1 %}
+                            {% if count > 0 %}
+                            <li>
+                                <a href="{% add_facet_link querydict facet value %}">
+                                    <span class="label radius right">{{ count }}</span>
+                                    {{ value }}
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% endwith %}
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            {% endfor %}
-        </section>
-    </form>
-</div>
-
-<div class="large-9 columns">
-    <h1>Search Results</h1>
-    <h2>Total persons found: {{ paginator.count }}</h2>
-
-    {% if selected_facets %}
-    <div class="large-12 columns">
-        <dl class="dl-horizontal">
-            <dt><span class="inline-title">Filtering By: </span></dt>
-            <dd>
-            {% for facet in selected_facets %}
-            <span class="facet-selected">{{ facet }}
-                <a href="{% remove_facet_link querydict facet %}">
-                    <i class="icon icon-remove">x</i>
-                </a>
-             </span>
-             {% endfor %}
-            </dd>
-        </dl>
+                {% endfor %}
+            </section>
+        </form>
     </div>
-    {% endif %}
 
-    <ul class="search-results">
-        {% for result in object_list %}
-        {% with doc=result.documents.0 %}
-        <li>
-            <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a>
-        </li>
-        {% endwith %}
-        {% empty %}
-        <li>No results found!</li>
-        {% endfor %}
-    </ul>
+    <div class="large-8 columns">
+        <h1>Search Results <span class="label radius">{{ paginator.count }}</span></h1>
+        <!-- <h2>Total persons found: {{ paginator.count }}</h2> -->
 
-    {% display_pagination querydict page_obj %}
-</div>
+        {% if selected_facets %}
+        <div class="panel applied-filter-box">
+            <h4>Filtering by:</h4>
+            <ul class="inline-list applied-filter-list">
+                {% for facet in selected_facets %}
+                <li>
+                    <span class="label radius secondary">
+                        {{ facet }}
+                        <a href="{% remove_facet_link querydict facet %}">
+                            <i class="fa fa-times-circle"></i>
+                        </a>
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <ol class="search-results">
+            {% for result in object_list %}
+            {% with doc=result.documents.0 %}
+            <li>
+                <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a>
+            </li>
+            {% endwith %}
+            {% empty %}
+            <li>No results found!</li>
+            {% endfor %}
+        </ol>
+
+        {% display_pagination querydict page_obj %}
+    </div>
 
 </div>
 {% endblock main %}

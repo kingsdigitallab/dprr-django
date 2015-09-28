@@ -31,6 +31,14 @@ li.greyed-out a {
 	font-weight: 700;
 }
 
+.less-padding {
+	padding: .5rem;
+}
+
+.hidden {
+	display: none;
+}
+
 /*** Header ***/
 
 header.main-header {
@@ -75,6 +83,10 @@ h4, h5, h6 {
 	font-family: 'Open Sans Condensed Light', sans-serif;
 }
 
+.main h1 .label {
+	font-size: .75em;
+}
+
 /*** Navigation ***/
 
 .top-bar-section ul li {
@@ -112,6 +124,44 @@ h3.quick-home {
 	margin-bottom: 1rem;
 	padding-bottom: .5rem;
 	font-size: 1.5rem;
+}
+
+/*** Facets / Filters ***/
+
+.panel-head h4 {
+	cursor: pointer;
+}
+
+.panel-head .label {
+	font-size: .75em;
+}
+
+.panel-body ul {
+	margin-bottom: 0;
+}
+
+.panel-body li {
+	border-bottom: 1px solid #fff;
+
+	.label {
+		margin-top: .25rem;
+	}
+}
+
+.panel-body li:last-child {
+	border-bottom: none;
+}
+
+.applied-filter-list .label {
+	background: scale-color($dark-gold, $lightness: 75%) !important;
+	font-size: 1em;	
+}
+
+.applied-filter-box {
+	background: scale-color($dark-gold, $lightness: 92%);
+	border-left: none;
+	border-right: none;
+	padding: .5rem;
 }
 
 /*** Blog ***/

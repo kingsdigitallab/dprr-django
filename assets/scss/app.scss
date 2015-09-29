@@ -32,7 +32,7 @@ li.greyed-out a {
 }
 
 .less-padding {
-	padding: .5rem;
+	padding: .5rem !important;
 }
 
 .hidden {
@@ -126,10 +126,15 @@ h3.quick-home {
 	font-size: 1.5rem;
 }
 
-/*** Facets / Filters ***/
+/*** Search / Facets / Filters ***/
+
+.facets hr {
+	margin: 0 0 1rem;
+}
 
 .panel-head h4 {
 	cursor: pointer;
+	margin-bottom: 0;
 }
 
 .panel-head .label {
@@ -152,9 +157,19 @@ h3.quick-home {
 	border-bottom: none;
 }
 
-.applied-filter-list .label {
-	background: scale-color($dark-gold, $lightness: 75%) !important;
-	font-size: 1em;	
+.applied-filter-list {
+	clear: both;
+	margin-left: 0;
+	 .label {
+		background: scale-color($dark-gold, $lightness: 75%) !important;
+		font-size: 1em;
+	}
+
+	li {
+		margin-left: 0;
+		margin-right: .5rem;
+		margin-bottom: .5rem;
+	}
 }
 
 .applied-filter-box {
@@ -162,6 +177,30 @@ h3.quick-home {
 	border-left: none;
 	border-right: none;
 	padding: .5rem;
+	button {
+		margin-bottom: .5rem;
+	}
+}
+
+.custom-counter {
+	margin-left: 0;
+	padding-right: 0;
+	list-style-type: none;
+}
+
+.custom-counter li {
+	counter-increment: step-counter;
+	border-bottom: 1px solid $sand;
+	line-height: 2rem;
+}
+
+.custom-counter li::before {
+	content: counter(step-counter);
+	margin-right: 8px;
+	font-size: .75rem;
+	color: scale-color($dark-gold, $lightness: 20%);
+	background: scale-color($sand, $lightness: 30%);
+	padding: 3px 8px;
 }
 
 /*** Blog ***/

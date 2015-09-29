@@ -93,6 +93,18 @@ h4, h5, h6 {
 	background: scale-color($royal-blue, $lightness: -15%);
 }
 
+/*** Side Nav ***/
+
+h3.quick-home {
+	padding-top: 1rem;
+}
+
+.quick-home li a {
+	text-align: left;
+	padding-left: 1rem !important;
+	margin: 0;
+}
+
 /*** Content ***/
 
 .list-page-title {
@@ -141,6 +153,23 @@ p.meta,
 	font-size: .875rem;
 	color: #666;
 	padding: .5rem 0 1rem;
+}
+
+/*** Events ***/
+
+.events .byline {
+	font-size: 1.5rem !important;
+	font-style: normal;
+}
+
+.events .byline:before {
+	content: "\f073 ";
+	font-family: 'FontAwesome';
+	padding-right: 5px;
+}
+
+.events .optional {
+	display: none;
 }
 
 /*** Sidebar ***/

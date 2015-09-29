@@ -21,7 +21,7 @@
 
     <script src="{% static 'vendor/modernizr/modernizr.js' %}"></script>
 </head>
-<body id="body">
+<body id="body"{% block pageclass %}{% endblock %}>
 
     {% include "includes/header.html" %}
 

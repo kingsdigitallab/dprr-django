@@ -102,6 +102,7 @@
             {% for result in object_list %}
             {% with doc=result.documents.0 %}
             <li>
+                <span class="label radius secondary right">Off. [date]</span>
                 <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a>
             </li>
             {% endwith %}

@@ -26,6 +26,24 @@ apt-get -y install libldap-dev libsasl2-dev
 apt-get -y install libxml2-dev libxslt1-dev
 apt-get -y install redis-server
 
+# Java, Tomcat and SOLR
+sudo apt-get -y install openjdk-7-jdk
+mkdir /usr/java
+ln -s /usr/lib/jvm/java-7-openjdk-amd64 /usr/java/default
+
+sudo apt-get install -y tomcat7 tomcat7-admin
+
+wget http://mirror.catn.com/pub/apache/lucene/solr/4.10.4/solr-4.10.4.tgz
+tar xvzf solr-4.10.4.tgz
+rm solr-4.10.4.tgz
+
+sudo cp solr-4.10.4/example/lib/ext/* /usr/share/tomcat7/lib/
+sudo cp solr-4.10.4/dist/solr-4.10.4.war /var/lib/tomcat7/webapps/solr.war
+sudo cp -rv solr-4.10.4/example/solr /var/lib/tomcat7/
+sudo chown -R tomcat7:tomcat7 /var/lib/tomcat7/solr
+sudo /etc/init.d/tomcat7 restart
+
+
 sudo su - postgres -c "psql -c \"create user vagrant with superuser password 'vagrant';\""
 sudo su - postgres -c "psql -c \"create user app_dprr password 'app_dprr';\""
 sudo su - postgres -c "createdb app_dprr_local -E UTF-8 -T template0 -O app_dprr"
@@ -60,3 +78,10 @@ pip install -U django-libsass==0.3
 
 python /vagrant/manage.py migrate
 sudo chown -R vagrant /home/vagrant/venv/
+
+# SOLR indexing
+python /vagrant/manage.py build_solr_schema > schema.xml
+sudo mv schema.xml /var/lib/tomcat7/solr/collection1/conf/schema.xml
+sudo /etc/init.d/tomcat7 restart
+python /vagrant/manage.py rebuild_index --noinput
+

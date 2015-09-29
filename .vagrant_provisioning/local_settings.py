@@ -34,3 +34,13 @@ DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': 'dprr.settings.local.show_toolbar',
 }
 
+#------------------------------------------------------------------------------
+# Haystack Config
+#------------------------------------------------------------------------------
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'promrep.solr_backends.solr_backend_field_collapsing.GroupedSolrEngine',
+        'URL': 'http://127.0.0.1:8080/solr'
+    },
+}

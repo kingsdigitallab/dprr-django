@@ -119,14 +119,19 @@ $dark-gold		: #4A412A;
 $royal-blue		: #607a7a;
 // $jet         : #222222;
 // $black       : #000000;
+$info-blue		: #a0d3e8;
+$warning-orange	: #f08a24;
 
 // We use these as default colors throughout
 $primary-color: $royal-blue;
 // $secondary-color: $dark-gold;
+$secondary-color: $sand;
 // $alert-color: #f04124;
 // $success-color: #43AC6A;
 // $warning-color: #f08a24;
+$warning-color: scale-color($warning-orange, $lightness: 70%);
 // $info-color: #a0d3e8;
+$info-color: scale-color($info-blue, $lightness: 50%);
 
 // We use these to control various global styles
 $body-bg: scale-color($primary-color, $lightness: 40%);

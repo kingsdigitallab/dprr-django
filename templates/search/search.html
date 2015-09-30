@@ -98,7 +98,7 @@
         </div>
         {% endif %}
 
-        <ol class="search-results custom-counter">
+        <ol start="{{page_obj.start_index}}" class="search-results custom-counter">
             {% for result in object_list %}
             {% with doc=result.documents.0 %}
             <li>

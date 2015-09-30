@@ -67,6 +67,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'ddhldap',
+    'haystack',
     'mptt',
     'django_mptt_admin',
     'author',
@@ -75,6 +76,7 @@ INSTALLED_APPS = (
 INSTALLED_APPS += ws.INSTALLED_APPS
 
 INSTALLED_APPS += (
+    'ddh_utils',
     'dprr',
     'promrep',
     'wagtailbase',

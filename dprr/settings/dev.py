@@ -21,18 +21,30 @@ LOGGING_LEVEL = logging.DEBUG
 
 LOGGING['loggers']['django']['level'] = LOGGING_LEVEL
 LOGGING['loggers']['django_auth_ldap']['level'] = LOGGING_LEVEL
-LOGGING['loggers']['promrep']['level'] = logging.INFO
+LOGGING['loggers']['promrep']['level'] = LOGGING_LEVEL
 
 TEMPLATE_DEBUG = True
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Development Installed Applications Settings
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# Haystack Config
+# -----------------------------------------------------------------------------
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'promrep.solr_backends.solr_backend_field_collapsing.GroupedSolrEngine',
+        'URL': 'http://127.0.0.1:8182/solr'
+    },
+}
+
+
+# -----------------------------------------------------------------------------
 # Django Extensions
 # http://django-extensions.readthedocs.org/en/latest/
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 try:
     import django_extensions
@@ -40,15 +52,17 @@ try:
 except ImportError:
     pass
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Django Debug Toolbar
 # http://django-debug-toolbar.readthedocs.org/en/latest/
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 try:
     import debug_toolbar
     INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
-    MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+    MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + (
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    )
     DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
     DEBUG_TOOLBAR_PANELS = [
@@ -66,9 +80,9 @@ except ImportError:
     pass
 
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Local settings
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 try:
     from local import *

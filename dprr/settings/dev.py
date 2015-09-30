@@ -48,7 +48,7 @@ HAYSTACK_CONNECTIONS = {
 
 try:
     import django_extensions
-    INSTALLED_APPS = INSTALLED_APPS + ('django_extensions', 'haystack_panel', )
+    INSTALLED_APPS = INSTALLED_APPS + ('django_extensions', )
 except ImportError:
     pass
 
@@ -74,8 +74,22 @@ try:
         'debug_toolbar.panels.templates.TemplatesPanel',
         'debug_toolbar.panels.cache.CachePanel',
         'debug_toolbar.panels.profiling.ProfilingPanel',
-        'haystack_panel.panel.HaystackDebugPanel',
     ]
+
+except ImportError:
+    pass
+
+
+# -----------------------------------------------------------------------------
+# Django Haystack Panel
+# https://github.com/streeter/django-haystack-panel
+# -----------------------------------------------------------------------------
+
+try:
+    import haystack_panel
+
+    INSTALLED_APPS = INSTALLED_APPS + ('haystack_panel', )
+    DEBUG_TOOLBAR_PANELS.append('haystack_panel.panel.HaystackDebugPanel')
 
 except ImportError:
     pass

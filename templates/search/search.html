@@ -25,19 +25,18 @@
                 <hr>
 
                 <h4>Filter by <strong>post date</strong></h4>
-                <!-- {{ form.post_date.errors }}
-                <p>{{ form.post_date }}</p>
 
-                <button type="submit" class="radius expand less-padding secondary">Update search</button> -->
+                {{ form.post_date_from.errors }}
+                {{ form.post_date_to.errors }}
 
                 <div class="row range">
                     <div class="small-6 columns">
                         <label>From</label>
-                        <input type="number" id="year-from" value="-509" name="q">
+                        {{ form.post_date_from }}
                     </div>
                     <div class="small-6 columns">
                         <label>To</label>
-                        <input type="number" id="year-to" value="-31" name="q">
+                        {{ form.post_date_to }}
                     </div>
                 </div>
                 <div class="row range">

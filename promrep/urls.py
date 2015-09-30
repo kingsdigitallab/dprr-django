@@ -6,7 +6,7 @@ from promrep.views import PersonDetailView, PromrepFacetedSearchView
 urlpatterns = patterns('',
                        url(r'^$',
                            PromrepFacetedSearchView.as_view(),
-                           name='bijagos_haystack_search')
+                           name='haystack_search')
                        )
 
 urlpatterns += patterns('',

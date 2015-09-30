@@ -78,7 +78,7 @@
         <h1>Search Results <span class="label radius">{{ paginator.count }}</span></h1>
         <!-- <h2>Total persons found: {{ paginator.count }}</h2> -->
 
-        {% if selected_facets %}
+        {% if selected_facets or post_date_filter %}
         <div class="panel applied-filter-box">
             <a href="{% url 'haystack_search' %}" class="button less-padding radius right"><i class="fa fa-trash"></i> Clear all</a>
 
@@ -94,6 +94,19 @@
                     </span>
                 </li>
                 {% endfor %}
+
+                {% if post_date_filter %}
+                <li>
+                    <span class="label radius secondary">
+                        <a href="{{ post_date_filter.0}}" title="Remove filter">Post Date: {{ post_date_filter.1 }}
+                            <i class="fa fa-times-circle"></i>
+                        </a>
+                    </span>
+                </li>
+                {% endif %}
+
+
+
             </ul>
         </div>
         {% endif %}

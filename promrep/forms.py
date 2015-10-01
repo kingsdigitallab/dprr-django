@@ -106,8 +106,8 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     """Extends FacetedSearchForm, as we have special requirements in terms of
     facet handling and date filtering."""
 
-    post_date_from = forms.IntegerField(required=False)
-    post_date_to = forms.IntegerField(required=False)
+    post_date_from = forms.IntegerField(required=False, max_value=-33, min_value=-509)
+    post_date_to = forms.IntegerField(required=False, max_value=-33, min_value=-509)
 
     def no_query_found(self):
         """Determines the behaviour when no query was found; returns all the

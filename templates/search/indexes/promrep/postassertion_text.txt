@@ -1,0 +1,7 @@
+{{ object.office.name }}
+
+{{ object.person }}
+
+{% for note in object.notes.all %}
+    {{ note }}
+{% endfor %}

@@ -15,7 +15,7 @@ class MultiValueIntegerField (indexes.MultiValueField):
 class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     item_id = indexes.CharField(model_attr='id')
 
-    text = indexes.CharField(document=True, use_template=False)
+    text = indexes.CharField(document=True, use_template=True)
 
     person = indexes.CharField(model_attr='person', faceted=True)
     person_id = indexes.IntegerField(model_attr='person__id')

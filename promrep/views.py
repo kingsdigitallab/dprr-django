@@ -55,7 +55,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
             text = ""
             if self.request.GET.get('post_date_to') and self.request.GET.get('post_date_from'):
-                text = self.request.GET.get('post_date_from') + " - " + self.request.GET.get('post_date_to')
+                text = self.request.GET.get('post_date_from') + " to " + self.request.GET.get('post_date_to')
             elif self.request.GET.get('post_date_to'):
                 text = "Before " + self.request.GET.get('post_date_to')
             elif self.request.GET.get('post_date_from'):

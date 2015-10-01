@@ -1,7 +1,9 @@
-{{ object.office.name }}
-
-{{ object.person }}
-
 {% for note in object.notes.all %}
+<p>
     {{ note }}
+</p>
 {% endfor %}
+
+<p>
+    {{ object.office.name }} {{ object.person }}
+</p>

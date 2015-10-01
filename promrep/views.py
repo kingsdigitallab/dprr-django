@@ -36,6 +36,21 @@ class PromrepFacetedSearchView(FacetedSearchView):
             context['selected_facets'] = self.request.GET.getlist(
                 'selected_facets')
 
+        qs = self.request.GET.copy()
+        if self.request.GET.get('q'):
+            qs.pop('q')
+
+            # always remove the page number
+            if 'page' in qs:
+                qs.pop('page')
+
+            if len(qs):
+                url = '?{0}'.format(qs.urlencode())
+            else:
+                url = reverse('haystack_search')
+
+            context['remove_text_filter'] = url
+
         # handles the special case of range facets
         if ('post_date_from' or 'post_date_to') in self.request.GET:
             qs = self.request.GET.copy()
@@ -46,6 +61,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
             if 'post_date_to' in qs:
                 qs.pop('post_date_to')
 
+            # always remove the page number
             if 'page' in qs:
                 qs.pop('page')
 
@@ -53,18 +69,18 @@ class PromrepFacetedSearchView(FacetedSearchView):
             if len(qs):
                 url = '?{0}'.format(qs.urlencode())
 
-            text = ""
+            date_text = ""
             if self.request.GET.get('post_date_to') and self.request.GET.get('post_date_from'):
-                text = self.request.GET.get('post_date_from') + " to " + self.request.GET.get('post_date_to')
+                date_text = self.request.GET.get('post_date_from') + " to " + self.request.GET.get('post_date_to')
             elif self.request.GET.get('post_date_to'):
-                text = "Before " + self.request.GET.get('post_date_to')
+                date_text = "Before " + self.request.GET.get('post_date_to')
             elif self.request.GET.get('post_date_from'):
-                text = "After " + self.request.GET.get('post_date_from')
+                date_text = "After " + self.request.GET.get('post_date_from')
 
             # if neither dates have values
             # no need to print the filter...
-            if text != "":
-                context['post_date_filter'] = (url, text)
+            if date_text != "":
+                context['post_date_filter'] = (url, date_text)
 
         return context
 

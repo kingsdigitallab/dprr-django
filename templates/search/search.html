@@ -89,16 +89,16 @@
 
             <h4>Filtering by:</h4>
             <ul class="inline-list applied-filter-list">
-                {% for facet in selected_facets %}
+
+                {% if query %}
                 <li>
                     <span class="label radius secondary">
-                        {{ facet }}
-                        <a href="{% remove_facet_link querydict facet %}">
+                        <a href="{{ remove_text_filter }}" title="Remove filter">Text: {{ query }}
                             <i class="fa fa-times-circle"></i>
                         </a>
                     </span>
                 </li>
-                {% endfor %}
+                {% endif %}
 
                 {% if post_date_filter %}
                 <li>
@@ -110,6 +110,16 @@
                 </li>
                 {% endif %}
 
+                {% for facet in selected_facets %}
+                <li>
+                    <span class="label radius secondary">
+                        {{ facet }}
+                        <a href="{% remove_facet_link querydict facet %}">
+                            <i class="fa fa-times-circle"></i>
+                        </a>
+                    </span>
+                </li>
+                {% endfor %}
 
 
             </ul>

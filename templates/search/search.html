@@ -39,6 +39,11 @@
                         {{ form.post_date_to }}
                     </div>
                 </div>
+
+                {% for facet_value in selected_facets %}
+                    <input class="selected_facets_input" type="hidden" name="selected_facets" value="{{ facet_value }}">
+                {% endfor %}
+
                 <div class="row range">
                     <div class="large-12 columns">
                         <button type="submit" class="radius expand less-padding secondary">Update search</button>

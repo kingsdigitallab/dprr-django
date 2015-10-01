@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load ddh_utils_tags wagtailbase_tags wagtailcore_tags %}
+{% load ddh_utils_tags wagtailbase_tags wagtailcore_tags highlight %}
 
 {% block meta_title %}Search Results{% if query %} for {{ query }}{% endif %}{% endblock %}
 
@@ -15,7 +15,7 @@
                 </div>
                 <div class="row collapse">
                     <div class="small-9 columns">
-                        <input type="text" placeholder="Search...">
+                        {{ form.q }}
                     </div>
                     <div class="small-3 columns">
                         <button type="submit" class="postfix button"><i class="fa fa-search"></i></button>
@@ -55,7 +55,7 @@
                 {% for facet in facets.fields %}
                 <div class="panel radius">
                     <div class="panel-head">
-                        <h4><i class="fa fa-caret-right right"></i> Filter by <strong>{{ facet }}</strong></h4>
+                        <h4><i class="fa fa-caret-right right"></i> Filter by <strong>{{ facet }}</strong> <span class="label radius secondary">tot. count</span></h4>
                     </div>
                     <div class="panel-body hidden">
                         <ul class="no-bullet">
@@ -118,12 +118,17 @@
 
         <ol start="{{page_obj.start_index}}" class="search-results custom-counter">
             {% for result in object_list %}
-            {% with doc=result.documents.0 %}
             <li>
+            {% with doc=result.documents.0 %}
                 <span class="label radius secondary right">Off. [date]</span>
                 <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a>
-            </li>
+                {% for dd in result.documents %}
+                <p>
+                    {% highlight dd.text with query html_tag 'strong' max_length 120  %}
+                </p>
+                {% endfor %}
             {% endwith %}
+            </li>
             {% empty %}
             <li>No results found!</li>
             {% endfor %}

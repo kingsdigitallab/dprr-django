@@ -32,6 +32,10 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     province = indexes.MultiValueField(faceted=True)
     post_date = MultiValueIntegerField(faceted=True)
 
+    # used to display the highest office achieved in the search page
+    highest_office = indexes.CharField(faceted=False)
+
+
     def get_model(self):
         return PostAssertion
 
@@ -70,3 +74,12 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
         cognomen = object.person.cognomen.strip()
         return re.sub(r'[\?\[\]\(\)]', '', cognomen)
+
+
+    def prepare_highest_office(self, object):
+        """returns a string with the highest office/date a specific person achived"""
+
+        pa = object.person.post_assertions.all().order_by('-date_end', '-date_end')[0]
+
+        return pa.office.abbrev_name.title() + " " + pa.print_date()
+

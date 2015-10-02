@@ -130,7 +130,7 @@
             {% for result in object_list %}
             <li>
             {% with doc=result.documents.0 %}
-                <span class="label radius secondary right">Off. [date]</span>
+                <span class="label radius secondary right">{{ doc.highest_office }}</span>
                 <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a>
                 {% for dd in result.documents %}
                 <p>

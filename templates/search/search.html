@@ -81,9 +81,8 @@
 
     <div class="large-8 columns">
         <h1>Search Results <span class="label radius">{{ paginator.count }}</span></h1>
-        <!-- <h2>Total persons found: {{ paginator.count }}</h2> -->
 
-        {% if selected_facets or post_date_filter %}
+        {% if query or selected_facets or post_date_filter %}
         <div class="panel applied-filter-box">
             <a href="{% url 'haystack_search' %}" class="button less-padding radius right"><i class="fa fa-trash"></i> Clear all</a>
 

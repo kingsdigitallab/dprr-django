@@ -182,30 +182,22 @@ h3.quick-home {
 	}
 }
 
-.custom-counter {
-	margin-left: 0;
-	padding-right: 0;
-	list-style-type: none;
-}
-
-.custom-counter li {
-	counter-increment: step-counter;
-	border-bottom: 1px solid $sand;
-	line-height: 2rem;
-}
-
-.custom-counter li::before {
-	content: counter(step-counter);
-	margin-right: 8px;
-	font-size: .75rem;
-	color: scale-color($dark-gold, $lightness: 20%);
-	background: scale-color($sand, $lightness: 30%);
-	padding: 3px 8px;
-}
-
 .search-results {
+	font-size: .8125rem;
+	color: #666;
 	.label {
 		margin-top: .5rem;
+	}
+
+	li {	
+		border-bottom: 1px solid $sand;
+		p {
+			font-size: .8125rem;
+			margin: .5rem 0;
+		}
+		a {
+			font-size: 1rem;
+		}
 	}
 }
 

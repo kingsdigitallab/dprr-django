@@ -125,12 +125,12 @@
         </div>
         {% endif %}
 
-        <ol start="{{page_obj.start_index}}" class="search-results custom-counter">
+        <ol start="{{page_obj.start_index}}" class="search-results">
             {% for result in object_list %}
             <li>
             {% with doc=result.documents.0 %}
                 <span class="label radius secondary right">{{ doc.highest_office }}</span>
-                <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a>
+                <p><a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a></p>
                 {% for dd in result.documents %}
                 <p>
                     {% highlight dd.text with query html_tag 'strong' max_length 120  %}

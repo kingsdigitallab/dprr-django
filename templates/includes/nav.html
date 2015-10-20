@@ -25,10 +25,12 @@
 				</li>
 			</ul> -->
 			<!-- Left Nav Section -->
-			{# {% block main_menu %} #}
-            {# {% get_site_root as site_root %} #}
-            {# {% main_menu root=site_root current_page=self %} #}
-            {# {% endblock %} #}
+			{% comment %}
+			{% block main_menu %}
+            {% get_site_root as site_root %}
+            {% main_menu root=site_root current_page=self %}
+            {% endblock %}
+            {% endcomment %}
 
 
 			<ul class="left">

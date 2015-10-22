@@ -81,9 +81,8 @@
 
     <div class="large-8 columns">
         <h1>Search Results <span class="label radius">{{ paginator.count }}</span></h1>
-        <!-- <h2>Total persons found: {{ paginator.count }}</h2> -->
 
-        {% if selected_facets or post_date_filter %}
+        {% if query or selected_facets or post_date_filter %}
         <div class="panel applied-filter-box">
             <a href="{% url 'haystack_search' %}" class="button less-padding radius right"><i class="fa fa-trash"></i> Clear all</a>
 
@@ -126,12 +125,12 @@
         </div>
         {% endif %}
 
-        <ol start="{{page_obj.start_index}}" class="search-results custom-counter">
+        <ol start="{{page_obj.start_index}}" class="search-results">
             {% for result in object_list %}
             <li>
             {% with doc=result.documents.0 %}
                 <span class="label radius secondary right">{{ doc.highest_office }}</span>
-                <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a>
+                <p><a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a></p>
                 {% for dd in result.documents %}
                 <p>
                     {% highlight dd.text with query html_tag 'strong' max_length 120  %}

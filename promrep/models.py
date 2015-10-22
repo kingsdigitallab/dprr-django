@@ -481,7 +481,7 @@ class PostAssertion(TimeStampedModel):
     print_provinces.short_description = 'Provinces'
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-date_end', '-date_start',]
 
     def __unicode__(self):
 
@@ -512,7 +512,7 @@ class PostAssertion(TimeStampedModel):
             if self.date_end:
                 date_str = date_str + date_to_string(self.date_end, self.date_end_uncertain)
             else:
-                date_str - date_str + "?"
+                date_str = date_str + "?"
 
         return date_str.strip()
 

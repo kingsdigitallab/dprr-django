@@ -31,6 +31,14 @@ li.greyed-out a {
 	font-weight: 700;
 }
 
+.less-padding {
+	padding: .5rem !important;
+}
+
+.hidden {
+	display: none;
+}
+
 /*** Header ***/
 
 header.main-header {
@@ -75,6 +83,10 @@ h4, h5, h6 {
 	font-family: 'Open Sans Condensed Light', sans-serif;
 }
 
+.main h1 .label {
+	font-size: .75em;
+}
+
 /*** Navigation ***/
 
 .top-bar-section ul li {
@@ -112,6 +124,82 @@ h3.quick-home {
 	margin-bottom: 1rem;
 	padding-bottom: .5rem;
 	font-size: 1.5rem;
+}
+
+/*** Search / Facets / Filters ***/
+
+.facets hr {
+	margin: 0 0 1rem;
+}
+
+.panel-head h4 {
+	cursor: pointer;
+	margin-bottom: 0;
+}
+
+.panel-head .label {
+	font-size: .75em;
+}
+
+.panel-body ul {
+	margin-bottom: 0;
+}
+
+.panel-body li {
+	border-bottom: 1px solid #fff;
+
+	.label {
+		margin-top: .25rem;
+	}
+}
+
+.panel-body li:last-child {
+	border-bottom: none;
+}
+
+.applied-filter-list {
+	clear: both;
+	margin-left: 0;
+	 .label {
+		background: scale-color($dark-gold, $lightness: 75%) !important;
+		font-size: 1em;
+	}
+
+	li {
+		margin-left: 0;
+		margin-right: .5rem;
+		margin-bottom: .5rem;
+	}
+}
+
+.applied-filter-box {
+	background: scale-color($dark-gold, $lightness: 92%);
+	border-left: none;
+	border-right: none;
+	padding: .5rem;
+	button,
+	.button {
+		margin-bottom: .5rem;
+	}
+}
+
+.search-results {
+	font-size: .8125rem;
+	color: #444;
+	.label {
+		margin-top: .5rem;
+	}
+
+	li {	
+		border-bottom: 1px solid $sand;
+		p {
+			font-size: .8125rem;
+			margin: .5rem 0;
+		}
+		a {
+			font-size: 1rem;
+		}
+	}
 }
 
 /*** Blog ***/

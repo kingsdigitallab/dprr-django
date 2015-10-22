@@ -64,7 +64,7 @@ class GroupedSearchQuery(SolrSearchQuery):
             res.update({'group': 'true',
                         'group.field': self.grouping_field,
                         'group.ngroups': 'true',
-                        # 'group.limit': 2,  # TODO: Don't hard-code this
+                        'group.limit': 4,  # TODO: Don't hard-code this
                         'group.sort': 'django_ct desc, score desc',
                         'group.facet': 'true',
                         'result_class': GroupedSearchResult})

@@ -63,6 +63,24 @@ class RelationshipAssertionAdmin(admin.ModelAdmin):
 admin.site.register(RelationshipAssertion, RelationshipAssertionAdmin)
 
 
+class InverseRelationshipInline(admin.StackedInline):
+    model = RelationshipAssertion
+    fk_name = 'related_person'
+    extra=0
+
+    raw_id_fields = ('person', )
+
+    related_lookup_fields = {
+        'fk': ['person', ],
+    }
+
+    fields = (
+        ['person', 'relationship'],
+        ['notes', ]
+    )
+
+
+
 class PostAssertionProvincesInline(admin.StackedInline):
     model = PostAssertion.provinces.through
     extra = 0
@@ -364,7 +382,7 @@ class PersonAdmin(admin.ModelAdmin):
                    'review_flag', REUpdatedListFilter, 'patrician', 'novus',
                    'nobilis', 'eques', )
 
-    inlines = (PostAssertionInline, PersonNoteInline)
+    inlines = (PostAssertionInline, PersonNoteInline, InverseRelationshipInline)
     exclude = ('assertions', )
 
 admin.site.register(Person, PersonAdmin)

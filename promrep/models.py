@@ -353,7 +353,7 @@ class Office(MPTTModel, TimeStampedModel):
 
 
 @with_author
-class Relationship(TimeStampedModel):
+class RelationshipType(TimeStampedModel):
 
     name = models.CharField(max_length=256, unique=True)
     description = models.CharField(max_length=1024, blank=True)

@@ -570,8 +570,8 @@ class RelationshipAssertion(TimeStampedModel):
     review_flag = models.BooleanField(
         verbose_name="Review needed", default=False)
 
-    def __unicode__():
-        return "{} is {} of {}".format(person, relationship, related_person)
+    def __unicode__(self):
+        return "{} is {} {}".format(self.person, self.relationship, self.related_person)
 
 
 @with_author

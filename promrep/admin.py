@@ -16,11 +16,23 @@ from promrep.forms import PostInlineForm
 from models import Person, Office, Praenomen, PostAssertion, \
     Group, RoleType, DateType, SecondarySource, Gens, \
     PostAssertionNote, Tribe, Province, PostAssertionProvince, \
-    PersonNote
+    PersonNote, RelationshipAssertion, RelationshipType
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
 
+
+class RelationshipTypeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'description', 'created', 'modified')
+    list_display_links = ('name', 'description')
+    readonly_fields = ('id', 'created', 'modified')
+
+    search_fields = ('name', 'description')
+    fields = ( 'id', ('name', 'description'), )
+
+    show_change_link = True
+
+admin.site.register(RelationshipType, RelationshipTypeAdmin)
 
 class PostAssertionProvincesInline(admin.StackedInline):
     model = PostAssertion.provinces.through

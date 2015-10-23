@@ -28,11 +28,40 @@ class RelationshipTypeAdmin(admin.ModelAdmin):
     readonly_fields = ('id', 'created', 'modified')
 
     search_fields = ('name', 'description')
-    fields = ( 'id', ('name', 'description'), )
+    fields = ('id', ('name', 'description'), )
 
     show_change_link = True
 
 admin.site.register(RelationshipType, RelationshipTypeAdmin)
+
+
+class RelationshipAssertionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'person', 'relationship', 'related_person',
+                    'uncertain', 'secondary_source', 'review_flag',
+                    'created', 'modified')
+
+    readonly_fields = ('id', 'created', 'modified')
+
+    raw_id_fields = ['person', 'related_person',
+                     'relationship', 'secondary_source']
+
+    related_lookup_fields = {
+        'fk': ['person', 'related_person', 'relationship', 'secondary_source'],
+    }
+
+    fields = (('id', 'review_flag'),
+              ('person',),
+              ('relationship'),
+              ('related_person'),
+              ('secondary_source'),
+              ('original_text'),
+              ('notes'),
+              )
+
+    show_change_link = True
+
+admin.site.register(RelationshipAssertion, RelationshipAssertionAdmin)
+
 
 class PostAssertionProvincesInline(admin.StackedInline):
     model = PostAssertion.provinces.through
@@ -51,9 +80,9 @@ class PostAssertionProvincesInline(admin.StackedInline):
     }
 
     fields = (
-       ['province', 'uncertain'] ,
-       ['note',]
-       )
+        ['province', 'uncertain'],
+        ['note', ]
+    )
 
 
 class PostAssertionNoteInline(admin.StackedInline):
@@ -84,34 +113,34 @@ class PostAssertionAdmin(admin.ModelAdmin):
     readonly_fields = ('id', )
 
     fieldsets = [
-            ('Database Info',
-                {'fields': [('id', 'review_flag'), ]}),
-            ('', {'fields':
-                    [
-                        'person',
-                        'office',
-                        'secondary_source',
-                        ('role', 'uncertain'),
-                        'group',
-                        ('original_text', 'office_xref'),
-                    ],
-                }
-                ),
-            ('Dates', {'fields': [
-                        ('date_display_text'),
-                        ('date_source_text', 'date_secondary_source'),
-                        ('date_start', 'date_start_uncertain'),
-                        ('date_end', 'date_end_uncertain')
-                     ]}),
-            ('Provinces', {'fields': [
-                        ('province_original', 'province_original_expanded'),
-                     ]})
-            ]
+        ('Database Info',
+         {'fields': [('id', 'review_flag'), ]}),
+        ('', {'fields':
+              [
+                  'person',
+                  'office',
+                  'secondary_source',
+                  ('role', 'uncertain'),
+                  'group',
+                  ('original_text', 'office_xref'),
+              ],
+              }
+         ),
+        ('Dates', {'fields': [
+            ('date_display_text'),
+            ('date_source_text', 'date_secondary_source'),
+            ('date_start', 'date_start_uncertain'),
+            ('date_end', 'date_end_uncertain')
+        ]}),
+        ('Provinces', {'fields': [
+            ('province_original', 'province_original_expanded'),
+        ]})
+    ]
 
     raw_id_fields = ('group', 'person', 'office', )
 
     related_lookup_fields = {
-         'fk': ['group', 'person', 'office', ],
+        'fk': ['group', 'person', 'office', ],
     }
 
     inlines = (PostAssertionNoteInline, PostAssertionProvincesInline)
@@ -120,8 +149,10 @@ admin.site.register(PostAssertion, PostAssertionAdmin)
 
 
 class NoteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'note_type', 'secondary_source', 'text', 'extra_info', 'created', 'modified')
-    list_display_links = ('note_type', 'secondary_source', 'text', 'extra_info')
+    list_display = ('id', 'note_type', 'secondary_source',
+                    'text', 'extra_info', 'created', 'modified')
+    list_display_links = ('note_type', 'secondary_source',
+                          'text', 'extra_info')
     readonly_fields = ('id', 'created', 'modified')
 
     search_fields = ['id', 'text']
@@ -139,7 +170,7 @@ class ProvinceAdmin(admin.ModelAdmin):
     readonly_fields = ('id', 'created', 'modified')
 
     search_fields = ['id', 'name', ]
-    fields = ('id', 'name', 'description' )
+    fields = ('id', 'name', 'description')
 
     show_change_link = True
 
@@ -176,9 +207,9 @@ class PersonInline(admin.StackedInline):
     show_change_link = True
 
     fields = (
-        ['id', 'review_flag', 'position'] ,
-        ['person',],
-        ['office', 'role',],
+        ['id', 'review_flag', 'position'],
+        ['person', ],
+        ['office', 'role', ],
         ['uncertain'],
         ['secondary_source', 'original_text', 'office_xref'],
         ['date_display_text', ],
@@ -219,27 +250,27 @@ class PostAssertionInline(admin.StackedInline):
     readonly_fields = ('id', )
 
     fields = (['id', 'review_flag', ],
-            ['office', 'role'],
-            ['uncertain', ],
-            ['secondary_source', ],
-            ['group',],
-            ['original_text', 'office_xref'],
-            'date_display_text',
-            ['date_source_text', 'date_secondary_source', ],
-            ['date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'],
-            'notes',
-            ['province_original', 'province_original_expanded'],
-            'provinces_list',
-            'edit_link',
-            )
+              ['office', 'role'],
+              ['uncertain', ],
+              ['secondary_source', ],
+              ['group', ],
+              ['original_text', 'office_xref'],
+              'date_display_text',
+              ['date_source_text', 'date_secondary_source', ],
+              ['date_start', 'date_start_uncertain',
+                  'date_end', 'date_end_uncertain'],
+              'notes',
+              ['province_original', 'province_original_expanded'],
+              'provinces_list',
+              'edit_link',
+              )
 
     raw_id_fields = ('notes', 'group',)
 
     related_lookup_fields = {
         'fk': ['group', ],
-        'm2m': ['notes',],
+        'm2m': ['notes', ],
     }
-
 
 
 class REUpdatedListFilter(SimpleListFilter):
@@ -263,30 +294,30 @@ class REUpdatedListFilter(SimpleListFilter):
 class PersonAdmin(admin.ModelAdmin):
 
     fieldsets = [
-            ('Database', {
-                'fields': [('id', 'review_flag'), 'review_notes']},
-            ),
-            ('General Info',
-                {
-                'classes': ('grp-collapse grp-open',),
-                'fields': [
-                    ('sex',),
-                    ('praenomen', 'praenomen_uncertain'),
-                    'alt_praenomen',
-                    ('nomen', 'nomen_uncertain'),
-                    ('filiation', 'filiation_uncertain'),
-                    ('cognomen', 'cognomen_uncertain'),
-                    ('other_names', 'other_names_uncertain',),
-                    ('gens', 'gens_uncertain',),
-                    ('tribe', 'tribe_uncertain'),
-                    ('origin', ),
-                ]}),
-            ('RE',
-                {'classes': ('grp-collapse grp-open',),
-                'fields': [
-                    ('re_number', 're_number_old', ),
-                ]}
-            ),
+        ('Database', {
+            'fields': [('id', 'review_flag'), 'review_notes']},
+         ),
+        ('General Info',
+         {
+             'classes': ('grp-collapse grp-open',),
+             'fields': [
+                 ('sex',),
+                 ('praenomen', 'praenomen_uncertain'),
+                 'alt_praenomen',
+                 ('nomen', 'nomen_uncertain'),
+                 ('filiation', 'filiation_uncertain'),
+                 ('cognomen', 'cognomen_uncertain'),
+                 ('other_names', 'other_names_uncertain',),
+                 ('gens', 'gens_uncertain',),
+                 ('tribe', 'tribe_uncertain'),
+                 ('origin', ),
+             ]}),
+        ('RE',
+         {'classes': ('grp-collapse grp-open',),
+          'fields': [
+             ('re_number', 're_number_old', ),
+         ]}
+         ),
         ('Dates', {
             'classes': ('grp-collapse grp-open',),
             'fields': [
@@ -295,24 +326,24 @@ class PersonAdmin(admin.ModelAdmin):
                 ('date_first', 'date_first_type'),
                 ('date_last', 'date_last_type'),
                 ('era_from', 'era_to'),
-        ]}),
+            ]}),
         ('Patrician', {
             'classes': ('grp-collapse grp-open',),
             'fields': [('patrician', 'patrician_uncertain'),
-                              ('patrician_notes')]}),
+                       ('patrician_notes')]}),
         ('Novus', {
             'classes': ('grp-collapse grp-open',),
             'fields': [('novus', 'novus_uncertain'),
-                              ('novus_notes')]}),
+                       ('novus_notes')]}),
         ('Nobilis', {
             'classes': ('grp-collapse grp-open',),
             'fields': [('nobilis', 'nobilis_uncertain'),
-                                ('novus_notes')]}),
+                       ('novus_notes')]}),
         ('Eques', {
             'classes': ('grp-collapse grp-open',),
             'fields': [('eques', 'eques_uncertain'),
-                              ('eques_notes')]}),
-        ]
+                       ('eques_notes')]}),
+    ]
 
     readonly_fields = ('id', )
 
@@ -324,10 +355,10 @@ class PersonAdmin(admin.ModelAdmin):
         'modified',
         'created_by',
         'created',
-        )
+    )
 
     search_fields = ['id', 'nomen', 'cognomen', 'praenomen__abbrev',
-                    'praenomen__name', 'other_names', 're_number', ]
+                     'praenomen__name', 'other_names', 're_number', ]
 
     list_filter = ('nomen',
                    'review_flag', REUpdatedListFilter, 'patrician', 'novus',
@@ -357,14 +388,15 @@ class OfficeAdmin(DjangoMpttAdmin):
         'name',
         'abbrev_name',
         'description',
-        )
+    )
 
 admin.site.register(Office, OfficeAdmin)
 
 
 class GroupAdmin(admin.ModelAdmin):
 
-    search_fields = ['id', 'postassertion__person__nomen', 'postassertion__person__cognomen', 'postassertion__office']
+    search_fields = ['id', 'postassertion__person__nomen',
+                     'postassertion__person__cognomen', 'postassertion__office']
 
     list_display = (
         'id',
@@ -378,19 +410,19 @@ class GroupAdmin(admin.ModelAdmin):
     readonly_fields = ('id', )
     list_display_links = ('id', 'notes', )
 
-    fieldsets = [ ('Database Info', {'fields': ['id']}),
-                    ( '' ,
-                        {
-                        'fields': [
-                                ('date_year', 'date_info', ),
-                                ( 'notes', ),
-                                ],
-                        }
-                    ),
-            ]
+    fieldsets = [('Database Info', {'fields': ['id']}),
+                 ('',
+                  {
+                      'fields': [
+                          ('date_year', 'date_info', ),
+                          ('notes', ),
+                      ],
+                  }
+                  ),
+                 ]
 
     inlines = [PersonInline, ]
-    exclude = ('persons',  )
+    exclude = ('persons',)
 
 admin.site.register(Group, GroupAdmin)
 
@@ -431,5 +463,3 @@ class SecondarySourceAdmin(admin.ModelAdmin):
 
 
 admin.site.register(SecondarySource, SecondarySourceAdmin)
-
-

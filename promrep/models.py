@@ -66,9 +66,11 @@ class SecondarySource(TimeStampedModel):
 
 class PrimarySource(models.Model):
     name = models.CharField(max_length=256, unique=True)
+    abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
+    biblio = models.CharField(max_length=512, unique=True, blank=True)
 
     def __unicode__(self):
-        return self.name
+        return self.abbrev_name
 
 
 @with_author

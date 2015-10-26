@@ -14,7 +14,7 @@ from django.utils.html import format_html
 from promrep.forms import PostInlineForm
 
 from models import Person, Office, Praenomen, PostAssertion, \
-    Group, RoleType, DateType, SecondarySource, Gens, \
+    Group, RoleType, DateType, SecondarySource, PrimarySource,Gens, \
     PostAssertionNote, Tribe, Province, PostAssertionProvince, \
     PersonNote, RelationshipAssertion, RelationshipType
 
@@ -66,7 +66,13 @@ admin.site.register(RelationshipAssertion, RelationshipAssertionAdmin)
 class InverseRelationshipInline(admin.StackedInline):
     model = RelationshipAssertion
     fk_name = 'related_person'
-    extra=0
+    extra = 0
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-open',)
+
+    verbose_name = ''
+    verbose_name_plural = 'Indirect Relationship Assertions'
 
     raw_id_fields = ('person', )
 
@@ -74,11 +80,37 @@ class InverseRelationshipInline(admin.StackedInline):
         'fk': ['person', ],
     }
 
+    readonly_fields = ['related_person']
+
     fields = (
-        ['person', 'relationship'],
+        ['person', 'relationship', 'related_person'],
         ['notes', ]
     )
 
+
+class DirectRelationshipInline(admin.StackedInline):
+    model = RelationshipAssertion
+    fk_name = 'person'
+    extra = 0
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-open',)
+
+    verbose_name = ''
+    verbose_name_plural = 'Direct Relationship Assertions'
+
+
+    raw_id_fields = ('related_person', )
+    readonly_fields = ['person']
+
+    related_lookup_fields = {
+        'fk': ['related_person', ],
+    }
+
+    fields = (
+        ['person', 'relationship', 'related_person',],
+        ['notes', ]
+    )
 
 
 class PostAssertionProvincesInline(admin.StackedInline):
@@ -382,7 +414,9 @@ class PersonAdmin(admin.ModelAdmin):
                    'review_flag', REUpdatedListFilter, 'patrician', 'novus',
                    'nobilis', 'eques', )
 
-    inlines = (PostAssertionInline, PersonNoteInline, InverseRelationshipInline)
+    inlines = (PostAssertionInline, PersonNoteInline,
+               DirectRelationshipInline, InverseRelationshipInline)
+
     exclude = ('assertions', )
 
 admin.site.register(Person, PersonAdmin)

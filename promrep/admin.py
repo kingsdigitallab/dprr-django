@@ -109,12 +109,12 @@ class InverseRelationshipInline(admin.StackedInline):
         'fk': ['person', 'secondary_source'],
     }
 
-    readonly_fields = ['related_person']
+    readonly_fields = ['id', 'related_person', 'primary_sources_list']
 
     fields = (
+        ['id', 'uncertain', ],
         ['person', 'relationship', 'related_person'],
-        ['uncertain', ],
-        ['secondary_source', ],
+        ['secondary_source', 'primary_sources_list'],
         ['notes', ]
     )
 
@@ -133,16 +133,16 @@ class DirectRelationshipInline(admin.StackedInline):
     verbose_name_plural = 'Direct Relationship Assertions'
 
     raw_id_fields = ('related_person', 'secondary_source')
-    readonly_fields = ['person']
+    readonly_fields = ['id', 'person', 'primary_sources_list', ]
 
     related_lookup_fields = {
         'fk': ['related_person', 'secondary_source'],
     }
 
     fields = (
+        ['id', 'uncertain', ],
         ['person', 'relationship', 'related_person', ],
-        ['uncertain', ],
-        ['secondary_source', ],
+        ['secondary_source', 'primary_sources_list'],
         ['notes', ]
     )
 

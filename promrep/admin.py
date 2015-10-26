@@ -68,22 +68,26 @@ class InverseRelationshipInline(admin.StackedInline):
     fk_name = 'related_person'
     extra = 0
 
+    show_change_link = True
+
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-open',)
 
     verbose_name = ''
     verbose_name_plural = 'Indirect Relationship Assertions'
 
-    raw_id_fields = ('person', )
+    raw_id_fields = ('person', 'secondary_source')
 
     related_lookup_fields = {
-        'fk': ['person', ],
+        'fk': ['person', 'secondary_source'],
     }
 
     readonly_fields = ['related_person']
 
     fields = (
         ['person', 'relationship', 'related_person'],
+        ['uncertain', ],
+        ['secondary_source', ],
         ['notes', ]
     )
 
@@ -93,22 +97,25 @@ class DirectRelationshipInline(admin.StackedInline):
     fk_name = 'person'
     extra = 0
 
+    show_change_link = True
+
     classes = ('grp-collapse grp-open',)
     inline_classes = ('grp-collapse grp-open',)
 
     verbose_name = ''
     verbose_name_plural = 'Direct Relationship Assertions'
 
-
-    raw_id_fields = ('related_person', )
+    raw_id_fields = ('related_person', 'secondary_source')
     readonly_fields = ['person']
 
     related_lookup_fields = {
-        'fk': ['related_person', ],
+        'fk': ['related_person', 'secondary_source'],
     }
 
     fields = (
         ['person', 'relationship', 'related_person',],
+        ['uncertain',],
+        ['secondary_source', ],
         ['notes', ]
     )
 
@@ -515,3 +522,11 @@ class SecondarySourceAdmin(admin.ModelAdmin):
 
 
 admin.site.register(SecondarySource, SecondarySourceAdmin)
+
+
+class PrimarySourceAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'abbrev_name', 'biblio')
+    readonly_fields = ('id', )
+    list_display_links = ('id', 'abbrev_name', 'name', 'biblio')
+
+admin.site.register(PrimarySource, PrimarySourceAdmin)

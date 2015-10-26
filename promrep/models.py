@@ -564,7 +564,7 @@ class RelationshipAssertion(TimeStampedModel):
 
     secondary_source = models.ForeignKey(SecondarySource)
 
-    primary_source = models.ManyToManyField(
+    primary_sources = models.ManyToManyField(
         PrimarySource, through='RelationshipAssertionPrimarySource', null=True,
         blank=True)
 
@@ -574,6 +574,10 @@ class RelationshipAssertion(TimeStampedModel):
 
     def __unicode__(self):
         return "{} is {} {}".format(self.person, self.relationship, self.related_person)
+
+    @property
+    def primary_sources_list(self):
+        return ", ".join(psource.abbrev_name for psource in self.primary_sources.all())
 
 
 @with_author

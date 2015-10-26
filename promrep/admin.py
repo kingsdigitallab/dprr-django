@@ -14,12 +14,37 @@ from django.utils.html import format_html
 from promrep.forms import PostInlineForm
 
 from models import Person, Office, Praenomen, PostAssertion, \
-    Group, RoleType, DateType, SecondarySource, PrimarySource,Gens, \
+    Group, RoleType, DateType, SecondarySource, PrimarySource, Gens, \
     PostAssertionNote, Tribe, Province, PostAssertionProvince, \
-    PersonNote, RelationshipAssertion, RelationshipType
+    PersonNote, RelationshipAssertion, RelationshipType, \
+    RelationshipAssertionPrimarySource
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
+
+
+class RelationshipAssertionPrimarySourceInline(admin.StackedInline):
+    model = RelationshipAssertionPrimarySource
+    extra = 0
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-open',)
+
+    verbose_name = 'Primary Source:'
+    verbose_name_plural = 'Primary Sources'
+
+    readonly_fields = ['id']
+    raw_id_fields = ['primary_source', ]
+
+    related_lookup_fields = {
+        'fk': ['primary_source', ]
+    }
+
+    fields = [
+        ['id'],
+        ['primary_source'],
+        ['original_text'],
+        ]
 
 
 class RelationshipTypeAdmin(admin.ModelAdmin):
@@ -57,6 +82,8 @@ class RelationshipAssertionAdmin(admin.ModelAdmin):
               ('original_text'),
               ('notes'),
               )
+
+    inlines = (RelationshipAssertionPrimarySourceInline, )
 
     show_change_link = True
 
@@ -113,8 +140,8 @@ class DirectRelationshipInline(admin.StackedInline):
     }
 
     fields = (
-        ['person', 'relationship', 'related_person',],
-        ['uncertain',],
+        ['person', 'relationship', 'related_person', ],
+        ['uncertain', ],
         ['secondary_source', ],
         ['notes', ]
     )

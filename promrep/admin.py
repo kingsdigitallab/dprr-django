@@ -98,7 +98,7 @@ class InverseRelationshipInline(admin.StackedInline):
     show_change_link = True
 
     classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-closed',)
 
     verbose_name = ''
     verbose_name_plural = 'Indirect Relationship Assertions'
@@ -127,7 +127,7 @@ class DirectRelationshipInline(admin.StackedInline):
     show_change_link = True
 
     classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse  grp-closed',)
 
     verbose_name = ''
     verbose_name_plural = 'Direct Relationship Assertions'

@@ -583,9 +583,9 @@ class RelationshipAssertion(TimeStampedModel):
 @with_author
 class RelationshipAssertionPrimarySource(TimeStampedModel):
     relationship_assertion = models.ForeignKey(RelationshipAssertion)
-    primary_source = models.ForeignKey(PrimarySource)
+    primary_source = models.ForeignKey(PrimarySource, blank=True, null=True)
 
     original_text = models.CharField(max_length=1024, blank=True)
 
     def __unicode__(self):
-        return self.primary_source.abbrev_name
+        return self.original_text

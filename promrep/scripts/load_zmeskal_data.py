@@ -210,12 +210,11 @@ def read_input_file(ifname):
             # Primary Sources
             orig_primary_sources_text = row_dict['primary_source_refs'].strip()
 
-            if orig_primary_sources_text:
-                for prim_source_text in orig_primary_sources_text.split(","):
-                    prim_source_text = prim_source_text.strip()
+            for prim_source_text in orig_primary_sources_text.split(","):
+                prim_source_text = prim_source_text.strip()
 
-                    raps = RelationshipAssertionPrimarySource.objects.create(
-                        original_text=prim_source_text, relationship_assertion=rel)
+                raps = RelationshipAssertionPrimarySource.objects.create(
+                    original_text=prim_source_text, relationship_assertion=rel)
 
             # Upgrades and saves the row
             row_dict.update({"p1_id": p1_id,

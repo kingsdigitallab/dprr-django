@@ -577,7 +577,7 @@ class RelationshipAssertion(TimeStampedModel):
 
     @property
     def primary_sources_list(self):
-        return ", ".join(psource.abbrev_name for psource in self.primary_sources.all())
+        return ", ".join(ps.original_text for ps in self.relationshipassertionprimarysource_set.all())
 
 
 @with_author

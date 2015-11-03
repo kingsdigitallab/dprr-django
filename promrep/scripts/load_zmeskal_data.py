@@ -6,7 +6,7 @@ from os import path
 import primary_source_aux as psource_aux
 
 from promrep.models import Person, RelationshipAssertion, Praenomen, \
-    SecondarySource, PrimarySource, Sex, RelationshipType
+    SecondarySource, PrimarySource, Sex, RelationshipType, RelationshipAssertionPrimarySource
 
 # Setup logging
 LOGGER = logging.getLogger(__name__)
@@ -38,7 +38,6 @@ ICSV_COLUMNS = ["person_1_id",
                 "person_2_other_names",
                 "primary_source_refs",
                 "notes"]
-
 
 
 def clean_field(field, a_string):
@@ -215,19 +214,14 @@ def read_input_file(ifname):
                 for prim_source_text in orig_primary_sources_text.split(","):
                     prim_source_text = prim_source_text.strip()
 
-                    # rel_prim_source
-                    primary_source_abbrev = psource_aux.parse_primary_source(primary_source_text)
-
-                    # create a new intermediate object
-                    raps = RelationshipAssertionPrimarySource.objects.create(original_text=prim_source_text,
-                                                                             relationship_assertion=rel,
-                                                                             primary_source=primary_source
-                                                                             )
+                    raps = RelationshipAssertionPrimarySource.objects.create(
+                        original_text=prim_source_text, relationship_assertion=rel)
 
             # Upgrades and saves the row
             row_dict.update({"p1_id": p1_id,
                              "relationshipassertion_id": rel.id,
                              "p2_id": p2_id})
+
             writer.writerow(row_dict)
 
     LOGGER.info("Wrote log file \"{}\"".format(log_fname))

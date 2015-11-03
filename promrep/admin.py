@@ -76,7 +76,7 @@ class RelationshipAssertionAdmin(admin.ModelAdmin):
 
     fields = (('id', 'review_flag'),
               ('person',),
-              ('relationship'),
+              ('relationship', 'relationship_number'),
               ('related_person'),
               ('secondary_source'),
               ('original_text'),

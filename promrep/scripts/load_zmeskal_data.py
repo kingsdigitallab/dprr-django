@@ -207,6 +207,14 @@ def read_input_file(ifname):
                 uncertain=uncertain_flag, secondary_source=sec_source,
                 notes=rel_notes)
 
+            #
+            marriage_no = row_dict["marriage_no"].strip()
+            if marriage_no:
+                print marriage_no
+                rel.relationship_number = int(marriage_no)
+
+            rel.save()
+
             # Primary Sources
             orig_primary_sources_text = row_dict['primary_source_refs'].strip()
 

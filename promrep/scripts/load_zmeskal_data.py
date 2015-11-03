@@ -200,22 +200,26 @@ def read_input_file(ifname):
 
             rel_notes = unicode(row_dict['notes'].strip(), 'iso-8859-1')
 
-            # create RelationshipAssertion
-            # TODO: test if created
-            rel = RelationshipAssertion.objects.create(
-                person_id=p1_id, related_person_id=p2_id, relationship=rel_type,
-                uncertain=uncertain_flag, secondary_source=sec_source,
-                notes=rel_notes)
 
-            #
+            rel_num = None
             marriage_no = row_dict["marriage_no"].strip()
             if marriage_no:
-                print marriage_no
-                rel.relationship_number = int(marriage_no)
+                rel_num = int(marriage_no)
 
-            rel.save()
+            # create RelationshipAssertion
+            # TODO: test if created
+            rel, created = RelationshipAssertion.objects.get_or_create(
+                person_id=p1_id, related_person_id=p2_id, relationship=rel_type,
+                uncertain=uncertain_flag, secondary_source=sec_source,
+                notes=rel_notes,
+                relationship_number= rel_num)
 
-            # Primary Sources
+            if created:
+                LOGGER.info("Created new relationship with id={}".format(rel.id))
+            else:
+                LOGGER.info("Relationship already existed with id={}".format(rel.id))
+
+            # always add Primary Sources
             orig_primary_sources_text = row_dict['primary_source_refs'].strip()
 
             for prim_source_text in orig_primary_sources_text.split(","):

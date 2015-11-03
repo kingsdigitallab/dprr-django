@@ -33,18 +33,18 @@ class RelationshipAssertionPrimarySourceInline(admin.StackedInline):
     verbose_name = 'Primary Source:'
     verbose_name_plural = 'Primary Sources'
 
-    readonly_fields = ['id']
+    readonly_fields = ('id', )
     raw_id_fields = ['primary_source', ]
 
     related_lookup_fields = {
         'fk': ['primary_source', ]
     }
 
-    fields = [
-        ['id'],
-        ['primary_source'],
-        ['original_text'],
-        ]
+    fields = (
+        ('id'),
+        ('primary_source'),
+        ('original_text'),
+    )
 
 
 class RelationshipTypeAdmin(admin.ModelAdmin):
@@ -112,10 +112,10 @@ class InverseRelationshipInline(admin.StackedInline):
     readonly_fields = ['id', 'related_person', 'primary_sources_list']
 
     fields = (
-        ['id', 'uncertain', ],
-        ['person', 'relationship', 'related_person'],
-        ['secondary_source', 'primary_sources_list'],
-        ['notes', ]
+        ('id', 'uncertain', ),
+        ('person', 'relationship', 'related_person'),
+        ('secondary_source', 'primary_sources_list'),
+        ('notes', ),
     )
 
 
@@ -140,10 +140,10 @@ class DirectRelationshipInline(admin.StackedInline):
     }
 
     fields = (
-        ['id', 'uncertain', ],
-        ['person', 'relationship', 'related_person', ],
-        ['secondary_source', 'primary_sources_list'],
-        ['notes', ]
+        ('id', 'uncertain', ),
+        ('person', 'relationship', 'related_person', ),
+        ('secondary_source', 'primary_sources_list'),
+        ('notes',),
     )
 
 
@@ -164,8 +164,8 @@ class PostAssertionProvincesInline(admin.StackedInline):
     }
 
     fields = (
-        ['province', 'uncertain'],
-        ['note', ]
+        ('province', 'uncertain'),
+        ('note', )
     )
 
 
@@ -198,27 +198,27 @@ class PostAssertionAdmin(admin.ModelAdmin):
 
     fieldsets = [
         ('Database Info',
-         {'fields': [('id', 'review_flag'), ]}),
+         {'fields': (('id', 'review_flag'), )}),
         ('', {'fields':
-              [
+              (
                   'person',
                   'office',
                   'secondary_source',
                   ('role', 'uncertain'),
                   'group',
                   ('original_text', 'office_xref'),
-              ],
+              ),
               }
          ),
-        ('Dates', {'fields': [
+        ('Dates', {'fields': (
             ('date_display_text'),
             ('date_source_text', 'date_secondary_source'),
             ('date_start', 'date_start_uncertain'),
             ('date_end', 'date_end_uncertain')
-        ]}),
-        ('Provinces', {'fields': [
+        )}),
+        ('Provinces', {'fields': (
             ('province_original', 'province_original_expanded'),
-        ]})
+        )})
     ]
 
     raw_id_fields = ('group', 'person', 'office', )
@@ -240,7 +240,7 @@ class NoteAdmin(admin.ModelAdmin):
     readonly_fields = ('id', 'created', 'modified')
 
     search_fields = ['id', 'text']
-    fields = ('id', ['secondary_source', 'note_type'], 'text', 'extra_info', )
+    fields = ('id', ('secondary_source', 'note_type'), 'text', 'extra_info', )
 
     show_change_link = True
 
@@ -291,14 +291,14 @@ class PersonInline(admin.StackedInline):
     show_change_link = True
 
     fields = (
-        ['id', 'review_flag', 'position'],
-        ['person', ],
-        ['office', 'role', ],
-        ['uncertain'],
-        ['secondary_source', 'original_text', 'office_xref'],
-        ['date_display_text', ],
-        ['date_source_text', 'date_secondary_source', ],
-        ['date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'],
+        ('id', 'review_flag', 'position'),
+        ('person', ),
+        ('office', 'role', ),
+        ('uncertain'),
+        ('secondary_source', 'original_text', 'office_xref'),
+        ('date_display_text', ),
+        ('date_source_text', 'date_secondary_source', ),
+        ('date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'),
         'notes',
         'edit_link'
     )
@@ -333,18 +333,18 @@ class PostAssertionInline(admin.StackedInline):
     ordering = ('-date_start', '-date_end', )
     readonly_fields = ('id', )
 
-    fields = (['id', 'review_flag', ],
-              ['office', 'role'],
-              ['uncertain', ],
-              ['secondary_source', ],
-              ['group', ],
-              ['original_text', 'office_xref'],
-              'date_display_text',
-              ['date_source_text', 'date_secondary_source', ],
-              ['date_start', 'date_start_uncertain',
-                  'date_end', 'date_end_uncertain'],
+    fields = (('id', 'review_flag', ),
+              ('office', 'role'),
+              ('uncertain', ),
+              ('secondary_source', ),
+              ('group', ),
+              ('original_text', 'office_xref'),
+              ('date_display_text',),
+              ('date_source_text', 'date_secondary_source', ),
+              ('date_start', 'date_start_uncertain',
+                  'date_end', 'date_end_uncertain'),
               'notes',
-              ['province_original', 'province_original_expanded'],
+              ('province_original', 'province_original_expanded'),
               'provinces_list',
               'edit_link',
               )
@@ -384,7 +384,7 @@ class PersonAdmin(admin.ModelAdmin):
         ('General Info',
          {
              'classes': ('grp-collapse grp-open',),
-             'fields': [
+             'fields': (
                  ('sex',),
                  ('praenomen', 'praenomen_uncertain'),
                  'alt_praenomen',
@@ -395,38 +395,38 @@ class PersonAdmin(admin.ModelAdmin):
                  ('gens', 'gens_uncertain',),
                  ('tribe', 'tribe_uncertain'),
                  ('origin', ),
-             ]}),
+             )}),
         ('RE',
          {'classes': ('grp-collapse grp-open',),
-          'fields': [
+          'fields': (
              ('re_number', 're_number_old', ),
-         ]}
+         )}
          ),
         ('Dates', {
             'classes': ('grp-collapse grp-open',),
-            'fields': [
+            'fields': (
                 ('date_display_text'),
                 ('date_source_text', 'date_secondary_source'),
                 ('date_first', 'date_first_type'),
                 ('date_last', 'date_last_type'),
                 ('era_from', 'era_to'),
-            ]}),
+            )}),
         ('Patrician', {
             'classes': ('grp-collapse grp-open',),
-            'fields': [('patrician', 'patrician_uncertain'),
-                       ('patrician_notes')]}),
+            'fields': (('patrician', 'patrician_uncertain'),
+                       ('patrician_notes'))}),
         ('Novus', {
             'classes': ('grp-collapse grp-open',),
-            'fields': [('novus', 'novus_uncertain'),
-                       ('novus_notes')]}),
+            'fields': (('novus', 'novus_uncertain'),
+                       ('novus_notes'))}),
         ('Nobilis', {
             'classes': ('grp-collapse grp-open',),
-            'fields': [('nobilis', 'nobilis_uncertain'),
-                       ('novus_notes')]}),
+            'fields': (('nobilis', 'nobilis_uncertain'),
+                       ('novus_notes'))}),
         ('Eques', {
             'classes': ('grp-collapse grp-open',),
-            'fields': [('eques', 'eques_uncertain'),
-                       ('eques_notes')]}),
+            'fields': (('eques', 'eques_uncertain'),
+                       ('eques_notes'))}),
     ]
 
     readonly_fields = ('id', )
@@ -496,13 +496,13 @@ class GroupAdmin(admin.ModelAdmin):
     readonly_fields = ('id', )
     list_display_links = ('id', 'notes', )
 
-    fieldsets = [('Database Info', {'fields': ['id']}),
+    fieldsets = [('Database Info', {'fields': [('id')]}),
                  ('',
                   {
-                      'fields': [
+                      'fields': (
                           ('date_year', 'date_info', ),
                           ('notes', ),
-                      ],
+                      ),
                   }
                   ),
                  ]

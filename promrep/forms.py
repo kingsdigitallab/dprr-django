@@ -17,8 +17,9 @@ def get_range_parts(value_range):
 
 
 class ModelLinkWidget(forms.Widget):
-
-    '''This widget adds a link, to edit the current inline, after the inline form fields.'''
+    """This widget adds a link, to edit the current inline, after the
+    inline form fields.
+    """
 
     def __init__(self, obj, attrs=None):
         super(ModelLinkWidget, self).__init__(attrs)
@@ -56,10 +57,10 @@ class PostAssertionProvincesWidget(forms.Widget):
 
 
 class PostInlineForm(forms.ModelForm):
-
-    '''This form renders a model and adds a link to edit the nested inline
+    """This form renders a model and adds a link to edit the nested inline
     model. This is useful for inline editing when the nested inline fields are
-    not displayed.'''
+    not displayed.
+    """
 
     edit_link = forms.CharField(label='Edit', required=False)
     print_dates = forms.CharField(label='Post Person Dates', required=False)
@@ -83,10 +84,9 @@ class PostInlineForm(forms.ModelForm):
 
 
 class PersonInlineForm(forms.ModelForm):
-
-    '''This form renders a model and adds a link to edit the nested inline
+    """This form renders a model and adds a link to edit the nested inline
     model. This is useful for inline editing when the nested inline fields are
-    not displayed.'''
+    not displayed."""
 
     edit_link = forms.CharField(label='Edit', required=False)
 
@@ -99,6 +99,25 @@ class PersonInlineForm(forms.ModelForm):
 
         # instance is always available, it just does or doesn't have pk.
         self.fields['edit_link'].widget = ModelLinkWidget(self.instance)
+
+
+class RelationshipAssertionInlineForm(forms.ModelForm):
+    """This form renders a model and adds a link to edit the nested inline
+    model. This is useful for inline editing when the nested inline fields are
+    not displayed."""
+
+    edit_link = forms.CharField(label='Edit', required=False)
+
+    class Meta:
+        exclude = ()
+        fieldsets = []
+
+    def __init__(self, *args, **kwargs):
+        super(RelationshipAssertionInlineForm, self).__init__(*args, **kwargs)
+
+        # instance is always available, it just does or doesn't have pk.
+        self.fields['edit_link'].widget = ModelLinkWidget(self.instance)
+
 
 
 class PromrepFacetedSearchForm(FacetedSearchForm):

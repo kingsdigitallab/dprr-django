@@ -11,7 +11,7 @@ from django.forms import TextInput, Textarea
 from django.core import urlresolvers
 from django.utils.html import format_html
 
-from promrep.forms import PostInlineForm
+from promrep.forms import PostInlineForm, RelationshipAssertionInlineForm
 
 from models import Person, Office, Praenomen, PostAssertion, \
     Group, RoleType, DateType, SecondarySource, PrimarySource, Gens, \
@@ -92,6 +92,7 @@ admin.site.register(RelationshipAssertion, RelationshipAssertionAdmin)
 
 class InverseRelationshipInline(admin.StackedInline):
     model = RelationshipAssertion
+    form = RelationshipAssertionInlineForm
     fk_name = 'related_person'
     extra = 0
 
@@ -116,11 +117,13 @@ class InverseRelationshipInline(admin.StackedInline):
         ('person', 'relationship', 'related_person'),
         ('secondary_source', 'primary_sources_list'),
         ('notes', ),
+        ('edit_link', ),
     )
 
 
 class DirectRelationshipInline(admin.StackedInline):
     model = RelationshipAssertion
+    form = RelationshipAssertionInlineForm
     fk_name = 'person'
     extra = 0
 
@@ -144,6 +147,7 @@ class DirectRelationshipInline(admin.StackedInline):
         ('person', 'relationship', 'related_person', ),
         ('secondary_source', 'primary_sources_list'),
         ('notes',),
+        ('edit_link', ),
     )
 
 

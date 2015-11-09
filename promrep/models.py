@@ -36,6 +36,7 @@ def date_to_string(date_int, date_uncertain, date_suffix=True):
 
     return date_str
 
+
 @with_author
 class DateType(TimeStampedModel):
     name = models.CharField(max_length=256, unique=True)
@@ -65,9 +66,11 @@ class SecondarySource(TimeStampedModel):
 
 class PrimarySource(models.Model):
     name = models.CharField(max_length=256, unique=True)
+    abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
+    biblio = models.CharField(max_length=512, unique=True, blank=True)
 
     def __unicode__(self):
-        return self.name
+        return self.abbrev_name
 
 
 @with_author
@@ -353,7 +356,7 @@ class Office(MPTTModel, TimeStampedModel):
 
 
 @with_author
-class Relationship(TimeStampedModel):
+class RelationshipType(TimeStampedModel):
 
     name = models.CharField(max_length=256, unique=True)
     description = models.CharField(max_length=1024, blank=True)
@@ -481,7 +484,7 @@ class PostAssertion(TimeStampedModel):
     print_provinces.short_description = 'Provinces'
 
     class Meta:
-        ordering = ['-date_end', '-date_start',]
+        ordering = ['-date_end', '-date_start', ]
 
     def __unicode__(self):
 
@@ -500,17 +503,20 @@ class PostAssertion(TimeStampedModel):
         if self.date_display_text:
             date_str = self.date_display_text
         elif self.date_start == self.date_end and self.date_start_uncertain == self.date_end_uncertain:
-            date_str = date_to_string(self.date_start, self.date_start_uncertain)
+            date_str = date_to_string(
+                self.date_start, self.date_start_uncertain)
         else:
             if self.date_start:
-                date_str = date_to_string(self.date_start, self.date_start_uncertain, False)
+                date_str = date_to_string(
+                    self.date_start, self.date_start_uncertain, False)
             else:
                 date_str = "?"
 
             date_str = date_str + " - "
 
             if self.date_end:
-                date_str = date_str + date_to_string(self.date_end, self.date_end_uncertain)
+                date_str = date_str + \
+                    date_to_string(self.date_end, self.date_end_uncertain)
             else:
                 date_str = date_str + "?"
 
@@ -530,3 +536,56 @@ class PostAssertionProvince(models.Model):
             un = "?"
 
         return self.province.name + " " + un
+
+
+@with_author
+class RelationshipAssertion(TimeStampedModel):
+    person = models.ForeignKey(
+        Person, related_name="relationships_as_subject")
+    relationship = models.ForeignKey(RelationshipType)
+    related_person = models.ForeignKey(
+        Person, related_name="relationships_as_object")
+
+    # relationship number indicates if it's the third wife of
+    relationship_number = models.PositiveSmallIntegerField(
+        null=True, blank=True)
+    # when referring to the third wife of it's also useful to link to the other
+    # relationship - in this case the previous
+    related_relationship = models.ForeignKey("self", null=True, blank=True,
+                                             related_name="next")
+
+    # when two different sources write about the two sides of the relationship
+    # this field indicates that one is the inverse of the other
+    inverse_relationship = models.ForeignKey("self", null=True, blank=True)
+
+    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
+
+    original_text = models.CharField(max_length=1024, blank=True)
+
+    secondary_source = models.ForeignKey(SecondarySource)
+
+    primary_sources = models.ManyToManyField(
+        PrimarySource, through='RelationshipAssertionPrimarySource', null=True,
+        blank=True)
+
+    notes = models.TextField(blank=True)
+    review_flag = models.BooleanField(
+        verbose_name="Review needed", default=False)
+
+    def __unicode__(self):
+        return "{} is {} {}".format(self.person, self.relationship, self.related_person)
+
+    @property
+    def primary_sources_list(self):
+        return ", ".join(ps.original_text for ps in self.relationshipassertionprimarysource_set.all())
+
+
+@with_author
+class RelationshipAssertionPrimarySource(TimeStampedModel):
+    relationship_assertion = models.ForeignKey(RelationshipAssertion)
+    primary_source = models.ForeignKey(PrimarySource, blank=True, null=True)
+
+    original_text = models.CharField(max_length=1024, blank=True)
+
+    def __unicode__(self):
+        return self.original_text

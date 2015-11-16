@@ -39,6 +39,12 @@ li.greyed-out a {
 	display: none;
 }
 
+.bottom-margin {
+	li {
+		margin-bottom: 1rem;
+	}
+}
+
 /*** Header ***/
 
 header.main-header {
@@ -124,6 +130,35 @@ h3.quick-home {
 	margin-bottom: 1rem;
 	padding-bottom: .5rem;
 	font-size: 1.5rem;
+}
+
+.timeline {
+	li {
+		&:before {
+			font-family: "FontAwesome";
+			content: "\f111 \A \f106";
+			white-space: pre; /* or pre-wrap */
+			color: $primary-color;
+			padding-right: 10px;
+			display: inline-block;
+			vertical-align: text-top;
+		}
+	}
+
+	li li:before {
+		content: none;
+	}
+
+	.label {
+		font-size: 1rem;
+	}
+
+	ul {
+		border-left: 1px dotted $primary-color;
+		padding-left: 1.25rem;
+		margin-left: .28125rem !important;
+		margin-top: -.5rem;
+	}
 }
 
 /*** Search / Facets / Filters ***/
@@ -314,6 +349,37 @@ footer.main-footer .logo a {
 
 footer.main-footer .right p {
 	text-align: right;
+}
+
+/*** SVG / Graphs ***/
+
+.svg-container {
+    width: 100%;
+    height: 0;
+    padding-top: 60%;
+    margin-bottom: 1rem;
+    position: relative;
+    border: 3px solid $secondary-color;
+}
+
+.svg-title {
+	background: $secondary-color;
+	padding: .5rem .5rem .375rem;
+	margin-bottom: 0;
+	font-size: 1.5rem;
+}
+
+svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.svg-link {
+	fill: $primary-color;
+	&:hover {
+		fill: $dark-gold;
+	}
 }
 
 /*** Typography ***/

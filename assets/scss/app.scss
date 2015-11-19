@@ -351,15 +351,19 @@ footer.main-footer .right p {
 	text-align: right;
 }
 
-/*** SVG / Graphs ***/
+/*** SVG / Graphs / Sigma ***/
 
-.svg-container {
+.svg-container,
+.sigma-container {
     width: 100%;
-    height: 0;
-    padding-top: 60%;
     margin-bottom: 1rem;
     position: relative;
     border: 3px solid $secondary-color;
+}
+
+.svg-container {
+    padding-top: 60%;
+    height: 0;
 }
 
 .svg-title {
@@ -380,6 +384,26 @@ svg {
 	&:hover {
 		fill: $dark-gold;
 	}
+}
+
+.node {
+	stroke: #fff;
+	stroke-width: 1.5px;
+}
+
+.link {
+	stroke: #999;
+	stroke-opacity: .6;
+}
+
+#family-graph {
+	display: block;
+}
+
+#sigma-container {
+	max-width: 100%;
+	height: 465px;
+	display: block;
 }
 
 /*** Typography ***/

@@ -3,7 +3,13 @@ $(document).ready(function() {
 	// Expand / Collapse
 
 	$('.panel-head h4').bind("click", function() {
-		$(this).parent().next('.panel-body').slideToggle(400).removeClass("hidden");
+		$(this).parent().next('.panel-body').slideToggle(400).removeClass("hide");
+		$("i", this).toggleClass("fa-caret-down fa-caret-right");
+		return false;
+	});
+
+	$('.expander').bind("click", function() {
+		$(this).next('.collapsible').slideToggle(400).removeClass("hide");
 		$("i", this).toggleClass("fa-caret-down fa-caret-right");
 		return false;
 	});

@@ -228,6 +228,12 @@ h3.quick-home {
 
 	li {	
 		border-bottom: 1px solid $sand;
+		margin-bottom: 1rem;
+		padding-top: .5rem;
+
+		.row {
+			margin-bottom: .5rem;
+		}
 		p {
 			font-size: .8125rem;
 			margin: .5rem 0;

@@ -143,103 +143,106 @@ def read_input_file(ifname):
 
         csvDict = csv.DictReader(csvfile,
                                  fieldnames=ICSV_COLUMNS,
-                                 delimiter=";")
+                                 delimiter="\t")
 
         # skips first row
         csvDict.next()
 
         for row_dict in csvDict:
-            p1_id = int(row_dict['person_1_id'])
-            p2_id = int(row_dict['person_2_id'])
+            try:
+                p1_id = int(row_dict['person_1_id'])
+                p2_id = int(row_dict['person_2_id'])
 
-            if not p1_id:
-                p1_dict = {
-                    "sex": row_dict["person_1_sex"],
-                    "praenomen": row_dict["person_1_praenomen"],
-                    "nomen": row_dict["person_1_nomen"],
-                    "re": row_dict["person_1_re"],
-                    "cognomen": row_dict["person_1_cognomen"],
-                    "other_names": row_dict["person_1_other_names"]
-                }
+                if not p1_id:
+                    p1_dict = {
+                        "sex": row_dict["person_1_sex"],
+                        "praenomen": row_dict["person_1_praenomen"],
+                        "nomen": row_dict["person_1_nomen"],
+                        "re": row_dict["person_1_re"],
+                        "cognomen": row_dict["person_1_cognomen"],
+                        "other_names": row_dict["person_1_other_names"]
+                    }
 
-                p1_id, created_p1 = create_person(p1_dict)
-                if created_p1:
-                    LOGGER.info("Created new person1 with id {}".format(p1_id))
+                    p1_id, created_p1 = create_person(p1_dict)
+                    if created_p1:
+                        LOGGER.info("Created new person1 with id {}".format(p1_id))
+                    else:
+                        LOGGER.info("Person1 id {}".format(p1_id))
+
+                if not p2_id:
+                    p2_dict = {
+                        "sex": row_dict["person_2_sex"],
+                        "praenomen": row_dict["person_2_praenomen"],
+                        "nomen": row_dict["person_2_nomen"],
+                        "re": row_dict["person_2_re"],
+                        "cognomen": row_dict["person_2_cognomen"],
+                        "other_names": row_dict["person_2_other_names"]
+                    }
+
+                    p2_id, created_p2 = create_person(p2_dict)
+                    if created_p2:
+                        LOGGER.info("Created new person2 with id {}".format(p2_id))
+                    else:
+                        LOGGER.info("Person2 id {}".format(p2_id))
+
+                # gets the relationship type from the csv file
+                rel_type_name = row_dict["relationship"].strip().lower()
+
+                rel_type, created = RelationshipType.objects.get_or_create(
+                    name=rel_type_name)
+                if created:
+                    LOGGER.info(
+                        "Created new relationship type {}".format(rel_type))
+
+                uncertain_flag = False
+                uncertain = row_dict["uncertain"].strip()
+                if uncertain:
+                    uncertain_flag = True
+
+                rel_notes = unicode(row_dict['notes'].strip(), 'iso-8859-1')
+
+
+                rel_num = None
+                marriage_no = row_dict["marriage_no"].strip()
+                if marriage_no:
+                    rel_num = int(marriage_no)
+
+                # create RelationshipAssertion
+                # TODO: test if created
+                rel, created = RelationshipAssertion.objects.get_or_create(
+                    person_id=p1_id, related_person_id=p2_id, relationship=rel_type,
+                    uncertain=uncertain_flag, secondary_source=sec_source,
+                    notes=rel_notes,
+                    relationship_number= rel_num)
+
+                if created:
+                    LOGGER.info("Created new relationship with id={}".format(rel.id))
                 else:
-                    LOGGER.info("Person1 id {}".format(p1_id))
+                    LOGGER.info("Relationship already existed with id={}".format(rel.id))
 
-            if not p2_id:
-                p2_dict = {
-                    "sex": row_dict["person_2_sex"],
-                    "praenomen": row_dict["person_2_praenomen"],
-                    "nomen": row_dict["person_2_nomen"],
-                    "re": row_dict["person_2_re"],
-                    "cognomen": row_dict["person_2_cognomen"],
-                    "other_names": row_dict["person_2_other_names"]
-                }
+                # always add Primary Sources
+                orig_primary_sources_text = row_dict['primary_source_refs'].strip()
 
-                p2_id, created_p2 = create_person(p2_dict)
-                if created_p2:
-                    LOGGER.info("Created new person2 with id {}".format(p2_id))
-                else:
-                    LOGGER.info("Person2 id {}".format(p2_id))
+                for prim_source_text in orig_primary_sources_text.split(","):
+                    prim_source_text = prim_source_text.strip()
 
-            # gets the relationship type from the csv file
-            rel_type_name = row_dict["relationship"].strip().lower()
+                    raps = RelationshipAssertionPrimarySource.objects.create(
+                        original_text=prim_source_text, relationship_assertion=rel)
 
-            rel_type, created = RelationshipType.objects.get_or_create(
-                name=rel_type_name)
-            if created:
-                LOGGER.info(
-                    "Created new relationship type {}".format(rel_type))
+                # Upgrades and saves the row
+                row_dict.update({"p1_id": p1_id,
+                                 "relationshipassertion_id": rel.id,
+                                 "p2_id": p2_id})
 
-            uncertain_flag = False
-            uncertain = row_dict["uncertain"].strip()
-            if uncertain:
-                uncertain_flag = True
-
-            rel_notes = unicode(row_dict['notes'].strip(), 'iso-8859-1')
-
-
-            rel_num = None
-            marriage_no = row_dict["marriage_no"].strip()
-            if marriage_no:
-                rel_num = int(marriage_no)
-
-            # create RelationshipAssertion
-            # TODO: test if created
-            rel, created = RelationshipAssertion.objects.get_or_create(
-                person_id=p1_id, related_person_id=p2_id, relationship=rel_type,
-                uncertain=uncertain_flag, secondary_source=sec_source,
-                notes=rel_notes,
-                relationship_number= rel_num)
-
-            if created:
-                LOGGER.info("Created new relationship with id={}".format(rel.id))
-            else:
-                LOGGER.info("Relationship already existed with id={}".format(rel.id))
-
-            # always add Primary Sources
-            orig_primary_sources_text = row_dict['primary_source_refs'].strip()
-
-            for prim_source_text in orig_primary_sources_text.split(","):
-                prim_source_text = prim_source_text.strip()
-
-                raps = RelationshipAssertionPrimarySource.objects.create(
-                    original_text=prim_source_text, relationship_assertion=rel)
-
-            # Upgrades and saves the row
-            row_dict.update({"p1_id": p1_id,
-                             "relationshipassertion_id": rel.id,
-                             "p2_id": p2_id})
-
-            writer.writerow(row_dict)
+                writer.writerow(row_dict)
+            except Exception as e:
+                LOGGER.error("Unable to import line from csv file... Please debug data. ".format(e))
 
     LOGGER.info("Wrote log file \"{}\"".format(log_fname))
 
 
 def run():
-    ifname = "promrep/scripts/data/zmeskal/ZmeskalOutv1.csv"
+    ifname = "promrep/scripts/data/zmeskal/ZmeskalOutv2.csv"
     LOGGER.info("Importing data from \"{}\"".format(ifname))
 
     read_input_file(ifname)

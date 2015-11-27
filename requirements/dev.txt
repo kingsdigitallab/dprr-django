@@ -41,5 +41,6 @@ tzlocal==1.0
 unicodecsv==0.9.4
 wagtail==0.7
 wsgiref
-django-haystack
+git+git://github.com/kingsdigitallab/django-haystack.git
 pysolr
+ddh-django-utils

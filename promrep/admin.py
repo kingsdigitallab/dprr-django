@@ -85,6 +85,11 @@ class RelationshipAssertionAdmin(admin.ModelAdmin):
 
     inlines = (RelationshipAssertionPrimarySourceInline, )
 
+    search_fields = ('person__nomen', 'person__cognomen', 'related_person__nomen',
+                     'related_person__cognomen', 'person__other_names',
+                     'related_person__other_names', 'person__id', 'related_person__id',
+                     'person__re_number', 'related_person__re_number', )
+
     show_change_link = True
 
 admin.site.register(RelationshipAssertion, RelationshipAssertionAdmin)

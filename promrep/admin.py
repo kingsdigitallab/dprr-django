@@ -61,9 +61,9 @@ admin.site.register(RelationshipType, RelationshipTypeAdmin)
 
 
 class RelationshipAssertionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'person', 'relationship', 'related_person',
-                    'uncertain', 'secondary_source', 'review_flag',
-                    'created', 'modified')
+    list_display = ('id', 'person', 'relationship', 'relationship_number',
+                    'related_person', 'uncertain', 'secondary_source',
+                    'review_flag', 'created', 'modified')
 
     readonly_fields = ('id', 'created', 'modified')
 

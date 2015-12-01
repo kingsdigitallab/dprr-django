@@ -293,6 +293,8 @@ class Person(TimeStampedModel):
         return self.url_to_edit_person()
 
     def __unicode__(self):
+        name = ""
+
         # only show praenomen for men
         if self.sex.name == "Male":
 
@@ -303,9 +305,6 @@ class Person(TimeStampedModel):
                     name = name + " (or " + self.alt_praenomen.abbrev + ")"
                 elif self.praenomen_uncertain:
                     name = name + "?"
-
-        else:
-            name = ""
 
         if self.nomen:
             name = name + ' ' + self.nomen

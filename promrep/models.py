@@ -589,6 +589,9 @@ class RelationshipAssertion(TimeStampedModel):
         return ", ".join(ps.original_text for ps in self.relationshipassertionprimarysource_set.all())
 
 
+    class Meta:
+        ordering = ['relationship_number', 'id']
+
 @with_author
 class RelationshipAssertionPrimarySource(TimeStampedModel):
     relationship_assertion = models.ForeignKey(RelationshipAssertion)

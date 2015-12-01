@@ -313,7 +313,8 @@ class Person(TimeStampedModel):
             name = name + ' ' + '(' + self.re_number + ')'
 
         if self.filiation:
-            name = name + ' ' + self.filiation
+            if self.filiation not in ['- f. - n.', '- f.', '- n.']:
+                name = name + ' ' + self.filiation
 
         if self.tribe:
             name = name + ' ' + self.tribe.abbrev

@@ -61,9 +61,9 @@ admin.site.register(RelationshipType, RelationshipTypeAdmin)
 
 
 class RelationshipAssertionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'person', 'relationship', 'related_person',
-                    'uncertain', 'secondary_source', 'review_flag',
-                    'created', 'modified')
+    list_display = ('id', 'person', 'relationship', 'relationship_number',
+                    'related_person', 'uncertain', 'secondary_source',
+                    'review_flag', 'created', 'modified')
 
     readonly_fields = ('id', 'created', 'modified')
 
@@ -84,6 +84,11 @@ class RelationshipAssertionAdmin(admin.ModelAdmin):
               )
 
     inlines = (RelationshipAssertionPrimarySourceInline, )
+
+    search_fields = ('person__nomen', 'person__cognomen', 'related_person__nomen',
+                     'related_person__cognomen', 'person__other_names',
+                     'related_person__other_names', 'person__id', 'related_person__id',
+                     'person__re_number', 'related_person__re_number', )
 
     show_change_link = True
 
@@ -115,7 +120,7 @@ class InverseRelationshipInline(admin.StackedInline):
     fields = (
         ('id', 'uncertain', ),
         ('person', 'relationship', 'related_person'),
-        ('secondary_source', 'primary_sources_list'),
+        ('relationship_number', 'secondary_source', 'primary_sources_list'),
         ('notes', ),
         ('edit_link', ),
     )
@@ -145,7 +150,7 @@ class DirectRelationshipInline(admin.StackedInline):
     fields = (
         ('id', 'uncertain', ),
         ('person', 'relationship', 'related_person', ),
-        ('secondary_source', 'primary_sources_list'),
+        ('relationship_number', 'secondary_source', 'primary_sources_list'),
         ('notes',),
         ('edit_link', ),
     )

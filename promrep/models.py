@@ -295,8 +295,16 @@ class Person(TimeStampedModel):
     def __unicode__(self):
         name = ""
 
-        if self.praenomen:
-            name = name + ' ' + self.praenomen.abbrev
+        # only show praenomen for men
+        if self.sex.name == "Male":
+
+            if self.praenomen:
+                name = self.praenomen.abbrev
+
+                if self.alt_praenomen:
+                    name = name + " (or " + self.alt_praenomen.abbrev + ")"
+                elif self.praenomen_uncertain:
+                    name = name + "?"
 
         if self.nomen:
             name = name + ' ' + self.nomen
@@ -305,7 +313,8 @@ class Person(TimeStampedModel):
             name = name + ' ' + '(' + self.re_number + ')'
 
         if self.filiation:
-            name = name + ' ' + self.filiation
+            if self.filiation not in ['- f. - n.', '- f.', '- n.']:
+                name = name + ' ' + self.filiation
 
         if self.tribe:
             name = name + ' ' + self.tribe.abbrev
@@ -579,6 +588,9 @@ class RelationshipAssertion(TimeStampedModel):
     def primary_sources_list(self):
         return ", ".join(ps.original_text for ps in self.relationshipassertionprimarysource_set.all())
 
+
+    class Meta:
+        ordering = ['relationship_number', 'id']
 
 @with_author
 class RelationshipAssertionPrimarySource(TimeStampedModel):

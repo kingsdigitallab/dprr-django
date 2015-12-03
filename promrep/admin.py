@@ -120,7 +120,7 @@ class InverseRelationshipInline(admin.StackedInline):
     fields = (
         ('id', 'uncertain', ),
         ('person', 'relationship', 'related_person'),
-        ('secondary_source', 'primary_sources_list'),
+        ('relationship_number', 'secondary_source', 'primary_sources_list'),
         ('notes', ),
         ('edit_link', ),
     )
@@ -150,7 +150,7 @@ class DirectRelationshipInline(admin.StackedInline):
     fields = (
         ('id', 'uncertain', ),
         ('person', 'relationship', 'related_person', ),
-        ('secondary_source', 'primary_sources_list'),
+        ('relationship_number', 'secondary_source', 'primary_sources_list'),
         ('notes',),
         ('edit_link', ),
     )

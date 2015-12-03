@@ -25,7 +25,7 @@ DATABASES = {
 
 # https://github.com/sehmaschine/django-grappelli/issues/456
 # Any value other than "" in the setting value will break the inline templates
-TEMPLATE_STRING_IF_INVALID = '^^^INVALID %s^^^'
+TEMPLATE_STRING_IF_INVALID = ''
 
 def show_toolbar(request):
     return True

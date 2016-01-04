@@ -10,6 +10,8 @@
 
         <h1>{{ person }}</h1>
 
+        <h2 class="svg-title">Relationships recorded in the sources</h2>
+
         {% if person.review_flag %}
             <p><b>Warning: person needs revision</b></p>
         {% endif %}
@@ -27,17 +29,19 @@
 
         <h2>Offices</h2>
 
-        <ul>
+        <ul class="timeline no-bullet bottom-margin">
             {% for pa in person.post_assertions.all %}
-                <li>{{ pa.print_date |safe}} {{ pa.office | title}} {% if pa.provinces %} {{pa.print_provinces}} {% endif %}</li>
+                <li><span class="label radius secondary">{{ pa.print_date |safe}}</span> <strong>{{ pa.office | title}} {% if pa.provinces %} {{pa.print_provinces}} {% endif %}</strong>
 
                 {% if pa.notes.count %}
-                <ul>
+                <ul class="no-bullet">
                     {% for note in pa.notes.all %}
                         <li>{{note.text}} (in <i>{{note.secondary_source.abbrev_name}}</i>)</li>
                     {% endfor %}
                 </ul>
                 {% endif %}
+
+                </li>
             {% endfor %}
         </ul>
 

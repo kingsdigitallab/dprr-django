@@ -8,8 +8,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = ".vagrant_provisioning/playbook.yml"
-    ansible.tags = "solr"
-    # ansible.verbose = "vvv"
+    #    ansible.tags = "solr"
+    #    ansible.verbose = "vvv"
   end
 
   config.vm.network :forwarded_port, guest: 8080, host: 8081

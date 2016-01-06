@@ -330,6 +330,18 @@
         creates: "/var/lib/tomcat7/shared/classes/log4j.properties"
 
     notify: restart tomcat
+    # TODO: needed because on the next task we delete the example folder
+    ignore_errors: yes
+    tags:
+      - solr
+
+  # TODO: folder needs to be deleted, but this means that
+  # previous task cannot run again...
+  - name: Ensure solr example directory is absent.
+    sudo: yes
+    file:
+      path: "{{ solr.dir }}/example"
+      state: absent
     tags:
       - solr
 
@@ -376,6 +388,7 @@
       - solr
 
   # haystack schema
+  # TODO: we should ensure Solr is running correctly
   - name: haystack | build solr schema
     shell: >
       {{ user_home }}/venv/bin/python {{ project_root }}/manage.py build_solr_schema > {{ project_root }}/schema.xml

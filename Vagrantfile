@@ -8,7 +8,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = ".vagrant_provisioning/playbook.yml"
-    # ansible.tags = ""
+    ansible.tags = "solr"
     # ansible.verbose = "vvv"
   end
 

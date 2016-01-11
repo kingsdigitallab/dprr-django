@@ -283,7 +283,7 @@ class Person(TimeStampedModel):
 
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (
-            self._meta.app_label, self._meta.module_name), args=[self.id])
+            self._meta.app_label, self._meta.model_name), args=[self.id])
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     url_to_edit_person.allow_tags = True
@@ -430,7 +430,7 @@ class Group(TimeStampedModel):
 
     def related_label(self):
         url = reverse('admin:%s_%s_change' % (
-            self._meta.app_label, self._meta.module_name), args=[self.id])
+            self._meta.app_label, self._meta.model_name), args=[self.id])
         return u'<a href="%s">%s</a>' % (url, self.__unicode__(), )
 
 

@@ -6,7 +6,11 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "puphpet/debian75-x64"
 
-  config.vm.provision :shell, :path => ".vagrant_provisioning/vagrant.sh"
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = ".vagrant_provisioning/playbook.yml"
+    #    ansible.tags = "solr"
+    #    ansible.verbose = "vvv"
+  end
 
   config.vm.network :forwarded_port, guest: 8080, host: 8081
   config.vm.network :forwarded_port, guest: 8000, host: 8001

@@ -431,7 +431,7 @@ class PersonAdmin(admin.ModelAdmin):
         ('Nobilis', {
             'classes': ('grp-collapse grp-open',),
             'fields': (('nobilis', 'nobilis_uncertain'),
-                       ('novus_notes'))}),
+                       ('nobilis_notes'))}),
         ('Eques', {
             'classes': ('grp-collapse grp-open',),
             'fields': (('eques', 'eques_uncertain'),

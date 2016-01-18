@@ -580,20 +580,6 @@ class RelationshipAssertion(TimeStampedModel):
     def __unicode__(self):
         return "{} is {} {}".format(self.person, self.relationship, self.related_person)
 
-    @property
-    def primary_sources_list(self):
-        return ", ".join(ps.original_text for ps in self.relationshipassertionprimarysource_set.all())
-
 
     class Meta:
         ordering = ['relationship_number', 'id']
-
-@with_author
-class RelationshipAssertionPrimarySource(TimeStampedModel):
-    relationship_assertion = models.ForeignKey(RelationshipAssertion)
-    primary_source = models.ForeignKey(PrimarySource, blank=True, null=True)
-
-    original_text = models.CharField(max_length=1024, blank=True)
-
-    def __unicode__(self):
-        return self.original_text

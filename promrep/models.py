@@ -573,10 +573,6 @@ class RelationshipAssertion(TimeStampedModel):
 
     secondary_source = models.ForeignKey(SecondarySource)
 
-    primary_sources = models.ManyToManyField(
-        PrimarySource, through='RelationshipAssertionPrimarySource', null=True,
-        blank=True)
-
     notes = models.TextField(blank=True)
     review_flag = models.BooleanField(
         verbose_name="Review needed", default=False)

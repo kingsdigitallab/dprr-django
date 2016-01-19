@@ -12,4 +12,9 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RenameField('relationshipassertion', 'notes', 'extra_info'),
+        migrations.AlterField(
+            model_name='relationshipassertion',
+            name='extra_info',
+            field=models.TextField(help_text=b'Extra info about the relationship', blank=True),
+        ),
     ]

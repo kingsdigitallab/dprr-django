@@ -6,7 +6,7 @@ from os import path
 import primary_source_aux as psource_aux
 
 from promrep.models import Person, RelationshipAssertion, Praenomen, \
-    SecondarySource, PrimarySource, Sex, RelationshipType, RelationshipAssertionPrimarySource
+    SecondarySource, PrimarySource, Sex, RelationshipType
 
 # Setup logging
 LOGGER = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ ICSV_COLUMNS = ["person_1_id",
                 "person_2_cognomen",
                 "person_2_other_names",
                 "primary_source_refs",
-                "notes"]
+                ]
 
 
 def clean_field(field, a_string):
@@ -119,6 +119,28 @@ def create_person(row_dict):
     return person.id, created
 
 
+def read_notes_file_to_dict(ifname):
+    """ Reads a notes file to a dict
+        returns a dictionary where the key is the reference name and the value is the note
+    """
+
+    notes_dict = {}
+
+    with open(ifname, 'rU') as csvfile:
+
+        csvDict = csv.DictReader(csvfile,
+                                 fieldnames=['primary_source_ref', 'text'],
+                                 delimiter=";",)
+
+        csvDict.next()
+
+        for row in csvDict:
+            row_text = unicode(row['text'].strip(), 'iso-8859-1')
+            notes_dict[row['primary_source_ref'].strip()] = row_text
+
+    return notes_dict
+
+
 def read_input_file(ifname):
 
     file_basename = path.basename(ifname)
@@ -139,11 +161,12 @@ def read_input_file(ifname):
                             extrasaction='ignore')
     writer.writeheader()
 
+
     with open(ifname, 'rU') as csvfile:
 
         csvDict = csv.DictReader(csvfile,
                                  fieldnames=ICSV_COLUMNS,
-                                 delimiter="\t")
+                                 delimiter=";")
 
         # skips first row
         csvDict.next()
@@ -199,7 +222,7 @@ def read_input_file(ifname):
                 if uncertain:
                     uncertain_flag = True
 
-                rel_notes = unicode(row_dict['notes'].strip(), 'iso-8859-1')
+                # rel_notes = unicode(row_dict['notes'].strip(), 'iso-8859-1')
 
 
                 rel_num = None
@@ -212,7 +235,6 @@ def read_input_file(ifname):
                 rel, created = RelationshipAssertion.objects.get_or_create(
                     person_id=p1_id, related_person_id=p2_id, relationship=rel_type,
                     uncertain=uncertain_flag, secondary_source=sec_source,
-                    notes=rel_notes,
                     relationship_number= rel_num)
 
                 if created:
@@ -242,7 +264,12 @@ def read_input_file(ifname):
 
 
 def run():
-    ifname = "promrep/scripts/data/zmeskal/ZmeskalOutv2.csv"
+    ifname = "promrep/scripts/data/zmeskal/ZmeskalOutv4.csv"
+    notes_csv = "promrep/scripts/data/zmeskal/ZmeskalGermanNotesv1.csv"
+
     LOGGER.info("Importing data from \"{}\"".format(ifname))
 
-    read_input_file(ifname)
+    secsource_notes_d = read_notes_file_to_dict(notes_csv)
+    print secsource_notes_d
+
+    # read_input_file(ifname)

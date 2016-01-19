@@ -601,7 +601,9 @@ class RelationshipAssertion(TimeStampedModel):
     # TODO: should this be removed - and use the Note instead?
     secondary_source = models.ForeignKey(SecondarySource)
 
-    notes = models.TextField(blank=True)
+    extra_info = models.TextField(blank=True)
+    extra_info.help_text = "Extra info about the relationship"
+
     review_flag = models.BooleanField(
         verbose_name="Review needed", default=False)
 

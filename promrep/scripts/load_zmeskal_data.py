@@ -6,7 +6,8 @@ from os import path
 import primary_source_aux as psource_aux
 
 from promrep.models import Person, RelationshipAssertion, Praenomen, \
-    SecondarySource, PrimarySource, Sex, RelationshipType
+    SecondarySource, PrimarySource, Sex, RelationshipType, RelationshipAssertionReference, \
+    PrimarySourceReference
 
 # Setup logging
 LOGGER = logging.getLogger(__name__)
@@ -37,6 +38,7 @@ ICSV_COLUMNS = ["person_1_id",
                 "person_2_cognomen",
                 "person_2_other_names",
                 "primary_source_refs",
+                "ignore-me",
                 ]
 
 
@@ -141,12 +143,15 @@ def read_notes_file_to_dict(ifname):
     return notes_dict
 
 
-def read_input_file(ifname):
+def read_input_file(ifname, notes_csv_fname):
 
     file_basename = path.basename(ifname)
     file_basename = path.splitext(file_basename)[0]
 
     log_fname = file_basename + "_import-log.csv"
+
+    # read the notes csv file
+    notes_dict = read_notes_file_to_dict(notes_csv_fname)
 
     sec_source, created = SecondarySource.objects.get_or_create(
         name="Zmeskal family data", biblio="Zmeskal family data biblio entry",
@@ -161,7 +166,6 @@ def read_input_file(ifname):
                             extrasaction='ignore')
     writer.writeheader()
 
-
     with open(ifname, 'rU') as csvfile:
 
         csvDict = csv.DictReader(csvfile,
@@ -172,6 +176,7 @@ def read_input_file(ifname):
         csvDict.next()
 
         for row_dict in csvDict:
+
             try:
                 p1_id = int(row_dict['person_1_id'])
                 p2_id = int(row_dict['person_2_id'])
@@ -188,7 +193,8 @@ def read_input_file(ifname):
 
                     p1_id, created_p1 = create_person(p1_dict)
                     if created_p1:
-                        LOGGER.info("Created new person1 with id {}".format(p1_id))
+                        LOGGER.info(
+                            "Created new person1 with id {}".format(p1_id))
                     else:
                         LOGGER.info("Person1 id {}".format(p1_id))
 
@@ -204,7 +210,8 @@ def read_input_file(ifname):
 
                     p2_id, created_p2 = create_person(p2_dict)
                     if created_p2:
-                        LOGGER.info("Created new person2 with id {}".format(p2_id))
+                        LOGGER.info(
+                            "Created new person2 with id {}".format(p2_id))
                     else:
                         LOGGER.info("Person2 id {}".format(p2_id))
 
@@ -224,7 +231,6 @@ def read_input_file(ifname):
 
                 # rel_notes = unicode(row_dict['notes'].strip(), 'iso-8859-1')
 
-
                 rel_num = None
                 marriage_no = row_dict["marriage_no"].strip()
                 if marriage_no:
@@ -235,21 +241,38 @@ def read_input_file(ifname):
                 rel, created = RelationshipAssertion.objects.get_or_create(
                     person_id=p1_id, related_person_id=p2_id, relationship=rel_type,
                     uncertain=uncertain_flag, secondary_source=sec_source,
-                    relationship_number= rel_num)
+                    relationship_number=rel_num)
 
                 if created:
-                    LOGGER.info("Created new relationship with id={}".format(rel.id))
+                    LOGGER.info(
+                        "Created new relationship with id={}".format(rel.id))
                 else:
-                    LOGGER.info("Relationship already existed with id={}".format(rel.id))
+                    LOGGER.info(
+                        "Relationship already existed with id={}".format(rel.id))
 
-                # always add Primary Sources
-                orig_primary_sources_text = row_dict['primary_source_refs'].strip()
+                # primary_source_refs cell parsing:
+                #   Each line corresponds to a single RelationshipAssertionReference
+                #   each cell may contain multiple comma-separated PrimarySourceReferences
+                # each cell can have a corresponding text Note (see notes file)
 
-                for prim_source_text in orig_primary_sources_text.split(","):
-                    prim_source_text = prim_source_text.strip()
+                orig_references_text = row_dict['primary_source_refs'].strip()
 
-                    raps = RelationshipAssertionPrimarySource.objects.create(
-                        original_text=prim_source_text, relationship_assertion=rel)
+                ra_reference = RelationshipAssertionReference.objects.create(
+                    secondary_source=sec_source, )
+
+                rel.references.add(ra_reference)
+                rel.save()
+
+                if orig_references_text in notes_dict:
+                    ra_reference.text = notes_dict[orig_references_text]
+                    ra_reference.save()
+
+                # creates all the PrimarySourceObjects
+                # TODO: should it be get_or_create???
+                for psource in orig_references_text.split(","):
+                    primary_reference = PrimarySourceReferences.objects.create(
+                        note=ra_reference,
+                        text=psource)
 
                 # Upgrades and saves the row
                 row_dict.update({"p1_id": p1_id,
@@ -257,8 +280,10 @@ def read_input_file(ifname):
                                  "p2_id": p2_id})
 
                 writer.writerow(row_dict)
+
             except Exception as e:
-                LOGGER.error("Unable to import line from csv file... Please debug data. ".format(e))
+                LOGGER.error(
+                    "Unable to import line from csv file... Please debug data. ".format(e))
 
     LOGGER.info("Wrote log file \"{}\"".format(log_fname))
 
@@ -269,7 +294,4 @@ def run():
 
     LOGGER.info("Importing data from \"{}\"".format(ifname))
 
-    secsource_notes_d = read_notes_file_to_dict(notes_csv)
-    print secsource_notes_d
-
-    # read_input_file(ifname)
+    read_input_file(ifname, notes_csv)

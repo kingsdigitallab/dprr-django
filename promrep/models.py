@@ -140,6 +140,15 @@ class RoleType(TimeStampedModel):
         return self.name
 
 
+@with_author
+class PrimarySourceReference(TimeStampedModel):
+    note = models.ForeignKey(PrimarySource, null=True, related_name = 'primary_source_references')
+    primary_source = models.ForeignKey(
+        PrimarySource, null=True, related_name='references')
+
+    text = models.TextField(blank=True)
+
+
 class NoteType(TimeStampedModel):
     name = models.CharField(max_length=128, unique=True)
     description = models.TextField(max_length=1024, blank=True)
@@ -149,12 +158,18 @@ class NoteType(TimeStampedModel):
 
 
 class Note(TimeStampedModel):
+    # TODO: rename to SecondarySourceReference?
     note_type = models.ForeignKey(NoteType, default=1, )
     secondary_source = models.ForeignKey(SecondarySource)
 
-    # useful to store the bookmark number, for instance
     text = models.TextField(blank=True)
+
+    # useful to store the bookmark number, for instance
     extra_info = models.TextField(max_length=1024, blank=True)
+
+    # primary source references, including text, etc
+    primary_source_references = models.ManyToManyField(
+        PrimarySourceReference, blank=True)
 
     class Meta:
         abstract = True
@@ -162,6 +177,18 @@ class Note(TimeStampedModel):
 
     def __unicode__(self):
         return self.text.strip()
+
+
+@with_author
+class RelationshipAssertionReference(Note):
+
+    def url_to_edit_note(self):
+        url = reverse('admin:%s_%s_change' % (
+            self._meta.app_label, self._meta.model_name), args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.__unicode__())
+
+    def related_label(self):
+        return u"[%s - %s] %s<br /><br />" % (self.note_type, self.secondary_source.abbrev_name, self.text)
 
 
 @with_author
@@ -571,6 +598,7 @@ class RelationshipAssertion(TimeStampedModel):
 
     original_text = models.CharField(max_length=1024, blank=True)
 
+    # TODO: should this be removed - and use the Note instead?
     secondary_source = models.ForeignKey(SecondarySource)
 
     notes = models.TextField(blank=True)
@@ -579,7 +607,6 @@ class RelationshipAssertion(TimeStampedModel):
 
     def __unicode__(self):
         return "{} is {} {}".format(self.person, self.relationship, self.related_person)
-
 
     class Meta:
         ordering = ['relationship_number', 'id']

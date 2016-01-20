@@ -7,7 +7,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 
 from django.core import urlresolvers
 from django.core.urlresolvers import reverse
@@ -65,6 +65,7 @@ class SecondarySource(TimeStampedModel):
 
 
 class PrimarySource(models.Model):
+
     name = models.CharField(max_length=256, unique=True)
     abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
     biblio = models.CharField(max_length=512, unique=True, blank=True)
@@ -140,21 +141,43 @@ class RoleType(TimeStampedModel):
         return self.name
 
 
-@with_author
-class PrimarySourceReference(TimeStampedModel):
-    note = models.ForeignKey(PrimarySource, null=True, related_name = 'primary_source_references')
-    primary_source = models.ForeignKey(
-        PrimarySource, null=True, related_name='references')
-
-    text = models.TextField(blank=True)
-
-
 class NoteType(TimeStampedModel):
     name = models.CharField(max_length=128, unique=True)
     description = models.TextField(max_length=1024, blank=True)
 
     def __unicode__(self):
         return self.name
+
+
+@with_author
+class PrimarySourceReference(TimeStampedModel):
+    # this is the connecting model between
+    #   Note and PrimarySource
+
+    limit = models.Q(app_label='promrep', model='PersonNote') | \
+        models.Q(app_label='promrep', model='PostAssertionNote') | \
+        models.Q(app_label='promrep', model='RelationshipAssertionReference')
+
+    content_type = models.ForeignKey(
+        ContentType,
+        verbose_name='primary source reference',
+        limit_choices_to=limit,
+        null=True,
+        blank=True,
+    )
+
+    object_id = models.PositiveIntegerField(
+        verbose_name='related object',
+        null=True,
+    )
+
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    primary_source = models.ForeignKey(PrimarySource, null=True)
+    text = models.TextField(blank=True)
+
+    def __unicode__(self):
+        return self.text
 
 
 class Note(TimeStampedModel):
@@ -167,10 +190,6 @@ class Note(TimeStampedModel):
     # useful to store the bookmark number, for instance
     extra_info = models.TextField(max_length=1024, blank=True)
 
-    # primary source references, including text, etc
-    primary_source_references = models.ManyToManyField(
-        PrimarySourceReference, blank=True)
-
     class Meta:
         abstract = True
         ordering = ['id', ]
@@ -179,8 +198,21 @@ class Note(TimeStampedModel):
         return self.text.strip()
 
 
+
+def create_primary_source_reference(sender, **kwargs):
+    if 'created' in kwargs:
+        if kwargs['created']:
+            instance = kwargs['instance']
+            ctype = ContentType.objects.get_for_model(instance)
+            primary_source_reference = PrimarySourceReference.objects.get_or_create(content_type=ctype,
+                                                object_id=instance.id,
+                                                pub_date=instance.pub_date)
+
 @with_author
 class RelationshipAssertionReference(Note):
+
+    primary_source_references = GenericRelation(PrimarySourceReference,
+                                    related_query_name='relationship_assertion_references')
 
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
@@ -602,7 +634,8 @@ class RelationshipAssertion(TimeStampedModel):
     secondary_source = models.ForeignKey(SecondarySource)
 
     # TODO: normalise - same as PostAssertionNotes
-    references = models.ManyToManyField(RelationshipAssertionReference, blank=True)
+    references = models.ManyToManyField(
+        RelationshipAssertionReference, blank=True)
 
     extra_info = models.TextField(blank=True)
     extra_info.help_text = "Extra info about the relationship"

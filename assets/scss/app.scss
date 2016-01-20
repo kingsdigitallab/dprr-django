@@ -170,6 +170,10 @@ h3.quick-home {
 
 /*** Search / Facets / Filters ***/
 
+.left-off-canvas-menu {
+	height: 100vh;
+}
+
 .facets hr {
 	margin: 0 0 1rem;
 }
@@ -203,7 +207,7 @@ h3.quick-home {
 .applied-filter-list {
 	clear: both;
 	margin-left: 0;
-	 .label {
+	.label {
 		background: scale-color($dark-gold, $lightness: 75%) !important;
 		font-size: 1em;
 	}

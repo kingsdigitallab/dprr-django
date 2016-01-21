@@ -214,13 +214,21 @@ class RelationshipAssertionReference(Note):
     primary_source_references = GenericRelation(PrimarySourceReference,
                                     related_query_name='relationship_assertion_references')
 
+
+    def print_primary_source_refs(self):
+        return ', '.join([pref.__unicode__() for pref in self.primary_source_references.all()])
+
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     def related_label(self):
-        return u"[%s - %s] %s<br /><br />" % (self.note_type, self.secondary_source.abbrev_name, self.text)
+        return u"[%s] %s (%s)<br /><br />" % (self.secondary_source.abbrev_name, self.text, self.print_primary_source_refs())
+
+    def __unicode__(self):
+        return u"%s, %s (%s)" % (self.secondary_source.abbrev_name, self.text, self.print_primary_source_refs())
+
 
 
 @with_author

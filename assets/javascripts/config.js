@@ -14,9 +14,11 @@ $(document).ready(function() {
 		return false;
 	});
 
-	// Off-canvas open by default
-	// $('.off-canvas-wrap').foundation('offcanvas', 'show', 'move-right');
-	$('.off-canvas-wrap').foundation('offcanvas', 'hide', 'move-right');
-	$('.off-canvas-wrap').foundation('offcanvas', 'toggle', 'move-right');
+	$('button.options').bind("click", function() {
+		var txt = $(".search-box").is(':visible') ? 'Show' : 'Hide';
+		$('.search-box').slideToggle(400);
+		$('#showhide').text(txt);
+		return false;
+	});
 
 });

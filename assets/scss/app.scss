@@ -8,6 +8,13 @@
 
 /*** Global ***/
 
+hr {
+	height: 1px;
+	color: scale-color($primary-color, $lightness: 60%);
+	background-color: scale-color($primary-color, $lightness: 60%);
+	border: 0;
+}
+
 header.main-header,
 .header,
 footer.main-footer {
@@ -170,8 +177,35 @@ h3.quick-home {
 
 /*** Search / Facets / Filters ***/
 
-.left-off-canvas-menu {
-	height: 100vh;
+.options {
+	margin-bottom: 0 !important;
+	border: 1px solid scale-color($primary-color, $lightness: 70%) !important;
+	border-bottom: none !important;
+	span,
+	a {
+		margin-bottom: 0 !important;
+	}
+}
+
+.search-box {
+	padding: 1rem;
+	background: $secondary-color;
+	border: 1px solid scale-color($primary-color, $lightness: 70%);
+
+	.label.secondary,
+	button.secondary,
+	.button.secondary {
+		background: scale-color($secondary-color, $lightness: -10%);
+	}
+}
+
+// .show-all {
+// 	background: $primary-color;
+// }
+
+.offices {
+	height: 200px;
+	overflow: scroll;
 }
 
 .facets hr {

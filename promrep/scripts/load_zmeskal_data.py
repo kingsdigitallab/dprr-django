@@ -210,10 +210,9 @@ def read_input_file(ifname, notes_csv_fname):
 
                     p2_id, created_p2 = create_person(p2_dict)
                     if created_p2:
-                        LOGGER.info(
-                            "Created new person2 with id {}".format(p2_id))
+                        LOGGER.info("Created Person2 with id {}".format(p2_id))
                     else:
-                        LOGGER.info("Person2 id {}".format(p2_id))
+                        LOGGER.info("Person2 already existed with id {}".format(p2_id))
 
                 # gets the relationship type from the csv file
                 rel_type_name = row_dict["relationship"].strip().lower()

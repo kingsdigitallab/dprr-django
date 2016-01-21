@@ -267,12 +267,12 @@ def read_input_file(ifname, notes_csv_fname):
                     ra_reference.text = notes_dict[orig_references_text]
                     ra_reference.save()
 
-                # creates all the PrimarySourceObjects
-                # TODO: should it be get_or_create???
+                # creates the PrimarySourceReferences
                 for psource in orig_references_text.split(","):
-                    primary_reference = PrimarySourceReferences.objects.create(
-                        note=ra_reference,
-                        text=psource)
+                    primary_reference = PrimarySourceReference(
+                        content_object=ra_reference,
+                        text=psource.strip())
+                    primary_reference.save()
 
                 # Upgrades and saves the row
                 row_dict.update({"p1_id": p1_id,
@@ -282,6 +282,7 @@ def read_input_file(ifname, notes_csv_fname):
                 writer.writerow(row_dict)
 
             except Exception as e:
+                print e
                 LOGGER.error(
                     "Unable to import line from csv file... Please debug data. ".format(e))
 

@@ -1,8 +1,10 @@
-import csv
+# -*- coding: utf-8 -*-
+
+## import csv
+import unicodecsv as csv
 import itertools
 import logging
 from os import path
-
 import primary_source_aux as psource_aux
 
 from promrep.models import Person, RelationshipAssertion, Praenomen, \
@@ -128,17 +130,25 @@ def read_notes_file_to_dict(ifname):
 
     notes_dict = {}
 
-    with open(ifname, 'rU') as csvfile:
+    # csvfile = codecs.open(ifname, 'r', encoding='latin1')
+    csvfile = open(ifname, 'r')
 
-        csvDict = csv.DictReader(csvfile,
-                                 fieldnames=['primary_source_ref', 'text'],
-                                 delimiter=";",)
+    # with open(ifname, 'rU') as csvfile:
 
-        csvDict.next()
+    csvDict = csv.DictReader(csvfile,
+                             fieldnames=['primary_source_ref', 'text'],
+                             delimiter=";",)
+    csvDict.next()
 
-        for row in csvDict:
-            row_text = unicode(row['text'].strip(), 'iso-8859-1')
-            notes_dict[row['primary_source_ref'].strip()] = row_text
+    for row in csvDict:
+        # row_text = unicode(row['text'].strip(), 'iso-8859-15')
+        row_text = row['text'].strip()
+        # row_text = row_text.encode('utf-8').strip()
+
+        # print row_text.encode('utf-8')
+        notes_dict[row['primary_source_ref'].strip()] = row_text
+
+    csvfile.close()
 
     return notes_dict
 
@@ -210,7 +220,7 @@ def read_input_file(ifname, notes_csv_fname):
 
                     p2_id, created_p2 = create_person(p2_dict)
                     if created_p2:
-                        LOGGER.info("Created Person2 with id {}".format(p2_id))
+                        LOGGER.info("Person2 created with id {}".format(p2_id))
                     else:
                         LOGGER.info("Person2 already existed with id {}".format(p2_id))
 
@@ -252,16 +262,23 @@ def read_input_file(ifname, notes_csv_fname):
                 # primary_source_refs cell parsing:
                 #   Each line corresponds to a single RelationshipAssertionReference
                 #   each cell may contain multiple comma-separated PrimarySourceReferences
-                # each cell can have a corresponding text Note (see notes file)
+                #   each cell can have a corresponding text Note (see notes file)
+                #   The original reference is stored in the "extra_info" field
+
+                # The relationship assertion reference is only created
+                #   if it doesn't exist already.
 
                 orig_references_text = row_dict['primary_source_refs'].strip()
 
-                ra_reference = RelationshipAssertionReference.objects.create(
-                    secondary_source=sec_source, )
+                ra_reference, created = RelationshipAssertionReference.objects.get_or_create(
+                    secondary_source=sec_source,
+                    extra_info = orig_references_text
+                    )
 
                 rel.references.add(ra_reference)
-                rel.save()
 
+                # TODO: if text and primary sources are the same, then there's
+                # no need to create a new secondary source
                 if orig_references_text in notes_dict:
                     ra_reference.text = notes_dict[orig_references_text]
                     ra_reference.save()
@@ -281,16 +298,17 @@ def read_input_file(ifname, notes_csv_fname):
                 writer.writerow(row_dict)
 
             except Exception as e:
-                print e
                 LOGGER.error(
-                    "Unable to import line from csv file... Please debug data. ".format(e))
+                    "Unable to import line from csv file... Please debug data. ".format(e.message))
 
     LOGGER.info("Wrote log file \"{}\"".format(log_fname))
 
 
 def run():
     ifname = "promrep/scripts/data/zmeskal/ZmeskalOutv4.csv"
-    notes_csv = "promrep/scripts/data/zmeskal/ZmeskalGermanNotesv1.csv"
+    # notes_csv = "promrep/scripts/data/zmeskal/ZmeskalGermanNotesv2.csv"
+    # notes_csv = "promrep/scripts/data/zmeskal/ZmeskalGermanNotesv2-u16.txt"
+    notes_csv = "promrep/scripts/data/zmeskal/ZmeskalGermanNotesv2a.csv"
 
     LOGGER.info("Importing data from \"{}\"".format(ifname))
 

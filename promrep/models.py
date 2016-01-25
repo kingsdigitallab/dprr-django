@@ -210,6 +210,9 @@ def create_primary_source_reference(sender, **kwargs):
 
 @with_author
 class RelationshipAssertionReference(Note):
+    """This is a SecondarySourceNote/Reference
+
+    """
 
     primary_source_references = GenericRelation(PrimarySourceReference,
                                     related_query_name='relationship_assertion_references')

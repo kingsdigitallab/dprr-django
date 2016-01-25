@@ -17,34 +17,10 @@ from models import Person, Office, Praenomen, PostAssertion, \
     Group, RoleType, DateType, SecondarySource, PrimarySource, Gens, \
     PostAssertionNote, Tribe, Province, PostAssertionProvince, \
     PersonNote, RelationshipAssertion, RelationshipType, \
-    RelationshipAssertionPrimarySource
+    RelationshipAssertionReference
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
-
-
-class RelationshipAssertionPrimarySourceInline(admin.StackedInline):
-    model = RelationshipAssertionPrimarySource
-    extra = 0
-
-    classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-open',)
-
-    verbose_name = 'Primary Source:'
-    verbose_name_plural = 'Primary Sources'
-
-    readonly_fields = ('id', )
-    raw_id_fields = ['primary_source', ]
-
-    related_lookup_fields = {
-        'fk': ['primary_source', ]
-    }
-
-    fields = (
-        ('id'),
-        ('primary_source'),
-        ('original_text'),
-    )
 
 
 class RelationshipTypeAdmin(admin.ModelAdmin):
@@ -60,9 +36,34 @@ class RelationshipTypeAdmin(admin.ModelAdmin):
 admin.site.register(RelationshipType, RelationshipTypeAdmin)
 
 
+class RelationshipAssertionReferenceAdmin(admin.ModelAdmin):
+  list_display = ('id', 'secondary_source', 'text', 'print_primary_source_refs','created', 'modified')
+
+admin.site.register(RelationshipAssertionReference, RelationshipAssertionReferenceAdmin)
+
+
+class RelationshipAssertionReferenceInline(admin.StackedInline):
+    model = RelationshipAssertion.references.through
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-open',)
+
+    verbose_name = 'Relationship Assertion References'
+    verbose_name_plural = 'Relationship Assertion References'
+
+    raw_id_fields = ('relationshipassertionreference', )
+
+    related_lookup_fields = {
+        'fk': ['relationshipassertionreference'],
+    }
+
+    extra = 0
+    show_change_link = True
+
+
 class RelationshipAssertionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'person', 'relationship', 'relationship_number',
-                    'related_person', 'uncertain', 'secondary_source',
+    list_display = ('id', 'person', 'relationship', 'related_person',
+                    'relationship_number', 'uncertain', 'secondary_source',
                     'review_flag', 'created', 'modified')
 
     readonly_fields = ('id', 'created', 'modified')
@@ -79,16 +80,16 @@ class RelationshipAssertionAdmin(admin.ModelAdmin):
               ('relationship', 'relationship_number'),
               ('related_person'),
               ('secondary_source'),
+              ('extra_info', ),
               ('original_text'),
-              ('notes'),
               )
-
-    inlines = (RelationshipAssertionPrimarySourceInline, )
 
     search_fields = ('person__nomen', 'person__cognomen', 'related_person__nomen',
                      'related_person__cognomen', 'person__other_names',
-                     'related_person__other_names', 'person__id', 'related_person__id',
-                     'person__re_number', 'related_person__re_number', )
+                     'related_person__other_names', 'person__id', 'related_person__id', 'person__re_number', 'related_person__re_number', )
+
+    inlines = (RelationshipAssertionReferenceInline, )
+    # exclude = ('relationshipassertionreference',)
 
     show_change_link = True
 
@@ -115,13 +116,13 @@ class InverseRelationshipInline(admin.StackedInline):
         'fk': ['person', 'secondary_source'],
     }
 
-    readonly_fields = ['id', 'related_person', 'primary_sources_list']
+    readonly_fields = ['id', 'related_person', ]
 
     fields = (
         ('id', 'uncertain', ),
         ('person', 'relationship', 'related_person'),
-        ('relationship_number', 'secondary_source', 'primary_sources_list'),
-        ('notes', ),
+        ('relationship_number', 'secondary_source', ),
+        ('extra_info', ),
         ('edit_link', ),
     )
 
@@ -141,7 +142,7 @@ class DirectRelationshipInline(admin.StackedInline):
     verbose_name_plural = 'Direct Relationship Assertions'
 
     raw_id_fields = ('related_person', 'secondary_source')
-    readonly_fields = ['id', 'person', 'primary_sources_list', ]
+    readonly_fields = ['id', 'person', ]
 
     related_lookup_fields = {
         'fk': ['related_person', 'secondary_source'],
@@ -150,8 +151,8 @@ class DirectRelationshipInline(admin.StackedInline):
     fields = (
         ('id', 'uncertain', ),
         ('person', 'relationship', 'related_person', ),
-        ('relationship_number', 'secondary_source', 'primary_sources_list'),
-        ('notes',),
+        ('relationship_number', 'secondary_source',),
+        ('extra_info',),
         ('edit_link', ),
     )
 

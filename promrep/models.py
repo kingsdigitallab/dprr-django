@@ -7,7 +7,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 
 from django.core import urlresolvers
 from django.core.urlresolvers import reverse
@@ -65,6 +65,7 @@ class SecondarySource(TimeStampedModel):
 
 
 class PrimarySource(models.Model):
+
     name = models.CharField(max_length=256, unique=True)
     abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
     biblio = models.CharField(max_length=512, unique=True, blank=True)
@@ -148,12 +149,45 @@ class NoteType(TimeStampedModel):
         return self.name
 
 
+@with_author
+class PrimarySourceReference(TimeStampedModel):
+    # this is the connecting model between
+    #   Note and PrimarySource
+
+    limit = models.Q(app_label='promrep', model='PersonNote') | \
+        models.Q(app_label='promrep', model='PostAssertionNote') | \
+        models.Q(app_label='promrep', model='RelationshipAssertionReference')
+
+    content_type = models.ForeignKey(
+        ContentType,
+        verbose_name='primary source reference',
+        limit_choices_to=limit,
+        null=True,
+        blank=True,
+    )
+
+    object_id = models.PositiveIntegerField(
+        verbose_name='related object',
+        null=True,
+    )
+
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    primary_source = models.ForeignKey(PrimarySource, null=True)
+    text = models.TextField(blank=True)
+
+    def __unicode__(self):
+        return self.text
+
+
 class Note(TimeStampedModel):
+    # TODO: rename to SecondarySourceReference?
     note_type = models.ForeignKey(NoteType, default=1, )
     secondary_source = models.ForeignKey(SecondarySource)
 
-    # useful to store the bookmark number, for instance
     text = models.TextField(blank=True)
+
+    # useful to store the bookmark number, for instance
     extra_info = models.TextField(max_length=1024, blank=True)
 
     class Meta:
@@ -162,6 +196,42 @@ class Note(TimeStampedModel):
 
     def __unicode__(self):
         return self.text.strip()
+
+
+
+def create_primary_source_reference(sender, **kwargs):
+    if 'created' in kwargs:
+        if kwargs['created']:
+            instance = kwargs['instance']
+            ctype = ContentType.objects.get_for_model(instance)
+            primary_source_reference = PrimarySourceReference.objects.get_or_create(content_type=ctype,
+                                                object_id=instance.id,
+                                                pub_date=instance.pub_date)
+
+@with_author
+class RelationshipAssertionReference(Note):
+    """This is a SecondarySourceNote/Reference
+
+    """
+
+    primary_source_references = GenericRelation(PrimarySourceReference,
+                                    related_query_name='relationship_assertion_references')
+
+
+    def print_primary_source_refs(self):
+        return ', '.join([pref.__unicode__() for pref in self.primary_source_references.all()])
+
+    def url_to_edit_note(self):
+        url = reverse('admin:%s_%s_change' % (
+            self._meta.app_label, self._meta.model_name), args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.__unicode__())
+
+    def related_label(self):
+        return u"[%s] %s (%s)<br /><br />" % (self.secondary_source.abbrev_name, self.text, self.print_primary_source_refs())
+
+    def __unicode__(self):
+        return u"%s, %s (%s)" % (self.secondary_source.abbrev_name, self.text, self.print_primary_source_refs())
+
 
 
 @with_author
@@ -571,33 +641,21 @@ class RelationshipAssertion(TimeStampedModel):
 
     original_text = models.CharField(max_length=1024, blank=True)
 
+    # TODO: should this be removed - and use the Note instead?
     secondary_source = models.ForeignKey(SecondarySource)
 
-    primary_sources = models.ManyToManyField(
-        PrimarySource, through='RelationshipAssertionPrimarySource', null=True,
-        blank=True)
+    # TODO: normalise - same as PostAssertionNotes
+    references = models.ManyToManyField(
+        RelationshipAssertionReference, blank=True)
 
-    notes = models.TextField(blank=True)
+    extra_info = models.TextField(blank=True)
+    extra_info.help_text = "Extra info about the relationship"
+
     review_flag = models.BooleanField(
         verbose_name="Review needed", default=False)
 
     def __unicode__(self):
         return "{} is {} {}".format(self.person, self.relationship, self.related_person)
 
-    @property
-    def primary_sources_list(self):
-        return ", ".join(ps.original_text for ps in self.relationshipassertionprimarysource_set.all())
-
-
     class Meta:
         ordering = ['relationship_number', 'id']
-
-@with_author
-class RelationshipAssertionPrimarySource(TimeStampedModel):
-    relationship_assertion = models.ForeignKey(RelationshipAssertion)
-    primary_source = models.ForeignKey(PrimarySource, blank=True, null=True)
-
-    original_text = models.CharField(max_length=1024, blank=True)
-
-    def __unicode__(self):
-        return self.original_text

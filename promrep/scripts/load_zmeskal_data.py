@@ -306,9 +306,9 @@ def read_input_file(ifname, notes_csv_fname):
 
 def run():
     ifname = "promrep/scripts/data/zmeskal/ZmeskalOutv4.csv"
-    # notes_csv = "promrep/scripts/data/zmeskal/ZmeskalGermanNotesv2.csv"
-    # notes_csv = "promrep/scripts/data/zmeskal/ZmeskalGermanNotesv2-u16.txt"
-    notes_csv = "promrep/scripts/data/zmeskal/ZmeskalGermanNotesv2a.csv"
+    
+    # re-exported from excel as semicolon separated csv in utf8
+    notes_csv = "promrep/scripts/data/zmeskal/ZmeskalGermanNotesv2_utf8.csv"
 
     LOGGER.info("Importing data from \"{}\"".format(ifname))
 

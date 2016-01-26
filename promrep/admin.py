@@ -433,12 +433,6 @@ class PersonAdmin(admin.ModelAdmin):
              ('re_number', 're_number_old', ),
          )}
          ),
-        ('Date', {
-         'classes': ('grp-collapse grp-open',),
-         'fields': (
-                    ('date_display_text'),
-                    ('era_from', 'era_to'),
-                    )}),
         ('Patrician', {
             'classes': ('grp-collapse grp-open',),
             'fields': (('patrician', 'patrician_uncertain'),
@@ -455,6 +449,14 @@ class PersonAdmin(admin.ModelAdmin):
             'classes': ('grp-collapse grp-open',),
             'fields': (('eques', 'eques_uncertain'),
                        ('eques_notes'))}),
+
+        ('Date Information', {
+         'classes': ('grp-collapse grp-open',),
+         'fields': (
+                    ('date_display_text'),
+                    ('era_from', 'era_to'),
+                    )}),
+
     ]
 
     readonly_fields = ('id', )

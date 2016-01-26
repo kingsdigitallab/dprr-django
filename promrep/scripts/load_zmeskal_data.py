@@ -135,18 +135,11 @@ def read_notes_file_to_dict(ifname):
 
     # with open(ifname, 'rU') as csvfile:
 
-    csvDict = csv.DictReader(csvfile,
-                             fieldnames=['primary_source_ref', 'text'],
-                             delimiter=";",)
-    csvDict.next()
+    csv_reader = csv.reader(csvfile, delimiter=";")
 
-    for row in csvDict:
-        # row_text = unicode(row['text'].strip(), 'iso-8859-15')
-        row_text = row['text'].strip()
-        # row_text = row_text.encode('utf-8').strip()
-
-        # print row_text.encode('utf-8')
-        notes_dict[row['primary_source_ref'].strip()] = row_text
+    for row in csv_reader:                
+        row_text = row[2].strip()
+        notes_dict[row[1].strip()] = row_text
 
     csvfile.close()
 
@@ -308,7 +301,7 @@ def run():
     ifname = "promrep/scripts/data/zmeskal/ZmeskalOutv4.csv"
     
     # re-exported from excel as semicolon separated csv in utf8
-    notes_csv = "promrep/scripts/data/zmeskal/ZmeskalGermanNotesv2_utf8.csv"
+    notes_csv = "promrep/scripts/data/zmeskal/zmeskal_from_xlsx.csv"
 
     LOGGER.info("Importing data from \"{}\"".format(ifname))
 

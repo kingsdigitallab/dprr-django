@@ -38,18 +38,6 @@ def date_to_string(date_int, date_uncertain, date_suffix=True):
 
 
 @with_author
-class DateType(TimeStampedModel):
-    name = models.CharField(max_length=256, unique=True)
-    description = models.CharField(max_length=1024, blank=True)
-
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-
-@with_author
 class SecondarySource(TimeStampedModel):
 
     name = models.CharField(max_length=256, unique=True)
@@ -198,15 +186,15 @@ class Note(TimeStampedModel):
         return self.text.strip()
 
 
-
 def create_primary_source_reference(sender, **kwargs):
     if 'created' in kwargs:
         if kwargs['created']:
             instance = kwargs['instance']
             ctype = ContentType.objects.get_for_model(instance)
             primary_source_reference = PrimarySourceReference.objects.get_or_create(content_type=ctype,
-                                                object_id=instance.id,
-                                                pub_date=instance.pub_date)
+                                                                                    object_id=instance.id,
+                                                                                    pub_date=instance.pub_date)
+
 
 @with_author
 class RelationshipAssertionReference(Note):
@@ -215,8 +203,7 @@ class RelationshipAssertionReference(Note):
     """
 
     primary_source_references = GenericRelation(PrimarySourceReference,
-                                    related_query_name='relationship_assertion_references')
-
+                                                related_query_name='relationship_assertion_references')
 
     def print_primary_source_refs(self):
         return ', '.join([pref.__unicode__() for pref in self.primary_source_references.all()])
@@ -231,7 +218,6 @@ class RelationshipAssertionReference(Note):
 
     def __unicode__(self):
         return u"%s, %s (%s)" % (self.secondary_source.abbrev_name, self.text, self.print_primary_source_refs())
-
 
 
 @with_author
@@ -330,18 +316,7 @@ class Person(TimeStampedModel):
     # dates
     date_display_text = models.CharField(
         max_length=1024, blank=True, null=True)
-    date_source_text = models.CharField(max_length=1024, blank=True, null=True)
-    date_secondary_source = models.ForeignKey(
-        SecondarySource, blank=True, null=True)
-
-    date_first = models.IntegerField(blank=True, null=True)
-    date_first_type = models.ForeignKey(
-        DateType, blank=True, null=True, related_name='person_first')
-
-    date_last = models.IntegerField(blank=True, null=True)
-    date_last_type = models.ForeignKey(
-        DateType, blank=True, null=True, related_name='person_last')
-
+    
     era_from = models.IntegerField(blank=True, null=True)
     era_to = models.IntegerField(blank=True, null=True)
 
@@ -406,6 +381,60 @@ class Person(TimeStampedModel):
 
     class Meta:
         ordering = ['id', ]
+
+
+@with_author
+class DateType(TimeStampedModel):
+    name = models.CharField(max_length=256, unique=True)
+    description = models.CharField(max_length=1024, blank=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+
+@with_author
+class DateInformation(TimeStampedModel):
+    person = models.ForeignKey(Person)
+
+    ATTESTATION = 'A'
+    INTERVAL_CHOICES = (
+        (ATTESTATION, 'Attestation'),
+        ('F', 'First'),
+        ('L', 'Last')
+    )
+
+    date_type = models.ForeignKey(
+        DateType, related_name='person_date', verbose_name='Type')
+    date_interval = models.CharField(
+        max_length=1, choices=INTERVAL_CHOICES, default=ATTESTATION,
+        verbose_name='Interval')
+    uncertain = models.BooleanField(default=False)
+    value = models.IntegerField()
+
+    secondary_source = models.ForeignKey(
+        SecondarySource, blank=True, null=True)
+    source_text = models.TextField(blank=True)
+    notes = models.TextField(blank=True)
+
+   
+    class Meta:
+        verbose_name = 'Date'
+
+    def __unicode__(self):
+        date_str = ""
+
+        if self.uncertain: 
+            date_str = date_str + "?"
+
+        if self.value < 0:
+            date_str = date_str + str(abs(self.value)) + " B.C."
+        else:
+            date_str = date_str + str(self.value) + " A.D."
+
+        return "{} [{}/{}]".format(date_str, self.date_type, self.get_date_interval_display())
 
 
 @with_author
@@ -513,7 +542,7 @@ class PostAssertion(TimeStampedModel):
     secondary_source = models.ForeignKey(SecondarySource)
 
     provinces = models.ManyToManyField(
-        Province, blank=True, null=True, through='PostAssertionProvince')
+        Province, blank=True, through='PostAssertionProvince')
     province_original = models.CharField(max_length=512, blank=True)
     province_original_expanded = models.CharField(max_length=512, blank=True)
 

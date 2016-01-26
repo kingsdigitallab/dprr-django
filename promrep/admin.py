@@ -13,7 +13,7 @@ from django.utils.html import format_html
 
 from promrep.forms import PostInlineForm, RelationshipAssertionInlineForm
 
-from models import Person, Office, Praenomen, PostAssertion, \
+from models import DateInformation, Person, Office, Praenomen, PostAssertion, \
     Group, RoleType, DateType, SecondarySource, PrimarySource, Gens, \
     PostAssertionNote, Tribe, Province, PostAssertionProvince, \
     PersonNote, RelationshipAssertion, RelationshipType, \
@@ -37,9 +37,11 @@ admin.site.register(RelationshipType, RelationshipTypeAdmin)
 
 
 class RelationshipAssertionReferenceAdmin(admin.ModelAdmin):
-  list_display = ('id', 'secondary_source', 'text', 'print_primary_source_refs','created', 'modified')
+    list_display = ('id', 'secondary_source', 'text',
+                    'print_primary_source_refs', 'created', 'modified')
 
-admin.site.register(RelationshipAssertionReference, RelationshipAssertionReferenceAdmin)
+admin.site.register(RelationshipAssertionReference,
+                    RelationshipAssertionReferenceAdmin)
 
 
 class RelationshipAssertionReferenceInline(admin.StackedInline):
@@ -385,6 +387,25 @@ class REUpdatedListFilter(SimpleListFilter):
             return queryset.filter(re_number_old__exact='')
 
 
+class DateInformationInline(admin.StackedInline):
+    model = DateInformation
+    extra = 0
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-open',)
+
+    fieldsets = [
+        ('', {'fields': [
+            ('date_type', 'date_interval', 'uncertain', 'value'),
+            'secondary_source',
+            'source_text',
+            'notes'
+        ]})
+    ]
+
+    verbose_name = 'Date'
+
+
 class PersonAdmin(admin.ModelAdmin):
 
     fieldsets = [
@@ -412,7 +433,7 @@ class PersonAdmin(admin.ModelAdmin):
              ('re_number', 're_number_old', ),
          )}
          ),
-        ('Dates', {
+        ('Date', {
             'classes': ('grp-collapse grp-open',),
             'fields': (
                 ('date_display_text'),
@@ -456,7 +477,7 @@ class PersonAdmin(admin.ModelAdmin):
                    'review_flag', REUpdatedListFilter, 'patrician', 'novus',
                    'nobilis', 'eques', )
 
-    inlines = (PostAssertionInline, PersonNoteInline,
+    inlines = (DateInformationInline, PostAssertionInline, PersonNoteInline,
                DirectRelationshipInline, InverseRelationshipInline)
 
     exclude = ('assertions', )

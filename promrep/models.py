@@ -395,21 +395,32 @@ class DateType(TimeStampedModel):
         return u'%s' % self.name
 
 
-# @with_author
-# class DateInformation(TimeStampedModel):
-#     date_secondary_source = models.ForeignKey(
-#         SecondarySource, blank=True, null=True)
+@with_author
+class DateInformation(TimeStampedModel):
+    person = models.ForeignKey(Person)
 
-#     date_first = models.IntegerField(blank=True, null=True)
-#     date_first_type = models.ForeignKey(
-#         DateType, blank=True, null=True, related_name='person_first')
+    ATTESTATION = 'A'
+    INTERVAL_CHOICES = (
+        (ATTESTATION, 'Attestation'),
+        ('F', 'First'),
+        ('L', 'Last')
+    )
 
-#     date_last = models.IntegerField(blank=True, null=True)
-#     date_last_type = models.ForeignKey(
-#         DateType, blank=True, null=True, related_name='person_last')
+    date_type = models.ForeignKey(
+        DateType, related_name='person_date', verbose_name='Type')
+    date_interval = models.CharField(
+        max_length=1, choices=INTERVAL_CHOICES, default=ATTESTATION,
+        verbose_name='Interval')
+    uncertain = models.BooleanField(default=False)
+    value = models.IntegerField()
 
-#     class Meta:
-#         verbose_name = 'Date'
+    secondary_source = models.ForeignKey(
+        SecondarySource, blank=True, null=True)
+    source_text = models.TextField(blank=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = 'Date'
 
 
 @with_author

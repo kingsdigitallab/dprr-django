@@ -392,7 +392,7 @@ class DateInformationInline(admin.StackedInline):
     extra = 0
 
     classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-closed',)
 
     fieldsets = [
         ('', {'fields': [
@@ -434,12 +434,11 @@ class PersonAdmin(admin.ModelAdmin):
          )}
          ),
         ('Date', {
-            'classes': ('grp-collapse grp-open',),
-            'fields': (
-                ('date_display_text'),
-                ('date_source_text'),
-                ('era_from', 'era_to'),
-            )}),
+         'classes': ('grp-collapse grp-open',),
+         'fields': (
+                    ('date_display_text'),
+                    ('era_from', 'era_to'),
+                    )}),
         ('Patrician', {
             'classes': ('grp-collapse grp-open',),
             'fields': (('patrician', 'patrician_uncertain'),

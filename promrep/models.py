@@ -419,8 +419,22 @@ class DateInformation(TimeStampedModel):
     source_text = models.TextField(blank=True)
     notes = models.TextField(blank=True)
 
+   
     class Meta:
         verbose_name = 'Date'
+
+    def __unicode__(self):
+        date_str = ""
+
+        if self.uncertain: 
+            date_str = date_str + "?"
+                    
+        if self.value < 0:
+            date_str = str(abs(self.value)) + " B.C."
+        else:
+            date_str = str(self.value) + " A.D."
+
+        return "{} [{}/{}]".format(date_str, self.date_type, self.get_date_interval_display())
 
 
 @with_author

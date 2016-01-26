@@ -316,7 +316,7 @@ class Person(TimeStampedModel):
     # dates
     date_display_text = models.CharField(
         max_length=1024, blank=True, null=True)
-    date_source_text = models.CharField(max_length=1024, blank=True, null=True)
+    
     era_from = models.IntegerField(blank=True, null=True)
     era_to = models.IntegerField(blank=True, null=True)
 

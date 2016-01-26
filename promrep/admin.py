@@ -416,9 +416,7 @@ class PersonAdmin(admin.ModelAdmin):
             'classes': ('grp-collapse grp-open',),
             'fields': (
                 ('date_display_text'),
-                ('date_source_text', 'date_secondary_source'),
-                ('date_first', 'date_first_type'),
-                ('date_last', 'date_last_type'),
+                ('date_source_text'),
                 ('era_from', 'era_to'),
             )}),
         ('Patrician', {

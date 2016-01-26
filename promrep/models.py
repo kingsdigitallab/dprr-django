@@ -428,11 +428,11 @@ class DateInformation(TimeStampedModel):
 
         if self.uncertain: 
             date_str = date_str + "?"
-                    
+
         if self.value < 0:
-            date_str = str(abs(self.value)) + " B.C."
+            date_str = date_str + str(abs(self.value)) + " B.C."
         else:
-            date_str = str(self.value) + " A.D."
+            date_str = date_str + str(self.value) + " A.D."
 
         return "{} [{}/{}]".format(date_str, self.date_type, self.get_date_interval_display())
 

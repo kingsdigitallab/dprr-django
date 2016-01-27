@@ -137,7 +137,7 @@ def read_notes_file_to_dict(ifname):
 
     csv_reader = csv.reader(csvfile, delimiter=";")
 
-    for row in csv_reader:                
+    for row in csv_reader:
         row_text = row[2].strip()
         notes_dict[row[1].strip()] = row_text
 
@@ -215,7 +215,8 @@ def read_input_file(ifname, notes_csv_fname):
                     if created_p2:
                         LOGGER.info("Person2 created with id {}".format(p2_id))
                     else:
-                        LOGGER.info("Person2 already existed with id {}".format(p2_id))
+                        LOGGER.info(
+                            "Person2 already existed with id {}".format(p2_id))
 
                 # gets the relationship type from the csv file
                 rel_type_name = row_dict["relationship"].strip().lower()
@@ -260,28 +261,31 @@ def read_input_file(ifname, notes_csv_fname):
 
                 # The relationship assertion reference is only created
                 #   if it doesn't exist already.
+                primary_references_str = row_dict[
+                    'primary_source_refs'].strip()
 
-                orig_references_text = row_dict['primary_source_refs'].strip()
+                if primary_references_str in notes_dict:
+                    ra_ref_text = notes_dict[primary_references_str]
+                else:
+                    ra_ref_text = ""
 
-                ra_reference, created = RelationshipAssertionReference.objects.get_or_create(
-                    secondary_source=sec_source,
-                    extra_info = orig_references_text
-                    )
+                # if text and primary sources are the same, then there's
+                # no need to create a new secondary source
+                ra_reference, created = RelationshipAssertionReference.objects.get_or_create(secondary_source=sec_source,
+                                                                                             extra_info=primary_references_str,
+                                                                                             text=ra_ref_text
+                                                                                             )
 
                 rel.references.add(ra_reference)
 
-                # TODO: if text and primary sources are the same, then there's
-                # no need to create a new secondary source
-                if orig_references_text in notes_dict:
-                    ra_reference.text = notes_dict[orig_references_text]
-                    ra_reference.save()
-
-                # creates the PrimarySourceReferences
-                for psource in orig_references_text.split(","):
-                    primary_reference = PrimarySourceReference(
-                        content_object=ra_reference,
-                        text=psource.strip())
-                    primary_reference.save()
+                if created:
+                    # only creates the PrimarySourceReferences if the
+                    # RelAssertionRef was created
+                    for psource in primary_references_str.split(","):
+                        primary_reference = PrimarySourceReference(
+                            content_object=ra_reference,
+                            text=psource.strip())
+                        primary_reference.save()
 
                 # Upgrades and saves the row
                 row_dict.update({"p1_id": p1_id,
@@ -299,7 +303,7 @@ def read_input_file(ifname, notes_csv_fname):
 
 def run():
     ifname = "promrep/scripts/data/zmeskal/ZmeskalOutv4.csv"
-    
+
     # re-exported from excel as semicolon separated csv in utf8
     notes_csv = "promrep/scripts/data/zmeskal/zmeskal_from_xlsx.csv"
 

@@ -4,6 +4,7 @@
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from django_mptt_admin.admin import DjangoMpttAdmin
+from django.contrib.contenttypes.admin import GenericStackedInline
 
 from promrep.forms import PostInlineForm, RelationshipAssertionInlineForm
 
@@ -11,7 +12,7 @@ from models import (
     DateInformation, Person, Office, Praenomen, PostAssertion, Group, RoleType,
     DateType, SecondarySource, PrimarySource, Gens, PostAssertionNote, Tribe,
     Province, PersonNote, RelationshipAssertion, RelationshipType,
-    RelationshipAssertionReference, TribeAssertion
+    RelationshipAssertionReference, TribeAssertion, PrimarySourceReference
 )
 
 admin.site.register(DateType)
@@ -31,9 +32,27 @@ class RelationshipTypeAdmin(admin.ModelAdmin):
 admin.site.register(RelationshipType, RelationshipTypeAdmin)
 
 
+class PrimarySourceReferenceInline(GenericStackedInline):
+    model = PrimarySourceReference
+
+    verbose_name = 'Primary Source Reference'
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-closed',)
+
+    raw_id_fields = ('primary_source', )
+
+    related_lookup_fields = {
+        'fk': ['primary_source'],
+    }
+    extra = 0
+
+
 class RelationshipAssertionReferenceAdmin(admin.ModelAdmin):
     list_display = ('id', 'secondary_source', 'text',
                     'print_primary_source_refs', 'created', 'modified')
+
+    inlines = (PrimarySourceReferenceInline, )
 
 admin.site.register(RelationshipAssertionReference,
                     RelationshipAssertionReferenceAdmin)

@@ -270,9 +270,7 @@ class Person(TimeStampedModel):
     filiation_uncertain = models.BooleanField(
         verbose_name='Uncertain Filiation', default=False)
 
-    gens = models.ForeignKey(Gens, blank=True, null=True)
-    gens_uncertain = models.BooleanField(
-        verbose_name='Uncertain Gens', default=False)
+    gentes = models.ManyToManyField(Gens, through='GensAssertion')
 
     tribes = models.ManyToManyField(Tribe, through='TribeAssertion')
 
@@ -398,6 +396,25 @@ class TribeAssertion(TimeStampedModel):
     def __unicode__(self):
         return u'{}{}'.format(
             self.tribe.abbrev, ' ?' if self.uncertain else '')
+
+
+@with_author
+class GensAssertion(TimeStampedModel):
+    person = models.ForeignKey(Person)
+    gens = models.ForeignKey(Gens, related_name='assertions')
+    uncertain = models.BooleanField(default=False)
+
+    secondary_source = models.ForeignKey(
+        SecondarySource, blank=True, null=True)
+
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = 'Gens'
+        verbose_name_plural = 'Gentes'
+
+    def __unicode__(self):
+        return u'{}{}'.format(self.gens.name, ' ?' if self.uncertain else '')
 
 
 @with_author

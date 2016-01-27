@@ -8,6 +8,9 @@ from django.contrib.contenttypes.admin import GenericStackedInline
 
 from promrep.forms import PostInlineForm, RelationshipAssertionInlineForm
 
+from django.utils.html import format_html
+from django.core.urlresolvers import reverse
+
 from models import (
     DateInformation, Person, Office, Praenomen, PostAssertion, Group, RoleType,
     DateType, SecondarySource, PrimarySource, Gens, PostAssertionNote, Tribe,
@@ -17,6 +20,20 @@ from models import (
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
+
+
+class RelationshipAssertionListInline(admin.TabularInline):
+    model = RelationshipAssertion.references.through
+    extra = 0
+
+    fields = ('link', )
+    readonly_fields = 'link',
+
+    def link(self, instance):
+        url = reverse('admin:%s_%s_change' % (RelationshipAssertion._meta.app_label,
+                                              RelationshipAssertion._meta.model_name), args=(instance.relationshipassertion.id,))
+
+        return format_html(u'<a href="{}">{}</a>', url, unicode(instance.relationshipassertion))
 
 
 class RelationshipTypeAdmin(admin.ModelAdmin):
@@ -52,7 +69,7 @@ class RelationshipAssertionReferenceAdmin(admin.ModelAdmin):
     list_display = ('id', 'secondary_source', 'text',
                     'print_primary_source_refs', 'created', 'modified')
 
-    inlines = (PrimarySourceReferenceInline, )
+    inlines = (PrimarySourceReferenceInline, RelationshipAssertionListInline, )
 
 admin.site.register(RelationshipAssertionReference,
                     RelationshipAssertionReferenceAdmin)
@@ -368,7 +385,7 @@ class PostAssertionInline(admin.StackedInline):
               ('date_display_text',),
               ('date_source_text', 'date_secondary_source', ),
               ('date_start', 'date_start_uncertain',
-                  'date_end', 'date_end_uncertain'),
+               'date_end', 'date_end_uncertain'),
               'notes',
               ('province_original', 'province_original_expanded'),
               'provinces_list',

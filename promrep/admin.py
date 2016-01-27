@@ -23,6 +23,8 @@ admin.site.register(RoleType)
 
 
 class RelationshipAssertionListInline(admin.TabularInline):
+    verbose_name_plural = 'Relationship Assertions'
+
     model = RelationshipAssertion.references.through
     extra = 0
 

@@ -274,9 +274,7 @@ class Person(TimeStampedModel):
     gens_uncertain = models.BooleanField(
         verbose_name='Uncertain Gens', default=False)
 
-    tribe = models.ForeignKey(Tribe, blank=True, null=True)
-    tribe_uncertain = models.BooleanField(
-        verbose_name='Uncertain Tribe', default=False)
+    tribes = models.ManyToManyField(Tribe, through='TribeAssertion')
 
     sex = models.ForeignKey(Sex, blank=True, null=True, default=1)
 
@@ -316,7 +314,7 @@ class Person(TimeStampedModel):
     # dates
     date_display_text = models.CharField(
         max_length=1024, blank=True, null=True)
-    
+
     era_from = models.IntegerField(blank=True, null=True)
     era_to = models.IntegerField(blank=True, null=True)
 
@@ -361,8 +359,8 @@ class Person(TimeStampedModel):
             if self.filiation not in ['- f. - n.', '- f.', '- n.']:
                 name = name + ' ' + self.filiation
 
-        if self.tribe:
-            name = name + ' ' + self.tribe.abbrev
+        for t in self.tribes.all():
+            name = name + ' ' + t.abbrev
 
         if self.cognomen:
             name = name + ' ' + self.cognomen
@@ -381,6 +379,25 @@ class Person(TimeStampedModel):
 
     class Meta:
         ordering = ['id', ]
+
+
+@with_author
+class TribeAssertion(TimeStampedModel):
+    person = models.ForeignKey(Person)
+    tribe = models.ForeignKey(Tribe, related_name='assertions')
+    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
+
+    secondary_source = models.ForeignKey(
+        SecondarySource, blank=True, null=True)
+
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = 'Tribe'
+
+    def __unicode__(self):
+        return u'{}{}'.format(
+            self.tribe.abbrev, ' ?' if self.uncertain else '')
 
 
 @with_author
@@ -419,14 +436,13 @@ class DateInformation(TimeStampedModel):
     source_text = models.TextField(blank=True)
     notes = models.TextField(blank=True)
 
-   
     class Meta:
         verbose_name = 'Date'
 
     def __unicode__(self):
         date_str = ""
 
-        if self.uncertain: 
+        if self.uncertain:
             date_str = date_str + "?"
 
         if self.value < 0:
@@ -434,7 +450,8 @@ class DateInformation(TimeStampedModel):
         else:
             date_str = date_str + str(self.value) + " A.D."
 
-        return "{} [{}/{}]".format(date_str, self.date_type, self.get_date_interval_display())
+        return "{} [{}/{}]".format(date_str, self.date_type,
+                                   self.get_date_interval_display())
 
 
 @with_author

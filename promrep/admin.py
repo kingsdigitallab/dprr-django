@@ -1,23 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from django.db import models
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from django_mptt_admin.admin import DjangoMpttAdmin
-from django.contrib.contenttypes import generic
-from django.forms import TextInput, Textarea
-
-from django.core import urlresolvers
-from django.utils.html import format_html
 
 from promrep.forms import PostInlineForm, RelationshipAssertionInlineForm
 
-from models import DateInformation, Person, Office, Praenomen, PostAssertion, \
-    Group, RoleType, DateType, SecondarySource, PrimarySource, Gens, \
-    PostAssertionNote, Tribe, Province, PostAssertionProvince, \
-    PersonNote, RelationshipAssertion, RelationshipType, \
-    RelationshipAssertionReference
+from models import (
+    DateInformation, Person, Office, Praenomen, PostAssertion, Group, RoleType,
+    DateType, SecondarySource, PrimarySource, Gens, PostAssertionNote, Tribe,
+    Province, PersonNote, RelationshipAssertion, RelationshipType,
+    RelationshipAssertionReference, TribeAssertion
+)
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
@@ -406,6 +401,24 @@ class DateInformationInline(admin.StackedInline):
     verbose_name = 'Date'
 
 
+class TribeAssertionInline(admin.StackedInline):
+    model = TribeAssertion
+    extra = 0
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-closed',)
+
+    fieldsets = [
+        ('', {'fields': [
+            ('tribe', 'uncertain'),
+            'secondary_source',
+            'notes'
+        ]})
+    ]
+
+    verbose_name = 'Tribe'
+
+
 class PersonAdmin(admin.ModelAdmin):
 
     fieldsets = [
@@ -424,7 +437,6 @@ class PersonAdmin(admin.ModelAdmin):
                  ('cognomen', 'cognomen_uncertain'),
                  ('other_names', 'other_names_uncertain',),
                  ('gens', 'gens_uncertain',),
-                 ('tribe', 'tribe_uncertain'),
                  ('origin', ),
              )}),
         ('RE',
@@ -453,9 +465,9 @@ class PersonAdmin(admin.ModelAdmin):
         ('Date Information', {
          'classes': ('grp-collapse grp-open',),
          'fields': (
-                    ('date_display_text'),
-                    ('era_from', 'era_to'),
-                    )}),
+             ('date_display_text'),
+             ('era_from', 'era_to'),
+         )}),
 
     ]
 
@@ -478,8 +490,10 @@ class PersonAdmin(admin.ModelAdmin):
                    'review_flag', REUpdatedListFilter, 'patrician', 'novus',
                    'nobilis', 'eques', )
 
-    inlines = (DateInformationInline, PostAssertionInline, PersonNoteInline,
-               DirectRelationshipInline, InverseRelationshipInline)
+    inlines = (
+        DateInformationInline, TribeAssertionInline, PostAssertionInline,
+        PersonNoteInline, DirectRelationshipInline, InverseRelationshipInline
+    )
 
     exclude = ('assertions', )
 

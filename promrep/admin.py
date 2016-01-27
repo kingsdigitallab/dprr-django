@@ -15,7 +15,8 @@ from models import (
     DateInformation, Person, Office, Praenomen, PostAssertion, Group, RoleType,
     DateType, SecondarySource, PrimarySource, Gens, PostAssertionNote, Tribe,
     Province, PersonNote, RelationshipAssertion, RelationshipType,
-    RelationshipAssertionReference, TribeAssertion, PrimarySourceReference
+    RelationshipAssertionReference, TribeAssertion, PrimarySourceReference,
+    GensAssertion
 )
 
 admin.site.register(DateType)
@@ -457,6 +458,25 @@ class TribeAssertionInline(admin.StackedInline):
     verbose_name = 'Tribe'
 
 
+class GensAssertionInline(admin.StackedInline):
+    model = GensAssertion
+    extra = 0
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-closed',)
+
+    fieldsets = [
+        ('', {'fields': [
+            ('gens', 'uncertain'),
+            'secondary_source',
+            'notes'
+        ]})
+    ]
+
+    verbose_name = 'Gens'
+    verbose_name_plural = 'Gentes'
+
+
 class PersonAdmin(admin.ModelAdmin):
 
     fieldsets = [
@@ -474,7 +494,6 @@ class PersonAdmin(admin.ModelAdmin):
                  ('filiation', 'filiation_uncertain'),
                  ('cognomen', 'cognomen_uncertain'),
                  ('other_names', 'other_names_uncertain',),
-                 ('gens', 'gens_uncertain',),
                  ('origin', ),
              )}),
         ('RE',
@@ -529,8 +548,9 @@ class PersonAdmin(admin.ModelAdmin):
                    'nobilis', 'eques', )
 
     inlines = (
-        DateInformationInline, TribeAssertionInline, PostAssertionInline,
-        PersonNoteInline, DirectRelationshipInline, InverseRelationshipInline
+        DateInformationInline, GensAssertionInline, TribeAssertionInline,
+        PostAssertionInline, PersonNoteInline, DirectRelationshipInline,
+        InverseRelationshipInline
     )
 
     exclude = ('assertions', )

@@ -744,3 +744,55 @@ class StatusType(TimeStampedModel):
     def __unicode__(self):
         return self.name
 
+
+
+@with_author
+class StatusAssertion(TimeStampedModel):
+    person = models.ForeignKey(Person)
+    status = models.ForeignKey(StatusType)
+    secondary_source = models.ForeignKey(SecondarySource)
+
+    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
+    original_text = models.CharField(max_length=1024, blank=True)
+
+    extra_info = models.TextField(blank=True)
+    extra_info.help_text = "Extra info about the status assertion"
+
+    review_flag = models.BooleanField(
+        verbose_name="Review needed", default=False)
+
+    # date information
+    date_start = models.IntegerField(blank=True, null=True)
+    date_start_uncertain = models.BooleanField(default=False)
+
+    date_end = models.IntegerField(blank=True, null=True)
+    date_end_uncertain = models.BooleanField(default=False)
+
+    date_display_text = models.CharField(
+        max_length=1024, blank=True, null=True)
+
+    date_source_text = models.CharField(max_length=1024, blank=True, null=True)
+    date_secondary_source = models.ForeignKey(SecondarySource, blank=True,
+                                              null=True, related_name='date_source')
+
+    # province information
+    provinces = models.ManyToManyField(Province, blank=True,
+                                       through='StatusAssertionProvince')
+
+    # notes
+    notes = models.ManyToManyField(StatusAssertionNote, blank=True)
+
+
+@with_author
+class StatusAssertionProvince(models.Model):
+    status_assertion = models.ForeignKey(StatusAssertion)
+    province = models.ForeignKey(Province)
+    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
+    note = models.CharField(max_length=1024, blank=True)
+
+    def __unicode__(self):
+        un = ""
+        if self.uncertain:
+            un = "?"
+
+        return self.province.name + " " + un

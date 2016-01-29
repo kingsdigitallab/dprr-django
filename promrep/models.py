@@ -722,3 +722,14 @@ class RelationshipAssertion(TimeStampedModel):
 
     class Meta:
         ordering = ['relationship_number', 'id']
+
+
+
+@with_author
+class StatusType(TimeStampedModel):
+    name = models.CharField(max_length=256, unique=True)
+    description = models.CharField(max_length=1024, blank=True)
+
+    def __unicode__(self):
+        return self.name
+

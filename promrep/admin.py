@@ -359,7 +359,7 @@ class PersonNoteInline(admin.StackedInline):
     }
 
 
-class PersonInline(admin.StackedInline):
+class PostAssertionInline(admin.StackedInline):
     model = PostAssertion
     form = PostInlineForm
 
@@ -399,6 +399,7 @@ class PersonInline(admin.StackedInline):
 
 class PostAssertionInline(admin.StackedInline):
     """Included in the Person Admin"""
+
     model = PostAssertion
     form = PostInlineForm
 
@@ -644,7 +645,7 @@ class GroupAdmin(admin.ModelAdmin):
                   ),
                  ]
 
-    inlines = [PersonInline, ]
+    inlines = [PostAssertionInline, ]
     exclude = ('persons',)
 
 admin.site.register(Group, GroupAdmin)

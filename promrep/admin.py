@@ -360,44 +360,6 @@ class PersonNoteInline(admin.StackedInline):
 
 
 class PostAssertionInline(admin.StackedInline):
-    model = PostAssertion
-    form = PostInlineForm
-
-    classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-closed',)
-
-    verbose_name_plural = 'Persons on this Group'
-    verbose_name = 'Person:'
-
-    show_change_link = True
-
-    fields = (
-        ('id', 'review_flag', 'position'),
-        ('person', ),
-        ('office', 'role', ),
-        ('uncertain'),
-        ('secondary_source', 'original_text', 'office_xref'),
-        ('date_display_text', ),
-        ('date_source_text', 'date_secondary_source', ),
-        ('date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'),
-        'notes',
-        'edit_link'
-    )
-
-    sortable_field_name = 'position'
-
-    readonly_fields = ('id', )
-
-    raw_id_fields = ('person', 'notes')
-    related_lookup_fields = {
-        'fk': ['person', ],
-        'm2m': ['notes', ]
-    }
-
-    extra = 0
-
-
-class PostAssertionInline(admin.StackedInline):
     """Included in the Person Admin"""
 
     model = PostAssertion
@@ -676,10 +638,10 @@ class StatusAssertionAdmin(admin.ModelAdmin):
 
     inlines = (StatusAssertionProvinceInline, StatusAssertionNoteInline, )
 
-
-    # notes = models.ManyToManyField(StatusAssertionNote, blank=True)
-
 admin.site.register(StatusAssertion, StatusAssertionAdmin)
+
+
+
 
 
 class StatusTypeAdmin(admin.ModelAdmin):

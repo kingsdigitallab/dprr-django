@@ -16,7 +16,7 @@ from models import (
     DateType, SecondarySource, PrimarySource, Gens, PostAssertionNote, Tribe,
     Province, PersonNote, RelationshipAssertion, RelationshipType,
     RelationshipAssertionReference, TribeAssertion, PrimarySourceReference,
-    GensAssertion
+    GensAssertion, StatusAssertion, StatusType
 )
 
 admin.site.register(DateType)
@@ -613,6 +613,44 @@ class GroupAdmin(admin.ModelAdmin):
     exclude = ('persons',)
 
 admin.site.register(Group, GroupAdmin)
+
+
+class StatusAssertionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'person', 'status',
+                    'uncertain', 'date_start', 'date_end')
+
+    fields = (('id', 'review_flag', ),
+              ('person', 'status', ),
+              ('secondary_source', 'uncertain',),
+              ('original_text'),
+              ('date_display_text',),
+              ('date_start', 'date_start_uncertain',),
+              ('date_end', 'date_end_uncertain',),
+              ('date_secondary_source',),
+              ('date_source_text',),
+              ('extra_info'))
+
+    readonly_fields = ('id', )
+
+    raw_id_fields = ('person', 'status', 'secondary_source', )
+
+    related_lookup_fields = {
+        'fk': ['person', 'status', 'secondary_source', ],
+    }
+
+    # provinces  through='StatusAssertionProvince')
+    # notes = models.ManyToManyField(StatusAssertionNote, blank=True)
+
+admin.site.register(StatusAssertion, StatusAssertionAdmin)
+
+
+class StatusTypeAdmin(admin.ModelAdmin):
+
+    list_display = ('id', 'name', )
+    list_display_links = ('id', 'name', )
+    readonly_fields = ('id', )
+
+admin.site.register(StatusType, StatusTypeAdmin)
 
 
 class GensAdmin(admin.ModelAdmin):

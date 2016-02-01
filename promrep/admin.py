@@ -6,7 +6,8 @@ from django.contrib.admin import SimpleListFilter
 from django_mptt_admin.admin import DjangoMpttAdmin
 from django.contrib.contenttypes.admin import GenericStackedInline
 
-from promrep.forms import PostInlineForm, RelationshipAssertionInlineForm
+from promrep.forms import (
+    PostInlineForm, RelationshipAssertionInlineForm, StatusInlineForm)
 
 from django.utils.html import format_html
 from django.core.urlresolvers import reverse
@@ -21,6 +22,42 @@ from models import (
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
+
+
+class StatusAssertionInline(admin.StackedInline):
+
+    model = StatusAssertion
+    form = StatusInlineForm
+
+    extra = 0
+    show_change_link = True
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-closed',)
+
+    verbose_name = 'Status Assertion'
+
+    ordering = ('-date_start', '-date_end', )
+    readonly_fields = ('id', )
+
+    fields = (('id', 'review_flag', ),
+              ('status', 'uncertain'),
+              ('secondary_source', ),
+              ('original_text', ),
+              ('date_display_text',),
+              ('date_source_text', 'date_secondary_source', ),
+              ('date_start', 'date_start_uncertain',),
+              ('date_end', 'date_end_uncertain',),
+              ('notes',),
+              # ('provinces_list',),
+              # ('edit_link',)
+              )
+
+    raw_id_fields = ('notes',)
+
+    related_lookup_fields = {
+        'm2m': ['notes',],
+    }
 
 
 class RelationshipAssertionListInline(admin.TabularInline):
@@ -215,7 +252,6 @@ class PostAssertionProvinceInline(admin.StackedInline):
     )
 
 
-
 class StatusAssertionProvinceInline(admin.StackedInline):
     model = StatusAssertion.provinces.through
     extra = 0
@@ -236,6 +272,7 @@ class StatusAssertionProvinceInline(admin.StackedInline):
         ('note', )
     )
 
+
 class PostAssertionNoteInline(admin.StackedInline):
     model = PostAssertion.notes.through
     extra = 0
@@ -251,6 +288,7 @@ class PostAssertionNoteInline(admin.StackedInline):
     related_lookup_fields = {
         'fk': ['postassertionnote', ],
     }
+
 
 class StatusAssertionNoteInline(admin.StackedInline):
     model = StatusAssertion.notes.through
@@ -547,8 +585,8 @@ class PersonAdmin(admin.ModelAdmin):
 
     inlines = (
         DateInformationInline, GensAssertionInline, TribeAssertionInline,
-        PostAssertionInline, PersonNoteInline, DirectRelationshipInline,
-        InverseRelationshipInline
+        PostAssertionInline, StatusAssertionInline, PersonNoteInline,
+        DirectRelationshipInline, InverseRelationshipInline
     )
 
     exclude = ('assertions', )
@@ -641,9 +679,6 @@ class StatusAssertionAdmin(admin.ModelAdmin):
 admin.site.register(StatusAssertion, StatusAssertionAdmin)
 
 
-
-
-
 class StatusTypeAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'name', )
@@ -697,4 +732,3 @@ class PrimarySourceAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'abbrev_name', 'name', 'biblio')
 
 admin.site.register(PrimarySource, PrimarySourceAdmin)
-

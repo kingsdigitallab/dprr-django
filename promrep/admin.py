@@ -252,6 +252,20 @@ class PostAssertionNoteInline(admin.StackedInline):
         'fk': ['postassertionnote', ],
     }
 
+class StatusAssertionNoteInline(admin.StackedInline):
+    model = StatusAssertion.notes.through
+    extra = 0
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-open',)
+
+    verbose_name = 'Status Assertion Note'
+    raw_id_fields = ('statusassertionnote', )
+
+    related_lookup_fields = {
+        'fk': ['statusassertionnote', ],
+    }
+
 
 class PostAssertionAdmin(admin.ModelAdmin):
 
@@ -659,7 +673,7 @@ class StatusAssertionAdmin(admin.ModelAdmin):
         'fk': ['person', 'status', 'secondary_source', ],
     }
 
-    inlines = (StatusAssertionProvinceInline, )
+    inlines = (StatusAssertionProvinceInline, StatusAssertionNoteInline, )
 
 
     # notes = models.ManyToManyField(StatusAssertionNote, blank=True)

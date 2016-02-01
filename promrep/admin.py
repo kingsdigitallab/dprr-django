@@ -193,7 +193,7 @@ class DirectRelationshipInline(admin.StackedInline):
     )
 
 
-class PostAssertionProvincesInline(admin.StackedInline):
+class PostAssertionProvinceInline(admin.StackedInline):
     model = PostAssertion.provinces.through
     extra = 0
 
@@ -214,6 +214,27 @@ class PostAssertionProvincesInline(admin.StackedInline):
         ('note', )
     )
 
+
+
+class StatusAssertionProvinceInline(admin.StackedInline):
+    model = StatusAssertion.provinces.through
+    extra = 0
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-open',)
+
+    verbose_name = 'Province'
+
+    raw_id_fields = ('province', )
+
+    related_lookup_fields = {
+        'fk': ['province', ],
+    }
+
+    fields = (
+        ('province', 'uncertain'),
+        ('note', )
+    )
 
 class PostAssertionNoteInline(admin.StackedInline):
     model = PostAssertion.notes.through
@@ -273,7 +294,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
         'fk': ['group', 'person', 'office', ],
     }
 
-    inlines = (PostAssertionNoteInline, PostAssertionProvincesInline)
+    inlines = (PostAssertionNoteInline, PostAssertionProvinceInline)
 
 admin.site.register(PostAssertion, PostAssertionAdmin)
 
@@ -638,7 +659,9 @@ class StatusAssertionAdmin(admin.ModelAdmin):
         'fk': ['person', 'status', 'secondary_source', ],
     }
 
-    # provinces  through='StatusAssertionProvince')
+    inlines = (StatusAssertionProvinceInline, )
+
+
     # notes = models.ManyToManyField(StatusAssertionNote, blank=True)
 
 admin.site.register(StatusAssertion, StatusAssertionAdmin)
@@ -697,3 +720,4 @@ class PrimarySourceAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'abbrev_name', 'name', 'biblio')
 
 admin.site.register(PrimarySource, PrimarySourceAdmin)
+

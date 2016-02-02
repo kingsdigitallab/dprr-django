@@ -782,6 +782,23 @@ class StatusAssertion(TimeStampedModel):
     # notes
     notes = models.ManyToManyField(StatusAssertionNote, blank=True)
 
+    def print_provinces(self):
+        provinces = []
+
+        if self.id:
+            for prov in self.statusassertionprovince_set.all():
+                name = str(prov.province)
+                if prov.uncertain:
+                    name = name + "?"
+
+                provinces.append(name)
+
+        return ", ".join(provinces)
+
+    print_provinces.allow_tags = True
+    print_provinces.short_description = 'Provinces'
+
+
 
 @with_author
 class StatusAssertionProvince(models.Model):

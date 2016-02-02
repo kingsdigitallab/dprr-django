@@ -743,7 +743,7 @@ class StatusType(TimeStampedModel):
     description = models.CharField(max_length=1024, blank=True)
 
     def __unicode__(self):
-        return self.name
+        return "{}".format(self.name)
 
 
 @with_author
@@ -782,6 +782,32 @@ class StatusAssertion(TimeStampedModel):
     # notes
     notes = models.ManyToManyField(StatusAssertionNote, blank=True)
 
+    # TODO: same as used in PostAssertion..
+    def print_dates(self):
+        date_str = ""
+
+        if self.date_display_text:
+            date_str = self.date_display_text
+        elif self.date_start == self.date_end and self.date_start_uncertain == self.date_end_uncertain:
+            date_str = date_to_string(
+                self.date_start, self.date_start_uncertain)
+        else:
+            if self.date_start:
+                date_str = date_to_string(
+                    self.date_start, self.date_start_uncertain, False)
+            else:
+                date_str = "?"
+
+            date_str = date_str + " - "
+
+            if self.date_end:
+                date_str = date_str + \
+                    date_to_string(self.date_end, self.date_end_uncertain)
+            else:
+                date_str = date_str + "?"
+
+        return date_str.strip()
+
     def print_provinces(self):
         provinces = []
 
@@ -798,7 +824,12 @@ class StatusAssertion(TimeStampedModel):
     print_provinces.allow_tags = True
     print_provinces.short_description = 'Provinces'
 
-
+    def __unicode__(self):
+        return "{} {}{} {} ({})".format(self.person,
+                                        self.status,
+                                        "?" if self.uncertain else "",
+                                        self.print_dates(),
+                                        self.secondary_source.abbrev_name)
 
 @with_author
 class StatusAssertionProvince(models.Model):

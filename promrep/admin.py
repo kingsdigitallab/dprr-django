@@ -409,7 +409,6 @@ class PostAssertionInline(admin.StackedInline):
     inline_classes = ('grp-collapse grp-closed',)
 
     verbose_name = 'Post Assertion'
-    verbose_name_plural = 'Person Post Assertions'
 
     show_change_link = True
     ordering = ('-date_start', '-date_end', )

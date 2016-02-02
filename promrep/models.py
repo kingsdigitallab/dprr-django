@@ -808,18 +808,11 @@ class StatusAssertion(TimeStampedModel):
 
         return date_str.strip()
 
+    # we need to use the connecting table unicode method in order to print
+    #  uncertainty info, etc.
     def print_provinces(self):
-        provinces = []
-
-        if self.id:
-            for prov in self.statusassertionprovince_set.all():
-                name = str(prov.province)
-                if prov.uncertain:
-                    name = name + "?"
-
-                provinces.append(name)
-
-        return ", ".join(provinces)
+        pl = [p.__unicode__() for p in self.statusassertionprovince_set.all()]
+        return ", ".join(pl)
 
     print_provinces.allow_tags = True
     print_provinces.short_description = 'Provinces'

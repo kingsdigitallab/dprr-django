@@ -48,9 +48,9 @@ class StatusAssertionInline(admin.StackedInline):
               ('date_source_text', 'date_secondary_source', ),
               ('date_start', 'date_start_uncertain',),
               ('date_end', 'date_end_uncertain',),
+              ('provinces_list',),
               ('notes',),
-              # ('provinces_list',),
-              # ('edit_link',)
+              ('edit_link',)
               )
 
     raw_id_fields = ('notes',)

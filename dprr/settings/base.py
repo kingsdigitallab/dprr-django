@@ -59,6 +59,7 @@ DEBUG = False
 TEMPLATE_DEBUG = False
 
 INSTALLED_APPS = (
+    'grappelli.dashboard',
     'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -250,6 +251,7 @@ WAGTAIL_SITE_NAME = PROJECT_TITLE
 #------------------------------------------------------------------------------
 
 GRAPPELLI_ADMIN_TITLE = PROJECT_TITLE
+GRAPPELLI_INDEX_DASHBOARD = 'dprr.dashboard.CustomIndexDashboard'
 
 #------------------------------------------------------------------------------
 # Django Author

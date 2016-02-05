@@ -7,7 +7,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 
 from django.core import urlresolvers
 from django.core.urlresolvers import reverse
@@ -38,18 +38,6 @@ def date_to_string(date_int, date_uncertain, date_suffix=True):
 
 
 @with_author
-class DateType(TimeStampedModel):
-    name = models.CharField(max_length=256, unique=True)
-    description = models.CharField(max_length=1024, blank=True)
-
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-
-@with_author
 class SecondarySource(TimeStampedModel):
 
     name = models.CharField(max_length=256, unique=True)
@@ -65,6 +53,7 @@ class SecondarySource(TimeStampedModel):
 
 
 class PrimarySource(models.Model):
+
     name = models.CharField(max_length=256, unique=True)
     abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
     biblio = models.CharField(max_length=512, unique=True, blank=True)
@@ -148,12 +137,45 @@ class NoteType(TimeStampedModel):
         return self.name
 
 
+@with_author
+class PrimarySourceReference(TimeStampedModel):
+    # this is the connecting model between
+    #   Note and PrimarySource
+
+    limit = models.Q(app_label='promrep', model='PersonNote') | \
+        models.Q(app_label='promrep', model='PostAssertionNote') | \
+        models.Q(app_label='promrep', model='RelationshipAssertionReference')
+
+    content_type = models.ForeignKey(
+        ContentType,
+        verbose_name='primary source reference',
+        limit_choices_to=limit,
+        null=True,
+        blank=True,
+    )
+
+    object_id = models.PositiveIntegerField(
+        verbose_name='related object',
+        null=True,
+    )
+
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    primary_source = models.ForeignKey(PrimarySource, null=True)
+    text = models.TextField(blank=True)
+
+    def __unicode__(self):
+        return self.text
+
+
 class Note(TimeStampedModel):
+    # TODO: rename to SecondarySourceReference?
     note_type = models.ForeignKey(NoteType, default=1, )
     secondary_source = models.ForeignKey(SecondarySource)
 
-    # useful to store the bookmark number, for instance
     text = models.TextField(blank=True)
+
+    # useful to store the bookmark number, for instance
     extra_info = models.TextField(max_length=1024, blank=True)
 
     class Meta:
@@ -162,6 +184,40 @@ class Note(TimeStampedModel):
 
     def __unicode__(self):
         return self.text.strip()
+
+
+def create_primary_source_reference(sender, **kwargs):
+    if 'created' in kwargs:
+        if kwargs['created']:
+            instance = kwargs['instance']
+            ctype = ContentType.objects.get_for_model(instance)
+            primary_source_reference = PrimarySourceReference.objects.get_or_create(content_type=ctype,
+                                                                                    object_id=instance.id,
+                                                                                    pub_date=instance.pub_date)
+
+
+@with_author
+class RelationshipAssertionReference(Note):
+    """This is a SecondarySourceNote/Reference
+
+    """
+
+    primary_source_references = GenericRelation(PrimarySourceReference,
+                                                related_query_name='relationship_assertion_references')
+
+    def print_primary_source_refs(self):
+        return ', '.join([pref.__unicode__() for pref in self.primary_source_references.all()])
+
+    def url_to_edit_note(self):
+        url = reverse('admin:%s_%s_change' % (
+            self._meta.app_label, self._meta.model_name), args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.__unicode__())
+
+    def related_label(self):
+        return u"[%s] %s (%s)<br /><br />" % (self.secondary_source.abbrev_name, self.text, self.print_primary_source_refs())
+
+    def __unicode__(self):
+        return u"%s, %s (%s)" % (self.secondary_source.abbrev_name, self.text, self.print_primary_source_refs())
 
 
 @with_author
@@ -214,13 +270,9 @@ class Person(TimeStampedModel):
     filiation_uncertain = models.BooleanField(
         verbose_name='Uncertain Filiation', default=False)
 
-    gens = models.ForeignKey(Gens, blank=True, null=True)
-    gens_uncertain = models.BooleanField(
-        verbose_name='Uncertain Gens', default=False)
+    gentes = models.ManyToManyField(Gens, through='GensAssertion')
 
-    tribe = models.ForeignKey(Tribe, blank=True, null=True)
-    tribe_uncertain = models.BooleanField(
-        verbose_name='Uncertain Tribe', default=False)
+    tribes = models.ManyToManyField(Tribe, through='TribeAssertion')
 
     sex = models.ForeignKey(Sex, blank=True, null=True, default=1)
 
@@ -260,17 +312,6 @@ class Person(TimeStampedModel):
     # dates
     date_display_text = models.CharField(
         max_length=1024, blank=True, null=True)
-    date_source_text = models.CharField(max_length=1024, blank=True, null=True)
-    date_secondary_source = models.ForeignKey(
-        SecondarySource, blank=True, null=True)
-
-    date_first = models.IntegerField(blank=True, null=True)
-    date_first_type = models.ForeignKey(
-        DateType, blank=True, null=True, related_name='person_first')
-
-    date_last = models.IntegerField(blank=True, null=True)
-    date_last_type = models.ForeignKey(
-        DateType, blank=True, null=True, related_name='person_last')
 
     era_from = models.IntegerField(blank=True, null=True)
     era_to = models.IntegerField(blank=True, null=True)
@@ -316,8 +357,8 @@ class Person(TimeStampedModel):
             if self.filiation not in ['- f. - n.', '- f.', '- n.']:
                 name = name + ' ' + self.filiation
 
-        if self.tribe:
-            name = name + ' ' + self.tribe.abbrev
+        for t in self.tribes.all():
+            name = name + ' ' + t.abbrev
 
         if self.cognomen:
             name = name + ' ' + self.cognomen
@@ -336,6 +377,98 @@ class Person(TimeStampedModel):
 
     class Meta:
         ordering = ['id', ]
+
+
+@with_author
+class TribeAssertion(TimeStampedModel):
+    person = models.ForeignKey(Person)
+    tribe = models.ForeignKey(Tribe, related_name='assertions')
+    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
+
+    secondary_source = models.ForeignKey(
+        SecondarySource, blank=True, null=True)
+
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = 'Tribe'
+
+    def __unicode__(self):
+        return u'{}{}'.format(
+            self.tribe.abbrev, ' ?' if self.uncertain else '')
+
+
+@with_author
+class GensAssertion(TimeStampedModel):
+    person = models.ForeignKey(Person)
+    gens = models.ForeignKey(Gens, related_name='assertions')
+    uncertain = models.BooleanField(default=False)
+
+    secondary_source = models.ForeignKey(
+        SecondarySource, blank=True, null=True)
+
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = 'Gens'
+        verbose_name_plural = 'Gentes'
+
+    def __unicode__(self):
+        return u'{}{}'.format(self.gens.name, ' ?' if self.uncertain else '')
+
+
+@with_author
+class DateType(TimeStampedModel):
+    name = models.CharField(max_length=256, unique=True)
+    description = models.CharField(max_length=1024, blank=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+
+@with_author
+class DateInformation(TimeStampedModel):
+    person = models.ForeignKey(Person)
+
+    ATTESTATION = 'A'
+    INTERVAL_CHOICES = (
+        (ATTESTATION, 'Attestation'),
+        ('F', 'First'),
+        ('L', 'Last')
+    )
+
+    date_type = models.ForeignKey(
+        DateType, related_name='person_date', verbose_name='Type')
+    date_interval = models.CharField(
+        max_length=1, choices=INTERVAL_CHOICES, default=ATTESTATION,
+        verbose_name='Interval')
+    uncertain = models.BooleanField(default=False)
+    value = models.IntegerField()
+
+    secondary_source = models.ForeignKey(
+        SecondarySource, blank=True, null=True)
+    source_text = models.TextField(blank=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = 'Date'
+
+    def __unicode__(self):
+        date_str = ""
+
+        if self.uncertain:
+            date_str = date_str + "?"
+
+        if self.value < 0:
+            date_str = date_str + str(abs(self.value)) + " B.C."
+        else:
+            date_str = date_str + str(self.value) + " A.D."
+
+        return "{} [{}/{}]".format(date_str, self.date_type,
+                                   self.get_date_interval_display())
 
 
 @with_author
@@ -443,7 +576,7 @@ class PostAssertion(TimeStampedModel):
     secondary_source = models.ForeignKey(SecondarySource)
 
     provinces = models.ManyToManyField(
-        Province, blank=True, null=True, through='PostAssertionProvince')
+        Province, blank=True, through='PostAssertionProvince')
     province_original = models.CharField(max_length=512, blank=True)
     province_original_expanded = models.CharField(max_length=512, blank=True)
 
@@ -571,33 +704,21 @@ class RelationshipAssertion(TimeStampedModel):
 
     original_text = models.CharField(max_length=1024, blank=True)
 
+    # TODO: should this be removed - and use the Note instead?
     secondary_source = models.ForeignKey(SecondarySource)
 
-    primary_sources = models.ManyToManyField(
-        PrimarySource, through='RelationshipAssertionPrimarySource', null=True,
-        blank=True)
+    # TODO: normalise - same as PostAssertionNotes
+    references = models.ManyToManyField(
+        RelationshipAssertionReference, blank=True)
 
-    notes = models.TextField(blank=True)
+    extra_info = models.TextField(blank=True)
+    extra_info.help_text = "Extra info about the relationship"
+
     review_flag = models.BooleanField(
         verbose_name="Review needed", default=False)
 
     def __unicode__(self):
         return "{} is {} {}".format(self.person, self.relationship, self.related_person)
 
-    @property
-    def primary_sources_list(self):
-        return ", ".join(ps.original_text for ps in self.relationshipassertionprimarysource_set.all())
-
-
     class Meta:
         ordering = ['relationship_number', 'id']
-
-@with_author
-class RelationshipAssertionPrimarySource(TimeStampedModel):
-    relationship_assertion = models.ForeignKey(RelationshipAssertion)
-    primary_source = models.ForeignKey(PrimarySource, blank=True, null=True)
-
-    original_text = models.CharField(max_length=1024, blank=True)
-
-    def __unicode__(self):
-        return self.original_text

@@ -38,3 +38,4 @@ wsgiref
 git+git://github.com/kingsdigitallab/django-haystack.git
 pysolr
 ddh-django-utils
+pygraphviz

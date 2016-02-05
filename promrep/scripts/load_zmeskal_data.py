@@ -302,7 +302,7 @@ def read_input_file(ifname, notes_csv_fname):
 
 
 def run():
-    ifname = "promrep/scripts/data/zmeskal/ZmeskalOutv4.csv"
+    ifname = "promrep/scripts/data/zmeskal/ZmeskalOutv6.csv"
 
     # re-exported from excel as semicolon separated csv in utf8
     notes_csv = "promrep/scripts/data/zmeskal/zmeskal_from_xlsx.csv"

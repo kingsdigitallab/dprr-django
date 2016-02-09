@@ -50,7 +50,7 @@ def clean_field(field, a_string):
     """
 
     # chars to be removed from  most name fields
-    unc_chars = ["?", ]
+    unc_chars = "?[]"
     uncertain = False
 
     for ch in unc_chars:
@@ -113,7 +113,7 @@ def create_person(row_dict):
     # remaining person fields, where names were not standard
     person_dict['re_number'] = row_dict.get('re')
 
-    print person_dict
+    # logger.info(person_dict)
     person, created = Person.objects.get_or_create(**person_dict)
 
     if created:
@@ -196,10 +196,9 @@ def read_input_file(ifname, notes_csv_fname):
 
                     p1_id, created_p1 = create_person(p1_dict)
                     if created_p1:
-                        LOGGER.info(
-                            "Created new person1 with id {}".format(p1_id))
+                        LOGGER.info("Created Person1: id={}".format(p1_id))
                     else:
-                        LOGGER.info("Person1 id {}".format(p1_id))
+                        LOGGER.info("Fetched Person1: id={}".format(p1_id))
 
                 if not p2_id:
                     p2_dict = {
@@ -213,10 +212,9 @@ def read_input_file(ifname, notes_csv_fname):
 
                     p2_id, created_p2 = create_person(p2_dict)
                     if created_p2:
-                        LOGGER.info("Person2 created with id {}".format(p2_id))
+                        LOGGER.info("Created Person2: id={}".format(p2_id))
                     else:
-                        LOGGER.info(
-                            "Person2 already existed with id {}".format(p2_id))
+                        LOGGER.info("Fetched Person2: id={}".format(p2_id))
 
                 # gets the relationship type from the csv file
                 rel_type_name = row_dict["relationship"].strip().lower()
@@ -302,7 +300,7 @@ def read_input_file(ifname, notes_csv_fname):
 
 
 def run():
-    ifname = "promrep/scripts/data/zmeskal/ZmeskalOutv4.csv"
+    ifname = "promrep/scripts/data/zmeskal/ZmeskalOutv8.csv"
 
     # re-exported from excel as semicolon separated csv in utf8
     notes_csv = "promrep/scripts/data/zmeskal/zmeskal_from_xlsx.csv"

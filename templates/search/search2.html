@@ -7,6 +7,7 @@
 <div class="row">
 	<div class="large-12 columns">
 		<h1 id="search-box">Search</h1>
+
 		<div class="row">
 			<div class="large-7 columns">
 				<h4>Text search <a data-dropdown="text-search-info" aria-controls="text-search-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
@@ -24,189 +25,265 @@
 			</div>
 			<div class="large-2 large-offset-3 columns show-all">
 				<p>&nbsp;</p>
-				<p><a href="/browse/#search-results-box" class="less-padding expand button right">Show all</a></p>
+				<p><a href="{% url 'haystack_search2' %}#search-results-box" class="less-padding expand button right">Show all</a></p>
 			</div>
 		</div>
 
-		<hr>
+		<hr id="search">
+
 		<button class="small button secondary options"><i class="fa fa-cog"></i> <span id="showhide">Hide</span> filters' settings</button>
 		<a href="/browse/" class="right options"><span class="small button"><i class="fa fa-refresh"></i> Start new search</span></a>
+		
 		<div class="search-box">
+
 			<form method="get" action=".">
 				<section data-section="non-expandable" data-expandable-group-member="facets" id="dprr-filter">
-
-					<h4>Filter by <strong>names</strong> <a data-dropdown="names-info" aria-controls="names-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-					<div id="names-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-						<p>Some info on how to use the <strong>name search</strong>.</p>
-					</div>
-
 					<div class="row">
-						<div class="large-2 columns">
-							<label>Praenomen
-								<input type="text" value="">
-							</label>
+						<div class="large-12 columns">
+							<h4>Refine your search</h4>
 						</div>
-						<div class="large-3 columns">
-							<label>Nomen
-								<input type="text" value="">
-							</label>
-						</div>
-						<div class="large-1 columns">
-							<label>.f
-								<input type="text" value="">
-							</label>
-						</div>
-						<div class="large-1 columns">
-							<label>.n
-								<input type="text" value="">
-							</label>
-						</div>
-						<div class="large-3 columns">
-							<label>Cognomen
-								<input type="text" value="">
-							</label>
-						</div>
-						<div class="large-2 columns">
-							<label>+ many
-								<input type="text" value="">
-							</label>
-						</div>
-					</div>
+						
+						<div class="large-12 columns">
+							<div class="panel results-preview" data-magellan-expedition="fixed">
+								<h4>Results preview <a data-dropdown="results-preview-info" aria-controls="results-preview-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a>
+								<a href="#search-results-box" class="less-padding button right">Show results</a></h4>
+								<div id="results-preview-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+									<p>Some info on what's displayed by the <strong>results preview</strong>.</p>
+								</div>
+								<h3><strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search2' %}#search"><i class="fa fa-trash"></i> Clear all</a></h3>
 
-					<h4>Filter by <strong>post date</strong> <a data-dropdown="dates-info" aria-controls="dates-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-					<div id="dates-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-						<p>Some info on how to use the <strong>dates search</strong>.</p>
-					</div>
+								{% if query or selected_facets or post_date_filter %}
 
-					{{ form.post_date_from.errors }}
-					{{ form.post_date_to.errors }}
+								<ul class="inline-list no-bullet free-filters">
 
-					<div class="row range">
-						<div class="small-5 columns">
-							<label>From / After (Leave blank for <em>Before</em>)</label>
-							{{ form.post_date_from }}
-						</div>
-						<div class="small-5 columns">
-							<label>To / Before (Leave blank for <em>After</em>)</label>
-							{{ form.post_date_to }}
-						</div>
-						<div class="large-2 columns">
-							<label>&nbsp;</label>
-							<button type="submit" class="less-padding expand secondary">Update dates</button>
-						</div>
-					</div>
+									{% if query %}
+									<li>
+										<span class="label radius">
+											<a href="{{ remove_text_filter }}#search" title="Remove filter">Text: {{ query }}
+												<i class="fa fa-times-circle"></i>
+											</a>
+										</span>
+									</li>
+									{% endif %}
 
-					{% for facet_value in selected_facets %}
-						<input class="selected_facets_input" type="hidden" name="selected_facets" value="{{ facet_value }}">
-					{% endfor %}
+									{% if post_date_filter %}
+									<li>
+										<span class="label radius">
+											<a href="{{ post_date_filter.0}}#search" title="Remove filter">Post Date: {{ post_date_filter.1 }}
+												<i class="fa fa-times-circle"></i>
+											</a>
+										</span>
+									</li>
+									{% endif %}
 
-					<div class="row">
-						<div class="large-6 columns">
-							<h4>Filter by <strong>office</strong> <a data-dropdown="office-info" aria-controls="office-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-							<div id="office-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-								<p>Some info on how to use the <strong>office filter</strong>.</p>
+									{% for facet in selected_facets %}
+									<li>
+										<span class="label radius">
+											{{ facet }}
+											<a href="{% remove_facet_link querydict facet %}#search">
+												<i class="fa fa-times-circle"></i>
+											</a>
+										</span>
+									</li>
+									{% endfor %}
+								</ul>
+								{% endif %}
 							</div>
-							<div class="panel offices">
+						</div>
+					</div>
+
+					<div class="row">
+						{% comment %}
+						{% for facet in facets.fields %}
+						<div class="large-6 columns">
+							<div class="panel radius fixed-height">
+								<h4>Filter by <strong>{{ facet }}</strong></h4>
 								<ul class="no-bullet">
-									<li><a href="#">Office 1</a></li>
-									<li><a href="#">Office 2</a></li>
-									<li><a href="#">Office 3</a></li>
-									<li><a href="#">Office 4</a></li>
-									<li><a href="#">Office 5</a></li>
-									<li><a href="#">Office 6</a></li>
-									<li><a href="#">Office 7</a></li>
-									<li><a href="#">Office 8</a></li>
+									{% for term in facets.fields|get_item:facet %}
+									{% with value=term.0 count=term.1 %}
+									{% if count > 0 %}
+									<li>
+										<a href="{% add_facet_link querydict facet value %}">
+											<span class="label radius right">{{ count }}</span>
+											{{ value }}
+										</a>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
 								</ul>
 							</div>
 						</div>
+						{% endfor %}
+						{% endcomment %}
 
-						<div class="large-6 columns">
-							<div class="row">
-								<div class="large-6 columns">
-									<h4>Filter by <strong>gender</strong> <a data-dropdown="gender-info" aria-controls="gender-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-									<div id="gender-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-										<p>Some info on how to use the <strong>gender filter</strong>.</p>
+						<div class="large-12 columns">
+							<h4>Filter by <strong>names</strong> <a data-dropdown="names-info" aria-controls="names-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+							<div id="names-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+								<p>Some info on how to use the <strong>name search</strong>.</p>
+							</div>
+							<ul class="no-bullet">
+								<li>
+									<div class="row">
+										<div class="large-2 columns">
+											<label>Praenomen
+												<select>
+													<option selected="selected" disabled="disabled"></option>
+													<option value="A.">A.</option>
+													<option value="Agr.">Agr.</option>
+													<option value="Ap.">Ap.</option>
+													<option value="C.">C.</option>
+													<option value="D.">D.</option>
+													<option value="L.">L.</option>
+												</select>
+											</label>
+										</div>
+										<div class="large-3 columns">
+											<label>Nomen
+												<select>
+													<option selected="selected" disabled="disabled"></option>
+													<option value="Aurelius">Aurelius</option>
+													<option value="Claudius">Claudius</option>
+													<option value="Fabius">Fabius</option>
+													<option value="Flavius">Flavius</option>
+													<option value="Julius">Julius</option>
+													<option value="Valerius">Valerius</option>
+												</select>
+											</label>
+										</div>
+										<div class="large-1 columns">
+											<label>.f
+												<select>
+													<option selected="selected" disabled="disabled"></option>
+												</select>
+											</label>
+										</div>
+										<div class="large-1 columns">
+											<label>.n
+												<select>
+													<option selected="selected" disabled="disabled"></option>
+												</select>
+											</label>
+										</div>
+										<div class="large-3 columns">
+											<label>Cognomen
+												<select>
+													<option selected="selected" disabled="disabled"></option>
+												</select>
+											</label>
+										</div>
+										<div class="large-2 columns">
+											<label>+ many
+												<select>
+													<option selected="selected" disabled="disabled"></option>
+												</select>
+											</label>
+										</div>
 									</div>
-									<input type="checkbox" name="personMale" value="Male" id="personMale"><label for="personMale">Male</label><br>
-									<input type="checkbox" name="personFemale" value="Female" id="personFemale"><label for="personFemale">Female</label>
+								</li>
+							</ul>
+						</div>
+
+						<div class="large-12 columns">
+							<h4>Filter by <strong>post date</strong> <a data-dropdown="dates-info" aria-controls="dates-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+							<div id="dates-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+								<p>Some info on how to use the <strong>dates search</strong>.</p>
+							</div>
+
+							{{ form.post_date_from.errors }}
+							{{ form.post_date_to.errors }}
+
+							<div class="row range">
+								<div class="small-5 columns">
+									<label>From / After (Leave blank for <em>Before</em>)</label>
+									{{ form.post_date_from }}
 								</div>
-								<div class="large-6 columns">
-									<h4>Filter by <strong>class</strong> <a data-dropdown="class-info" aria-controls="class-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-									<div id="class-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-										<p>Some info on how to use the <strong>class filter</strong>.</p>
-									</div>
-									<input type="checkbox" name="patrician" value="Patrician" id="patrician"><label for="patrician">Patrician</label><br>
-									<input type="checkbox" name="plebeian" value="Plebeian" id="plebeian"><label for="plebeian">Plebeian</label>
+								<div class="small-5 columns">
+									<label>To / Before (Leave blank for <em>After</em>)</label>
+									{{ form.post_date_to }}
 								</div>
-								<div class="large-12 columns">
-									<h4>Filter by <strong>province</strong> <a data-dropdown="province-info" aria-controls="province-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-									<div id="province-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-										<p>Some info on how to use the <strong>province filter</strong>.</p>
-									</div>
-									<label>Province
-										<select>
-											<option selected="selected" disabled="disabled">Select a province</option>
-											<option value="prova">Province A</option>
-											<option value="provb">Province B</option>
-											<option value="provc">Province C</option>
-											<option value="provd">Province D</option>
-										</select>
-									</label>
+								<div class="large-2 columns">
+									<label>&nbsp;</label>
+									<button type="submit" class="less-padding expand secondary">Update dates</button>
 								</div>
 							</div>
 						</div>
+
+						<div class="large-6 columns">
+							<div class="panel radius fixed-height">
+								<h4>Filter by <strong>office</strong> <a data-dropdown="office-info" aria-controls="office-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+								<div id="office-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+									<p>Some info on how to use the <strong>office filter</strong>.</p>
+								</div>
+								<ul class="no-bullet">
+									{% for term in facets.fields|get_item:"office" %}
+									{% with value=term.0 count=term.1 %}
+									{% if count > 0 %}
+									<li>
+										<a href="{% add_facet_link querydict "office" value %}#search">
+											<span class="label radius right">{{ count }}</span>
+											{{ value }}
+										</a>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+								</ul>
+							</div>
+						</div>
+						<div class="large-6 columns">
+							<div class="panel radius fixed-height">
+								<h4>Filter by <strong>province</strong> <a data-dropdown="province-info" aria-controls="province-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+								<div id="province-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+									<p>Some info on how to use the <strong>province filter</strong>.</p>
+								</div>
+								<ul class="no-bullet">
+									{% for term in facets.fields|get_item:"province" %}
+									{% with value=term.0 count=term.1 %}
+									{% if count > 0 %}
+									<li>
+										<a href="{% add_facet_link querydict "province" value %}#search">
+											<span class="label radius right">{{ count }}</span>
+											{{ value }}
+										</a>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+								</ul>
+							</div>
+						</div>
+						<div class="large-6 columns">
+							<h4>Filter by <strong>class</strong> <a data-dropdown="class-info" aria-controls="class-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+							<div id="class-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+								<p>Some info on how to use the <strong>class filter</strong>.</p>
+							</div>
+							<input type="radio" name="patrician" value="Patrician" id="patrician"><label for="patrician">Patrician <span class="label radius">573</span></label><br>
+							<input type="radio" name="plebeian" value="Plebeian" id="plebeian"><label for="plebeian">Plebeian <span class="label radius">213</span></label>
+						</div>
+						<div class="large-6 columns">
+							<h4>Filter by <strong>gender</strong> <a data-dropdown="gender-info" aria-controls="gender-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+							<div id="gender-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+								<p>Some info on how to use the <strong>gender filter</strong>.</p>
+							</div>
+							<input type="radio" name="personMale" value="Male" id="personMale"><label for="personMale">Male <span class="label radius">2134</span></label><br>
+							<input type="radio" name="personFemale" value="Female" id="personFemale"><label for="personFemale">Female <span class="label radius">21</span></label>
+						</div>
 					</div>
-					<a href="#" class="button expand"><i class="fa fa-search"></i> Apply filters</a>
 				</section>
 			</form>
 		</div>
+	</div>
+</div>
+
+<div class="row extra-margin" id="search-results-box">
+	<div class="large-12 columns">
 
 		<hr>
 
-		<h2 id="search-results-box">Search Results <span class="label radius">{{ paginator.count }}</span> <a href="#search-box" class="less-padding button right"><i class="fa fa-edit"></i> Edit search</a></h2>
+		<h2>Search Results <span class="label radius">{{ paginator.count }}</span> <a href="#search" class="less-padding button right"><i class="fa fa-edit"></i> Edit search</a></h2>
 
 		<hr>
-
-		{% if query or selected_facets or post_date_filter %}
-		<div class="panel applied-filter-box">
-			<a href="{% url 'haystack_search' %}" class="button less-padding right"><i class="fa fa-trash"></i> Clear all</a>
-
-			<h4>Filtering by:</h4>
-			<ul class="inline-list applied-filter-list">
-
-				{% if query %}
-				<li>
-					<span class="label radius secondary">
-						<a href="{{ remove_text_filter }}" title="Remove filter">Text: {{ query }}
-							<i class="fa fa-times-circle"></i>
-						</a>
-					</span>
-				</li>
-				{% endif %}
-
-				{% if post_date_filter %}
-				<li>
-					<span class="label radius secondary">
-						<a href="{{ post_date_filter.0}}" title="Remove filter">Post Date: {{ post_date_filter.1 }}
-							<i class="fa fa-times-circle"></i>
-						</a>
-					</span>
-				</li>
-				{% endif %}
-
-				{% for facet in selected_facets %}
-				<li>
-					<span class="label radius secondary">
-						{{ facet }}
-						<a href="{% remove_facet_link querydict facet %}">
-							<i class="fa fa-times-circle"></i>
-						</a>
-					</span>
-				</li>
-				{% endfor %}
-			</ul>
-		</div>
-		{% endif %}
 
 		<ol start="{{page_obj.start_index}}" class="search-results">
 			{% for result in object_list %}
@@ -617,7 +694,9 @@
 			<li>No results found!</li>
 			{% endfor %}
 		</ol>
+
 		{% display_pagination querydict page_obj %}
 	</div>
+
 </div>
 {% endblock main %}

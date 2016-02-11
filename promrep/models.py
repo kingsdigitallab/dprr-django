@@ -111,15 +111,6 @@ class Tribe(models.Model):
         ordering = ['id', ]
 
 
-@with_author
-class Origin(models.Model):
-
-    name = models.CharField(max_length=128, unique=True)
-    extra_info = models.CharField(max_length=1024, blank=True)
-
-    def __unicode__(self):
-        return self.name
-
 
 class RoleType(TimeStampedModel):
 
@@ -297,7 +288,7 @@ class Person(TimeStampedModel):
         max_length=32, blank=True, verbose_name='RE (old)')
     re_number_old.help_text = "RE number before revising"
 
-    origin = models.ForeignKey(Origin, blank=True, null=True)
+    origin = models.TextField(blank=True)
 
     patrician = models.NullBooleanField(
         verbose_name='Patrician', default=None, null=True)

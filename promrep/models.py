@@ -7,7 +7,8 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.fields import (
+    GenericForeignKey, GenericRelation)
 
 from django.core import urlresolvers
 from django.core.urlresolvers import reverse
@@ -234,6 +235,18 @@ class PostAssertionNote(Note):
 
 @with_author
 class PersonNote(Note):
+
+    def url_to_edit_note(self):
+        url = reverse('admin:%s_%s_change' % (
+            self._meta.app_label, self._meta.model_name), args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.__unicode__())
+
+    def related_label(self):
+        return u"[%s - %s] %s<br /><br />" % (self.note_type, self.secondary_source.abbrev_name, self.text)
+
+
+@with_author
+class StatusAssertionNote(Note):
 
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
@@ -722,3 +735,105 @@ class RelationshipAssertion(TimeStampedModel):
 
     class Meta:
         ordering = ['relationship_number', 'id']
+
+
+@with_author
+class StatusType(TimeStampedModel):
+    name = models.CharField(max_length=256, unique=True)
+    description = models.CharField(max_length=1024, blank=True)
+
+    def __unicode__(self):
+        return "{}".format(self.name)
+
+
+@with_author
+class StatusAssertion(TimeStampedModel):
+    person = models.ForeignKey(Person)
+    status = models.ForeignKey(StatusType)
+    secondary_source = models.ForeignKey(SecondarySource)
+
+    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
+    original_text = models.CharField(max_length=1024, blank=True)
+
+    extra_info = models.TextField(blank=True)
+    extra_info.help_text = "Extra info about the status assertion"
+
+    review_flag = models.BooleanField(
+        verbose_name="Review needed", default=False)
+
+    # date information
+    date_start = models.IntegerField(blank=True, null=True)
+    date_start_uncertain = models.BooleanField(default=False)
+
+    date_end = models.IntegerField(blank=True, null=True)
+    date_end_uncertain = models.BooleanField(default=False)
+
+    date_display_text = models.CharField(
+        max_length=1024, blank=True, null=True)
+
+    date_source_text = models.CharField(max_length=1024, blank=True, null=True)
+    date_secondary_source = models.ForeignKey(SecondarySource, blank=True,
+                                              null=True, related_name='date_source')
+
+    # province information
+    provinces = models.ManyToManyField(Province, blank=True,
+                                       through='StatusAssertionProvince')
+
+    # notes
+    notes = models.ManyToManyField(StatusAssertionNote, blank=True)
+
+    # TODO: same as used in PostAssertion..
+    def print_dates(self):
+        date_str = ""
+
+        if self.date_display_text:
+            date_str = self.date_display_text
+        elif self.date_start == self.date_end and self.date_start_uncertain == self.date_end_uncertain:
+            date_str = date_to_string(
+                self.date_start, self.date_start_uncertain)
+        else:
+            if self.date_start:
+                date_str = date_to_string(
+                    self.date_start, self.date_start_uncertain, False)
+            else:
+                date_str = "?"
+
+            date_str = date_str + " - "
+
+            if self.date_end:
+                date_str = date_str + \
+                    date_to_string(self.date_end, self.date_end_uncertain)
+            else:
+                date_str = date_str + "?"
+
+        return date_str.strip()
+
+    # we need to use the connecting table unicode method in order to print
+    #  uncertainty info, etc.
+    def print_provinces(self):
+        pl = [p.__unicode__() for p in self.statusassertionprovince_set.all()]
+        return ", ".join(pl)
+
+    print_provinces.allow_tags = True
+    print_provinces.short_description = 'Provinces'
+
+    def __unicode__(self):
+        return "{} {}{} {} ({})".format(self.person,
+                                        self.status,
+                                        "?" if self.uncertain else "",
+                                        self.print_dates(),
+                                        self.secondary_source.abbrev_name)
+
+@with_author
+class StatusAssertionProvince(models.Model):
+    status_assertion = models.ForeignKey(StatusAssertion)
+    province = models.ForeignKey(Province)
+    uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
+    note = models.CharField(max_length=1024, blank=True)
+
+    def __unicode__(self):
+        un = ""
+        if self.uncertain:
+            un = "?"
+
+        return self.province.name + " " + un

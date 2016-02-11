@@ -55,6 +55,15 @@ class PostAssertionProvincesWidget(forms.Widget):
     def render(self, name, value, attrs=None):
         return self.object.print_provinces()
 
+class StatusProvincesWidget(forms.Widget):
+
+    def __init__(self, obj, attrs=None):
+        super(StatusProvincesWidget, self).__init__(attrs)
+        self.object = obj
+
+    def render(self, name, value, attrs=None):
+        return self.object.print_provinces()
+
 
 class PostInlineForm(forms.ModelForm):
     """This form renders a model and adds a link to edit the nested inline
@@ -117,6 +126,31 @@ class RelationshipAssertionInlineForm(forms.ModelForm):
 
         # instance is always available, it just does or doesn't have pk.
         self.fields['edit_link'].widget = ModelLinkWidget(self.instance)
+
+
+class StatusInlineForm(forms.ModelForm):
+    """This form renders a model and adds a link to edit the nested inline
+    model. This is useful for inline editing when the nested inline fields are
+    not displayed.
+    """
+
+    edit_link = forms.CharField(label='Edit', required=False)
+    provinces_list = forms.CharField(label='Province(s)', required=False)
+
+    # verbose_name = 'Post'
+
+    class Meta:
+        exclude = ()
+        fieldsets = []
+
+    def __init__(self, *args, **kwargs):
+        super(StatusInlineForm, self).__init__(*args, **kwargs)
+
+        # instance is always available, it just does or doesn't have pk.
+        self.fields['edit_link'].widget = ModelLinkWidget(self.instance)
+        self.fields['provinces_list'].widget = StatusProvincesWidget(
+            self.instance)
+
 
 
 

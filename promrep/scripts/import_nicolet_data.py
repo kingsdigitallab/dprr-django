@@ -9,7 +9,7 @@ import primary_source_aux as psource_aux
 
 from promrep.models import (Person, StatusAssertion, Praenomen, Sex,
                             SecondarySource, StatusAssertionNote,
-                            PostAssertion)
+                            PostAssertion, Tribe, TribeAssertion)
 
 import pprint
 pp = pprint.PrettyPrinter(width=1)
@@ -87,7 +87,7 @@ def create_person(row_dict):
     person_dict['sex'] = Sex.objects.get(name="Male")
 
     if 'sex' in row_dict and row_dict['sex'].strip() == "F":
-            person_dict['sex'] = Sex.objects.get(name="Female")
+        person_dict['sex'] = Sex.objects.get(name="Female")
 
     # praenomen special case
     # we initially clean the string, and then add the object to the dictionary
@@ -149,7 +149,7 @@ def read_input_file(ifname):
                             extrasaction='ignore')
     writer.writeheader()
 
-    stats = { 'person': {'new': 0, 'old': 0, 'found': 0} }
+    stats = {'person': {'new': 0, 'old': 0, 'found': 0}}
 
     with open(ifname, 'rU') as csvfile:
 
@@ -160,7 +160,6 @@ def read_input_file(ifname):
         # skips header row
         csvDict.next()
 
-        # always collect tribe info
         for row_dict in csvDict:
 
             person_id = int(row_dict['person'])
@@ -172,8 +171,7 @@ def read_input_file(ifname):
                     "re": row_dict["RE"],
                     "filiation": row_dict["filiation"],
                     "cognomen": row_dict["cognomen"],
-                    "other_names": row_dict["other_names"],
-                    "person_original_text": row_dict["original_text"]
+                    "other_names": row_dict["other_names"]
                 }
 
                 person_id, created = create_person(person_dict)
@@ -188,6 +186,81 @@ def read_input_file(ifname):
                 stats['person']['old'] += 1
                 LOGGER.info("Lotus Person: id={}".format(person_id))
 
+            person = Person.objects.get(id=person_id)
+
+
+            # always add the tribe info
+            if row_dict['tribe']:
+                for tribe in row_dict['tribe'].split(" or "):
+                    tribe_str = tribe.strip()
+
+                    if tribe_str:
+                        # all tribes should already be in the db
+                        try:
+                            tribe_obj = Tribe.objects.filter(name__iexact=tribe_str).first()
+                            tribe_uncertain = row_dict["tribe_uncertain"]
+
+                            tribe_assertion, created = TribeAssertion.objects.get_or_create(person=person,
+                                                                                            tribe=tribe_obj,
+                                                                                            uncertain=tribe_uncertain,
+                                                                                            secondary_source=sec_source)
+                        except Exception as e:
+                            LOGGER.error(e)
+                            LOGGER.error(tribe_str)
+
+
+            # original_text = row_dict["original_text"]
+
+            # uncertain_flag = False
+            # uncertain = row_dict["uncertain"].strip()
+            # if uncertain:
+            #     uncertain_flag = True
+
+        # statys_assertion = StatusAssertion.objects.get_or_create()
+        # always collect origin info
+
+            #     # rel_notes = unicode(row_dict['notes'].strip(), 'iso-8859-1')
+
+            #     rel_num = None
+            #     marriage_no = row_dict["marriage_no"].strip()
+            #     if marriage_no:
+            #         rel_num = int(marriage_no)
+
+            #     # create RelationshipAssertion
+            #     # TODO: test if created
+            #     rel, created = RelationshipAssertion.objects.get_or_create(
+            #         person_id=p1_id, related_person_id=p2_id, relationship=rel_type,
+            #         uncertain=uncertain_flag, secondary_source=sec_source,
+            #         relationship_number=rel_num)
+
+            #     if created:
+            #         LOGGER.info(
+            #             "Created new relationship with id={}".format(rel.id))
+            #     else:
+            #         LOGGER.info(
+            #             "Relationship already existed with id={}".format(rel.id))
+
+            #     rel.references.add(ra_reference)
+
+            #     if created:
+            #         # only creates the PrimarySourceReferences if the
+            #         # RelAssertionRef was created
+            #         for psource in primary_references_str.split(","):
+            #             primary_reference = PrimarySourceReference(
+            #                 content_object=ra_reference,
+            #                 text=psource.strip())
+            #             primary_reference.save()
+
+            #     # Upgrades and saves the row
+            #     row_dict.update({"p1_id": p1_id,
+            #                      "relationshipassertion_id": rel.id,
+            #                      "p2_id": p2_id})
+
+            #     writer.writerow(row_dict)
+
+            # except Exception as e:
+            #     LOGGER.error(
+            #         "Unable to import line from csv file... Please debug data. ".format(e.message))
 
     pp.pprint(stats)
     LOGGER.info("Wrote log file \"{}\"".format(log_fname))

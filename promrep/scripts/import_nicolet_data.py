@@ -188,6 +188,19 @@ def read_input_file(ifname):
 
             person = Person.objects.get(id=person_id)
 
+            if row_dict["origin"]:
+                origin_str = row_dict["origin"]
+                print origin_str
+
+                if row_dict["origin_uncertain"]:
+                    origin_str = origin_str + "?"
+
+                if person.origin:
+                    LOGGER.info("Person already had previous Origin info!!!!")
+                else:
+                    person.origin = origin_str
+                    person.save()
+
 
             # always add the tribe info
             if row_dict['tribe']:

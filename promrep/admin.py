@@ -6,7 +6,8 @@ from django.contrib.admin import SimpleListFilter
 from django_mptt_admin.admin import DjangoMpttAdmin
 from django.contrib.contenttypes.admin import GenericStackedInline
 
-from promrep.forms import PostInlineForm, RelationshipAssertionInlineForm
+from promrep.forms import (
+    PostInlineForm, RelationshipAssertionInlineForm, StatusInlineForm)
 
 from django.utils.html import format_html
 from django.core.urlresolvers import reverse
@@ -16,11 +17,47 @@ from models import (
     DateType, SecondarySource, PrimarySource, Gens, PostAssertionNote, Tribe,
     Province, PersonNote, RelationshipAssertion, RelationshipType,
     RelationshipAssertionReference, TribeAssertion, PrimarySourceReference,
-    GensAssertion
+    GensAssertion, StatusAssertion, StatusType
 )
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
+
+
+class StatusAssertionInline(admin.StackedInline):
+
+    model = StatusAssertion
+    form = StatusInlineForm
+
+    extra = 0
+    show_change_link = True
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-closed',)
+
+    verbose_name = 'Status Assertion'
+
+    ordering = ('-date_start', '-date_end', )
+    readonly_fields = ('id', )
+
+    fields = (('id', 'review_flag', ),
+              ('status', 'uncertain'),
+              ('secondary_source', ),
+              ('original_text', ),
+              ('date_display_text',),
+              ('date_source_text', 'date_secondary_source', ),
+              ('date_start', 'date_start_uncertain',),
+              ('date_end', 'date_end_uncertain',),
+              ('provinces_list',),
+              ('notes',),
+              ('edit_link',)
+              )
+
+    raw_id_fields = ('notes',)
+
+    related_lookup_fields = {
+        'm2m': ['notes',],
+    }
 
 
 class RelationshipAssertionListInline(admin.TabularInline):
@@ -193,7 +230,7 @@ class DirectRelationshipInline(admin.StackedInline):
     )
 
 
-class PostAssertionProvincesInline(admin.StackedInline):
+class PostAssertionProvinceInline(admin.StackedInline):
     model = PostAssertion.provinces.through
     extra = 0
 
@@ -202,6 +239,27 @@ class PostAssertionProvincesInline(admin.StackedInline):
 
     verbose_name = 'Province:'
     verbose_name_plural = 'Provinces'
+
+    raw_id_fields = ('province', )
+
+    related_lookup_fields = {
+        'fk': ['province', ],
+    }
+
+    fields = (
+        ('province', 'uncertain'),
+        ('note', )
+    )
+
+
+class StatusAssertionProvinceInline(admin.StackedInline):
+    model = StatusAssertion.provinces.through
+    extra = 0
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-open',)
+
+    verbose_name = 'Province'
 
     raw_id_fields = ('province', )
 
@@ -229,6 +287,21 @@ class PostAssertionNoteInline(admin.StackedInline):
 
     related_lookup_fields = {
         'fk': ['postassertionnote', ],
+    }
+
+
+class StatusAssertionNoteInline(admin.StackedInline):
+    model = StatusAssertion.notes.through
+    extra = 0
+
+    classes = ('grp-collapse grp-open',)
+    inline_classes = ('grp-collapse grp-open',)
+
+    verbose_name = 'Status Assertion Note'
+    raw_id_fields = ('statusassertionnote', )
+
+    related_lookup_fields = {
+        'fk': ['statusassertionnote', ],
     }
 
 
@@ -273,7 +346,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
         'fk': ['group', 'person', 'office', ],
     }
 
-    inlines = (PostAssertionNoteInline, PostAssertionProvincesInline)
+    inlines = (PostAssertionNoteInline, PostAssertionProvinceInline)
 
 admin.site.register(PostAssertion, PostAssertionAdmin)
 
@@ -324,46 +397,9 @@ class PersonNoteInline(admin.StackedInline):
     }
 
 
-class PersonInline(admin.StackedInline):
-    model = PostAssertion
-    form = PostInlineForm
-
-    classes = ('grp-collapse grp-open',)
-    inline_classes = ('grp-collapse grp-closed',)
-
-    verbose_name_plural = 'Persons on this Group'
-    verbose_name = 'Person:'
-
-    show_change_link = True
-
-    fields = (
-        ('id', 'review_flag', 'position'),
-        ('person', ),
-        ('office', 'role', ),
-        ('uncertain'),
-        ('secondary_source', 'original_text', 'office_xref'),
-        ('date_display_text', ),
-        ('date_source_text', 'date_secondary_source', ),
-        ('date_start', 'date_start_uncertain', 'date_end', 'date_end_uncertain'),
-        'notes',
-        'edit_link'
-    )
-
-    sortable_field_name = 'position'
-
-    readonly_fields = ('id', )
-
-    raw_id_fields = ('person', 'notes')
-    related_lookup_fields = {
-        'fk': ['person', ],
-        'm2m': ['notes', ]
-    }
-
-    extra = 0
-
-
 class PostAssertionInline(admin.StackedInline):
     """Included in the Person Admin"""
+
     model = PostAssertion
     form = PostInlineForm
 
@@ -373,7 +409,6 @@ class PostAssertionInline(admin.StackedInline):
     inline_classes = ('grp-collapse grp-closed',)
 
     verbose_name = 'Post Assertion'
-    verbose_name_plural = 'Person Post Assertions'
 
     show_change_link = True
     ordering = ('-date_start', '-date_end', )
@@ -549,8 +584,8 @@ class PersonAdmin(admin.ModelAdmin):
 
     inlines = (
         DateInformationInline, GensAssertionInline, TribeAssertionInline,
-        PostAssertionInline, PersonNoteInline, DirectRelationshipInline,
-        InverseRelationshipInline
+        PostAssertionInline, StatusAssertionInline, PersonNoteInline,
+        DirectRelationshipInline, InverseRelationshipInline
     )
 
     exclude = ('assertions', )
@@ -609,10 +644,47 @@ class GroupAdmin(admin.ModelAdmin):
                   ),
                  ]
 
-    inlines = [PersonInline, ]
+    inlines = [PostAssertionInline, ]
     exclude = ('persons',)
 
 admin.site.register(Group, GroupAdmin)
+
+
+class StatusAssertionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'person', 'status',
+                    'uncertain', 'date_start', 'date_end')
+
+    fields = (('id', 'review_flag', ),
+              ('person', 'status', ),
+              ('secondary_source', 'uncertain',),
+              ('original_text'),
+              ('date_display_text',),
+              ('date_start', 'date_start_uncertain',),
+              ('date_end', 'date_end_uncertain',),
+              ('date_secondary_source',),
+              ('date_source_text',),
+              ('extra_info'))
+
+    readonly_fields = ('id', )
+
+    raw_id_fields = ('person', 'status', 'secondary_source', )
+
+    related_lookup_fields = {
+        'fk': ['person', 'status', 'secondary_source', ],
+    }
+
+    inlines = (StatusAssertionProvinceInline, StatusAssertionNoteInline, )
+
+admin.site.register(StatusAssertion, StatusAssertionAdmin)
+
+
+class StatusTypeAdmin(admin.ModelAdmin):
+
+    list_display = ('id', 'name', )
+    list_display_links = ('id', 'name', )
+    readonly_fields = ('id', )
+
+admin.site.register(StatusType, StatusTypeAdmin)
 
 
 class GensAdmin(admin.ModelAdmin):

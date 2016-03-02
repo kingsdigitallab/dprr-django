@@ -20,7 +20,11 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     person = indexes.CharField(model_attr='person', faceted=True)
     person_id = indexes.IntegerField(model_attr='person__id')
 
+    praenomen = indexes.CharField(
+        model_attr='person__praenomen__abbrev', faceted=True, null=True)
     nomen = indexes.CharField(faceted=True, null=True)
+    f = indexes.CharField(faceted=True, null=True)
+    n = indexes.CharField(faceted=True, null=True)
     cognomen = indexes.CharField(faceted=True, null=True)
 
     gender = indexes.CharField(
@@ -50,6 +54,52 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
 
+    def prepare_nomen(self, object):
+        """The list of nomens to filter on should not show parentheses or
+        brackets."""
+
+        nomen = object.person.nomen.strip()
+        return re.sub(r'[\?\[\]\(\)]', '', nomen)
+
+    def prepare_f(self, object):
+        filiation = object.person.filiation.strip()
+
+        if not filiation:
+            return None
+
+        found = re.search(r'(.*?) f\..*', filiation)
+
+        if not found:
+            return None
+
+        return found.groups()[0]
+
+    def prepare_n(self, object):
+        filiation = object.person.filiation.strip()
+
+        if not filiation:
+            return None
+
+        found = re.search(r'.*?f\.\s*(.*?) n\..*', filiation)
+
+        if not found:
+            return None
+
+        return found.groups()[0]
+
+    def prepare_cognomen(self, object):
+        """The list of cognomens to filter on should not show parentheses or
+        brackets."""
+
+        cognomen = object.person.cognomen.strip()
+        return re.sub(r'[\?\[\]\(\)]', '', cognomen)
+
+    def prepare_province(self, object):
+        return [re.sub(
+            r'[\?\[\]\(\)]',
+            '',
+            p.name.strip().capitalize()) for p in object.provinces.all()]
+
     def prepare_post_date(self, object):
         """range of dates for the post"""
 
@@ -66,26 +116,6 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         res = range(start, end + 1, 1)
 
         return res
-
-    def prepare_province(self, object):
-        return [re.sub(
-            r'[\?\[\]\(\)]',
-            '',
-            p.name.strip().capitalize()) for p in object.provinces.all()]
-
-    def prepare_nomen(self, object):
-        """The list of nomens to filter on should not show parentheses or
-        brackets."""
-
-        nomen = object.person.nomen.strip()
-        return re.sub(r'[\?\[\]\(\)]', '', nomen)
-
-    def prepare_cognomen(self, object):
-        """The list of cognomens to filter on should not show parentheses or
-        brackets."""
-
-        cognomen = object.person.cognomen.strip()
-        return re.sub(r'[\?\[\]\(\)]', '', cognomen)
 
     def prepare_highest_office(self, object):
         """returns a string with the highest office/date a specific person

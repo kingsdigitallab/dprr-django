@@ -3,7 +3,7 @@ from promrep.models import PostAssertion
 import re
 
 
-class MultiValueIntegerField (indexes.MultiValueField):
+class MultiValueIntegerField(indexes.MultiValueField):
     field_type = 'integer'
 
     def convert(self, value):
@@ -23,6 +23,8 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     nomen = indexes.CharField(faceted=True, null=True)
     cognomen = indexes.CharField(faceted=True, null=True)
 
+    gender = indexes.CharField(
+        model_attr='person__sex__name', faceted=True, null=True)
     patrician = indexes.BooleanField(
         model_attr='person__patrician', default=False, faceted=True)
 
@@ -34,7 +36,6 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
     # used to display the highest office achieved in the search page
     highest_office = indexes.CharField(faceted=False)
-
 
     def get_model(self):
         return PostAssertion
@@ -61,25 +62,30 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         return res
 
     def prepare_province(self, object):
-        return [re.sub(r'[\?\[\]\(\)]', '', p.name.strip().capitalize()) for p in object.provinces.all()]
+        return [re.sub(
+            r'[\?\[\]\(\)]',
+            '',
+            p.name.strip().capitalize()) for p in object.provinces.all()]
 
     def prepare_nomen(self, object):
-        """The list of nomens to filter on should not show parentheses or brackets."""
+        """The list of nomens to filter on should not show parentheses or
+        brackets."""
 
         nomen = object.person.nomen.strip()
         return re.sub(r'[\?\[\]\(\)]', '', nomen)
 
     def prepare_cognomen(self, object):
-        """The list of cognomens to filter on should not show parentheses or brackets."""
+        """The list of cognomens to filter on should not show parentheses or
+        brackets."""
 
         cognomen = object.person.cognomen.strip()
         return re.sub(r'[\?\[\]\(\)]', '', cognomen)
 
-
     def prepare_highest_office(self, object):
-        """returns a string with the highest office/date a specific person achived"""
+        """returns a string with the highest office/date a specific person
+        archived"""
 
-        pa = object.person.post_assertions.all().order_by('-date_end', '-date_end')[0]
+        pa = object.person.post_assertions.all().order_by(
+            '-date_end', '-date_end')[0]
 
         return pa.office.abbrev_name.title() + " " + pa.print_date()
-

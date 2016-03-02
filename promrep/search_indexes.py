@@ -67,7 +67,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         if not filiation:
             return None
 
-        found = re.search(r'(.*?) f\..*', filiation)
+        found = re.search(r'([^-].*?) f\..*', filiation)
 
         if not found:
             return None
@@ -80,7 +80,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         if not filiation:
             return None
 
-        found = re.search(r'.*?f\.\s*(.*?) n\..*', filiation)
+        found = re.search(r'(?:.*\s+f\.\s+)?(.*[^-])\s+n\.', filiation)
 
         if not found:
             return None

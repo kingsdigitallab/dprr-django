@@ -23,8 +23,8 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     praenomen = indexes.CharField(
         model_attr='person__praenomen__abbrev', faceted=True, null=True)
     nomen = indexes.CharField(faceted=True, null=True)
-    f = indexes.CharField(faceted=True, null=True)
-    n = indexes.CharField(faceted=True, null=True)
+    f = indexes.CharField(model_attr='person__f', faceted=True, null=True)
+    n = indexes.CharField(model_attr='person__n', faceted=True, null=True)
     cognomen = indexes.CharField(faceted=True, null=True)
 
     gender = indexes.CharField(
@@ -60,32 +60,6 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
         nomen = object.person.nomen.strip()
         return re.sub(r'[\?\[\]\(\)]', '', nomen)
-
-    def prepare_f(self, object):
-        filiation = object.person.filiation.strip()
-
-        if not filiation:
-            return None
-
-        found = re.search(r'([^-].*?) f\..*', filiation)
-
-        if not found:
-            return None
-
-        return found.groups()[0]
-
-    def prepare_n(self, object):
-        filiation = object.person.filiation.strip()
-
-        if not filiation:
-            return None
-
-        found = re.search(r'(?:.*\s+f\.\s+)?(.*[^-])\s+n\.', filiation)
-
-        if not found:
-            return None
-
-        return found.groups()[0]
 
     def prepare_cognomen(self, object):
         """The list of cognomens to filter on should not show parentheses or

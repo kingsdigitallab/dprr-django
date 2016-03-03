@@ -26,8 +26,6 @@ def parse_person(text):
     # returnable dictionary
     person_data = {}
 
-    print "ParsePersonName", text
-
     praenomen_list = [regex.escape(p.abbrev) for p in Praenomen.objects.all()]
     praenomen_abbrev = r'(?:%s)' % '|'.join(praenomen_list)
     full_prae_list = [regex.escape(p.name) for p in Praenomen.objects.all()]
@@ -158,8 +156,6 @@ def parse_person(text):
 def parse_brennan_person(text):
     """Will return a person object or None if unable to parse the person"""
 
-    logger.info("ParseBrennanPerson: %s" %(text))
-
     praenomen_list = [regex.escape(p.abbrev) for p in Praenomen.objects.all()]
     praenomen_abbrev = r'(?:%s)' % '|'.join(praenomen_list)
 
@@ -208,12 +204,12 @@ def parse_brennan_person(text):
         real = ""
     sex = Sex.objects.get(name='Male')
 
-    praen_cert = True
+    praen_cert = False
     if len(captured.captures('praenomen')):
         praenomen_str = captured.captures('praenomen')[0].strip()
 
         if "?" in praenomen_str:
-            praen_cert = False
+            praen_cert = True
             praenomen_str = praenomen_str.replace("?", "")
 
         try:
@@ -264,19 +260,20 @@ def parse_brennan_person(text):
     # these chars indicate uncertainty, etc...
 
     try:
+        # TODO: add tribe object separately
         person = Person(
             sex=sex,
             praenomen=praenomen,
             nomen= nomen.strip("?()[]"),
-            praenomen_certainty = praen_cert,
+            praenomen_uncertain = praen_cert,
             filiation=filiation,
-            tribe = tribe,
             cognomen=cognomen_first,
             re_number=real,
             other_names=other_names,
             patrician=is_pat,
             patrician_uncertain=pat_uncertain,
             )
+
 
     except Exception as e:
         print 'Failed to create person %s (%s)' % (e.message, type(e))

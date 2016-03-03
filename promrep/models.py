@@ -5,12 +5,10 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey
 
-from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import (
     GenericForeignKey, GenericRelation)
 
-from django.core import urlresolvers
 from django.core.urlresolvers import reverse
 
 from author.decorators import with_author

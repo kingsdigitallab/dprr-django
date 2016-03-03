@@ -124,7 +124,7 @@ class AddParsingAuxTestCase(TestCase):
         self.assertEqual(p['nomen'], "Novius")
         self.assertEqual(p['cognomen'], "Niger")
         self.assertEqual(p['praenomen'], Praenomen.objects.get(abbrev="L."))
-        self.assertFalse(p['praenomen_certainty'])
+        self.assertTrue(p['praenomen_uncertain'])
         self.assertEqual(p['re_number'], "12, cf. 7")
 
         ### tribe

@@ -141,12 +141,12 @@ def read_input_file(ifname):
         abbrev_name="Nicolet")
 
     # log file with the ids of the objects created in the database
-    writer = csv.DictWriter(open(log_fname, 'wb'),
-                            ["person_1_id", "relationshipassertion_id"],
-                            dialect='excel',
-                            delimiter=";",
-                            extrasaction='ignore')
-    writer.writeheader()
+    csv_log = csv.DictWriter(open(log_fname, 'wb'),
+                             ["person_id", "person", "status_assertion", "post_assertion"],
+                             dialect='excel',
+                             delimiter=";",
+                             extrasaction='ignore')
+    csv_log.writeheader()
 
     stats = {'person': {'new': 0, 'old': 0, 'found': 0}}
 
@@ -264,6 +264,7 @@ def read_input_file(ifname):
                         date_end=date_end,
                         date_start_uncertain=date_start_uncertain,
                         date_end_uncertain=date_end_uncertain,
+                        date_source_text = date_source_text,
                         uncertain=row_dict['office_uncertain'],
                         original_text=row_dict['original_text'],
                         review_flag=row_dict['review_flag']
@@ -275,6 +276,7 @@ def read_input_file(ifname):
                 if date_end:
                     st_assert.date_end = date_end
 
+                st_assert.date_source_text = date_source_text
                 st_assert.date_start_uncertain = date_start_uncertain
                 st_assert.date_end_uncertain = date_end_uncertain
 
@@ -282,7 +284,7 @@ def read_input_file(ifname):
 
         # print a log file of the created persons
 
-            #     writer.writerow(row_dict)
+            #     csv_log.writerow(row_dict)
 
             # except Exception as e:
             #     LOGGER.error(

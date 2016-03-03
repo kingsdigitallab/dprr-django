@@ -17,12 +17,12 @@ from models import (
     DateType, SecondarySource, PrimarySource, Gens, PostAssertionNote, Tribe,
     Province, PersonNote, RelationshipAssertion, RelationshipType,
     RelationshipAssertionReference, TribeAssertion, PrimarySourceReference,
-    GensAssertion, StatusAssertion, StatusType
+    GensAssertion, StatusAssertion, StatusType, StatusAssertionNote
 )
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
-
+admin.site.register(StatusAssertionNote)
 
 class StatusAssertionInline(admin.StackedInline):
 

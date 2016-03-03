@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-## import csv
+# import csv
 import unicodecsv as csv
 import itertools
 import logging
@@ -9,7 +9,8 @@ import primary_source_aux as psource_aux
 
 from promrep.models import (Person, StatusAssertion, Praenomen, Sex,
                             SecondarySource, StatusAssertionNote,
-                            PostAssertion, Tribe, TribeAssertion)
+                            PostAssertion, Tribe, TribeAssertion,
+                            StatusType, PostAssertion, Office, )
 
 import pprint
 pp = pprint.PrettyPrinter(width=1)
@@ -83,7 +84,6 @@ def create_person(row_dict):
     """
 
     person_dict = {}
-
     person_dict['sex'] = Sex.objects.get(name="Male")
 
     if 'sex' in row_dict and row_dict['sex'].strip() == "F":
@@ -125,7 +125,6 @@ def create_person(row_dict):
 
     if created:
         LOGGER.info("Created person with id={}".format(person.id))
-        person_dict["review_notes"] = "created from Zmeskal csv file"
 
     return person.id, created
 
@@ -201,7 +200,6 @@ def read_input_file(ifname):
                     person.origin = origin_str
                     person.save()
 
-
             # always add the tribe info
             if row_dict['tribe']:
                 for tribe in row_dict['tribe'].split(" or "):
@@ -210,64 +208,79 @@ def read_input_file(ifname):
                     if tribe_str:
                         # all tribes should already be in the db
                         try:
-                            tribe_obj = Tribe.objects.filter(name__iexact=tribe_str).first()
+                            tribe_obj = Tribe.objects.filter(
+                                name__iexact=tribe_str).first()
                             tribe_uncertain = row_dict["tribe_uncertain"]
 
-                            tribe_assertion, created = TribeAssertion.objects.get_or_create(person=person,
-                                                                                            tribe=tribe_obj,
-                                                                                            uncertain=tribe_uncertain,
-                                                                                            secondary_source=sec_source)
+                            tribe_assertion, created = \
+                                TribeAssertion.objects.get_or_create(person=person,
+                                                                     tribe=tribe_obj,
+                                                                     uncertain=tribe_uncertain,
+                                                                     secondary_source=sec_source)
                         except Exception as e:
                             LOGGER.error(e)
                             LOGGER.error(tribe_str)
 
+            st_type, created = StatusType.objects.get_or_create(name="Eques")
 
-            # original_text = row_dict["original_text"]
+            st_assert, sa_created = StatusAssertion.objects.get_or_create(
+                person=person,
+                secondary_source=sec_source,
+                uncertain=row_dict["eques_uncertain"],
+                status=st_type,
+                review_flag=row_dict["review_flag"],
+                original_text=row_dict["original_text"],)
 
-            # uncertain_flag = False
-            # uncertain = row_dict["uncertain"].strip()
-            # if uncertain:
-            #     uncertain_flag = True
+            if sa_created:
+                sa_note = StatusAssertionNote(secondary_source=sec_source,
+                                              text=row_dict["notes"],)
+                sa_note.save()
+                st_assert.notes.add(sa_note)
 
-        # statys_assertion = StatusAssertion.objects.get_or_create()
-        # always collect origin info
+            # Dates, post assertions
 
-            #     # rel_notes = unicode(row_dict['notes'].strip(), 'iso-8859-1')
+            date_start_type = row_dict["date_start_type"].strip()
+            date_end_type = row_dict["date_end_type"].strip()
+            date_start = row_dict["date_start"].strip()
+            date_start_uncertain = row_dict["date_start_uncertain"].strip()
+            date_end = row_dict["date_end"].strip()
+            date_end_uncertain = row_dict["date_end_uncertain"].strip()
+            date_source_text = row_dict["date_source_text"].strip()
 
-            #     rel_num = None
-            #     marriage_no = row_dict["marriage_no"].strip()
-            #     if marriage_no:
-            #         rel_num = int(marriage_no)
+            if (date_start_type or date_end_type) == "Office":
+                if row_dict["post"].strip == 0:
+                    office_name = row_dict['office_name'].strip()
 
-            #     # create RelationshipAssertion
-            #     # TODO: test if created
-            #     rel, created = RelationshipAssertion.objects.get_or_create(
-            #         person_id=p1_id, related_person_id=p2_id, relationship=rel_type,
-            #         uncertain=uncertain_flag, secondary_source=sec_source,
-            #         relationship_number=rel_num)
+                    print("Office-->{}".format(office_name))
 
-            #     if created:
-            #         LOGGER.info(
-            #             "Created new relationship with id={}".format(rel.id))
-            #     else:
-            #         LOGGER.info(
-            #             "Relationship already existed with id={}".format(rel.id))
+                    office = Office.objects.get(
+                        name__iexact=office_name)
 
-            #     rel.references.add(ra_reference)
+                    pa_assertion, created = PostAssertion.objects.get_or_create(
+                        person=person,
+                        office=office,
+                        secondary_source=sec_source,
+                        date_start=date_start,
+                        date_end=date_end,
+                        date_start_uncertain=date_start_uncertain,
+                        date_end_uncertain=date_end_uncertain,
+                        uncertain=row_dict['office_uncertain'],
+                        original_text=row_dict['original_text'],
+                        review_flag=row_dict['review_flag']
+                    )
 
-            #     if created:
-            #         # only creates the PrimarySourceReferences if the
-            #         # RelAssertionRef was created
-            #         for psource in primary_references_str.split(","):
-            #             primary_reference = PrimarySourceReference(
-            #                 content_object=ra_reference,
-            #                 text=psource.strip())
-            #             primary_reference.save()
+            else:
+                if date_start:
+                    st_assert.date_start = date_start
+                if date_end:
+                    st_assert.date_end = date_end
 
-            #     # Upgrades and saves the row
-            #     row_dict.update({"p1_id": p1_id,
-            #                      "relationshipassertion_id": rel.id,
-            #                      "p2_id": p2_id})
+                st_assert.date_start_uncertain = date_start_uncertain
+                st_assert.date_end_uncertain = date_end_uncertain
+
+                st_assert.save()
+
+        # print a log file of the created persons
 
             #     writer.writerow(row_dict)
 
@@ -280,7 +293,7 @@ def read_input_file(ifname):
 
 
 def run():
-    ifname = "promrep/scripts/data/nicolet/NicoletExportv4.csv"
+    ifname = "promrep/scripts/data/nicolet/NicoletExportv5.csv"
 
     LOGGER.info("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

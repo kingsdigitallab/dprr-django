@@ -170,7 +170,8 @@ def read_input_file(ifname):
                     "re": row_dict["RE"],
                     "filiation": row_dict["filiation"],
                     "cognomen": row_dict["cognomen"],
-                    "other_names": row_dict["other_names"]
+                    "other_names": row_dict["other_names"],
+                    "review_flag": row_dict["review_flag"],
                 }
 
                 person_id, created = create_person(person_dict)
@@ -248,20 +249,21 @@ def read_input_file(ifname):
             date_source_text = row_dict["date_source_text"].strip()
 
             if (date_start_type or date_end_type) == "Office":
-                if row_dict["post"].strip == 0:
+                if row_dict["post"].strip() == "0":
                     office_name = row_dict['office_name'].strip()
 
                     print("Office-->{}".format(office_name))
 
-                    office = Office.objects.get(
-                        name__iexact=office_name)
+                    office_list = Office.objects.filter(name__iexact=office_name)
+                    if len(office_list):
+                        office = Office.objects.get(name__iexact=office_name)
+                    else:
+                        office, created = Office.objects.get_or_create(name=office_name)
 
                     pa_assertion, created = PostAssertion.objects.get_or_create(
                         person=person,
                         office=office,
                         secondary_source=sec_source,
-                        date_start=date_start,
-                        date_end=date_end,
                         date_start_uncertain=date_start_uncertain,
                         date_end_uncertain=date_end_uncertain,
                         date_source_text = date_source_text,
@@ -269,6 +271,13 @@ def read_input_file(ifname):
                         original_text=row_dict['original_text'],
                         review_flag=row_dict['review_flag']
                     )
+
+                    if date_start:
+                        pa_assertion.date_start = date_start
+                    if date_end:
+                        pa_assertion.date_end = date_end
+                    pa_assertion.save()
+
 
             else:
                 if date_start:

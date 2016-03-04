@@ -26,16 +26,16 @@ class PersonTest(TestCase):
         self.person = Person()
 
     def test__f(self):
+        # 1. fail the test
+        # self.fail()
+        # 2. easy pass of the test
+        # self.assertIsNone(self.person.f)
+        # 3. add test cases and iteratively implement the functionality to pass
         for filiation in self.filiations:
             self.person.filiation = filiation['text']
             self.assertEqual(filiation['f'], self.person.f)
 
     def test__n(self):
-        # 1. fail the test
-        # self.fail()
-        # 2. easy pass of the test
-        # self.assertIsNone(self.person.n)
-        # 3. add test cases and iteratively implement the functionality to pass
         for filiation in self.filiations:
             self.person.filiation = filiation['text']
             self.assertEqual(filiation['n'], self.person.n)

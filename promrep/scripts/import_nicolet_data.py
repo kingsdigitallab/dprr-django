@@ -142,7 +142,8 @@ def read_input_file(ifname):
 
     # log file with the ids of the objects created in the database
     csv_log = csv.DictWriter(open(log_fname, 'wb'),
-                             ["person_id", "person", "status_assertion", "post_assertion"],
+                             ["person_id", "person",
+                                 "status_assertion", "post_assertion"],
                              dialect='excel',
                              delimiter=";",
                              extrasaction='ignore')
@@ -190,7 +191,6 @@ def read_input_file(ifname):
 
             if row_dict["origin"]:
                 origin_str = row_dict["origin"]
-                print origin_str
 
                 if row_dict["origin_uncertain"]:
                     origin_str = origin_str + "?"
@@ -201,26 +201,28 @@ def read_input_file(ifname):
                     person.origin = origin_str
                     person.save()
 
-            # always add the tribe info
+            # add the tribe info
             if row_dict['tribe']:
                 for tribe in row_dict['tribe'].split(" or "):
                     tribe_str = tribe.strip()
 
                     if tribe_str:
-                        # all tribes should already be in the db
-                        try:
-                            tribe_obj = Tribe.objects.filter(
-                                name__iexact=tribe_str).first()
-                            tribe_uncertain = row_dict["tribe_uncertain"]
+                        tribes = Tribe.objects.filter(name__iexact=tribe_str)
 
-                            tribe_assertion, created = \
-                                TribeAssertion.objects.get_or_create(person=person,
-                                                                     tribe=tribe_obj,
-                                                                     uncertain=tribe_uncertain,
-                                                                     secondary_source=sec_source)
-                        except Exception as e:
-                            LOGGER.error(e)
-                            LOGGER.error(tribe_str)
+                        if tribes.count() == 0:
+                            tribe_obj = Tribe.objects.create(name=tribe_str, abbrev=tribe_str)
+                        else:
+                            tribe_obj = tribes.first()
+
+                        tribe_uncertain = row_dict["tribe_uncertain"]
+
+                        # only created if doesn't exist already
+                        if tribe_obj not in person.tribes.all():
+                            tr_assert, cr = TribeAssertion.objects.get_or_create(
+                                person=person,
+                                tribe=tribe_obj,
+                                uncertain=tribe_uncertain,
+                                secondary_source=sec_source)
 
             st_type, created = StatusType.objects.get_or_create(name="Eques")
 
@@ -243,30 +245,34 @@ def read_input_file(ifname):
             date_start_type = row_dict["date_start_type"].strip()
             date_end_type = row_dict["date_end_type"].strip()
             date_start = row_dict["date_start"].strip()
-            date_start_uncertain = row_dict["date_start_uncertain"].strip()
             date_end = row_dict["date_end"].strip()
-            date_end_uncertain = row_dict["date_end_uncertain"].strip()
             date_source_text = row_dict["date_source_text"].strip()
+
+            date_start_uncertain = True
+            if row_dict["date_start_uncertain"].strip() == "0":
+                date_start_uncertain = False
+
+            date_end_uncertain = True
+            if row_dict["date_end_uncertain"].strip() == "0":
+                date_end_uncertain = False
 
             if (date_start_type or date_end_type) == "Office":
                 if row_dict["post"].strip() == "0":
                     office_name = row_dict['office_name'].strip()
+                    office_list = Office.objects.filter(
+                        name__iexact=office_name)
 
-                    print("Office-->{}".format(office_name))
-
-                    office_list = Office.objects.filter(name__iexact=office_name)
                     if len(office_list):
                         office = Office.objects.get(name__iexact=office_name)
                     else:
-                        office, created = Office.objects.get_or_create(name=office_name)
+                        office, created = Office.objects.get_or_create(
+                            name=office_name)
 
                     pa_assertion, created = PostAssertion.objects.get_or_create(
                         person=person,
                         office=office,
                         secondary_source=sec_source,
-                        date_start_uncertain=date_start_uncertain,
-                        date_end_uncertain=date_end_uncertain,
-                        date_source_text = date_source_text,
+                        date_source_text=date_source_text,
                         uncertain=row_dict['office_uncertain'],
                         original_text=row_dict['original_text'],
                         review_flag=row_dict['review_flag']
@@ -276,8 +282,12 @@ def read_input_file(ifname):
                         pa_assertion.date_start = date_start
                     if date_end:
                         pa_assertion.date_end = date_end
-                    pa_assertion.save()
 
+                    pa_assertion.date_source_text = date_source_text
+                    pa_assertion.date_start_uncertain = date_start_uncertain
+                    pa_assertion.date_end_uncertain = date_end_uncertain
+
+                    pa_assertion.save()
 
             else:
                 if date_start:

@@ -9,9 +9,9 @@
 /*** Global ***/
 
 /*** TO BE REMOVED: for presentation purposes only ***/
-// .extra-margin {
-// 	padding-top: 140px;
-// }
+.extra-margin {
+	padding-top: 140px;
+}
 /*** END TO BE REMOVED ***/
 
 hr {
@@ -212,6 +212,32 @@ h3.quick-home {
 	}
 }
 
+button.name-form {
+	color: $dark-gold;
+	font-size: .875rem;
+	background: scale-color($sand, $lightness: 15%);
+	border: 1px solid scale-color($sand, $lightness: -11%);
+	padding: .5rem 1rem;
+	width: 100%;
+
+	&:hover {
+		color: $dark-gold;
+		background: scale-color($sand, $lightness: 15%);
+	}
+
+	&:after {
+		border-color: $dark-gold transparent transparent transparent !important;
+	}
+}
+
+.drop-list {
+	li {
+		border-bottom: 1px solid #ccc;
+	}
+	li:last-child {
+		border: none;
+	}
+}
 // .show-all {
 // 	background: $primary-color;
 // }

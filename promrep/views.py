@@ -4,7 +4,7 @@ from django.views.generic.detail import DetailView
 from haystack.generic_views import FacetedSearchView
 
 from promrep.forms import PromrepFacetedSearchForm
-from promrep.models import PostAssertion, Person
+from promrep.models import PostAssertion, Person, StatusAssertion
 from promrep.solr_backends.solr_backend_field_collapsing import (
     GroupedSearchQuerySet)
 
@@ -12,12 +12,13 @@ from promrep.solr_backends.solr_backend_field_collapsing import (
 class PromrepFacetedSearchView(FacetedSearchView):
     # TODO: check how to set facet.mincount, can facet_fields be declared as a
     # dictionary?
-    facet_fields = ['patrician', 'nomen', 'cognomen', 'office', 'province', ]
-    alpha_facet_fields = ['nomen', 'office', 'province', 'cognomen', ]
+    facet_fields = ['patrician', 'nomen', 'cognomen', 'office', 'province',
+                    'status']
+    alpha_facet_fields = ['nomen', 'office', 'province', 'cognomen', 'status']
     form_class = PromrepFacetedSearchForm
     load_all = True
     queryset = GroupedSearchQuerySet().models(
-        PostAssertion).group_by('person_id')
+        PostAssertion, StatusAssertion).group_by('person_id')
 
     def get_queryset(self):
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
@@ -71,7 +72,8 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
             date_text = ""
             if self.request.GET.get('post_date_to') and self.request.GET.get('post_date_from'):
-                date_text = self.request.GET.get('post_date_from') + " to " + self.request.GET.get('post_date_to')
+                date_text = self.request.GET.get(
+                    'post_date_from') + " to " + self.request.GET.get('post_date_to')
             elif self.request.GET.get('post_date_to'):
                 date_text = "Before " + self.request.GET.get('post_date_to')
             elif self.request.GET.get('post_date_from'):

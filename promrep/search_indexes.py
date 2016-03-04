@@ -1,5 +1,5 @@
 from haystack import indexes
-from promrep.models import PostAssertion
+from promrep.models import PostAssertion, StatusAssertion
 import re
 
 
@@ -99,3 +99,36 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
             '-date_end', '-date_end')[0]
 
         return pa.office.abbrev_name.title() + " " + pa.print_date()
+
+
+class StatusAssertionIndex(indexes.SearchIndex, indexes.Indexable):
+    item_id = indexes.CharField(model_attr='id')
+
+    text = indexes.CharField(document=True, use_template=True)
+
+    person = indexes.CharField(model_attr='person', faceted=True)
+    person_id = indexes.IntegerField(model_attr='person__id')
+
+    praenomen = indexes.CharField(
+        model_attr='person__praenomen__abbrev', faceted=True, null=True)
+    f = indexes.CharField(model_attr='person__f', faceted=True, null=True)
+    n = indexes.CharField(model_attr='person__n', faceted=True, null=True)
+
+    gender = indexes.CharField(
+        model_attr='person__sex__name', faceted=True, null=True)
+    patrician = indexes.BooleanField(
+        model_attr='person__patrician', default=False, faceted=True)
+    novus = indexes.BooleanField(
+        model_attr='person__novus', default=False, faceted=True)
+    nobilis = indexes.BooleanField(
+        model_attr='person__nobilis', default=False, faceted=True)
+
+    status = indexes.CharField(model_attr='status__name', faceted=True)
+    uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
+
+    def get_model(self):
+        return StatusAssertion
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()

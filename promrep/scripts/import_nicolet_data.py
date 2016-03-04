@@ -10,7 +10,8 @@ import primary_source_aux as psource_aux
 from promrep.models import (Person, StatusAssertion, Praenomen, Sex,
                             SecondarySource, StatusAssertionNote,
                             PostAssertion, Tribe, TribeAssertion,
-                            StatusType, PostAssertion, Office, )
+                            StatusType, PostAssertion, Office,
+                            PostAssertionNote, )
 
 import pprint
 pp = pprint.PrettyPrinter(width=1)
@@ -210,7 +211,8 @@ def read_input_file(ifname):
                         tribes = Tribe.objects.filter(name__iexact=tribe_str)
 
                         if tribes.count() == 0:
-                            tribe_obj = Tribe.objects.create(name=tribe_str, abbrev=tribe_str)
+                            tribe_obj = Tribe.objects.create(
+                                name=tribe_str, abbrev=tribe_str)
                         else:
                             tribe_obj = tribes.first()
 
@@ -256,6 +258,7 @@ def read_input_file(ifname):
             if row_dict["date_end_uncertain"].strip() == "0":
                 date_end_uncertain = False
 
+            # creates a PostAssertion
             if (date_start_type or date_end_type) == "Office":
                 if row_dict["post"].strip() == "0":
                     office_name = row_dict['office_name'].strip()
@@ -287,6 +290,12 @@ def read_input_file(ifname):
                     pa_assertion.date_start_uncertain = date_start_uncertain
                     pa_assertion.date_end_uncertain = date_end_uncertain
 
+                    # adds the note to the post assertion
+                    pa_note = PostAssertionNote.objects.create(
+                                                secondary_source=sec_source,
+                                                text=row_dict["notes"],)
+
+                    pa_assertion.notes.add(pa_note)
                     pa_assertion.save()
 
             else:

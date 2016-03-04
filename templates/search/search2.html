@@ -7,36 +7,35 @@
 <div class="row">
 	<div class="large-12 columns">
 		<h1 id="search-box">Search</h1>
-
-		<div class="row">
-			<div class="large-7 columns">
-				<h4>Text search <a data-dropdown="text-search-info" aria-controls="text-search-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-				<div id="text-search-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-					<p>Some info on how to use the <strong>free text search</strong>.</p>
+			
+		<form method="get" action=".">
+			<div class="row">
+				<div class="large-7 columns">
+					<h4>Text search <a data-dropdown="text-search-info" aria-controls="text-search-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+					<div id="text-search-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+						<p>Some info on how to use the <strong>free text search</strong>.</p>
+					</div>
+					<div class="row collapse">
+						<div class="small-9 columns">
+							{{ form.q }}
+						</div>
+						<div class="small-3 columns">
+							<button type="submit" class="postfix button"><i class="fa fa-search"></i></button>
+						</div>
+					</div>
 				</div>
-				<div class="row collapse">
-					<div class="small-9 columns">
-						{{ form.q }}
-					</div>
-					<div class="small-3 columns">
-						<button type="submit" class="postfix button"><i class="fa fa-search"></i></button>
-					</div>
+				<div class="large-2 large-offset-3 columns show-all">
+					<p>&nbsp;</p>
+					<p><a href="{% url 'haystack_search2' %}#search-results-box" class="less-padding expand button right">Show all</a></p>
 				</div>
 			</div>
-			<div class="large-2 large-offset-3 columns show-all">
-				<p>&nbsp;</p>
-				<p><a href="{% url 'haystack_search2' %}#search-results-box" class="less-padding expand button right">Show all</a></p>
-			</div>
-		</div>
 
-		<hr id="search">
+			<hr id="search">
 
-		<button class="small button secondary options"><i class="fa fa-cog"></i> <span id="showhide">Hide</span> filters' settings</button>
-		<a href="/browse/" class="right options"><span class="small button"><i class="fa fa-refresh"></i> Start new search</span></a>
+			<button class="small button secondary options"><i class="fa fa-cog"></i> <span id="showhide">Hide</span> filters' settings</button>
+			<a href="/browse/" class="right options"><span class="small button"><i class="fa fa-refresh"></i> Start new search</span></a>
 		
-		<div class="search-box">
-
-			<form method="get" action=".">
+			<div class="search-box">
 				<section data-section="non-expandable" data-expandable-group-member="facets" id="dprr-filter">
 					<div class="row">
 						<div class="large-12 columns">
@@ -129,12 +128,13 @@
 											<label>Praenomen
 												<select>
 													<option selected="selected" disabled="disabled"></option>
-													<option value="A.">A.</option>
-													<option value="Agr.">Agr.</option>
-													<option value="Ap.">Ap.</option>
-													<option value="C.">C.</option>
-													<option value="D.">D.</option>
-													<option value="L.">L.</option>
+													{% for term in facets.fields|get_item:"praenomen" %}
+													{% with value=term.0 count=term.1 %}
+													{% if count > 0 %}
+													<option value="{{ value }}">{{ value }} ({{ count }})</option>
+													{% endif %}
+													{% endwith %}
+													{% endfor %}
 												</select>
 											</label>
 										</div>
@@ -142,12 +142,13 @@
 											<label>Nomen
 												<select>
 													<option selected="selected" disabled="disabled"></option>
-													<option value="Aurelius">Aurelius</option>
-													<option value="Claudius">Claudius</option>
-													<option value="Fabius">Fabius</option>
-													<option value="Flavius">Flavius</option>
-													<option value="Julius">Julius</option>
-													<option value="Valerius">Valerius</option>
+													{% for term in facets.fields|get_item:"nomen" %}
+													{% with value=term.0 count=term.1 %}
+													{% if count > 0 %}
+													<option value="{{ value }}">{{ value }} ({{ count }})</option>
+													{% endif %}
+													{% endwith %}
+													{% endfor %}
 												</select>
 											</label>
 										</div>
@@ -155,6 +156,13 @@
 											<label>.f
 												<select>
 													<option selected="selected" disabled="disabled"></option>
+													{% for term in facets.fields|get_item:"f" %}
+													{% with value=term.0 count=term.1 %}
+													{% if count > 0 %}
+													<option value="{{ value }}">{{ value }} ({{ count }})</option>
+													{% endif %}
+													{% endwith %}
+													{% endfor %}
 												</select>
 											</label>
 										</div>
@@ -162,6 +170,13 @@
 											<label>.n
 												<select>
 													<option selected="selected" disabled="disabled"></option>
+													{% for term in facets.fields|get_item:"n" %}
+													{% with value=term.0 count=term.1 %}
+													{% if count > 0 %}
+													<option value="{{ value }}">{{ value }} ({{ count }})</option>
+													{% endif %}
+													{% endwith %}
+													{% endfor %}
 												</select>
 											</label>
 										</div>
@@ -169,6 +184,13 @@
 											<label>Cognomen
 												<select>
 													<option selected="selected" disabled="disabled"></option>
+													{% for term in facets.fields|get_item:"cognomen" %}
+													{% with value=term.0 count=term.1 %}
+													{% if count > 0 %}
+													<option value="{{ value }}">{{ value }} ({{ count }})</option>
+													{% endif %}
+													{% endwith %}
+													{% endfor %}
 												</select>
 											</label>
 										</div>
@@ -182,6 +204,16 @@
 									</div>
 								</li>
 							</ul>
+
+							<p>
+								{% for term in facets.fields|get_item:"gender" %}
+								{% with value=term.0 count=term.1 %}
+								{% if count > 0 %}
+								<input id="person-{{ value }}" type="radio" value="{{ value }}"> <label for="person-{{ value }}">{{ value }} <span class="label radius">{{ count }}</span></label>
+								{% endif %}
+								{% endwith %}
+								{% endfor %}
+							</p>
 						</div>
 
 						<div class="large-12 columns">
@@ -253,26 +285,102 @@
 								</ul>
 							</div>
 						</div>
-						<div class="large-6 columns">
-							<h4>Filter by <strong>class</strong> <a data-dropdown="class-info" aria-controls="class-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-							<div id="class-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-								<p>Some info on how to use the <strong>class filter</strong>.</p>
+						<div class="large-12 columns">
+							<div class="panel radius">
+								<h4>Filter by <strong>class</strong> <a data-dropdown="class-info" aria-controls="class-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+								<div id="class-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+									<p>Some info on how to use the <strong>class filter</strong>.</p>
+								</div>
+
+								<ul class="inline-list">
+									{% comment %}
+									{% for term in facets.fields|get_item:"eques" %}
+									{% with value=term.0 count=term.1 %}
+									{% if value == "true" %}
+									<li>
+										<input id="eques-id" type="checkbox" value="eques"{% if count = 0 %} disabled{% endif %}> <label for="eques-id"{% if count = 0 %} class="grayed-out"{% endif %}>Eques <span class="label radius">{{ count }}</span></label>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+
+									{% for term in facets.fields|get_item:"nobilis" %}
+									{% with value=term.0 count=term.1 %}
+									{% if value == "true" %}
+									<li>
+										<input id="nobilis-id" type="checkbox" value="nobilis"{% if count = 0 %} disabled{% endif %}> <label for="nobilis-id"{% if count = 0 %} class="grayed-out"{% endif %}>Nobilis <span class="label radius">{{ count }}</span></label>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+
+									{% for term in facets.fields|get_item:"novus" %}
+									{% with value=term.0 count=term.1 %}
+									{% if value == "true" %}
+									<li>
+										<input id="novus-id" type="checkbox" value="novus"{% if count = 0 %} disabled{% endif %}> <label for="novus-id"{% if count = 0 %} class="grayed-out"{% endif %}>Novus <span class="label radius">{{ count }}</span></label>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+
+									{% for term in facets.fields|get_item:"patrician" %}
+									{% with value=term.0 count=term.1 %}
+									{% if value == "true" %}
+									<li>
+										<input id="patrician-id" type="checkbox" value="patrician"{% if count = 0 %} disabled{% endif %}> <label for="patrician-id"{% if count = 0 %} class="grayed-out"{% endif %}>Patrician <span class="label radius">{{ count }}</span></label>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+									{% endcomment %}
+									
+									{% for term in facets.fields|get_item:"eques" %}
+									{% with value=term.0 count=term.1 %}
+									{% if value == "true" and count > 0 %}
+									<li>
+										<a href="{% add_facet_link querydict "eques" value %}#search">Eques <span class="label radius">{{ count }}</span></a>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+									
+									{% for term in facets.fields|get_item:"nobilis" %}
+									{% with value=term.0 count=term.1 %}
+									{% if value == "true" and count > 0 %}
+									<li>
+										<a href="{% add_facet_link querydict "nobilis" value %}#search">Nobilis <span class="label radius">{{ count }}</span></a>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+									
+									{% for term in facets.fields|get_item:"novus" %}
+									{% with value=term.0 count=term.1 %}
+									{% if value == "true" and count > 0 %}
+									<li>
+										<a href="{% add_facet_link querydict "novus" value %}#search">Novus <span class="label radius">{{ count }}</span></a>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+									
+									{% for term in facets.fields|get_item:"patrician" %}
+									{% with value=term.0 count=term.1 %}
+									{% if value == "true" and count > 0 %}
+									<li>
+										<a href="{% add_facet_link querydict "patrician" value %}#search">Patrician <span class="label radius">{{ count }}</span></a>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+								</ul>
 							</div>
-							<input type="radio" name="patrician" value="Patrician" id="patrician"><label for="patrician">Patrician <span class="label radius">573</span></label><br>
-							<input type="radio" name="plebeian" value="Plebeian" id="plebeian"><label for="plebeian">Plebeian <span class="label radius">213</span></label>
-						</div>
-						<div class="large-6 columns">
-							<h4>Filter by <strong>gender</strong> <a data-dropdown="gender-info" aria-controls="gender-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-							<div id="gender-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-								<p>Some info on how to use the <strong>gender filter</strong>.</p>
-							</div>
-							<input type="radio" name="personMale" value="Male" id="personMale"><label for="personMale">Male <span class="label radius">2134</span></label><br>
-							<input type="radio" name="personFemale" value="Female" id="personFemale"><label for="personFemale">Female <span class="label radius">21</span></label>
 						</div>
 					</div>
 				</section>
-			</form>
-		</div>
+			</div>
+		</form>
 	</div>
 </div>
 

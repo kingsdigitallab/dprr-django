@@ -24,6 +24,7 @@ admin.site.register(DateType)
 admin.site.register(RoleType)
 admin.site.register(StatusAssertionNote)
 
+
 class StatusAssertionInline(admin.StackedInline):
 
     model = StatusAssertion
@@ -56,7 +57,7 @@ class StatusAssertionInline(admin.StackedInline):
     raw_id_fields = ('notes',)
 
     related_lookup_fields = {
-        'm2m': ['notes',],
+        'm2m': ['notes', ],
     }
 
 
@@ -549,10 +550,6 @@ class PersonAdmin(admin.ModelAdmin):
             'classes': ('grp-collapse grp-open',),
             'fields': (('nobilis', 'nobilis_uncertain'),
                        ('nobilis_notes'))}),
-        ('Eques', {
-            'classes': ('grp-collapse grp-open',),
-            'fields': (('eques', 'eques_uncertain'),
-                       ('eques_notes'))}),
 
         ('Date Information', {
          'classes': ('grp-collapse grp-open',),
@@ -578,9 +575,8 @@ class PersonAdmin(admin.ModelAdmin):
     search_fields = ['id', 'nomen', 'cognomen', 'praenomen__abbrev',
                      'praenomen__name', 'other_names', 're_number', ]
 
-    list_filter = ('nomen',
-                   'review_flag', REUpdatedListFilter, 'patrician', 'novus',
-                   'nobilis', 'eques', )
+    list_filter = ('nomen', 'review_flag', REUpdatedListFilter, 'patrician',
+                   'novus', 'nobilis', )
 
     inlines = (
         DateInformationInline, GensAssertionInline, TribeAssertionInline,

@@ -72,6 +72,19 @@ li.greyed-out a {
 	}
 }
 
+/* Highlight newly added filters in the preview box */
+
+/*** TODO: fix this animation ***/
+
+.free-filters li:last-child:target {
+	animation: highlight 2s ease;
+}
+
+@keyframes highlight {
+	from { background: yellow; }
+	to { background: transparent; }
+}
+
 /*** Header ***/
 
 header.main-header {

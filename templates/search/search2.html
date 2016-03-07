@@ -123,7 +123,7 @@
 										{% for term in facets.fields|get_item:"praenomen" %}
 										{% with value=term.0 count=term.1 %}
 										{% if count > 0 %}
-										<li><a href="{% add_facet_link querydict "praenomen" value %}#search"><span class="label radius right">{{ count }}</span>{{ value }}</a></li>
+										<li><a href="{% add_facet_link querydict "praenomen" value %}#search" class="add-filter"><span class="label radius right highlight">{{ count }}</span>{{ value }}</a></li>
 										{% endif %}
 										{% endwith %}
 										{% endfor %}

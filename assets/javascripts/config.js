@@ -21,4 +21,10 @@ $(document).ready(function() {
 		return false;
 	});
 
+	// Highlight selected filters
+
+	// $('.add-filter').bind("click", function() {
+	// 	$('.results-review .label').removeClass('.highlight');
+	// 	$('.free-filters .label:last-child').addClass('.highlight');
+	// });
 });

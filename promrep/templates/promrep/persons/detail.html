@@ -229,7 +229,7 @@
                 {% if pa.notes.count %}
                 <ul class="no-bullet">
                     {% for note in pa.notes.all %}
-                        <li>{{note.text}} (in <i>{{note.secondary_source.abbrev_name}}</i>)</li>
+                        <li>{{note.text}} (in <em>{{note.secondary_source.abbrev_name}}</em>)</li>
                     {% endfor %}
                 </ul>
                 {% endif %}

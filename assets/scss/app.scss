@@ -74,15 +74,13 @@ li.greyed-out a {
 
 /* Highlight newly added filters in the preview box */
 
-/*** TODO: fix this animation ***/
-
-.free-filters li:last-child:target {
-	animation: highlight 2s ease;
+.free-filters li:last-child span.label {
+	animation: highlight 3s ease;
 }
 
 @keyframes highlight {
-	from { background: yellow; }
-	to { background: transparent; }
+	from { background: scale-color(yellow, $lightness: 50%); }
+	to { background: $primary-color; }
 }
 
 /*** Header ***/
@@ -251,9 +249,6 @@ button.name-form {
 		border: none;
 	}
 }
-// .show-all {
-// 	background: $primary-color;
-// }
 
 .offices {
 	height: 200px;

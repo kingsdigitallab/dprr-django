@@ -7,6 +7,8 @@ import logging
 from os import path
 import primary_source_aux as psource_aux
 
+import re
+
 from promrep.models import (Person, StatusAssertion, Praenomen, Sex,
                             SecondarySource, StatusAssertionNote,
                             PostAssertion, Tribe, TribeAssertion,
@@ -290,10 +292,17 @@ def read_input_file(ifname):
                     pa_assertion.date_start_uncertain = date_start_uncertain
                     pa_assertion.date_end_uncertain = date_end_uncertain
 
+                    # in the case of the post assertions, we can ignore the
+                    #   text after Nicolet Ref. XYZ.
+                    print row_dict["notes"]
+                    pa_txt = re.sub(
+                        r"(Nicolet\sRef\s[0-9]+\.).*", r"\1", row_dict["notes"])
+                    print pa_txt
+
                     # adds the note to the post assertion
                     pa_note = PostAssertionNote.objects.create(
-                                                secondary_source=sec_source,
-                                                text=row_dict["notes"],)
+                        secondary_source=sec_source,
+                        text=pa_txt,)
 
                     pa_assertion.notes.add(pa_note)
                     pa_assertion.save()
@@ -323,7 +332,7 @@ def read_input_file(ifname):
 
 
 def run():
-    ifname = "promrep/scripts/data/nicolet/NicoletExportv5.csv"
+    ifname = "promrep/scripts/data/nicolet/NicoletExportv6.csv"
 
     LOGGER.info("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

@@ -13,6 +13,8 @@ from django.core.urlresolvers import reverse
 
 from author.decorators import with_author
 
+import re
+
 
 def date_to_string(date_int, date_uncertain, date_suffix=True):
     date_str = ""
@@ -31,7 +33,7 @@ def date_to_string(date_int, date_uncertain, date_suffix=True):
         if date_suffix:
             date_str = date_str + suffix
     else:
-        date_str = "<i>(no date info)</i>"
+        date_str = "<em>(no date info)</em>"
 
     return date_str
 
@@ -248,13 +250,13 @@ class StatusAssertionNote(Note):
 
 @with_author
 class Person(TimeStampedModel):
-
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
     praenomen_uncertain = models.BooleanField(
         verbose_name='Uncertain Praenomen', default=False)
-    alt_praenomen = models.ForeignKey(Praenomen, blank=True, null=True,
-                                      related_name='person_alt_praenomen_set',
-                                      verbose_name='Alternative Praenomen')
+    alt_praenomen = models.ForeignKey(
+        Praenomen, blank=True, null=True,
+        related_name='person_alt_praenomen_set',
+        verbose_name='Alternative Praenomen')
 
     nomen = models.CharField(max_length=128, blank=True)
     nomen_uncertain = models.BooleanField(
@@ -324,16 +326,8 @@ class Person(TimeStampedModel):
 
     review_notes = models.TextField(blank=True)
 
-    def url_to_edit_person(self):
-        url = reverse('admin:%s_%s_change' % (
-            self._meta.app_label, self._meta.model_name), args=[self.id])
-        return u'<a href="%s">%s</a>' % (url, self.__unicode__())
-
-    url_to_edit_person.allow_tags = True
-    url_to_edit_person.short_description = 'Person'
-
-    def related_label(self):
-        return self.url_to_edit_person()
+    class Meta:
+        ordering = ['id', ]
 
     def __unicode__(self):
         name = ""
@@ -370,15 +364,44 @@ class Person(TimeStampedModel):
 
         return name.strip()
 
+    @property
+    def f(self):
+        if not self.filiation:
+            return None
 
-#    def get_dates(self):
-#        dates = ' '.join([unicode(date) for date in self.dates.all()])
-#        return dates
+        filiation = self.filiation.strip()
 
-#    get_dates.short_description = 'Dates'
+        found = re.search(r'([^-].*?) f\..*', filiation)
 
-    class Meta:
-        ordering = ['id', ]
+        if not found:
+            return None
+
+        return found.groups()[0]
+
+    @property
+    def n(self):
+        if not self.filiation:
+            return None
+
+        filiation = self.filiation.strip()
+
+        found = re.search(r'(?:.*\s+f\.\s+)?(.*[^-])\s+n\.', filiation)
+
+        if not found:
+            return None
+
+        return found.groups()[0]
+
+    def url_to_edit_person(self):
+        url = reverse('admin:%s_%s_change' % (
+            self._meta.app_label, self._meta.model_name), args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.__unicode__())
+
+    url_to_edit_person.allow_tags = True
+    url_to_edit_person.short_description = 'Person'
+
+    def related_label(self):
+        return self.url_to_edit_person()
 
 
 @with_author

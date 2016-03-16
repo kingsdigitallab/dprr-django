@@ -10,6 +10,6 @@ system_packages: [ack-grep, zsh, vim-nox, python-dev, python-pip, python-psycopg
   python-setuptools, python-virtualenv, nfs-common, postgresql-9.3, postgresql-client-9.3,
   postgresql-server-dev-9.3, postgresql-contrib-9.3, libldap2-dev, libsasl2-dev, libjpeg-dev,
   nodejs, openjdk-7-jre, libxml2-dev, libxslt-dev, git, git-core, libproj-dev, mercurial,
-  emacs23-nox, graphviz, graphviz-dev]
+  emacs23-nox, graphviz, graphviz-dev, pkg-config]
 user_home: /home/vagrant
 zsh: {oh_my_zsh: 'https://github.com/robbyrussell/oh-my-zsh.git', zshrc: zshrc}

@@ -22,7 +22,7 @@ from django.conf import settings
 REPOSITORY = 'https://scm.cch.kcl.ac.uk/hg/dprr-django'
 
 env.user = settings.FABRIC_USER
-env.hosts = ['dprr.cch.kcl.ac.uk']
+env.hosts = ['dprr.dighum.kcl.ac.uk']
 env.root_path = '/vol/dprr/webroot/'
 env.envs_path = os.path.join(env.root_path, 'envs')
 
@@ -105,16 +105,16 @@ def unlock():
 
 
 def set_srvr_vars():
-    env.path = os.path.join(env.root_path, env.srvr, 'django', 'root')
+    env.path = os.path.join(env.root_path, env.srvr, 'django', 'dprr-django')
     env.within_virtualenv = 'source {}'.format(
-        os.path.join(env.envs_path, env.srvr, 'bin', 'activate'))
+        os.path.join(env.envs_path, 'dprr-' +  env.srvr, 'bin', 'activate'))
 
 
 @task
 def create_virtualenv():
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
     with quiet():
-        env_vpath = os.path.join(env.envs_path, env.srvr)
+        env_vpath = os.path.join(env.envs_path, 'dprr-' + env.srvr)
         if run('ls {}'.format(env_vpath)).succeeded:
             print(
                 green('virtual environment at [{}] exists'.format(env_vpath)))
@@ -173,7 +173,7 @@ def update(branch=None):
         # try specified branch first
         to_branch = branch
     elif not branch and env.srvr in ['local', 'vagrant', 'dev']:
-        # if loval, vagrant or dev deploy to master
+        # if local, vagrant or dev deploy to master
         to_branch = 'default'
     else:
         # else deploy to server tag
@@ -258,7 +258,7 @@ def reinstall_requirement(which):
 
 @task
 def own_django_log():
-    """ make sure logs/django.log is owned by www-data"""
+    """ make sure logs/django.log is owned by www-data """
 
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 

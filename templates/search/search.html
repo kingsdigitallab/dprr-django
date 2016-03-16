@@ -26,7 +26,7 @@
 				</div>
 				<div class="large-2 large-offset-3 columns show-all">
 					<p>&nbsp;</p>
-					<p><a href="{% url 'haystack_search2' %}#search-results-box" class="less-padding expand button right">Show all</a></p>
+					<p><a href="{% url 'haystack_search' %}#search-results-box" class="less-padding expand button right">Show all</a></p>
 				</div>
 			</div>
 
@@ -51,7 +51,7 @@
 								<div id="results-preview-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
 									<p>Some info on what's displayed by the <strong>results preview</strong>.</p>
 								</div>
-								<h3><strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search2' %}#search"><i class="fa fa-trash"></i> Clear all</a></h3>
+								<h3><strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search"><i class="fa fa-trash"></i> Clear all</a></h3>
 
 								{% if query or selected_facets or post_date_filter %}
 

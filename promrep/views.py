@@ -91,6 +91,6 @@ class PersonDetailView(DetailView):
     template_name = 'promrep/persons/detail.html'
 
 
-class PromrepFacetedSearchView2(PromrepFacetedSearchView):
-    template_name = 'search/search2.html'
+# class PromrepFacetedSearchView2(PromrepFacetedSearchView):
+#     template_name = 'search/search2.html'
     

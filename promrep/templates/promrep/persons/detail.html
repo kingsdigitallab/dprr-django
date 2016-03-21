@@ -224,7 +224,7 @@
 
         <ul class="timeline no-bullet bottom-margin">
             {% for pa in person.post_assertions.all %}
-                <li><span class="label radius secondary">{{ pa.print_date |safe}}</span> <strong>{{ pa.office | title}} {% if pa.provinces %} {{pa.print_provinces}} {% endif %}</strong>
+                <li><span class="label radius{% if pa.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ pa.print_date | safe}}</span> <strong>{{ pa.office | title}} {% if pa.provinces %} <a href="#">{{ pa.print_provinces }}</a> {% endif %}</strong>
 
                 {% if pa.notes.count %}
                 <ul class="no-bullet">

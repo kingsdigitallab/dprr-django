@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 
 from promrep.views import (PersonDetailView, 
-		PromrepFacetedSearchView, PromrepFacetedSearchView2)
+		PromrepFacetedSearchView)
 
 
 urlpatterns = patterns('',
@@ -17,8 +17,8 @@ urlpatterns += patterns('',
                         )
 
 # test url for UI 
-urlpatterns += patterns('',
-                       url(r'^test/$',
-                           PromrepFacetedSearchView2.as_view(),
-                           name='haystack_search2')
-                       )
+# urlpatterns += patterns('',
+#                        url(r'^test/$',
+#                            PromrepFacetedSearchView2.as_view(),
+#                            name='haystack_search2')
+#                        )

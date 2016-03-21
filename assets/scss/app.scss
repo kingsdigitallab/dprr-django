@@ -72,6 +72,30 @@ li.greyed-out a {
 	}
 }
 
+.green {
+	color: green;
+}
+
+.green-bg {
+	background: green;
+}
+
+.gray {
+	color: gray;
+}
+
+.gray-bg {
+	background: gray;
+}
+
+.red {
+	color: red;
+}
+
+.inline-list i {
+	display: inline-block;
+}
+
 /* Highlight newly added filters in the preview box */
 
 .free-filters li:last-child span.label {
@@ -197,6 +221,11 @@ h3.quick-home {
 		margin-left: .28125rem !important;
 		margin-top: -.5rem;
 	}
+}
+
+.key {
+	font-style: italic;
+	font-size: .875rem;
 }
 
 /*** Search / Facets / Filters ***/

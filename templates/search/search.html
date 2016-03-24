@@ -461,13 +461,20 @@
 
 		<h2>Search Results <span class="label radius">{{ paginator.count }}</span> <a href="#search" class="less-padding button right"><i class="fa fa-edit"></i> Edit search</a></h2>
 
+		<ul class="inline-list right key">
+			<li>Dates can be: </li>
+			<li><span class="label radius green-bg">Certain <i class="fa fa-check-circle"></i></span></li>
+			<li><span class="label radius gray-bg">Uncertain <i class="fa fa-minus-circle"></i></span></li>
+		</ul>
+
 		<hr>
 
 		<ol start="{{page_obj.start_index}}" class="search-results">
 			{% for result in object_list %}
 			<li>
 				{% with doc=result.documents.0 %}
-				<span class="label radius secondary right">{{ doc.highest_office }}</span>
+				<span class="label radius right{% if doc.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ doc.highest_office }}{% if doc.uncertain == True %} <i class="fa fa-minus-circle"></i>{% else %} <i class="fa fa-check-circle"></i>{% endif %}</span>
+				<p></p>
 				<h3><a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a></h3>
 				{% for dd in result.documents %}
 				<p>
@@ -477,6 +484,9 @@
 				<a href="#" class="expander">Expand <i class="fa fa-caret-right fa-lg"></i></a>
 				<div class="row hide collapsible">
 					<div class="large-6 columns">
+						<p>Placeholder</p>
+						<p><em>&lt;List of offices held&gt;</em></p>
+						<!--
 						<h4>Offices held</h4>
 						<ul class="no-bullet list-offices">
 							{# for #}
@@ -494,8 +504,10 @@
 							<li><span class="label radius secondary">49-44 B.C. Dictator</span></li>
 							{# endfor #}
 						</ul>
+						-->
 					</div>
 					<div class="large-6 columns">
+						<p>Placeholder visualisation</p>
 						<div class="svg-container">
 							<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 815 485">
 								<g transform="translate(40,0)">

@@ -209,7 +209,9 @@ def update_index():
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 
     with cd(env.path), prefix(env.within_virtualenv):
-        run('sudo ./manage.py build_solr_schema > schema.xml')
+        run('./manage.py build_solr_schema > schema.xml')
+        run('mv schema.xml ../../solr/collection1/conf/')
+        sudo('service tomcat7-{} restart'.format(env.srvr))
         run('./manage.py update_index')
 
 

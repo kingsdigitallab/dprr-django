@@ -93,7 +93,3 @@ class PromrepFacetedSearchView(FacetedSearchView):
 class PersonDetailView(DetailView):
     model = Person
     template_name = 'promrep/persons/detail.html'
-
-
-class PromrepFacetedSearchView2(PromrepFacetedSearchView):
-    template_name = 'search/search2.html'

@@ -1,9 +1,10 @@
 from django.core.urlresolvers import reverse
 from django.views.generic.detail import DetailView
-
 from haystack.generic_views import FacetedSearchView
-
 from promrep.forms import PromrepFacetedSearchForm
+from promrep.models import Person, PostAssertion, StatusAssertion
+from promrep.solr_backends.solr_backend_field_collapsing import \
+    GroupedSearchQuerySet
 from promrep.models import PostAssertion, Person, StatusAssertion
 from promrep.solr_backends.solr_backend_field_collapsing import (
     GroupedSearchQuerySet)
@@ -20,6 +21,13 @@ class PromrepFacetedSearchView(FacetedSearchView):
     load_all = True
     queryset = GroupedSearchQuerySet().models(
         PostAssertion, StatusAssertion).group_by('person_id')
+
+    def get_initial(self):
+        initial = super(PromrepFacetedSearchView, self).get_initial()
+        initial['date_from'] = PromrepFacetedSearchForm.MIN_DATE
+        initial['date_to'] = PromrepFacetedSearchForm.MAX_DATE
+
+        return initial
 
     def get_queryset(self):
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
@@ -54,14 +62,14 @@ class PromrepFacetedSearchView(FacetedSearchView):
             context['remove_text_filter'] = url
 
         # handles the special case of range facets
-        if ('post_date_from' or 'post_date_to') in self.request.GET:
+        if ('date_from' or 'date_to') in self.request.GET:
             qs = self.request.GET.copy()
 
-            if 'post_date_from' in qs:
-                qs.pop('post_date_from')
+            if 'date_from' in qs:
+                qs.pop('date_from')
 
-            if 'post_date_to' in qs:
-                qs.pop('post_date_to')
+            if 'date_to' in qs:
+                qs.pop('date_to')
 
             # always remove the page number
             if 'page' in qs:
@@ -73,19 +81,19 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
             date_text = ""
             if self.request.GET.get(
-                    'post_date_to') and self.request.GET.get('post_date_from'):
+                    'date_to') and self.request.GET.get('date_from'):
                 date_text = self.request.GET.get(
-                    'post_date_from') + " to " + self.request.GET.get(
-                    'post_date_to')
-            elif self.request.GET.get('post_date_to'):
-                date_text = "Before " + self.request.GET.get('post_date_to')
-            elif self.request.GET.get('post_date_from'):
-                date_text = "After " + self.request.GET.get('post_date_from')
+                    'date_from') + " to " + self.request.GET.get(
+                    'date_to')
+            elif self.request.GET.get('date_to'):
+                date_text = "Before " + self.request.GET.get('date_to')
+            elif self.request.GET.get('date_from'):
+                date_text = "After " + self.request.GET.get('date_from')
 
             # if neither dates have values
             # no need to print the filter...
             if date_text != "":
-                context['post_date_filter'] = (url, date_text)
+                context['date_filter'] = (url, date_text)
 
         return context
 

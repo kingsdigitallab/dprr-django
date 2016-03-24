@@ -1,6 +1,8 @@
-from haystack import indexes
-from promrep.models import PostAssertion, StatusAssertion
 import re
+
+from haystack import indexes
+from promrep.forms import PromrepFacetedSearchForm
+from promrep.models import PostAssertion, StatusAssertion
 
 
 class MultiValueIntegerField(indexes.MultiValueField):
@@ -42,7 +44,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
 
     province = indexes.MultiValueField(faceted=True)
-    post_date = MultiValueIntegerField(faceted=True)
+    date = MultiValueIntegerField(faceted=True)
 
     # used to display the highest office achieved in the search page
     highest_office = indexes.CharField(faceted=False)
@@ -74,11 +76,11 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
             '',
             p.name.strip().capitalize()) for p in object.provinces.all()]
 
-    def prepare_post_date(self, object):
+    def prepare_date(self, object):
         """range of dates for the post"""
 
-        start = -1000
-        end = 1000
+        start = PromrepFacetedSearchForm.MIN_DATE
+        end = PromrepFacetedSearchForm.MAX_DATE
 
         if object.date_start:
             start = object.date_start
@@ -125,6 +127,7 @@ class StatusAssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
     status = indexes.CharField(model_attr='status__name', faceted=True)
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
+    date = MultiValueIntegerField(faceted=True)
 
     def get_model(self):
         return StatusAssertion
@@ -132,3 +135,20 @@ class StatusAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
+
+    def prepare_date(self, object):
+        """range of dates for the post"""
+
+        start = PromrepFacetedSearchForm.MIN_DATE
+        end = PromrepFacetedSearchForm.MAX_DATE
+
+        if object.date_start:
+            start = object.date_start
+
+        if object.date_end:
+            end = object.date_end
+
+        # need to increment the last point
+        res = range(start, end + 1, 1)
+
+        return res

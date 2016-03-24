@@ -33,7 +33,7 @@ def date_to_string(date_int, date_uncertain, date_suffix=True):
         if date_suffix:
             date_str = date_str + suffix
     else:
-        date_str = "<i>(no date info)</i>"
+        date_str = "<em>(no date info)</em>"
 
     return date_str
 

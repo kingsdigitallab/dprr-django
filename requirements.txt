@@ -16,6 +16,7 @@ django-mptt
 django-mptt-admin
 django-redis==3.6.1
 django-treebeard==2.0
+Fabric
 filebrowser-safe
 future
 grappelli-safe==0.3.13

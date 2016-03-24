@@ -12,9 +12,10 @@ from promrep.solr_backends.solr_backend_field_collapsing import (
 class PromrepFacetedSearchView(FacetedSearchView):
     # TODO: check how to set facet.mincount, can facet_fields be declared as a
     # dictionary?
-    facet_fields = ['patrician', 'nomen', 'cognomen', 'office', 'province',
-                    'status']
-    alpha_facet_fields = ['nomen', 'office', 'province', 'cognomen', 'status']
+    facet_fields = ['cognomen', 'eques', 'f', 'gender', 'n', 'nobilis',
+                    'nomen', 'novus', 'office', 'patrician', 'praenomen',
+                    'province']
+    alpha_facet_fields = ['cognomen', 'nomen', 'office', 'province']
     form_class = PromrepFacetedSearchForm
     load_all = True
     queryset = GroupedSearchQuerySet().models(
@@ -71,9 +72,11 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 url = '?{0}'.format(qs.urlencode())
 
             date_text = ""
-            if self.request.GET.get('post_date_to') and self.request.GET.get('post_date_from'):
+            if self.request.GET.get(
+                    'post_date_to') and self.request.GET.get('post_date_from'):
                 date_text = self.request.GET.get(
-                    'post_date_from') + " to " + self.request.GET.get('post_date_to')
+                    'post_date_from') + " to " + self.request.GET.get(
+                    'post_date_to')
             elif self.request.GET.get('post_date_to'):
                 date_text = "Before " + self.request.GET.get('post_date_to')
             elif self.request.GET.get('post_date_from'):
@@ -90,3 +93,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
 class PersonDetailView(DetailView):
     model = Person
     template_name = 'promrep/persons/detail.html'
+
+
+class PromrepFacetedSearchView2(PromrepFacetedSearchView):
+    template_name = 'search/search2.html'

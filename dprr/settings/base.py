@@ -261,3 +261,9 @@ GRAPPELLI_INDEX_DASHBOARD = 'dprr.dashboard.CustomIndexDashboard'
 MIDDLEWARE_CLASSES += ('author.middlewares.AuthorDefaultBackendMiddleware', )
 
 AUTHOR_CREATED_BY_FIELD_NAME = 'created_by'
+
+# -----------------------------------------------------------------------------
+# FABRIC
+# -----------------------------------------------------------------------------
+
+FABRIC_USER = ''

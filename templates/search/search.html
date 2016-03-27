@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load ddh_utils_tags wagtailbase_tags wagtailcore_tags highlight %}
+{% load ddh_utils_tags wagtailbase_tags highlight %}
 
 {% block meta_title %}Search Results{% if query %} for {{ query }}{% endif %}{% endblock %}
 
@@ -7,7 +7,7 @@
 <div class="row">
 	<div class="large-12 columns">
 		<h1 id="search-box">Search</h1>
-			
+
 		<form method="get" action=".">
 			<div class="row">
 				<div class="large-7 columns">
@@ -34,7 +34,7 @@
 
 			<button class="small button secondary options"><i class="fa fa-cog"></i> <span id="showhide">Hide</span> filters' settings</button>
 			<a href="/browse/" class="right options"><span class="small button"><i class="fa fa-refresh"></i> Start new search</span></a>
-		
+
 			<div class="search-box">
 				<section data-section="non-expandable" data-expandable-group-member="facets" id="dprr-filter">
 					<div class="row">
@@ -42,7 +42,7 @@
 							<h4>Refine your search</h4>
 						</div>
 					</div>
-					
+
 					<div class="row">
 						<div class="large-12 columns">
 							<div class="panel results-preview" data-magellan-expedition="fixed">
@@ -53,7 +53,7 @@
 								</div>
 								<h3><strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search"><i class="fa fa-trash"></i> Clear all</a></h3>
 
-								{% if query or selected_facets or post_date_filter %}
+								{% if query or selected_facets or date_filter %}
 
 								<ul class="inline-list no-bullet free-filters">
 
@@ -67,10 +67,10 @@
 									</li>
 									{% endif %}
 
-									{% if post_date_filter %}
+									{% if date_filter %}
 									<li>
 										<span class="label radius">
-											<a href="{{ post_date_filter.0}}#search" title="Remove filter">Post Date: {{ post_date_filter.1 }}
+											<a href="{{ date_filter.0}}#search" title="Remove filter">Post Date: {{ date_filter.1 }}
 												<i class="fa fa-times-circle"></i>
 											</a>
 										</span>
@@ -276,22 +276,22 @@
 
 					<div class="row">
 						<div class="large-12 columns">
-							<h4>Filter by <strong>post date</strong> <a data-dropdown="dates-info" aria-controls="dates-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+							<h4>Filter by <strong>date</strong> <a data-dropdown="dates-info" aria-controls="dates-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
 							<div id="dates-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
 								<p>Time frame:<br><strong>509 B.C. - 33 B.C.</strong></p>
 							</div>
 
-							{{ form.post_date_from.errors }}
-							{{ form.post_date_to.errors }}
+							{{ form.date_from.errors }}
+							{{ form.date_to.errors }}
 
 							<div class="row range">
 								<div class="small-5 columns">
 									<label>From / After (Leave blank for <em>Before</em>)</label>
-									{{ form.post_date_from }}
+									{{ form.date_from }}
 								</div>
 								<div class="small-5 columns">
 									<label>To / Before (Leave blank for <em>After</em>)</label>
-									{{ form.post_date_to }}
+									{{ form.date_to }}
 								</div>
 								<div class="large-2 columns">
 									<label>&nbsp;</label>
@@ -398,7 +398,7 @@
 									{% endwith %}
 									{% endfor %}
 									{% endcomment %}
-									
+
 									{% for term in facets.fields|get_item:"eques" %}
 									{% with value=term.0 count=term.1 %}
 									{% if value == "true" and count > 0 %}
@@ -408,7 +408,7 @@
 									{% endif %}
 									{% endwith %}
 									{% endfor %}
-									
+
 									{% for term in facets.fields|get_item:"nobilis" %}
 									{% with value=term.0 count=term.1 %}
 									{% if value == "true" and count > 0 %}
@@ -418,7 +418,7 @@
 									{% endif %}
 									{% endwith %}
 									{% endfor %}
-									
+
 									{% for term in facets.fields|get_item:"novus" %}
 									{% with value=term.0 count=term.1 %}
 									{% if value == "true" and count > 0 %}
@@ -428,7 +428,7 @@
 									{% endif %}
 									{% endwith %}
 									{% endfor %}
-									
+
 									{% for term in facets.fields|get_item:"patrician" %}
 									{% with value=term.0 count=term.1 %}
 									{% if value == "true" and count > 0 %}
@@ -514,7 +514,7 @@
 									<g>
 										<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
 											L120,224.664"/>
-										
+
 											<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.995,4.9748" d="
 											M125.31,224.441c100.252-6.197,103.002-182.519,204.875-185.894"/>
 										<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,38.664L333,38.664
@@ -523,7 +523,7 @@
 									<g>
 										<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
 											L120,224.664"/>
-										
+
 											<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0072,5.0359" d="
 											M125.369,224.498c100.182-4.019,102.964-117.105,204.773-119.302"/>
 										<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,105.664
@@ -698,7 +698,7 @@
 											<g>
 												<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
 													L120,224.664"/>
-												
+
 													<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.995,4.9748" d="
 													M125.31,224.441c100.252-6.197,103.002-182.519,204.875-185.894"/>
 												<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,38.664L333,38.664
@@ -707,7 +707,7 @@
 											<g>
 												<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
 													L120,224.664"/>
-												
+
 													<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0072,5.0359" d="
 													M125.369,224.498c100.182-4.019,102.964-117.105,204.773-119.302"/>
 												<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,105.664

@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.admin.widgets import AdminFileWidget
-from django.utils.safestring import mark_safe
 from django.core.validators import RegexValidator
-
+from django.utils.safestring import mark_safe
 from haystack.forms import FacetedSearchForm
 
 
@@ -27,7 +26,8 @@ class ModelLinkWidget(forms.Widget):
 
     def render(self, name, value, attrs=None):
         edit_link = '<a href="../../../%s/%s/%s/">Edit %s</a>' % \
-            (self.object._meta.app_label, self.object._meta.object_name.lower(),
+            (self.object._meta.app_label,
+             self.object._meta.object_name.lower(),
              self.object.pk, self.object._meta.verbose_name.lower())
 
         if self.object.pk:
@@ -54,6 +54,7 @@ class PostAssertionProvincesWidget(forms.Widget):
 
     def render(self, name, value, attrs=None):
         return self.object.print_provinces()
+
 
 class StatusProvincesWidget(forms.Widget):
 
@@ -152,15 +153,18 @@ class StatusInlineForm(forms.ModelForm):
             self.instance)
 
 
-
-
 class PromrepFacetedSearchForm(FacetedSearchForm):
 
     """Extends FacetedSearchForm, as we have special requirements in terms of
     facet handling and date filtering."""
 
-    post_date_from = forms.IntegerField(required=False, max_value=-33, min_value=-509)
-    post_date_to = forms.IntegerField(required=False, max_value=-33, min_value=-509)
+    MIN_DATE = -509
+    MAX_DATE = -33
+
+    date_from = forms.IntegerField(
+        required=False, max_value=MAX_DATE, min_value=MIN_DATE)
+    date_to = forms.IntegerField(
+        required=False, max_value=MAX_DATE, min_value=MIN_DATE)
 
     def no_query_found(self):
         """Determines the behaviour when no query was found; returns all the
@@ -176,17 +180,13 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
         # Narrow the search by the ranges of dates
         # Requires, of course, that the form be bound.
         if self.is_bound:
-            post_date_from = -509
-            post_date_to = -33
+            data = self.cleaned_data
 
-            if self.cleaned_data.get('post_date_from'):
-                post_date_from = self.cleaned_data.get('post_date_from')
-
-            if self.cleaned_data.get('post_date_to'):
-                post_date_to = self.cleaned_data.get('post_date_to')
-
-            if self.cleaned_data.has_key('post_date_from') or self.cleaned_data.has_key('post_date_to'):
-                sqs = sqs.narrow(u'post_date:[%s TO %s]' %
-                                 (post_date_from, post_date_to))
+            if 'date_from' in data or 'date_to' in data:
+                sqs = sqs.narrow(
+                    'date:[{} TO {}]'.format(
+                        data.get('date_from', self.MIN_DATE) or self.MIN_DATE,
+                        data.get('date_to', self.MAX_DATE) or self.MAX_DATE)
+                )
 
         return sqs

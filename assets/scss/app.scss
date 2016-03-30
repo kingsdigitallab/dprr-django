@@ -8,11 +8,10 @@
 
 /*** Global ***/
 
-/*** TO BE REMOVED: for presentation purposes only ***/
+/* Handles the offset of the magellan sticky navigation */
 .extra-margin {
 	padding-top: 140px;
 }
-/*** END TO BE REMOVED ***/
 
 hr {
 	height: 1px;
@@ -23,9 +22,9 @@ hr {
 
 header.main-header,
 .header,
-footer.main-footer {
-	min-height: 10rem;
-}
+// footer.main-footer {
+// 	min-height: 10rem;
+// }
 
 .content-area {
 	background: $white;
@@ -151,7 +150,8 @@ h4, h5, h6 {
 	font-family: 'Open Sans Condensed Light', sans-serif;
 }
 
-.main h1 .label {
+.main h1 .label,
+.main h2 .label {
 	font-size: .75em;
 }
 
@@ -229,6 +229,13 @@ h3.quick-home {
 }
 
 /*** Search / Facets / Filters ***/
+
+#search form {
+	display: block;
+	height: 100%;
+	overflow: hidden; /* Stops the page from overflowing due to long list of
+						 filters */
+}
 
 .options {
 	margin-bottom: 0 !important;
@@ -437,7 +444,7 @@ ul.blog,
 ul.blog p {
 	font-size: .875rem;
 	margin: .5rem 0;
-	line-height: 1.25rem
+	line-height: 1.25rem;
 }
 
 ul.blog li {

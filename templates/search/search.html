@@ -5,36 +5,13 @@
 
 {% block main %}
 <div class="row">
-	<div class="large-12 columns">
+	<div class="large-12 columns" id="search">
 		<h1 id="search-box">Search</h1>
+
+		<button class="small button secondary options"><i class="fa fa-cog"></i> <span id="showhide">Hide</span> filters' settings</button>
+		<a href="/browse/" class="right options"><span class="small button"><i class="fa fa-refresh"></i> Start new search</span></a>
 			
-		<form method="get" action=".">
-			<div class="row">
-				<div class="large-7 columns">
-					<h4>Text search <a data-dropdown="text-search-info" aria-controls="text-search-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-					<div id="text-search-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-						<p>Some info on how to use the <strong>free text search</strong>.</p>
-					</div>
-					<div class="row collapse">
-						<div class="small-9 columns">
-							{{ form.q }}
-						</div>
-						<div class="small-3 columns">
-							<button type="submit" class="postfix button"><i class="fa fa-search"></i></button>
-						</div>
-					</div>
-				</div>
-				<div class="large-2 large-offset-3 columns show-all">
-					<p>&nbsp;</p>
-					<p><a href="{% url 'haystack_search' %}#search-results-box" class="less-padding expand button right">Show all</a></p>
-				</div>
-			</div>
-
-			<hr id="search">
-
-			<button class="small button secondary options"><i class="fa fa-cog"></i> <span id="showhide">Hide</span> filters' settings</button>
-			<a href="/browse/" class="right options"><span class="small button"><i class="fa fa-refresh"></i> Start new search</span></a>
-		
+		<form method="get" action=".">		
 			<div class="search-box">
 				<section data-section="non-expandable" data-expandable-group-member="facets" id="dprr-filter">
 					<div class="row">
@@ -45,9 +22,9 @@
 					
 					<div class="row">
 						<div class="large-12 columns">
-							<div class="panel results-preview" data-magellan-expedition="fixed">
+							<div class="panel results-preview" data-magellan-expedition="fixed" data-options="offse_by_height: true">
 								<h4>Results preview <a data-dropdown="results-preview-info" aria-controls="results-preview-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a>
-								<a href="#search-results-box" class="less-padding button right">Show results</a></h4>
+								<a href="#search-results-box" class="less-padding button right">Show <strong>{{ paginator.count }}</strong> results</a></h4>
 								<div id="results-preview-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
 									<p>Some info on what's displayed by the <strong>results preview</strong>.</p>
 								</div>
@@ -89,6 +66,23 @@
 									{% endfor %}
 								</ul>
 								{% endif %}
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="large-12 columns">
+							<h4>Text search <a data-dropdown="text-search-info" aria-controls="text-search-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+							<div id="text-search-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+								<p>Some info on how to use the <strong>free text search</strong>.</p>
+							</div>
+							<div class="row collapse">
+								<div class="small-9 columns">
+									{{ form.q }}
+								</div>
+								<div class="small-3 columns">
+									<button type="submit" class="postfix button"><i class="fa fa-search"></i></button>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -357,48 +351,6 @@
 								</div>
 
 								<ul class="inline-list">
-									{% comment %}
-									{% for term in facets.fields|get_item:"eques" %}
-									{% with value=term.0 count=term.1 %}
-									{% if value == "true" %}
-									<li>
-										<input id="eques-id" type="checkbox" value="eques"{% if count = 0 %} disabled{% endif %}> <label for="eques-id"{% if count = 0 %} class="grayed-out"{% endif %}>Eques <span class="label radius">{{ count }}</span></label>
-									</li>
-									{% endif %}
-									{% endwith %}
-									{% endfor %}
-
-									{% for term in facets.fields|get_item:"nobilis" %}
-									{% with value=term.0 count=term.1 %}
-									{% if value == "true" %}
-									<li>
-										<input id="nobilis-id" type="checkbox" value="nobilis"{% if count = 0 %} disabled{% endif %}> <label for="nobilis-id"{% if count = 0 %} class="grayed-out"{% endif %}>Nobilis <span class="label radius">{{ count }}</span></label>
-									</li>
-									{% endif %}
-									{% endwith %}
-									{% endfor %}
-
-									{% for term in facets.fields|get_item:"novus" %}
-									{% with value=term.0 count=term.1 %}
-									{% if value == "true" %}
-									<li>
-										<input id="novus-id" type="checkbox" value="novus"{% if count = 0 %} disabled{% endif %}> <label for="novus-id"{% if count = 0 %} class="grayed-out"{% endif %}>Novus <span class="label radius">{{ count }}</span></label>
-									</li>
-									{% endif %}
-									{% endwith %}
-									{% endfor %}
-
-									{% for term in facets.fields|get_item:"patrician" %}
-									{% with value=term.0 count=term.1 %}
-									{% if value == "true" %}
-									<li>
-										<input id="patrician-id" type="checkbox" value="patrician"{% if count = 0 %} disabled{% endif %}> <label for="patrician-id"{% if count = 0 %} class="grayed-out"{% endif %}>Patrician <span class="label radius">{{ count }}</span></label>
-									</li>
-									{% endif %}
-									{% endwith %}
-									{% endfor %}
-									{% endcomment %}
-									
 									{% for term in facets.fields|get_item:"eques" %}
 									{% with value=term.0 count=term.1 %}
 									{% if value == "true" and count > 0 %}
@@ -445,7 +397,7 @@
 
 					<div class="row">
 						<div class="large-12 columns">
-							<a href="#search-results-box" class="less-padding button right">Show results</a>
+							<a href="#search-results-box" class="less-padding button right">Show <strong>{{ paginator.count }}</strong> results</a>
 						</div>
 					</div>
 				</section>
@@ -473,9 +425,10 @@
 			{% for result in object_list %}
 			<li>
 				{% with doc=result.documents.0 %}
-				<span class="label radius right{% if doc.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ doc.highest_office }}{% if doc.uncertain == True %} <i class="fa fa-minus-circle"></i>{% else %} <i class="fa fa-check-circle"></i>{% endif %}</span>
-				<p></p>
-				<h3><a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a></h3>
+				<h3>
+					<span class="label radius right{% if doc.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ doc.highest_office }}{% if doc.uncertain == True %} <i class="fa fa-minus-circle"></i>{% else %} <i class="fa fa-check-circle"></i>{% endif %}</span>
+					<a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a>
+				</h3>
 				{% for dd in result.documents %}
 				<p>
 					{% highlight dd.text with query html_tag 'strong' max_length 120  %}

@@ -18,6 +18,9 @@ $(document).ready(function() {
 		var txt = $(".search-box").is(':visible') ? 'Show' : 'Hide';
 		$('.search-box').slideToggle(400);
 		$('#showhide').text(txt);
+		// toggle extra-margin class to remove blank space when collapsing
+		// the search box
+		$('#search-results-box').toggleClass("extra-margin");
 		return false;
 	});
 });

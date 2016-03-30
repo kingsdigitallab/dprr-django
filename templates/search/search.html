@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load ddh_utils_tags wagtailbase_tags wagtailcore_tags highlight %}
+{% load ddh_utils_tags wagtailbase_tags highlight %}
 
 {% block meta_title %}Search Results{% if query %} for {{ query }}{% endif %}{% endblock %}
 
@@ -22,7 +22,7 @@
 					
 					<div class="row">
 						<div class="large-12 columns">
-							<div class="panel results-preview" data-magellan-expedition="fixed" data-options="offse_by_height: true">
+							<div class="panel results-preview" data-magellan-expedition="fixed">
 								<h4>Results preview <a data-dropdown="results-preview-info" aria-controls="results-preview-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a>
 								<a href="#search-results-box" class="less-padding button right">Show <strong>{{ paginator.count }}</strong> results</a></h4>
 								<div id="results-preview-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
@@ -30,7 +30,7 @@
 								</div>
 								<h3><strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search"><i class="fa fa-trash"></i> Clear all</a></h3>
 
-								{% if query or selected_facets or post_date_filter %}
+								{% if query or selected_facets or date_filter %}
 
 								<ul class="inline-list no-bullet free-filters">
 
@@ -44,10 +44,10 @@
 									</li>
 									{% endif %}
 
-									{% if post_date_filter %}
+									{% if date_filter %}
 									<li>
 										<span class="label radius">
-											<a href="{{ post_date_filter.0}}#search" title="Remove filter">Post Date: {{ post_date_filter.1 }}
+											<a href="{{ date_filter.0}}#search" title="Remove filter">Post Date: {{ date_filter.1 }}
 												<i class="fa fa-times-circle"></i>
 											</a>
 										</span>
@@ -270,22 +270,22 @@
 
 					<div class="row">
 						<div class="large-12 columns">
-							<h4>Filter by <strong>post date</strong> <a data-dropdown="dates-info" aria-controls="dates-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+							<h4>Filter by <strong>date</strong> <a data-dropdown="dates-info" aria-controls="dates-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
 							<div id="dates-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
 								<p>Time frame:<br><strong>509 B.C. - 33 B.C.</strong></p>
 							</div>
 
-							{{ form.post_date_from.errors }}
-							{{ form.post_date_to.errors }}
+							{{ form.date_from.errors }}
+							{{ form.date_to.errors }}
 
 							<div class="row range">
 								<div class="small-5 columns">
 									<label>From / After (Leave blank for <em>Before</em>)</label>
-									{{ form.post_date_from }}
+									{{ form.date_from }}
 								</div>
 								<div class="small-5 columns">
 									<label>To / Before (Leave blank for <em>After</em>)</label>
-									{{ form.post_date_to }}
+									{{ form.date_to }}
 								</div>
 								<div class="large-2 columns">
 									<label>&nbsp;</label>
@@ -351,6 +351,48 @@
 								</div>
 
 								<ul class="inline-list">
+									{% comment %}
+									{% for term in facets.fields|get_item:"eques" %}
+									{% with value=term.0 count=term.1 %}
+									{% if value == "true" %}
+									<li>
+										<input id="eques-id" type="checkbox" value="eques"{% if count = 0 %} disabled{% endif %}> <label for="eques-id"{% if count = 0 %} class="grayed-out"{% endif %}>Eques <span class="label radius">{{ count }}</span></label>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+
+									{% for term in facets.fields|get_item:"nobilis" %}
+									{% with value=term.0 count=term.1 %}
+									{% if value == "true" %}
+									<li>
+										<input id="nobilis-id" type="checkbox" value="nobilis"{% if count = 0 %} disabled{% endif %}> <label for="nobilis-id"{% if count = 0 %} class="grayed-out"{% endif %}>Nobilis <span class="label radius">{{ count }}</span></label>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+
+									{% for term in facets.fields|get_item:"novus" %}
+									{% with value=term.0 count=term.1 %}
+									{% if value == "true" %}
+									<li>
+										<input id="novus-id" type="checkbox" value="novus"{% if count = 0 %} disabled{% endif %}> <label for="novus-id"{% if count = 0 %} class="grayed-out"{% endif %}>Novus <span class="label radius">{{ count }}</span></label>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+
+									{% for term in facets.fields|get_item:"patrician" %}
+									{% with value=term.0 count=term.1 %}
+									{% if value == "true" %}
+									<li>
+										<input id="patrician-id" type="checkbox" value="patrician"{% if count = 0 %} disabled{% endif %}> <label for="patrician-id"{% if count = 0 %} class="grayed-out"{% endif %}>Patrician <span class="label radius">{{ count }}</span></label>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+									{% endcomment %}
+
 									{% for term in facets.fields|get_item:"eques" %}
 									{% with value=term.0 count=term.1 %}
 									{% if value == "true" and count > 0 %}
@@ -360,7 +402,7 @@
 									{% endif %}
 									{% endwith %}
 									{% endfor %}
-									
+
 									{% for term in facets.fields|get_item:"nobilis" %}
 									{% with value=term.0 count=term.1 %}
 									{% if value == "true" and count > 0 %}
@@ -370,7 +412,7 @@
 									{% endif %}
 									{% endwith %}
 									{% endfor %}
-									
+
 									{% for term in facets.fields|get_item:"novus" %}
 									{% with value=term.0 count=term.1 %}
 									{% if value == "true" and count > 0 %}
@@ -380,7 +422,7 @@
 									{% endif %}
 									{% endwith %}
 									{% endfor %}
-									
+
 									{% for term in facets.fields|get_item:"patrician" %}
 									{% with value=term.0 count=term.1 %}
 									{% if value == "true" and count > 0 %}

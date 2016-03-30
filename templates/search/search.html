@@ -5,36 +5,13 @@
 
 {% block main %}
 <div class="row">
-	<div class="large-12 columns">
+	<div class="large-12 columns" id="search">
 		<h1 id="search-box">Search</h1>
 
-		<form method="get" action=".">
-			<div class="row">
-				<div class="large-7 columns">
-					<h4>Text search <a data-dropdown="text-search-info" aria-controls="text-search-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-					<div id="text-search-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-						<p>Some info on how to use the <strong>free text search</strong>.</p>
-					</div>
-					<div class="row collapse">
-						<div class="small-9 columns">
-							{{ form.q }}
-						</div>
-						<div class="small-3 columns">
-							<button type="submit" class="postfix button"><i class="fa fa-search"></i></button>
-						</div>
-					</div>
-				</div>
-				<div class="large-2 large-offset-3 columns show-all">
-					<p>&nbsp;</p>
-					<p><a href="{% url 'haystack_search' %}#search-results-box" class="less-padding expand button right">Show all</a></p>
-				</div>
-			</div>
-
-			<hr id="search">
-
-			<button class="small button secondary options"><i class="fa fa-cog"></i> <span id="showhide">Hide</span> filters' settings</button>
-			<a href="/browse/" class="right options"><span class="small button"><i class="fa fa-refresh"></i> Start new search</span></a>
-
+		<button class="small button secondary options"><i class="fa fa-cog"></i> <span id="showhide">Hide</span> filters' settings</button>
+		<a href="/browse/" class="right options"><span class="small button"><i class="fa fa-refresh"></i> Start new search</span></a>
+			
+		<form method="get" action=".">		
 			<div class="search-box">
 				<section data-section="non-expandable" data-expandable-group-member="facets" id="dprr-filter">
 					<div class="row">
@@ -42,12 +19,12 @@
 							<h4>Refine your search</h4>
 						</div>
 					</div>
-
+					
 					<div class="row">
 						<div class="large-12 columns">
 							<div class="panel results-preview" data-magellan-expedition="fixed">
 								<h4>Results preview <a data-dropdown="results-preview-info" aria-controls="results-preview-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a>
-								<a href="#search-results-box" class="less-padding button right">Show results</a></h4>
+								<a href="#search-results-box" class="less-padding button right">Show <strong>{{ paginator.count }}</strong> results</a></h4>
 								<div id="results-preview-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
 									<p>Some info on what's displayed by the <strong>results preview</strong>.</p>
 								</div>
@@ -89,6 +66,23 @@
 									{% endfor %}
 								</ul>
 								{% endif %}
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="large-12 columns">
+							<h4>Text search <a data-dropdown="text-search-info" aria-controls="text-search-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+							<div id="text-search-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+								<p>Some info on how to use the <strong>free text search</strong>.</p>
+							</div>
+							<div class="row collapse">
+								<div class="small-9 columns">
+									{{ form.q }}
+								</div>
+								<div class="small-3 columns">
+									<button type="submit" class="postfix button"><i class="fa fa-search"></i></button>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -445,7 +439,7 @@
 
 					<div class="row">
 						<div class="large-12 columns">
-							<a href="#search-results-box" class="less-padding button right">Show results</a>
+							<a href="#search-results-box" class="less-padding button right">Show <strong>{{ paginator.count }}</strong> results</a>
 						</div>
 					</div>
 				</section>
@@ -473,9 +467,10 @@
 			{% for result in object_list %}
 			<li>
 				{% with doc=result.documents.0 %}
-				<span class="label radius right{% if doc.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ doc.highest_office }}{% if doc.uncertain == True %} <i class="fa fa-minus-circle"></i>{% else %} <i class="fa fa-check-circle"></i>{% endif %}</span>
-				<p></p>
-				<h3><a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a></h3>
+				<h3>
+					<span class="label radius right{% if doc.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ doc.highest_office }}{% if doc.uncertain == True %} <i class="fa fa-minus-circle"></i>{% else %} <i class="fa fa-check-circle"></i>{% endif %}</span>
+					<a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a>
+				</h3>
 				{% for dd in result.documents %}
 				<p>
 					{% highlight dd.text with query html_tag 'strong' max_length 120  %}
@@ -514,7 +509,7 @@
 									<g>
 										<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
 											L120,224.664"/>
-
+										
 											<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.995,4.9748" d="
 											M125.31,224.441c100.252-6.197,103.002-182.519,204.875-185.894"/>
 										<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,38.664L333,38.664
@@ -523,7 +518,7 @@
 									<g>
 										<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
 											L120,224.664"/>
-
+										
 											<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0072,5.0359" d="
 											M125.369,224.498c100.182-4.019,102.964-117.105,204.773-119.302"/>
 										<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,105.664
@@ -698,7 +693,7 @@
 											<g>
 												<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
 													L120,224.664"/>
-
+												
 													<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.995,4.9748" d="
 													M125.31,224.441c100.252-6.197,103.002-182.519,204.875-185.894"/>
 												<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,38.664L333,38.664
@@ -707,7 +702,7 @@
 											<g>
 												<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
 													L120,224.664"/>
-
+												
 													<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0072,5.0359" d="
 													M125.369,224.498c100.182-4.019,102.964-117.105,204.773-119.302"/>
 												<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,105.664

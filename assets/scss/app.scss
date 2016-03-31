@@ -278,6 +278,8 @@ button.name-form {
 }
 
 .drop-list {
+	max-height: 550px; /* To overcome the overflow: hidden that cuts the list off */
+	overflow: scroll;
 	li {
 		border-bottom: 1px solid #ccc;
 	}

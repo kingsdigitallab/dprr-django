@@ -72,23 +72,6 @@
 
 					<div class="row">
 						<div class="large-12 columns">
-							<h4>Text search <a data-dropdown="text-search-info" aria-controls="text-search-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-							<div id="text-search-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-								<p>Some info on how to use the <strong>free text search</strong>.</p>
-							</div>
-							<div class="row collapse">
-								<div class="small-9 columns">
-									{{ form.q }}
-								</div>
-								<div class="small-3 columns">
-									<button type="submit" class="postfix button"><i class="fa fa-search"></i></button>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="large-12 columns">
 							<h4>Filter by <strong>names</strong> <a data-dropdown="names-info" aria-controls="names-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
 							<div id="names-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
 								<p>Some info on how to use the <strong>name search</strong>.</p>
@@ -274,80 +257,6 @@
 
 					<div class="row">
 						<div class="large-12 columns">
-							<h4>Filter by <strong>date</strong> <a data-dropdown="dates-info" aria-controls="dates-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-							<div id="dates-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-								<p>Time frame:<br><strong>509 B.C. - 33 B.C.</strong></p>
-							</div>
-
-							{{ form.date_from.errors }}
-							{{ form.date_to.errors }}
-
-							<div class="row range">
-								<div class="small-5 columns">
-									<label>From / After (Leave blank for <em>Before</em>)</label>
-									{{ form.date_from }}
-								</div>
-								<div class="small-5 columns">
-									<label>To / Before (Leave blank for <em>After</em>)</label>
-									{{ form.date_to }}
-								</div>
-								<div class="large-2 columns">
-									<label>&nbsp;</label>
-									<button type="submit" class="less-padding expand secondary">Update dates</button>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="large-6 columns">
-							<div class="panel radius fixed-height">
-								<h4>Filter by <strong>office</strong> <a data-dropdown="office-info" aria-controls="office-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-								<div id="office-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-									<p>Some info on how to use the <strong>office filter</strong>.</p>
-								</div>
-								<ul class="no-bullet">
-									{% for term in facets.fields|get_item:"office" %}
-									{% with value=term.0 count=term.1 %}
-									{% if count > 0 %}
-									<li>
-										<a href="{% add_facet_link querydict "office" value %}#search">
-											<span class="label radius right">{{ count }}</span>
-											{{ value }}
-										</a>
-									</li>
-									{% endif %}
-									{% endwith %}
-									{% endfor %}
-								</ul>
-							</div>
-						</div>
-						<div class="large-6 columns">
-							<div class="panel radius fixed-height">
-								<h4>Filter by <strong>province</strong> <a data-dropdown="province-info" aria-controls="province-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-								<div id="province-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-									<p>Some info on how to use the <strong>province filter</strong>.</p>
-								</div>
-								<ul class="no-bullet">
-									{% for term in facets.fields|get_item:"province" %}
-									{% with value=term.0 count=term.1 %}
-									{% if count > 0 %}
-									<li>
-										<a href="{% add_facet_link querydict "province" value %}#search">
-											<span class="label radius right">{{ count }}</span>
-											{{ value }}
-										</a>
-									</li>
-									{% endif %}
-									{% endwith %}
-									{% endfor %}
-								</ul>
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="large-12 columns">
 							<div class="panel radius">
 								<h4>Filter by <strong>class</strong> <a data-dropdown="class-info" aria-controls="class-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
 								<div id="class-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
@@ -437,6 +346,97 @@
 									{% endwith %}
 									{% endfor %}
 								</ul>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="large-12 columns">
+							<h4>Filter by <strong>date</strong> <a data-dropdown="dates-info" aria-controls="dates-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+							<div id="dates-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+								<p>Time frame:<br><strong>509 B.C. - 33 B.C.</strong></p>
+							</div>
+
+							{{ form.date_from.errors }}
+							{{ form.date_to.errors }}
+
+							<div class="row range">
+								<div class="small-5 columns">
+									<label>From / After (Leave blank for <em>Before</em>)</label>
+									{{ form.date_from }}
+								</div>
+								<div class="small-5 columns">
+									<label>To / Before (Leave blank for <em>After</em>)</label>
+									{{ form.date_to }}
+								</div>
+								<div class="large-2 columns">
+									<label>&nbsp;</label>
+									<button type="submit" class="less-padding expand secondary">Update dates</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="large-6 columns">
+							<div class="panel radius fixed-height">
+								<h4>Filter by <strong>office</strong> <a data-dropdown="office-info" aria-controls="office-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+								<div id="office-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+									<p>Some info on how to use the <strong>office filter</strong>.</p>
+								</div>
+								<ul class="no-bullet">
+									{% for term in facets.fields|get_item:"office" %}
+									{% with value=term.0 count=term.1 %}
+									{% if count > 0 %}
+									<li>
+										<a href="{% add_facet_link querydict "office" value %}#search">
+											<span class="label radius right">{{ count }}</span>
+											{{ value }}
+										</a>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+								</ul>
+							</div>
+						</div>
+						<div class="large-6 columns">
+							<div class="panel radius fixed-height">
+								<h4>Filter by <strong>province</strong> <a data-dropdown="province-info" aria-controls="province-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+								<div id="province-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+									<p>Some info on how to use the <strong>province filter</strong>.</p>
+								</div>
+								<ul class="no-bullet">
+									{% for term in facets.fields|get_item:"province" %}
+									{% with value=term.0 count=term.1 %}
+									{% if count > 0 %}
+									<li>
+										<a href="{% add_facet_link querydict "province" value %}#search">
+											<span class="label radius right">{{ count }}</span>
+											{{ value }}
+										</a>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="large-12 columns">
+							<h4>Text search <a data-dropdown="text-search-info" aria-controls="text-search-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
+							<div id="text-search-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+								<p>Some info on how to use the <strong>free text search</strong>.</p>
+							</div>
+							<div class="row collapse">
+								<div class="small-9 columns">
+									{{ form.q }}
+								</div>
+								<div class="small-3 columns">
+									<button type="submit" class="postfix button"><i class="fa fa-search"></i></button>
+								</div>
 							</div>
 						</div>
 					</div>

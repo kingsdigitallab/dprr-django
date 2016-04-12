@@ -151,9 +151,13 @@
 										{% endfor %}
 									</ul>
 								</div>
+
+								<!-- Add RE Number - call it RE -->
+
+
 								<div class="large-1 columns">
 									{% comment %}
-									<label>.f
+									<label>Father initial
 										<select>
 											<option></option>
 											{% for term in facets.fields|get_item:"f" %}
@@ -167,7 +171,7 @@
 									</label>
 									{% endcomment %}
 
-									<button data-dropdown="f" aria-controls="f" aria-expanded="false" class="name-form button dropdown">.f</button><br>
+									<button data-dropdown="f" aria-controls="f" aria-expanded="false" class="name-form button dropdown">Father initial</button><br>
 
 									<ul id="f" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
 										{% for term in facets.fields|get_item:"f" %}
@@ -181,7 +185,7 @@
 								</div>
 								<div class="large-1 columns">
 									{% comment %}
-									<label>.n
+									<label>Grandfather initial
 										<select>
 											<option></option>
 											{% for term in facets.fields|get_item:"n" %}
@@ -195,7 +199,7 @@
 									</label>
 									{% endcomment %}
 
-									<button data-dropdown="n" aria-controls="n" aria-expanded="false" class="name-form button dropdown">.n</button><br>
+									<button data-dropdown="n" aria-controls="n" aria-expanded="false" class="name-form button dropdown">Grandfather initial</button><br>
 
 									<ul id="n" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
 										{% for term in facets.fields|get_item:"n" %}
@@ -237,14 +241,14 @@
 								</div>
 								<div class="large-2 columns">
 									{% comment %}
-									<label>+ many
+									<label>Other names
 										<select>
 											<option></option>
 										</select>
 									</label>
 									{% endcomment %}
 
-									<button data-dropdown="many" aria-controls="many" aria-expanded="false" class="name-form button dropdown">+ many</button><br>
+									<button data-dropdown="many" aria-controls="many" aria-expanded="false" class="name-form button dropdown">Other names</button><br>
 
 									<ul id="many" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
 										<li><a href="#search"><span class="label radius right"></span></a></li>

@@ -77,8 +77,8 @@
 								<p>Some info on how to use the <strong>name search</strong>.</p>
 							</div>
 
-							<div class="row">
-								<div class="large-2 columns">
+							<div class="row name-row">
+								<div class="large-1 columns">
 									{% comment %}
 									<label>Praenomen
 										<select>
@@ -106,7 +106,7 @@
 										{% endfor %}
 									</ul>
 								</div>
-								<div class="large-3 columns">
+								<div class="large-1 columns">
 									{% comment %}
 									<label>Nomen
 										<select>
@@ -135,10 +135,12 @@
 									</ul>
 								</div>
 
-								<!-- Add RE Number - call it RE -->
-
-
 								<div class="large-1 columns">
+									<button data-dropdown="re" aria-controls="f" aria-expanded="false" class="name-form button dropdown">RE</button>
+								</div>
+
+
+								<div class="large-2 columns">
 									{% comment %}
 									<label>Father initial
 										<select>
@@ -166,7 +168,7 @@
 										{% endfor %}
 									</ul>
 								</div>
-								<div class="large-1 columns">
+								<div class="large-3 columns">
 									{% comment %}
 									<label>Grandfather initial
 										<select>
@@ -194,7 +196,7 @@
 										{% endfor %}
 									</ul>
 								</div>
-								<div class="large-3 columns">
+								<div class="large-2 columns">
 									{% comment %}
 									<label>Cognomen
 										<select>

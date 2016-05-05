@@ -111,7 +111,6 @@ class Tribe(models.Model):
         ordering = ['id', ]
 
 
-
 class RoleType(TimeStampedModel):
 
     name = models.CharField(max_length=128, unique=True)
@@ -492,8 +491,10 @@ class DateInformation(TimeStampedModel):
         else:
             date_str = date_str + str(self.value) + " A.D."
 
-        return "{} [{}/{}]".format(date_str, self.date_type,
-                                   self.get_date_interval_display())
+        return "{} {}, {} ({})".format(self.get_date_interval_display(),
+                                       date_str,
+                                       self.date_type,
+                                       self.secondary_source.abbrev_name)
 
 
 @with_author
@@ -835,6 +836,7 @@ class StatusAssertion(TimeStampedModel):
                                         "?" if self.uncertain else "",
                                         self.print_dates(),
                                         self.secondary_source.abbrev_name)
+
 
 @with_author
 class StatusAssertionProvince(models.Model):

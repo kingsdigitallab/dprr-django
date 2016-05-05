@@ -458,17 +458,17 @@ class DateType(TimeStampedModel):
 class DateInformation(TimeStampedModel):
     person = models.ForeignKey(Person)
 
-    ATTESTATION = 'A'
+    SINGLE = 'S'
     INTERVAL_CHOICES = (
-        (ATTESTATION, 'Attestation'),
-        ('F', 'First'),
-        ('L', 'Last')
+        (SINGLE, 'Single'),
+        ('B', 'Before'),
+        ('A', 'After')
     )
 
     date_type = models.ForeignKey(
         DateType, related_name='person_date', verbose_name='Type')
     date_interval = models.CharField(
-        max_length=1, choices=INTERVAL_CHOICES, default=ATTESTATION,
+        max_length=1, choices=INTERVAL_CHOICES, default=SINGLE,
         verbose_name='Interval')
     uncertain = models.BooleanField(default=False)
     value = models.IntegerField()

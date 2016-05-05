@@ -22,7 +22,7 @@
                     <g>
                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
                             L120,224.664"/>
-                        
+
                             <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.995,4.9748" d="
                             M125.31,224.441c100.252-6.197,103.002-182.519,204.875-185.894"/>
                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,38.664L333,38.664
@@ -31,7 +31,7 @@
                     <g>
                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
                             L120,224.664"/>
-                        
+
                             <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0072,5.0359" d="
                             M125.369,224.498c100.182-4.019,102.964-117.105,204.773-119.302"/>
                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,105.664
@@ -200,7 +200,7 @@
         </div>
         -->
 
-        <!-- 
+        <!--
         <div class="svg-container">
             <div id="family-graph">
             </div>
@@ -229,8 +229,14 @@
             {% endif %}
         </p>
 
-        <h2>Offices</h2>
+        <h2>Life Dates</h2>
+        <ul>
+            {% for di in person.dateinformation_set.all %}
+                <li>{{ di }}</li>
+            {% endfor %}
+        </ul>
 
+        <h2>Offices</h2>
         <ul class="timeline no-bullet bottom-margin">
             {% for pa in person.post_assertions.all %}
                 <li><span class="label radius{% if pa.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ pa.print_date | safe}}</span> <strong>{{ pa.office | title}} {% if pa.provinces %} <a href="#">{{ pa.print_provinces }}</a> {% endif %}</strong>

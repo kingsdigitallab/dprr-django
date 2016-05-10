@@ -5,6 +5,7 @@ import unicodecsv as csv
 import itertools
 from os import path
 import primary_source_aux as psource_aux
+from django.db import utils
 
 from promrep.models import Person, DateType, DateInformation, SecondarySource
 
@@ -41,7 +42,6 @@ def read_input_file(ifname):
 
         for row_dict in csvDict:
             person_id = row_dict['Person ID']
-            date_notes = row_dict['Notes']
 
             # will fail if we don't find the person, mostly for debug purposes
             person = Person.objects.get(id=person_id)
@@ -51,9 +51,10 @@ def read_input_file(ifname):
                 date_str = row_dict['Date{}'.format(i)].strip()
                 date_ref = row_dict['DateRef{}'.format(i)].strip()
                 uncertain_str = row_dict['DateUncertain{}'.format(i)].strip()
-                date_type_str = row_dict['DateType{}'.format(i)]
+                date_type_str = row_dict['DateType{}'.format(i)].strip()
+                date_note = row_dict['DateNotes{}'.format(i)].strip()
 
-                if date_str or date_ref:
+                if date_str:
                     # print i, row_dict
 
                     unc_flag = False
@@ -64,10 +65,13 @@ def read_input_file(ifname):
                         name=date_type_str)
 
                     # naive way of adding the sources
-                    sec_source, created = SecondarySource.objects.get_or_create(
-                        abbrev_name=date_ref,
-                        biblio=date_ref,
-                        name=date_ref)
+                    try:
+                        sec_source, created = SecondarySource.objects.get_or_create(
+                            abbrev_name=date_ref,
+                            biblio=date_ref,
+                            name=date_ref)
+                    except utils.IntegrityError:
+                        print("Biblio int error: {}".format(date_ref))
 
                     # date can be in intervals;
                     # if we have a before or after, we'll only create a single
@@ -77,17 +81,32 @@ def read_input_file(ifname):
                     if "before" in date_str:
                         interval = "Before"
                         date_str = date_str.replace('before', '').strip()
+                        date_str = - int(date_str)
                     elif "after" in date_str:
                         interval = "After"
                         date_str = date_str.replace('after', '').strip()
+                        date_str = - int(date_str)
+                    elif "by" in date_str:
+                        interval = "Before"
+                        date_str = date_str.replace('by', '').strip()
+                        date_str = - int(date_str) - 1
+                    elif "AD" in date_str:
+                        date_str = date_str.replace('AD', '').strip()
+                        date_str = int(date_str)
+                    else:
+                        date_str = - int(date_str)
 
-                    di = DateInformation.objects.create(
-                        person_id=person.id,
-                        value=date_str,
-                        uncertain=unc_flag,
-                        date_type=date_type,
-                        secondary_source=sec_source
-                    )
+                    try:
+                        di = DateInformation.objects.create(
+                            person_id=person.id,
+                            value=date_str,
+                            uncertain=unc_flag,
+                            date_type=date_type,
+                            notes = date_note,
+                            secondary_source=sec_source
+                        )
+                    except e:
+                        print("Cannot create DateInformation object".format(row_dict))
 
                     print("Added {} to Person {}".format(di.id, person.id))
 
@@ -95,7 +114,7 @@ def read_input_file(ifname):
 
 
 def run():
-    ifname = "promrep/scripts/data/life_data/SampleFileForLF13Apr.csv"
+    ifname = "promrep/scripts/data/life_data/LifeDatesV1.csv"
 
     print("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

@@ -44,71 +44,74 @@ def read_input_file(ifname):
             person_id = row_dict['Person ID']
 
             # will fail if we don't find the person, mostly for debug purposes
-            person = Person.objects.get(id=person_id)
+            try:
+                person = Person.objects.get(id=person_id)
+            except:
+                print("Cannot find person with id={}".format(person_id))
 
-            # can have up to 5 dates
-            for i in range(1, 5):
-                date_str = row_dict['Date{}'.format(i)].strip()
-                date_ref = row_dict['DateRef{}'.format(i)].strip()
-                uncertain_str = row_dict['DateUncertain{}'.format(i)].strip()
-                date_type_str = row_dict['DateType{}'.format(i)].strip()
-                date_note = row_dict['DateNotes{}'.format(i)].strip()
+                # can have up to 5 dates
+                for i in range(1, 5):
+                    date_str = row_dict['Date{}'.format(i)].strip()
+                    date_ref = row_dict['DateRef{}'.format(i)].strip()
+                    uncertain_str = row_dict['DateUncertain{}'.format(i)].strip()
+                    date_type_str = row_dict['DateType{}'.format(i)].strip()
+                    date_note = row_dict['DateNotes{}'.format(i)].strip()
 
-                if date_str:
-                    # print i, row_dict
+                    if date_str:
+                        # print i, row_dict
 
-                    unc_flag = False
-                    if uncertain_str:
-                        unc_flag = True
+                        unc_flag = False
+                        if uncertain_str:
+                            unc_flag = True
 
-                    date_type, created = DateType.objects.get_or_create(
-                        name=date_type_str)
+                        date_type, created = DateType.objects.get_or_create(
+                            name=date_type_str)
 
-                    # naive way of adding the sources
-                    try:
-                        sec_source, created = SecondarySource.objects.get_or_create(
-                            abbrev_name=date_ref,
-                            biblio=date_ref,
-                            name=date_ref)
-                    except utils.IntegrityError:
-                        print("Biblio int error: {}".format(date_ref))
+                        # naive way of adding the sources
+                        try:
+                            sec_source, created = SecondarySource.objects.get_or_create(
+                                abbrev_name=date_ref,
+                                biblio=date_ref,
+                                name=date_ref)
+                        except utils.IntegrityError:
+                            print("Biblio int error: {}".format(date_ref))
 
-                    # date can be in intervals;
-                    # if we have a before or after, we'll only create a single
-                    # point
-                    interval = "Single"
+                        # date can be in intervals;
+                        # if we have a before or after, we'll only create a single
+                        # point
+                        interval = "Single"
 
-                    if "before" in date_str:
-                        interval = "Before"
-                        date_str = date_str.replace('before', '').strip()
-                        date_str = - int(date_str)
-                    elif "after" in date_str:
-                        interval = "After"
-                        date_str = date_str.replace('after', '').strip()
-                        date_str = - int(date_str)
-                    elif "by" in date_str:
-                        interval = "Before"
-                        date_str = date_str.replace('by', '').strip()
-                        date_str = - int(date_str) - 1
-                    elif "AD" in date_str:
-                        date_str = date_str.replace('AD', '').strip()
-                        date_str = int(date_str)
-                    else:
-                        date_str = - int(date_str)
+                        if "before" in date_str:
+                            interval = "Before"
+                            date_str = date_str.replace('before', '').strip()
+                            date_str = - int(date_str)
+                        elif "after" in date_str:
+                            interval = "After"
+                            date_str = date_str.replace('after', '').strip()
+                            date_str = - int(date_str)
+                        elif "by" in date_str:
+                            interval = "Before"
+                            date_str = date_str.replace('by', '').strip()
+                            date_str = - int(date_str) - 1
+                        elif "AD" in date_str:
+                            date_str = date_str.replace('AD', '').strip()
+                            date_str = int(date_str)
+                        else:
+                            date_str = - int(date_str)
 
-                    try:
-                        di = DateInformation.objects.create(
-                            person_id=person.id,
-                            value=date_str,
-                            uncertain=unc_flag,
-                            date_type=date_type,
-                            notes = date_note,
-                            secondary_source=sec_source
-                        )
-                    except e:
-                        print("Cannot create DateInformation object".format(row_dict))
+                        try:
+                            di = DateInformation.objects.create(
+                                person_id=person.id,
+                                value=date_str,
+                                uncertain=unc_flag,
+                                date_type=date_type,
+                                notes = date_note,
+                                secondary_source=sec_source
+                            )
+                        except e:
+                            print("Cannot create DateInformation object".format(row_dict))
 
-                    print("Added {} to Person {}".format(di.id, person.id))
+                        print("Added {} to Person {}".format(di.id, person.id))
 
     print("Wrote log file \"{}\"".format(log_fname))
 

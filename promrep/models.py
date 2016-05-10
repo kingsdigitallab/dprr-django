@@ -111,7 +111,6 @@ class Tribe(models.Model):
         ordering = ['id', ]
 
 
-
 class RoleType(TimeStampedModel):
 
     name = models.CharField(max_length=128, unique=True)
@@ -458,17 +457,17 @@ class DateType(TimeStampedModel):
 class DateInformation(TimeStampedModel):
     person = models.ForeignKey(Person)
 
-    ATTESTATION = 'A'
+    SINGLE = 'S'
     INTERVAL_CHOICES = (
-        (ATTESTATION, 'Attestation'),
-        ('F', 'First'),
-        ('L', 'Last')
+        (SINGLE, 'Single'),
+        ('B', 'Before'),
+        ('A', 'After')
     )
 
     date_type = models.ForeignKey(
         DateType, related_name='person_date', verbose_name='Type')
     date_interval = models.CharField(
-        max_length=1, choices=INTERVAL_CHOICES, default=ATTESTATION,
+        max_length=1, choices=INTERVAL_CHOICES, default=SINGLE,
         verbose_name='Interval')
     uncertain = models.BooleanField(default=False)
     value = models.IntegerField()
@@ -492,8 +491,10 @@ class DateInformation(TimeStampedModel):
         else:
             date_str = date_str + str(self.value) + " A.D."
 
-        return "{} [{}/{}]".format(date_str, self.date_type,
-                                   self.get_date_interval_display())
+        return "{} {}, {} ({})".format(self.get_date_interval_display(),
+                                       date_str,
+                                       self.date_type,
+                                       self.secondary_source.abbrev_name)
 
 
 @with_author
@@ -835,6 +836,7 @@ class StatusAssertion(TimeStampedModel):
                                         "?" if self.uncertain else "",
                                         self.print_dates(),
                                         self.secondary_source.abbrev_name)
+
 
 @with_author
 class StatusAssertionProvince(models.Model):

@@ -46,8 +46,6 @@ def read_input_file(ifname):
             # will fail if we don't find the person, mostly for debug purposes
             try:
                 person = Person.objects.get(id=person_id)
-            except:
-                print("Cannot find person with id={}".format(person_id))
 
                 # can have up to 5 dates
                 for i in range(1, 5):
@@ -112,6 +110,10 @@ def read_input_file(ifname):
                             print("Cannot create DateInformation object".format(row_dict))
 
                         print("Added {} to Person {}".format(di.id, person.id))
+
+            except:
+                print("Cannot find person with id={}".format(person_id))
+
 
     print("Wrote log file \"{}\"".format(log_fname))
 

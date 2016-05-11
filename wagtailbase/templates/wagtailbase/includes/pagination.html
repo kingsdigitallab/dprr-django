@@ -1,0 +1,15 @@
+{% load wagtailbase_tags %}
+
+{% get_request_parameters exclude="page" as params %}
+
+<ul class="pagination">
+    <li class="arrow {% if not pages.has_previous %}unavailable{% endif %}">
+    <a href="{% if pages.has_previous %}?page={{ pages.previous_page_number }}{{ params }}{% endif %}">&laquo;</a>
+    </li>
+    <li>
+        <a href="">Page {{ pages.number }} of {{ pages.paginator.num_pages }}</a>
+    </li>
+    <li class="arrow {% if not pages.has_next %}unavailable{% endif %}">
+    <a href="{% if pages.has_next %}?page={{ pages.next_page_number }}{{ params }}{% endif %}">&raquo;</a>
+    </li>
+</ul>

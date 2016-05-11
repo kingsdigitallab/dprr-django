@@ -187,6 +187,12 @@ h3.quick-home {
 
 /*** Content ***/
 
+.name-row {
+	button {
+		padding: 0 !important;
+	}
+}
+
 .list-page-title {
 	border-bottom: 1px solid $iron;
 	margin-bottom: 1rem;

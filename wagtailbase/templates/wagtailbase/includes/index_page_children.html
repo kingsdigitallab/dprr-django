@@ -1,0 +1,15 @@
+{% if pages %}
+    {% load wagtailcore_tags %}
+
+    {% if title %}
+    <h3>{{ title }}</h3>
+    {% endif %}
+
+    <ul class="{% if class %}{{ class }}{% endif %}">
+    {% for page in pages %}
+        <li>
+            <a href="{% pageurl page %}">{{ page.title }}</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% endif %}

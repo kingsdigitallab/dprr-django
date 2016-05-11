@@ -1,0 +1,14 @@
+{% if post %}
+{% load wagtailroutablepage_tags wagtailcore_tags %}
+
+<h4>
+    <a href="{% pageurl post %}">{{ post.title }}</a>
+</h4>
+<p class="byline">by <a href="{% routablepageurl post.blog_index.specific 'author' post.owner %}">{{ post.owner }}</a>
+    <time datetime="{{ post.date|date:'c' }}">{{ post.date }}</time>
+</p>
+<p>
+    {{ post.content|richtext|truncatewords_html:75 }}
+</p>
+
+{% endif %}

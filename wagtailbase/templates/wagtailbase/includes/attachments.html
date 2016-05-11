@@ -1,0 +1,26 @@
+{% if attachments %}
+{% load wagtailcore_tags wagtailembeds_tags wagtailimages_tags %}
+
+{% if title %}
+<h3>{{ title }}</h3>
+{% endif %}
+
+<ul class="{{ class }}">
+  {% for attachment in attachments %}
+  <li>
+    <a href="{{ attachment.link }}">
+      {% if attachment.embed_url %}
+      {# Embedded video - requires an embedly key to be stored in settings #}
+      {{ attachment.embed_url|embed:1000 }}
+      {% elif attachment.image %}
+
+      {% image attachment.image width-1000 as attachmentimagedata %}
+      <img src="{{ attachmentimagedata.url }}" width="{{ attachmentimagedata.width }}" height="{{ attachmentimagedata.height }}" alt="{{ attachmentimagedata.alt }}" title="{{ attachment.caption }}" />
+      {% endif %}
+
+      <p class="caption">{{ attachment.caption }}</p>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}

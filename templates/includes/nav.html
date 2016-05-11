@@ -1,4 +1,4 @@
-{% load wagtailbase_tags %}
+{% load wagtailbase_tags dprr_tags %}
 
 <div class="contain-to-grid">
 	<nav class="top-bar" data-topbar role="navigation">
@@ -25,14 +25,12 @@
 				</li>
 			</ul> -->
 			<!-- Left Nav Section -->
-			{% comment %}
 			{% block main_menu %}
             {% get_site_root as site_root %}
             {% main_menu root=site_root current_page=self %}
             {% endblock %}
-            {% endcomment %}
 
-
+            {% comment %}
 			<ul class="left">
 				<li class="active"><a href="/">Home</a></li>
 				<li class="has-dropdown">
@@ -45,14 +43,10 @@
 					</ul>
 				</li>
 				<li><a href="/events/">Events</a></li>
-				<li><a href="/blog/">Blog</a></li>
-
-				<!-- TODO: Uncomment 'Browse' once we have the section ready -->
-				<!-- <li class="greyed-out"><a href="/browse/">Browse</a></li> -->
-
+				<li><a href="/blog/">Blog</a></li><li class="greyed-out"><a href="/browse/">Browse</a></li>
 				<li><a href="/contact/">Contact</a></li>
 			</ul>
-
+			{% endcomment %}
 		</section>
 	</nav>
 </div>

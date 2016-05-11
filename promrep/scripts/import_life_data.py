@@ -48,7 +48,7 @@ def read_input_file(ifname):
                 person = Person.objects.get(id=person_id)
 
                 # can have up to 5 dates
-                for i in range(1, 5):
+                for i in range(1, 6):
                     date_str = row_dict['Date{}'.format(i)].strip()
                     date_ref = row_dict['DateRef{}'.format(i)].strip()
                     uncertain_str = row_dict['DateUncertain{}'.format(i)].strip()
@@ -65,30 +65,24 @@ def read_input_file(ifname):
                         date_type, created = DateType.objects.get_or_create(
                             name=date_type_str)
 
-                        # naive way of adding the sources
-                        try:
-                            sec_source, created = SecondarySource.objects.get_or_create(
-                                abbrev_name=date_ref,
-                                biblio=date_ref,
-                                name=date_ref)
-                        except utils.IntegrityError:
-                            print("Biblio int error: {}".format(date_ref))
-
                         # date can be in intervals;
                         # if we have a before or after, we'll only create a single
                         # point
-                        interval = "Single"
+                        interval = "S"
 
                         if "before" in date_str:
-                            interval = "Before"
+                            # B: Before
+                            interval = "B"
                             date_str = date_str.replace('before', '').strip()
                             date_str = - int(date_str)
                         elif "after" in date_str:
-                            interval = "After"
+                            # A: After
+                            interval = "A"
                             date_str = date_str.replace('after', '').strip()
                             date_str = - int(date_str)
                         elif "by" in date_str:
-                            interval = "Before"
+                            # B: Before
+                            interval = "B"
                             date_str = date_str.replace('by', '').strip()
                             date_str = - int(date_str) - 1
                         elif "AD" in date_str:
@@ -104,14 +98,25 @@ def read_input_file(ifname):
                                 uncertain=unc_flag,
                                 date_type=date_type,
                                 notes = date_note,
-                                secondary_source=sec_source
+                                date_interval = interval
                             )
+
+                            # naive way of adding the sources
+                            if date_ref:
+                                sec_source, created = SecondarySource.objects.get_or_create(
+                                    abbrev_name=date_ref,
+                                    biblio=date_ref,
+                                    name=date_ref)
+                                di.secondary_source = sec_source
+                                di.save()
+
                         except e:
                             print("Cannot create DateInformation object".format(row_dict))
 
                         print("Added {} to Person {}".format(di.id, person.id))
 
-            except:
+            except Exception as e:
+                print e
                 print("Cannot find person with id={}".format(person_id))
 
 

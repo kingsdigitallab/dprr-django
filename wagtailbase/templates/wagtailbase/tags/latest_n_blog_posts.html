@@ -1,0 +1,16 @@
+{% load wagtailcore_tags %}
+
+{% for post in posts %}
+
+
+<h4>
+    <a href="{% pageurl post %}">{{ post.title }}</a>
+</h4>
+<p class="byline">by <a href="{% pageurl post.blog_index %}?author={{ post.owner.username }}">{{ post.owner }}</a>
+    <time datetime="{{ post.date|date:'c' }}">{{ post.date }}</time>
+</p>
+<p>
+    {{ post.content|richtext|truncatewords_html:75 }}
+</p>
+
+{% endfor %}

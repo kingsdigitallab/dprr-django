@@ -1,0 +1,14 @@
+{% extends "wagtailbase/base.html" %}
+
+{% block main %}
+{{ block.super }}
+
+{% block related_links %}
+{% include "wagtailbase/includes/related_links.html" with related_links=self.related_links.all title="Related links" %}
+{% endblock %}
+
+{% block attachments %}
+{% include "wagtailbase/includes/attachments.html" with attachments=self.attachments.all title="Attachments" %}
+{% endblock %}
+
+{% endblock %}

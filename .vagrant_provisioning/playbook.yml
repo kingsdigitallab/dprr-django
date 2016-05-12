@@ -141,24 +141,25 @@
       - db
 
   - name: postgresql | ensure postgresql user can authenticate
-    sudo: yes
+    become: yes
     lineinfile:
       dest: /etc/postgresql/{{ postgresql.version }}/main/pg_hba.conf
       backup: yes
       regexp: "^local\\s+all\\s+{{ postgresql.admin_user }}\\s+peer$"
-      line: "local\\tall\\t\\t{{ postgresql.admin_user }}\\t\\t\\t\\t{{ postgresql.default_auth_method }}"
+      line: "local    all    {{ postgresql.admin_user }}    {{ postgresql.default_auth_method }}"
     tags:
       - db
 
-  - name: postgresql | ensure application user can authenticate
-    sudo: yes
+  - name: postgresql | ensure all users can authenticate
+    become: yes
     lineinfile:
       dest: /etc/postgresql/{{ postgresql.version }}/main/pg_hba.conf
       backup: yes
-      insertafter: "local\\tall\\t\\t{{ postgresql.admin_user }}\\t\\t\\t\\t{{ postgresql.default_auth_method }}"
-      line: "local\\tall\\t\\t{{ postgresql.user }}\\t\\t\\t\\t{{ postgresql.default_auth_method }}"
+      regexp: "^local\\s+all\\s+all\\s+peer$"
+      line: "local    all    all    {{ postgresql.default_auth_method }}"
     notify:
       - postgresql | restart postgres
+      - elasticsearch | restart elasticsearch
     tags:
       - db
 

@@ -1,3 +1,3 @@
 [submodule "ddhldap"]
 	path = ddhldap
-	url = git@github.com:kingsdigitallab/ddhldap-django.git
+	url = https://github.com/kingsdigitallab/ddhldap-django.git

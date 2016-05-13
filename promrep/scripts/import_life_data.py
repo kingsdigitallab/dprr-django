@@ -124,7 +124,7 @@ def read_input_file(ifname):
 
 
 def run():
-    ifname = "promrep/scripts/data/life_data/LifeDatesV1.csv"
+    ifname = "promrep/scripts/data/life_data/LifeDatesV2.csv"
 
     print("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

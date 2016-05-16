@@ -4,11 +4,11 @@
   vars_files:
     - vars.yml
   gather_facts: false
-  sudo: true
+  become: true
 
   tasks:
   - name: fix debian sudoers file
-    sudo: yes
+    become: yes
     lineinfile:
       dest: /etc/sudoers
       backup: yes
@@ -33,7 +33,7 @@
       -system
 
   - name: apt | add node key
-    sudo: yes
+    become: yes
     apt_key:
       url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
       state: present
@@ -55,7 +55,7 @@
       - system
 
   - name: apt | add postgresql key
-    sudo: yes
+    become: yes
     apt_key:
       url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
       state: present
@@ -98,8 +98,12 @@
     - vars.yml
   gather_facts: false
   tasks:
+  - name: pip | create virtualenv folder
+    command: mkdir -p {{ python.virtualenv_location }}}}
+    tags:
+      - python
+
   - name: pip | setup virtualenv
-    command: mkdir -p {{ python.virtualenv_location }}
     command: virtualenv {{ python.virtualenv_location }}
     tags:
       - python
@@ -136,7 +140,7 @@
     locale_gen:
       name: "{{ postgresql.locale }}"
       state: present
-    sudo: yes
+    become: yes
     tags:
       - db
 
@@ -165,7 +169,7 @@
 
   handlers:
   - name: postgresql | restart postgres
-    sudo: yes
+    become: yes
     service:
       name: postgresql
       state: restarted
@@ -177,7 +181,7 @@
     - vars.yml
   tasks:
   - name: postgresql | create user
-    sudo_user: "{{ postgresql.admin_user }}"
+    become_user: "{{ postgresql.admin_user }}"
     postgresql_user:
       user: "{{ postgresql.user }}"
       password: "{{ postgresql.user_password }}"
@@ -186,7 +190,7 @@
       - db
 
   - name: postgresql | create db
-    sudo_user: "{{ postgresql.admin_user }}"
+    become_user: "{{ postgresql.admin_user }}"
     postgresql_db:
       name: "app_dprr_local"
       encoding: "{{postgresql.encoding}}"
@@ -219,7 +223,7 @@
 
   handlers:
   - name: postgresql | apply privileges
-    sudo_user: "{{ postgresql.admin_user }}"
+    become_user: "{{ postgresql.admin_user }}"
     postgresql_privs:
       db: "app_dprr_local"
       privs: ALL
@@ -231,7 +235,7 @@
       - data
 
   - name: postgresql | apply privileges after data import
-    sudo_user: "{{ postgresql.admin_user }}"
+    become_user: "{{ postgresql.admin_user }}"
     postgresql_privs:
       db: "app_dprr_local"
       objs: ALL_IN_SCHEMA
@@ -253,8 +257,12 @@
     tags:
       - django
 
-  - name: django | migrations
+  - name: django | make migrations
     command: "{{ user_home }}/venv/bin/python {{ project_root }}/manage.py makemigrations"
+    tags:
+      - django
+
+  - name: django | migrate
     command: "{{ user_home }}/venv/bin/python {{ project_root }}/manage.py migrate --noinput"
     tags:
       - django
@@ -266,7 +274,7 @@
     - vars.yml
   tasks:
   - name: Install Tomcat 7.
-    sudo: yes
+    become: yes
     apt: "name={{ item }} state=present"
     with_items:
       - tomcat7
@@ -276,7 +284,7 @@
       - solr
 
   - name: Ensure Tomcat 7 is started and enabled on boot.
-    sudo: yes
+    become: yes
     service: name=tomcat7 state=started enabled=yes
     tags:
       - tomcat
@@ -298,7 +306,7 @@
       - solr
 
   - name: Copy Solr into place.
-    sudo: yes
+    become: yes
     command: >
       cp -r {{ solr.download_dir }}/solr-{{ solr.version }} {{ solr.dir }}
       creates={{ solr.dir }}/dist/solr-{{ solr.version }}.war
@@ -307,7 +315,7 @@
 
   # Use shell so commands are passed in correctly.
   - name: Copy Solr components into place.
-    sudo: yes
+    become: yes
     shell: >
       cp -r {{ item.src }} {{ item.dest }}
       creates={{ item.creates }}
@@ -339,7 +347,7 @@
   # TODO: folder needs to be deleted, but this means that
   # previous task cannot run again...
   - name: Ensure solr example directory is absent.
-    sudo: yes
+    become: yes
     file:
       path: "{{ solr.dir }}/example"
       state: absent
@@ -347,7 +355,7 @@
       - solr
 
   - name: Set up solr data directory.
-    sudo: yes
+    become: yes
     file:
       path: "{{ solr.dir }}/data"
       state: directory
@@ -357,7 +365,7 @@
       - solr
 
   - name: Configure solrconfig.xml for new data directory.
-    sudo: yes
+    become: yes
     lineinfile:
       dest: "{{ solr.dir }}/collection1/conf/solrconfig.xml"
       regexp: "^.*<dataDir.+$"
@@ -367,7 +375,7 @@
       - solr
 
   - name: Set permissions for Solr home.
-    sudo: yes
+    become: yes
     file:
       path: "{{ solr.dir }}"
       recurse: yes
@@ -377,7 +385,7 @@
       - solr
 
   - name: Add Catalina configuration for solr.
-    sudo: yes
+    become: yes
     template:
       src: solr.xml.j2
       dest: /etc/tomcat7/Catalina/localhost/solr.xml
@@ -399,9 +407,8 @@
       - solr
 
   - name: haystack | move schema to solr dir
-    sudo: yes
+    become: yes
     command: mv {{ project_root }}/schema.xml {{ solr.dir }}/collection1/conf/
-    sudo: yes
     notify: restart tomcat
     tags:
       - django
@@ -410,7 +417,7 @@
 
   handlers:
   - name: restart tomcat
-    sudo: yes
+    become: yes
     service: name=tomcat7 state=restarted
 
 # TODO: only created this new play to ensure tomcat is restarted before we rebuild the index...
@@ -426,3 +433,16 @@
       - haystack
       - solr
 
+- hosts: all
+  vars_files:
+      - vars.yml
+  tasks:
+  - name: git | flake8 pre-commit hook
+    command: "{{ user_home }}/venv/bin/flake8 --install-hook"
+    args:
+      chdir: "{{ project_root }}"
+  - command: "git config flake8.strict True"
+    args:
+      chdir: "{{ project_root }}"
+    tags:
+      - git

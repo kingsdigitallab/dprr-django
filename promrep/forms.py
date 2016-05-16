@@ -1,6 +1,4 @@
 from django import forms
-from django.contrib.admin.widgets import AdminFileWidget
-from django.core.validators import RegexValidator
 from django.utils.safestring import mark_safe
 from haystack.forms import FacetedSearchForm
 

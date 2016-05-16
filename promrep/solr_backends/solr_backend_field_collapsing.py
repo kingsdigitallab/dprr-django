@@ -10,10 +10,12 @@ import logging
 
 from django.db.models.loading import get_model
 from haystack.backends import EmptyResults
-from haystack.backends.solr_backend import SolrEngine, SolrSearchBackend, SolrSearchQuery
+from haystack.backends.solr_backend import (SolrEngine, SolrSearchBackend,
+                                            SolrSearchQuery)
 from haystack.constants import DJANGO_CT, DJANGO_ID, ID
 from haystack.models import SearchResult
 from haystack.query import SearchQuerySet
+
 
 # Since there's no chance of this being portable (yet!) we'll import explicitly
 # rather than using the generic imports:
@@ -35,7 +37,8 @@ class GroupedSearchQuery(SolrSearchQuery):
         self.grouping_field = field_name
 
     def post_process_facets(self, results):
-        # FIXME: remove this hack once https://github.com/toastdriven/django-haystack/issues/750 lands
+        # FIXME: remove this hack once
+        #    https://github.com/toastdriven/django-haystack/issues/750 lands
         # See matches dance in _process_results below:
         total = 0
 
@@ -49,9 +52,11 @@ class GroupedSearchQuery(SolrSearchQuery):
         return super(GroupedSearchQuery, self).post_process_facets(results)
 
     def get_total_document_count(self):
-        """Return the total number of matching documents rather than document groups
+        """Return the total number of matching documents rather
+        than document groups
 
-        If the query has not been run, this will execute the query and store the results.
+        If the query has not been run, this will execute the query and
+        store the results.
         """
         if self._total_document_count is None:
             self.run()
@@ -77,17 +82,22 @@ class GroupedSearchResult(object):
         self.field_name = field_name
         self.key = group_data['groupValue']  # TODO: convert _to_python
         self.hits = group_data['doclist']['numFound']
-        self.documents = list(self.process_documents(group_data['doclist']['docs'],
-                                                     raw_results=raw_results))
+        self.documents = list(
+            self.process_documents(
+                group_data['doclist']['docs'],
+                raw_results=raw_results))
 
     def __unicode__(self):
-        return 'GroupedSearchResult({0.field_name}={0.group_key}, hits={0.hits})'.format(self)
+        return 'GroupedSearchResult({}={}, hits={})'.format(
+            self.field_name,
+            self.group_key,
+            self.hits)
 
     def process_documents(self, doclist, raw_results):
         # TODO: tame import spaghetti
         from haystack import connections
         # luisf
-        #### engine = connections["en"]
+        # engine = connections["en"]
         engine = connections.all()[0]
         conn = engine.get_backend().conn
 
@@ -104,7 +114,8 @@ class GroupedSearchResult(object):
                     index = unified_index.get_index(model)
                     string_key = str(key)
 
-                    if string_key in index.fields and hasattr(index.fields[string_key], 'convert'):
+                    if string_key in index.fields and \
+                            hasattr(index.fields[string_key], 'convert'):
                         additional_fields[string_key] = index.fields[
                             string_key].convert(value)
                     else:
@@ -115,11 +126,15 @@ class GroupedSearchResult(object):
                 del(additional_fields['score'])
 
                 if raw_result[ID] in getattr(raw_results, 'highlighting', {}):
-                    additional_fields['highlighted'] = raw_results.highlighting[
-                        raw_result[ID]]
+                    additional_fields['highlighted'] = \
+                        raw_results.highlighting[raw_result[ID]]
 
-                result = SearchResult(app_label, model_name, raw_result[DJANGO_ID],
-                                      raw_result['score'], **additional_fields)
+                result = SearchResult(
+                    app_label,
+                    model_name,
+                    raw_result[DJANGO_ID],
+                    raw_result['score'],
+                    **additional_fields)
                 yield result
 
 
@@ -130,7 +145,8 @@ class GroupedSearchQuerySet(SearchQuerySet):
 
         if not isinstance(self.query, GroupedSearchQuery):
             raise TypeError(
-                "GroupedSearchQuerySet must be used with a GroupedSearchQuery query")
+                "GroupedSearchQuerySet must be used "
+                "with a GroupedSearchQuery query")
 
     def group_by(self, field_name):
         """Have Solr group results based on the provided field name"""
@@ -143,12 +159,15 @@ class GroupedSearchQuerySet(SearchQuerySet):
         return results
 
     def total_document_count(self):
-        """Returns the count for the total number of matching documents rather than groups
+        """Returns the count for the total number of matching documents
+        rather than groups
 
-        A GroupedSearchQuerySet normally returns the number of document groups; this allows
-        you to indicate the total number of matching documents - quite handy for making facet counts match the
+        A GroupedSearchQuerySet normally returns the number of document
+        groups; this allows you to indicate the total number of
+        matching documents - quite handy for making facet counts match the
         displayed numbers
         """
+
         if self.query.has_run():
             return self.query.get_total_document_count()
         else:
@@ -172,16 +191,18 @@ class GroupedSolrSearchBackend(SolrSearchBackend):
         return res
 
     def _process_results(self, raw_results, result_class=None, **kwargs):
-        res = super(GroupedSolrSearchBackend, self)._process_results(raw_results,
-                                                                     result_class=result_class,
-                                                                     **kwargs)
+        res = super(GroupedSolrSearchBackend, self)._process_results(
+            raw_results,
+            result_class=result_class,
+            **kwargs)
 
         if result_class and not issubclass(result_class, GroupedSearchResult):
             return res
 
         if len(raw_results.docs):
             raise RuntimeError(
-                "Grouped Solr searches should return grouped elements, not docs!")
+                "Grouped Solr searches should return "
+                "grouped elements, not docs!")
 
         assert not res['results']
         assert not res['hits']
@@ -190,7 +211,8 @@ class GroupedSolrSearchBackend(SolrSearchBackend):
             return res
 
         assert len(
-            raw_results.grouped) == 1, "Grouping on more than one field is not supported"
+            raw_results.grouped) == 1,\
+            "Grouping on more than one field is not supported"
 
         res['results'] = results = []
         for field_name, field_group in raw_results.grouped.items():
@@ -199,7 +221,9 @@ class GroupedSolrSearchBackend(SolrSearchBackend):
             for group in field_group['groups']:
                 if group['groupValue'] is None:
                     logging.warning(
-                        "Unexpected NULL grouping", extra={'data': raw_results})
+                        "Unexpected NULL grouping",
+                        extra={'data': raw_results})
+
                     # Avoid confusing Haystack with excluded bogon results
                     res['hits'] -= 1
                     continue

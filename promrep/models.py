@@ -1,19 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import re
+
+from author.decorators import with_author
+from django.contrib.contenttypes.fields import (GenericForeignKey,
+                                                GenericRelation)
+from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse
 from django.db import models
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey
-
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import (
-    GenericForeignKey, GenericRelation)
-
-from django.core.urlresolvers import reverse
-
-from author.decorators import with_author
-
-import re
 
 
 def date_to_string(date_int, date_uncertain, date_suffix=True):
@@ -177,27 +174,18 @@ class Note(TimeStampedModel):
         return self.text.strip()
 
 
-def create_primary_source_reference(sender, **kwargs):
-    if 'created' in kwargs:
-        if kwargs['created']:
-            instance = kwargs['instance']
-            ctype = ContentType.objects.get_for_model(instance)
-            primary_source_reference = PrimarySourceReference.objects.get_or_create(content_type=ctype,
-                                                                                    object_id=instance.id,
-                                                                                    pub_date=instance.pub_date)
-
-
 @with_author
 class RelationshipAssertionReference(Note):
     """This is a SecondarySourceNote/Reference
-
     """
 
-    primary_source_references = GenericRelation(PrimarySourceReference,
-                                                related_query_name='relationship_assertion_references')
+    primary_source_references = GenericRelation(
+        PrimarySourceReference,
+        related_query_name='relationship_assertion_references')
 
     def print_primary_source_refs(self):
-        return ', '.join([pref.__unicode__() for pref in self.primary_source_references.all()])
+        return ', '.join([pref.__unicode__()
+                          for pref in self.primary_source_references.all()])
 
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
@@ -205,10 +193,14 @@ class RelationshipAssertionReference(Note):
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     def related_label(self):
-        return u"[%s] %s (%s)<br /><br />" % (self.secondary_source.abbrev_name, self.text, self.print_primary_source_refs())
+        return u"[%s] %s (%s)<br /><br />" % (
+            self.secondary_source.abbrev_name,
+            self.text, self.print_primary_source_refs())
 
     def __unicode__(self):
-        return u"%s, %s (%s)" % (self.secondary_source.abbrev_name, self.text, self.print_primary_source_refs())
+        return u"%s, %s (%s)" % (self.secondary_source.abbrev_name,
+                                 self.text,
+                                 self.print_primary_source_refs())
 
 
 @with_author
@@ -220,7 +212,9 @@ class PostAssertionNote(Note):
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     def related_label(self):
-        return u"[%s - %s] %s<br /><br />" % (self.note_type, self.secondary_source.abbrev_name, self.text)
+        return u"[%s - %s] %s<br /><br />" % (
+            self.note_type,
+            self.secondary_source.abbrev_name, self.text)
 
 
 @with_author
@@ -232,7 +226,10 @@ class PersonNote(Note):
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     def related_label(self):
-        return u"[%s - %s] %s<br /><br />" % (self.note_type, self.secondary_source.abbrev_name, self.text)
+        return u"[%s - %s] %s<br /><br />" % (
+            self.note_type,
+            self.secondary_source.abbrev_name,
+            self.text)
 
 
 @with_author
@@ -244,7 +241,10 @@ class StatusAssertionNote(Note):
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     def related_label(self):
-        return u"[%s - %s] %s<br /><br />" % (self.note_type, self.secondary_source.abbrev_name, self.text)
+        return u"[%s - %s] %s<br /><br />" % (
+            self.note_type,
+            self.secondary_source.abbrev_name,
+            self.text)
 
 
 @with_author
@@ -328,7 +328,7 @@ class Person(TimeStampedModel):
     class Meta:
         ordering = ['id', ]
 
-    def __unicode__(self):
+    def __unicode__(self):  # noqa
         name = ""
 
         # only show praenomen for men
@@ -581,11 +581,14 @@ class Group(TimeStampedModel):
     def __unicode__(self):
         members = str(self.persons.count())
         office_list = Office.objects.filter(
-            postassertion__group=self).distinct().values_list('name', flat=True)
+            postassertion__group=self).distinct().values_list(
+            'name',
+            flat=True)
 
         offices = "; ".join(office_list)
 
-        return "Group: {0} members; Office: {1} ({2})".format(members, offices, self.date_info)
+        return "Group: {0} members; Office: {1} ({2})".format(
+            members, offices, self.date_info)
 
     def related_label(self):
         url = reverse('admin:%s_%s_change' % (
@@ -629,7 +632,10 @@ class PostAssertion(TimeStampedModel):
         max_length=1024, blank=True, null=True)
     date_source_text = models.CharField(max_length=1024, blank=True, null=True)
     date_secondary_source = models.ForeignKey(
-        SecondarySource, blank=True, null=True, related_name='postassertion_date_secondary_source')
+        SecondarySource,
+        blank=True,
+        null=True,
+        related_name='postassertion_date_secondary_source')
 
     review_flag = models.BooleanField(
         verbose_name="Review needed", default=False)
@@ -670,7 +676,8 @@ class PostAssertion(TimeStampedModel):
 
         if self.date_display_text:
             date_str = self.date_display_text
-        elif self.date_start == self.date_end and self.date_start_uncertain == self.date_end_uncertain:
+        elif self.date_start == self.date_end and \
+                self.date_start_uncertain == self.date_end_uncertain:
             date_str = date_to_string(
                 self.date_start, self.date_start_uncertain)
         else:
@@ -744,7 +751,8 @@ class RelationshipAssertion(TimeStampedModel):
         verbose_name="Review needed", default=False)
 
     def __unicode__(self):
-        return "{} is {} {}".format(self.person, self.relationship, self.related_person)
+        return "{} is {} {}".format(
+            self.person, self.relationship, self.related_person)
 
     class Meta:
         ordering = ['relationship_number', 'id']
@@ -785,8 +793,11 @@ class StatusAssertion(TimeStampedModel):
         max_length=1024, blank=True, null=True)
 
     date_source_text = models.CharField(max_length=1024, blank=True, null=True)
-    date_secondary_source = models.ForeignKey(SecondarySource, blank=True,
-                                              null=True, related_name='date_source')
+    date_secondary_source = models.ForeignKey(
+        SecondarySource,
+        blank=True,
+        null=True,
+        related_name='date_source')
 
     # province information
     provinces = models.ManyToManyField(Province, blank=True,
@@ -801,7 +812,8 @@ class StatusAssertion(TimeStampedModel):
 
         if self.date_display_text:
             date_str = self.date_display_text
-        elif self.date_start == self.date_end and self.date_start_uncertain == self.date_end_uncertain:
+        elif self.date_start == self.date_end and \
+                self.date_start_uncertain == self.date_end_uncertain:
             date_str = date_to_string(
                 self.date_start, self.date_start_uncertain)
         else:

@@ -5,9 +5,6 @@ from promrep.forms import PromrepFacetedSearchForm
 from promrep.models import Person, PostAssertion, StatusAssertion
 from promrep.solr_backends.solr_backend_field_collapsing import \
     GroupedSearchQuerySet
-from promrep.models import PostAssertion, Person, StatusAssertion
-from promrep.solr_backends.solr_backend_field_collapsing import (
-    GroupedSearchQuerySet)
 
 
 class PromrepFacetedSearchView(FacetedSearchView):
@@ -37,7 +34,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
         return queryset
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):  # noqa
         context = super(
             PromrepFacetedSearchView, self).get_context_data(**kwargs)
         context['querydict'] = self.request.GET

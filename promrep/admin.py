@@ -3,22 +3,19 @@
 
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
-from django_mptt_admin.admin import DjangoMpttAdmin
 from django.contrib.contenttypes.admin import GenericStackedInline
-
-from promrep.forms import (
-    PostInlineForm, RelationshipAssertionInlineForm, StatusInlineForm)
-
-from django.utils.html import format_html
 from django.core.urlresolvers import reverse
-
-from models import (
-    DateInformation, Person, Office, Praenomen, PostAssertion, Group, RoleType,
-    DateType, SecondarySource, PrimarySource, Gens, PostAssertionNote, Tribe,
-    Province, PersonNote, RelationshipAssertion, RelationshipType,
-    RelationshipAssertionReference, TribeAssertion, PrimarySourceReference,
-    GensAssertion, StatusAssertion, StatusType, StatusAssertionNote
-)
+from django.utils.html import format_html
+from django_mptt_admin.admin import DjangoMpttAdmin
+from models import (DateInformation, DateType, Gens, GensAssertion, Group,
+                    Office, Person, PersonNote, PostAssertion,
+                    PostAssertionNote, Praenomen, PrimarySource,
+                    PrimarySourceReference, Province, RelationshipAssertion,
+                    RelationshipAssertionReference, RelationshipType, RoleType,
+                    SecondarySource, StatusAssertion, StatusAssertionNote,
+                    StatusType, Tribe, TribeAssertion)
+from promrep.forms import (PostInlineForm, RelationshipAssertionInlineForm,
+                           StatusInlineForm)
 
 admin.site.register(DateType)
 admin.site.register(RoleType)
@@ -71,10 +68,14 @@ class RelationshipAssertionListInline(admin.TabularInline):
     readonly_fields = 'link',
 
     def link(self, instance):
-        url = reverse('admin:%s_%s_change' % (RelationshipAssertion._meta.app_label,
-                                              RelationshipAssertion._meta.model_name), args=(instance.relationshipassertion.id,))
+        url = reverse('admin:%s_%s_change' % (
+            RelationshipAssertion._meta.app_label,
+            RelationshipAssertion._meta.model_name),
+            args=(instance.relationshipassertion.id,))
 
-        return format_html(u'<a href="{}">{}</a>', url, unicode(instance.relationshipassertion))
+        return format_html(u'<a href="{}">{}</a>',
+                           url,
+                           unicode(instance.relationshipassertion))
 
 
 class RelationshipTypeAdmin(admin.ModelAdmin):
@@ -158,9 +159,16 @@ class RelationshipAssertionAdmin(admin.ModelAdmin):
               ('original_text'),
               )
 
-    search_fields = ('person__nomen', 'person__cognomen', 'related_person__nomen',
-                     'related_person__cognomen', 'person__other_names',
-                     'related_person__other_names', 'person__id', 'related_person__id', 'person__re_number', 'related_person__re_number', )
+    search_fields = ('person__nomen',
+                     'person__cognomen',
+                     'related_person__nomen',
+                     'related_person__cognomen',
+                     'person__other_names',
+                     'related_person__other_names',
+                     'person__id',
+                     'related_person__id',
+                     'person__re_number',
+                     'related_person__re_number', )
 
     inlines = (RelationshipAssertionReferenceInline, )
     # exclude = ('relationshipassertionreference',)
@@ -308,9 +316,17 @@ class StatusAssertionNoteInline(admin.StackedInline):
 
 class PostAssertionAdmin(admin.ModelAdmin):
 
-    list_display = ('id', 'person', 'office',
-                    'date_start', 'print_provinces', 'date_end', 'secondary_source',
-                    'review_flag', 'created_by', 'created', 'modified')
+    list_display = ('id',
+                    'person',
+                    'office',
+                    'date_start',
+                    'print_provinces',
+                    'date_end',
+                    'secondary_source',
+                    'review_flag',
+                    'created_by',
+                    'created',
+                    'modified')
 
     list_filter = ('role', 'office', 'secondary_source', )
 
@@ -614,8 +630,10 @@ admin.site.register(Office, OfficeAdmin)
 
 class GroupAdmin(admin.ModelAdmin):
 
-    search_fields = ['id', 'postassertion__person__nomen',
-                     'postassertion__person__cognomen', 'postassertion__office']
+    search_fields = ['id',
+                     'postassertion__person__nomen',
+                     'postassertion__person__cognomen',
+                     'postassertion__office']
 
     list_display = (
         'id',

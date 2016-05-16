@@ -43,7 +43,8 @@ OFFICE_NAMES_DIC = {
     'prefects of the city': 'praefectus urbi',
     'praefectus urbis': 'praefectus urbi',
     'prefects of the fleet': 'praefectus classis',
-    'prefects to assign land to veterans': 'praefectus agris dandis assignandis',
+    'prefects to assign land to veterans':
+    'praefectus agris dandis assignandis',
     'quaesitores': 'quaesitor',
     'quaestorii': 'quaestorius',
     'quaestors': 'quaestor',
@@ -51,7 +52,8 @@ OFFICE_NAMES_DIC = {
     'quindecimviri sacris fadundis': 'quindecemvir sacris faciundis',
     'quindeciniviri sacris faciundis': 'quindecemvir sacris faciundis',
     'quindecirnviri sacris faciundis': 'quindecemvir sacris faciundis',
-    'quinqueviri agris dandis assignandis': 'quinquevir agris dandis assignandis',
+    'quinqueviri agris dandis assignandis':
+    'quinquevir agris dandis assignandis',
     'rex sacrorum': 'rex sacrorum',
     'sacerdotes': 'sacerdos',
     'septemviri epulones': 'septemvir epulonum',
@@ -59,7 +61,8 @@ OFFICE_NAMES_DIC = {
     'tribunes of the soldiers': 'tribunus militum',
     'triumvir capitalis': 'triumvir capitalis',
     'triumviri capitales?': 'triumvir capitalis',
-    'triumviri rei publicae constituendae': 'triumvir rei publicae constituendae',
+    'triumviri rei publicae constituendae':
+    'triumvir rei publicae constituendae',
     'vestal virgins': 'vestalis',
     'vestal virgin': 'vestalis',
     'vestales': 'vestalis',
@@ -75,19 +78,23 @@ OFFICE_NAMES_DIC = {
     'triumviri coloniis deducendis 3': 'triumvir coloniis deducendis 3',
     'triumviri coloniis deducendis 2': 'triumvir coloniis deducendis 2',
     'triumviri coloniis deducendis 1': 'triumvir coloniis deducendis 1',
-    'special commissions triumviri coloniis deducendis': 'triumvir coloniis deducendis',
+    'special commissions triumviri coloniis deducendis':
+    'triumvir coloniis deducendis',
     'triumviri coloniis deducendis': 'triumvir coloniis deducendis',
     'triumviri colonis deducendis': 'triumvir coloniis deducendis',
-    'special commissions: triumviri coloniae deducendae': 'triumvir coloniae deducendae',
+    'special commissions: triumviri coloniae deducendae':
+    'triumvir coloniae deducendae',
     'triumviri coloniae deducendae': 'triumvir coloniae deducendae',
     'triumviri capitales': 'triumvir capitalis',
     'triumviri agro dando': 'triumvir agro dando',
-    'triumviri agris iudicandis assignandis': 'triumvir agris iudicandis assignandis',
+    'triumviri agris iudicandis assignandis':
+    'triumvir agris iudicandis assignandis',
     'triumviri agris dandis assignandis': 'triumvir agris dandis assignandis',
     'triumviri agris dandis': 'triumvir agris dandis',
     'triumviri ad colonos scribendos': 'triumvir ad colonos scribendos',
     'tribune of the plebs': 'tribunus plebis',
-    'military tribunes with consular power': 'tribunus militum consulari potestate',
+    'military tribunes with consular power':
+    'tribunus militum consulari potestate',
     'tribunes of the soldiers b': 'tribunus militum b',
     'tribunes of the soldiers a': 'tribunus militum a',
     'tribunes of the soliders': 'tribunus militum',
@@ -95,8 +102,10 @@ OFFICE_NAMES_DIC = {
     'priestess': 'sacerdos',
     'priests': 'sacerdos',
     'quinqueviri mensarii': 'quinquevir mensarius',
-    'quinqueviri finibus cognoscendis statuendisque': 'quinquevir finibus cognoscendis statuendisque',
-    'special commissions quinqueviri agris dandis assignandis': 'quinquevir agris dandis assignandis',
+    'quinqueviri finibus cognoscendis statuendisque':
+    'quinquevir finibus cognoscendis statuendisque',
+    'special commissions quinqueviri agris dandis assignandis':
+    'quinquevir agris dandis assignandis',
     'questors': 'quaestor',
     'promagistrates': 'promagistrate',
     'prefect of the city': 'praefectus urbi',
@@ -134,7 +143,8 @@ OFFICE_NAMES_DIC = {
     'legates, ambassadors 1': 'legatus (ambassador) 1',
     'legates, ambassadors ? b': 'legatus (ambassador) ? b',
     'legatus (ambassadors)': 'legatus (ambassador)',
-    'legates, ambassadors (or lieutenants?)': 'legatus (ambassador or lieutenant?)',
+    'legates, ambassadors (or lieutenants?)':
+    'legatus (ambassador or lieutenant?)',
     'legates': 'legatus (lieutenant)',
     'flaminica martialis': 'flaminica Martialis',
     'flamen quirinalis': 'flamen Quirinalis',
@@ -147,10 +157,13 @@ OFFICE_NAMES_DIC = {
     'special commissions: duumviri navales': 'duumvir navalis',
     'dictators': 'dictator',
     'decemviri stlitibus iudicandis': 'decemvir stlitibus iudicandis',
-    'decemviri consulari imperio legibus scribundis': 'decemvir consulari imperio legibus scribundis',
-    'decemviri agris dandis attribuendis iudicandis': 'decemvir agris dandis attribuendis iudicandis',
+    'decemviri consulari imperio legibus scribundis':
+    'decemvir consulari imperio legibus scribundis',
+    'decemviri agris dandis attribuendis iudicandis':
+    'decemvir agris dandis attribuendis iudicandis',
     'decemviri agris dandis assignandis': 'decemvir agris dandis assignandis',
-    'special commissions decemviri agris dandis assignandis': 'decemvir agris dandis assignandis',
+    'special commissions decemviri agris dandis assignandis':
+    'decemvir agris dandis assignandis',
     'decemviri agris assignandis': 'decemvir agris assignandis',
     'special commissions curator viis sternendis': 'curator viis sternendis',
     'consuls b': 'consul b',

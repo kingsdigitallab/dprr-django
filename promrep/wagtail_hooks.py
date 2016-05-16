@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.utils.html import format_html, format_html_join
-
 from wagtail.wagtailcore import hooks
 from wagtail.wagtailcore.whitelist import allow_without_attributes
 
@@ -31,8 +30,9 @@ def editor_js():
     ]
 
     js_includes = format_html_join('\n', '<script src="{0}{1}"></script>',
-        ((settings.STATIC_URL, filename) for filename in js_files)
-    )
+                                   ((settings.STATIC_URL, filename)
+                                    for filename in js_files)
+                                   )
 
     return js_includes + format_html("""
         <script>

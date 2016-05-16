@@ -111,8 +111,8 @@ class AddParsingAuxTestCase(TestCase):
         self.assertTrue(p['praenomen_uncertain'])
         self.assertEqual(p['re_number'], "7")
 
-        ### TODO: date/office uncertainty ??
-        ######### date (up to taht year, including)
+        # TODO: date/office uncertainty ??
+        # date (up to taht year, including)
 
         p = aux.parse_person("? C. Memmius (7)")
         self.assertEqual(p['nomen'], "Memmius")
@@ -127,7 +127,7 @@ class AddParsingAuxTestCase(TestCase):
         self.assertTrue(p['praenomen_uncertain'])
         self.assertEqual(p['re_number'], "12, cf. 7")
 
-        ### tribe
+        # tribe
         p = aux.parse_person("C. Claudius C. f. Arn. Glaber (165)")
         self.assertEqual(p['nomen'], "Claudius")
         self.assertEqual(p['tribe'], Tribe.objects.get(abbrev="Arn."))
@@ -277,7 +277,8 @@ class AddParsingAuxTestCase(TestCase):
         self.assertEqual(p['re_number'], "8")
 
         p = aux.parse_person("Postumus Cominius - f. - n. Auruncus Pat. (16)")
-        self.assertEqual(p['praenomen'], Praenomen.objects.get(name="Postumus"))
+        self.assertEqual(
+            p['praenomen'], Praenomen.objects.get(name="Postumus"))
         self.assertEqual(p['nomen'], "Cominius")
         self.assertEqual(p['filiation'], "- f. - n.")
         self.assertEqual(p['cognomen'], "Auruncus")

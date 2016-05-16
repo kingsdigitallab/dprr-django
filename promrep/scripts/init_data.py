@@ -5,6 +5,7 @@
 
 from django.core.management import call_command
 
+
 def run():
     print 'Loading initial data fixtures'
 

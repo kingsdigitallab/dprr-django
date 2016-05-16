@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
-## import csv
-import unicodecsv as csv
-import itertools
+# import csv
 import logging
 from os import path
-import primary_source_aux as psource_aux
 
-from promrep.models import Person, RelationshipAssertion, Praenomen, \
-    SecondarySource, PrimarySource, Sex, RelationshipType, RelationshipAssertionReference, \
-    PrimarySourceReference
+import unicodecsv as csv
+from promrep.models import (Person, Praenomen, PrimarySourceReference,
+                            RelationshipAssertion,
+                            RelationshipAssertionReference, RelationshipType,
+                            SecondarySource, Sex)
 
 # Setup logging
 LOGGER = logging.getLogger(__name__)
@@ -125,7 +124,8 @@ def create_person(row_dict):
 
 def read_notes_file_to_dict(ifname):
     """ Reads a notes file to a dict
-        returns a dictionary where the key is the reference name and the value is the note
+        returns a dictionary where the key is the reference name
+        and the value is the note
     """
 
     notes_dict = {}
@@ -146,7 +146,7 @@ def read_notes_file_to_dict(ifname):
     return notes_dict
 
 
-def read_input_file(ifname, notes_csv_fname):
+def read_input_file(ifname, notes_csv_fname):  # noqa
 
     file_basename = path.basename(ifname)
     file_basename = path.splitext(file_basename)[0]
@@ -240,8 +240,11 @@ def read_input_file(ifname, notes_csv_fname):
                 # create RelationshipAssertion
                 # TODO: test if created
                 rel, created = RelationshipAssertion.objects.get_or_create(
-                    person_id=p1_id, related_person_id=p2_id, relationship=rel_type,
-                    uncertain=uncertain_flag, secondary_source=sec_source,
+                    person_id=p1_id,
+                    related_person_id=p2_id,
+                    relationship=rel_type,
+                    uncertain=uncertain_flag,
+                    secondary_source=sec_source,
                     relationship_number=rel_num)
 
                 if created:
@@ -249,12 +252,15 @@ def read_input_file(ifname, notes_csv_fname):
                         "Created new relationship with id={}".format(rel.id))
                 else:
                     LOGGER.info(
-                        "Relationship already existed with id={}".format(rel.id))
+                        "Relationship already existed with id={}".format(
+                            rel.id))
 
                 # primary_source_refs cell parsing:
-                #   Each line corresponds to a single RelationshipAssertionReference
-                #   each cell may contain multiple comma-separated PrimarySourceReferences
-                #   each cell can have a corresponding text Note (see notes file)
+                #   Each line corresponds to one RelationshipAssertionReference
+                #   each cell may contain multiple comma-separated
+                #      PrimarySourceReferences
+                #   each cell can have a corresponding text Note
+                #      (see notes file)
                 #   The original reference is stored in the "extra_info" field
 
                 # The relationship assertion reference is only created
@@ -269,10 +275,12 @@ def read_input_file(ifname, notes_csv_fname):
 
                 # if text and primary sources are the same, then there's
                 # no need to create a new secondary source
-                ra_reference, created = RelationshipAssertionReference.objects.get_or_create(secondary_source=sec_source,
-                                                                                             extra_info=primary_references_str,
-                                                                                             text=ra_ref_text
-                                                                                             )
+                ra_reference, created = \
+                    RelationshipAssertionReference.objects.get_or_create(
+                        secondary_source=sec_source,
+                        extra_info=primary_references_str,
+                        text=ra_ref_text
+                    )
 
                 rel.references.add(ra_reference)
 
@@ -294,7 +302,7 @@ def read_input_file(ifname, notes_csv_fname):
 
             except Exception as e:
                 LOGGER.error(
-                    "Unable to import line from csv file... Please debug data. ".format(e.message))
+                    "Cannot import line from csv file: {}".format(e.message))
 
     LOGGER.info("Wrote log file \"{}\"".format(log_fname))
 

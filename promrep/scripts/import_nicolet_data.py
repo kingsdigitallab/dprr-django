@@ -1,21 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# import csv
-import unicodecsv as csv
-import itertools
 import logging
-from os import path
-import primary_source_aux as psource_aux
-
-import re
-
-from promrep.models import (Person, StatusAssertion, Praenomen, Sex,
-                            SecondarySource, StatusAssertionNote,
-                            PostAssertion, Tribe, TribeAssertion,
-                            StatusType, PostAssertion, Office,
-                            PostAssertionNote, )
-
 import pprint
+import re
+from os import path
+
+import unicodecsv as csv
+from promrep.models import (Office, Person, PostAssertion, PostAssertionNote,
+                            Praenomen, SecondarySource, Sex, StatusAssertion,
+                            StatusAssertionNote, StatusType, Tribe,
+                            TribeAssertion)
+
 pp = pprint.PrettyPrinter(width=1)
 
 # Setup logging
@@ -132,7 +127,7 @@ def create_person(row_dict):
     return person.id, created
 
 
-def read_input_file(ifname):
+def read_input_file(ifname):  # noqa
 
     file_basename = path.basename(ifname)
     file_basename = path.splitext(file_basename)[0]
@@ -222,11 +217,12 @@ def read_input_file(ifname):
 
                         # only created if doesn't exist already
                         if tribe_obj not in person.tribes.all():
-                            tr_assert, cr = TribeAssertion.objects.get_or_create(
-                                person=person,
-                                tribe=tribe_obj,
-                                uncertain=tribe_uncertain,
-                                secondary_source=sec_source)
+                            tr_assert, cr = \
+                                TribeAssertion.objects.get_or_create(
+                                    person=person,
+                                    tribe=tribe_obj,
+                                    uncertain=tribe_uncertain,
+                                    secondary_source=sec_source)
 
             st_type, created = StatusType.objects.get_or_create(name="Eques")
 
@@ -273,15 +269,16 @@ def read_input_file(ifname):
                         office, created = Office.objects.get_or_create(
                             name=office_name)
 
-                    pa_assertion, created = PostAssertion.objects.get_or_create(
-                        person=person,
-                        office=office,
-                        secondary_source=sec_source,
-                        date_source_text=date_source_text,
-                        uncertain=row_dict['office_uncertain'],
-                        original_text=row_dict['original_text'],
-                        review_flag=row_dict['review_flag']
-                    )
+                    pa_assertion, created = \
+                        PostAssertion.objects.get_or_create(
+                            person=person,
+                            office=office,
+                            secondary_source=sec_source,
+                            date_source_text=date_source_text,
+                            uncertain=row_dict['office_uncertain'],
+                            original_text=row_dict['original_text'],
+                            review_flag=row_dict['review_flag']
+                        )
 
                     if date_start:
                         pa_assertion.date_start = date_start
@@ -296,7 +293,8 @@ def read_input_file(ifname):
                     #   text after Nicolet Ref. XYZ.
                     print row_dict["notes"]
                     pa_txt = re.sub(
-                        r"(Nicolet\sRef\s[0-9]+\.).*", r"\1", row_dict["notes"])
+                        r"(Nicolet\sRef\s[0-9]+\.).*", r"\1",
+                        row_dict["notes"])
                     print pa_txt
 
                     # adds the note to the post assertion
@@ -318,14 +316,6 @@ def read_input_file(ifname):
                 st_assert.date_end_uncertain = date_end_uncertain
 
                 st_assert.save()
-
-        # print a log file of the created persons
-
-            #     csv_log.writerow(row_dict)
-
-            # except Exception as e:
-            #     LOGGER.error(
-            #         "Unable to import line from csv file... Please debug data. ".format(e.message))
 
     pp.pprint(stats)
     LOGGER.info("Wrote log file \"{}\"".format(log_fname))

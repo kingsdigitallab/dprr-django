@@ -1,10 +1,12 @@
 import regex
 
+
 def parse_primary_source(text):
-    """given a primary source text reference it returns the abbrev of the primary source
+    """given a primary source text reference it returns the
+    abbrev of the primary source
     """
 
-    print text
+    psource = ""
 
     ref_regex = regex.compile(r"""
                 (?P<psource>(\w+\.?\s?)+)

@@ -1,17 +1,10 @@
-import csv
-import itertools
-import logging
-from os import path
-
-from django.db.models import Q
-
-from promrep.models import Person, RelationshipAssertion, Praenomen, \
-    SecondarySource, PrimarySource, Sex, RelationshipType, RelationshipAssertionPrimarySource
+from promrep.models import Person, RelationshipAssertion
 
 try:
     import simplejson as json
 except:
     import json
+
 
 def dump_rels(person, relationships=[], visited=[]):
     """Recursive function that given a person returns two lists
@@ -72,12 +65,10 @@ def person_rel_json(person):
     return json.dumps({"edges": edges, "nodes": nodes})
 
 
-
 def run():
 
     rel_json = person_rel_json(Person.objects.get(id=1452))
     print rel_json
-
 
     # visited_persons = set()
 
@@ -100,13 +91,16 @@ def run():
 #
     #             with open(fname, 'wb') as csvfile:
     #                 spamwriter = csv.writer(
-    #                     csvfile, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    #                     csvfile, delimiter=';', quotechar='"',
+    #                        quoting=csv.QUOTE_MINIMAL)
     #                 spamwriter.writerow(
-    #                     ["person1 ID", "person1", "relationship", "person2 ID", "person2"])
-#
+    #                     ["person1 ID", "person1",
+    #                      "relationship", "person2 ID", "person2"])
+    #
     #                 for rel in p_rels:
     #                     spamwriter.writerow(
-    #                         [rel.person.id, rel.person, rel.relationship, rel.related_person.id, rel.related_person])
+    #                         [rel.person.id, rel.person,
+    # rel.relationship, rel.related_person.id, rel.related_person])
 #
     #             csvfile.close()
     #             print "Wrote {}".format(fname)

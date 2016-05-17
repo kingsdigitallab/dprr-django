@@ -46,6 +46,18 @@ def read_input_file(ifname):  # noqa
                     date_type_str = row_dict['DateType{}'.format(i)].strip()
                     date_note = row_dict['DateNotes{}'.format(i)].strip()
 
+                    sec_source = False
+                    if date_ref:
+                        try:
+                            sec_source = SecondarySource.objects.get(
+                                abbrev_name=date_ref)
+                        except:
+                            sec_source, created = \
+                                SecondarySource.objects.get_or_create(
+                                    abbrev_name=date_ref,
+                                    biblio=date_ref,
+                                    name=date_ref)
+
                     if date_str:
                         # print i, row_dict
 
@@ -92,13 +104,7 @@ def read_input_file(ifname):  # noqa
                                 date_interval=interval
                             )
 
-                            # naive way of adding the sources
-                            if date_ref:
-                                sec_source, created = \
-                                    SecondarySource.objects.get_or_create(
-                                        abbrev_name=date_ref,
-                                        biblio=date_ref,
-                                        name=date_ref)
+                            if sec_source:
                                 di.secondary_source = sec_source
                                 di.save()
 
@@ -117,7 +123,7 @@ def read_input_file(ifname):  # noqa
 
 
 def run():
-    ifname = "promrep/scripts/data/life_data/LifeDatesV2.csv"
+    ifname = "promrep/scripts/data/life_data/LifeDatesV3.csv"
 
     print("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

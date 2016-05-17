@@ -1,24 +1,18 @@
-from django.db import models
-from django.db.models.signals import post_init
+import logging
 
 from django.conf import settings
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db import models
 from django.shortcuts import render
 from django.template.loader import select_template
-
+from wagtail.contrib.wagtailroutablepage.models import RoutablePageMixin, route
 from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
                                                 PageChooserPanel)
+from wagtail.wagtailcore.fields import RichTextField
+from wagtail.wagtailcore.models import Page
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
-from wagtail.wagtailcore.models import Page
-
-from wagtail.contrib.wagtailroutablepage.models import RoutablePageMixin, route
-
-from wagtail.wagtailcore.fields import RichTextField
-
 from wagtail.wagtailsearch import index
-
-import logging
 
 logger = logging.getLogger(__name__)
 

@@ -6,9 +6,6 @@ from wagtailbase.models import (
     BlogPost,
     IndexPageRelatedLink)
 
-from wagtail.wagtailcore.models import Page
-
-
 FIXTURES = ['test_data.json']
 
 
@@ -36,7 +33,8 @@ class TestIndexPage(TestCase):
 
         self.assertEqual(self.child_page,
                          self.index_page.get_children().first().specific)
-        self.assertEqual(self.child_page, self.index_page.children.first().specific)
+        self.assertEqual(self.child_page,
+                         self.index_page.children.first().specific)
 
 
 class TestRichTextPage(TestCase):

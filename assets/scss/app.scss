@@ -20,8 +20,8 @@ hr {
 	border: 0;
 }
 
-header.main-header,
-.header,
+// header.main-header,
+// .header,
 // footer.main-footer {
 // 	min-height: 10rem;
 // }
@@ -47,9 +47,9 @@ li.greyed-out a {
 	padding: .5rem !important;
 }
 
-.hidden {
-	display: none;
-}
+// .hidden {
+// 	display: none;
+// }
 
 .expander {
 	padding: 0 0 .5rem;
@@ -93,6 +93,13 @@ li.greyed-out a {
 
 .inline-list i {
 	display: inline-block;
+}
+
+.export {
+	text-align: center;
+	label {
+		font-size: .75em;
+	}
 }
 
 /* Highlight newly added filters in the preview box */
@@ -663,5 +670,34 @@ svg {
 	h2.site-title {
 		font-size: 1.75rem;
 		padding-top: 1em;
+	}
+}
+
+/* Printing search results */
+
+@media print {
+
+	@page {
+		margin: 1.5cm 1.25cm;
+	}
+
+	.extra-margin {
+		padding-top: 0;
+	}
+
+	.hide {
+		display: table !important;
+	}
+
+	header,
+	nav,
+	footer,
+	.enlarge,
+	.expander,
+	.do-not-print,
+	.pagination-centred,
+	.result-preview,
+	.results-preview.fixed {
+		display: none;
 	}
 }

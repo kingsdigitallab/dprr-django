@@ -1,26 +1,4 @@
 {% load wagtailcore_tags wagtailbase_tags %}
-{% comment %}
-<ul class="main-navigation">
-    <li{% if current_page and root.url == current_page.url %} class="active"{% endif %}>
-        <a href="{% pageurl root %}">{{ root.title }}</a>
-    </li>
-
-    {% for page in menu_pages %}
-    <li class="{% if current_page and page|is_current_or_ancestor:current_page %}active{% endif %}{% if page.get_children %} has-dropdown{% endif %}">
-        <a href="{% pageurl page %}">{{ page.title }}</a>
-
-        <!-- only needed to show sub-pages in the main nav -->
-        {% if page.get_children %}
-    	<ul class="dropdown">
-    		{% for child in page.get_children %}
-    		<li><a href="{% pageurl child %}">{{ child.title }}</a></li>
-    		{% endfor %}
-    	</ul>
-    	{% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% endcomment %}
 
 <ul class="main-navigation">
     <li{% if current_page and root.url == current_page.url %} class="active"{% endif %}>

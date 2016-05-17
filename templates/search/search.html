@@ -6,15 +6,17 @@
 {% block main %}
 <div class="row">
 	<div class="large-12 columns" id="search">
-		<h1 id="search-box">Search</h1>
+		<header>
+			<h1 id="search-box">Search</h1>
 
-		<button class="small button secondary options"><i class="fa fa-cog"></i> <span id="showhide">Hide</span> filters' settings</button>
-		<a href="/browse/" class="right options"><span class="small button"><i class="fa fa-refresh"></i> Start new search</span></a>
+			<button class="small button secondary options"><i class="fa fa-cog"></i> <span id="showhide">Hide</span> filters' settings</button>
+			<a href="/browse/" class="right options"><span class="small button"><i class="fa fa-refresh"></i> Start new search</span></a>
+		</header>
 			
 		<form method="get" action=".">		
 			<div class="search-box">
 				<section data-section="non-expandable" data-expandable-group-member="facets" id="dprr-filter">
-					<div class="row">
+					<div class="row do-not-print">
 						<div class="large-12 columns">
 							<h4>Refine your search</h4>
 						</div>
@@ -23,12 +25,12 @@
 					<div class="row">
 						<div class="large-12 columns">
 							<div class="panel results-preview" data-magellan-expedition="fixed">
-								<h4>Results preview <a data-dropdown="results-preview-info" aria-controls="results-preview-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a>
-								<a href="#search-results-box" class="less-padding button right">Show <strong>{{ paginator.count }}</strong> results</a></h4>
+								<h4>Results preview <a data-dropdown="results-preview-info" aria-controls="results-preview-info" aria-expanded="false" class="do-not-print"><i class="fa fa-question-circle"></i></a>
+								<a href="#search-results-box" class="less-padding button right do-not-print">Show <strong>{{ paginator.count }}</strong> results</a></h4>
 								<div id="results-preview-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
 									<p>Some info on what's displayed by the <strong>results preview</strong>.</p>
 								</div>
-								<h3><strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search"><i class="fa fa-trash"></i> Clear all</a></h3>
+								<h3><strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search" class="do-not-print"><i class="fa fa-trash"></i> Clear all</a></h3>
 
 								{% if query or selected_facets or date_filter %}
 
@@ -70,7 +72,7 @@
 						</div>
 					</div>
 
-					<div class="row">
+					<div class="row do-not-print">
 						<div class="large-12 columns">
 							<h4>Filter by <strong>names</strong> <a data-dropdown="names-info" aria-controls="names-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
 							<div id="names-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
@@ -257,7 +259,7 @@
 						</div>
 					</div>
 
-					<div class="row">
+					<div class="row do-not-print">
 						<div class="large-12 columns">
 							<div class="panel radius">
 								<h4>Filter by <strong>class</strong> <a data-dropdown="class-info" aria-controls="class-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
@@ -352,7 +354,7 @@
 						</div>
 					</div>
 
-					<div class="row">
+					<div class="row do-not-print">
 						<div class="large-12 columns">
 							<h4>Filter by <strong>date</strong> <a data-dropdown="dates-info" aria-controls="dates-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
 							<div id="dates-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
@@ -379,7 +381,7 @@
 						</div>
 					</div>
 
-					<div class="row">
+					<div class="row do-not-print">
 						<div class="large-6 columns">
 							<div class="panel radius fixed-height">
 								<h4>Filter by <strong>office</strong> <a data-dropdown="office-info" aria-controls="office-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
@@ -426,7 +428,7 @@
 						</div>
 					</div>
 
-					<div class="row">
+					<div class="row do-not-print">
 						<div class="large-12 columns">
 							<h4>Text search <a data-dropdown="text-search-info" aria-controls="text-search-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
 							<div id="text-search-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
@@ -443,7 +445,7 @@
 						</div>
 					</div>
 
-					<div class="row">
+					<div class="row do-not-print">
 						<div class="large-12 columns">
 							<a href="#search-results-box" class="less-padding button right">Show <strong>{{ paginator.count }}</strong> results</a>
 						</div>
@@ -459,7 +461,19 @@
 
 		<hr>
 
-		<h2>Search Results <span class="label radius">{{ paginator.count }}</span> <a href="#search" class="less-padding button right"><i class="fa fa-edit"></i> Edit search</a></h2>
+		<h2>Search Results <span class="label radius">{{ paginator.count }}</span> <a href="#search" class="less-padding button right edit-search do-not-print"><i class="fa fa-edit"></i> Edit search</a></h2>
+
+		<ul class="inline-list left export do-not-print">
+			<li>
+				<a class="right" aria-lablledby="#print"><i class="fa fa-print"></i><label id="print">Print</label></a>
+			</li>
+  			<li>
+				<a class="right" aria-lablledby="#pdf"><i class="fa fa-file-pdf-o"></i><label id="pdf">PDF</label></a>
+			</li>
+			<li>
+				<a class="right" aria-lablledby="#csv"><i class="fa fa-save"></i><label id="cvs">CSV</label></a>
+			</li>
+		</ul>
 
 		<ul class="inline-list right key">
 			<li>Dates can be: </li>

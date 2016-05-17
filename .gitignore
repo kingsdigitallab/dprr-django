@@ -64,3 +64,4 @@ static/
 
 # Vagrant
 .vagrant/
+playbook.retry

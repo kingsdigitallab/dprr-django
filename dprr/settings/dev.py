@@ -108,5 +108,8 @@ except ImportError:
 try:
     from local import *  # noqa
 except ImportError:
-    print('failed to import local')
-    raise ImportError('Error importing local settings')
+    print('failed to import local settings')
+
+    from test import *  # noqa
+    print('the project is running with test settings')
+    print('please create a local settings file')

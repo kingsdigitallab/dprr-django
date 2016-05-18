@@ -25,7 +25,7 @@ $(document).ready(function() {
 	});
 
 	// Printing search results
-	$('#print').bind("click", function() {
+	$('#printme').bind("click", function() {
 		// TODO: remove pagination and show full list of results
 		window.print();
 	});

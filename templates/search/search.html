@@ -102,7 +102,7 @@
 										{% for term in facets.fields|get_item:"praenomen" %}
 										{% with value=term.0 count=term.1 %}
 										{% if count > 0 %}
-										<li><a href="{% add_facet_link querydict "praenomen" value %}#search" class="add-filter"><span class="label radius right highlight">{{ count }}</span>{{ value }}</a></li>
+										<li><a href="{% add_facet_link querydict "praenomen" value %}#search" class="add-filter"><span class="secondary label radius right highlight">{{ count }}</span>{{ value }}</a></li>
 										{% endif %}
 										{% endwith %}
 										{% endfor %}
@@ -130,7 +130,7 @@
 										{% for term in facets.fields|get_item:"nomen" %}
 										{% with value=term.0 count=term.1 %}
 										{% if count > 0 %}
-										<li><a href="{% add_facet_link querydict "nomen" value %}#search"><span class="label radius right">{{ count }}</span>{{ value }}</a></li>
+										<li><a href="{% add_facet_link querydict "nomen" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
 										{% endif %}
 										{% endwith %}
 										{% endfor %}
@@ -138,7 +138,10 @@
 								</div>
 
 								<div class="large-1 columns">
-									<button data-dropdown="re" aria-controls="f" aria-expanded="false" class="name-form button dropdown">RE</button>
+									<button data-dropdown="re" aria-controls="f" aria-expanded="false" class="name-form button dropdown">RE</button><br>
+									<ul id="re" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
+										<li><a href="#search"><span class="secondary label radius right"></span></a></li>
+									</ul>
 								</div>
 
 
@@ -164,7 +167,7 @@
 										{% for term in facets.fields|get_item:"f" %}
 										{% with value=term.0 count=term.1 %}
 										{% if count > 0 %}
-										<li><a href="{% add_facet_link querydict "f" value %}#search"><span class="label radius right">{{ count }}</span>{{ value }}</a></li>
+										<li><a href="{% add_facet_link querydict "f" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
 										{% endif %}
 										{% endwith %}
 										{% endfor %}
@@ -192,7 +195,7 @@
 										{% for term in facets.fields|get_item:"n" %}
 										{% with value=term.0 count=term.1 %}
 										{% if count > 0 %}
-										<li><a href="{% add_facet_link querydict "n" value %}"><span class="label radius right">{{ count }}</span>{{ value }}</a></li>
+										<li><a href="{% add_facet_link querydict "n" value %}"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
 										{% endif %}
 										{% endwith %}
 										{% endfor %}
@@ -220,7 +223,7 @@
 										{% for term in facets.fields|get_item:"cognomen" %}
 										{% with value=term.0 count=term.1 %}
 										{% if count > 0 %}
-										<li><a href="{% add_facet_link querydict "cognomen" value %}"><span class="label radius right">{{ count }}</span>{{ value }}</a></li>
+										<li><a href="{% add_facet_link querydict "cognomen" value %}"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
 										{% endif %}
 										{% endwith %}
 										{% endfor %}
@@ -235,10 +238,10 @@
 									</label>
 									{% endcomment %}
 
-									<button data-dropdown="many" aria-controls="many" aria-expanded="false" class="name-form button dropdown">Other names</button><br>
+									<button data-dropdown="other-names" aria-controls="many" aria-expanded="false" class="name-form button dropdown">Other names</button><br>
 
-									<ul id="many" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-										<li><a href="#search"><span class="label radius right"></span></a></li>
+									<ul id="other-names" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
+										<li><a href="#search"><span class="secondary label radius right"></span></a></li>
 									</ul>
 								</div>
 							</div>

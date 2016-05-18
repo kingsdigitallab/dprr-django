@@ -140,7 +140,7 @@
 								<div class="large-1 columns">
 									<button data-dropdown="re" aria-controls="f" aria-expanded="false" class="name-form button dropdown">RE</button><br>
 									<ul id="re" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-										<li><a href="#search"><span class="secondary label radius right"></span></a></li>
+										<li><a href="#search"><span class="secondary label radius right">00</span></a></li>
 									</ul>
 								</div>
 
@@ -241,7 +241,7 @@
 									<button data-dropdown="other-names" aria-controls="many" aria-expanded="false" class="name-form button dropdown">Other names</button><br>
 
 									<ul id="other-names" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-										<li><a href="#search"><span class="secondary label radius right"></span></a></li>
+										<li><a href="#search"><span class="secondary label radius right">00</span></a></li>
 									</ul>
 								</div>
 							</div>
@@ -258,6 +258,18 @@
 								{% endif %}
 								{% endwith %}
 								{% endfor %}
+							</ul>
+
+							<ul class="button-group even-5">
+								<li><a href="#" class="button secondary less-padding smaller-fontsize">Certain birth date <span class="label radius right">00</span></a></li>
+								<li><a href="#" class="button secondary less-padding smaller-fontsize">Natural death <span class="label radius right">00</span></a></li>
+								<li><a href="#" class="button secondary less-padding smaller-fontsize">Violent death <span class="label radius right">00</span></a></li>
+								<li><a href="#" class="button secondary less-padding smaller-fontsize">Exiled <span class="label radius right">00</span></a></li>
+								<li><a href="#" class="button secondary less-padding smaller-fontsize">Adopted <span class="label radius right">00</span></a></li>
+							</ul>
+
+							<h3>Biographic data</h3>
+							<ul>
 							</ul>
 						</div>
 					</div>
@@ -313,16 +325,6 @@
 									{% endfor %}
 									{% endcomment %}
 
-									{% for term in facets.fields|get_item:"eques" %}
-									{% with value=term.0 count=term.1 %}
-									{% if value == "true" and count > 0 %}
-									<li>
-										<a href="{% add_facet_link querydict "eques" value %}#search">Eques <span class="label radius">{{ count }}</span></a>
-									</li>
-									{% endif %}
-									{% endwith %}
-									{% endfor %}
-
 									{% for term in facets.fields|get_item:"nobilis" %}
 									{% with value=term.0 count=term.1 %}
 									{% if value == "true" and count > 0 %}
@@ -353,6 +355,55 @@
 									{% endwith %}
 									{% endfor %}
 								</ul>
+								<ul class="inline-list">
+									{% for term in facets.fields|get_item:"eques" %}
+									{% with value=term.0 count=term.1 %}
+									{% if value == "true" and count > 0 %}
+									<li>
+										<a href="{% add_facet_link querydict "eques" value %}#search">Eques R. <span class="label radius">{{ count }}</span></a>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+									<li><a href="#">Eques R. (Expelled) <span class="label radius">00</span></a></li>
+									<li><a href="#">Senator <span class="label radius">00</span></a></li>
+									<li><a href="#">Senator (Expelled) <span class="label radius">00</span></a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="large-6 columns">
+							<button data-dropdown="tribes" aria-controls="tribes" aria-expanded="false" class="secondary less-padding button expand dropdown">Tribes</button><br>
+
+							<ul id="tribes" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
+								{% comment %}
+								{% for term in facets.fields|get_item:"tribe" %}
+								{% with value=term.0 count=term.1 %}
+								{% if count > 0 %}
+								<li><a href="{% add_facet_link querydict "tribe" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
+								{% endif %}
+								{% endwith %}
+								{% endfor %}
+								{% endcomment %}
+								<li><a href="#">Tribe 1 <span class="secondary label radius right">00</span></a></li>
+								<li><a href="#">Tribe 2 <span class="secondary label radius right">00</span></a></li>
+								<li><a href="#">Tribe 3 <span class="secondary label radius right">00</span></a></li>
+								<li><a href="#">Tribe 4 <span class="secondary label radius right">00</span></a></li>
+								<li><a href="#">Tribe 5 <span class="secondary label radius right">00</span></a></li>
+								<li><a href="#">Tribe 6 <span class="secondary label radius right">00</span></a></li>
+								<li><a href="#">Tribe 7 <span class="secondary label radius right">00</span></a></li>
+							</ul>
+						</div>
+						<div class="large-6 columns">
+							<div class="row collapse">
+								<div class="small-9 columns">
+									<input type="text" name="origin" placeholder="Search for origin">
+								</div>
+								<div class="small-3 columns">
+									<button type="submit" class="postfix secondary button"><i class="fa fa-search"></i></button>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -432,7 +483,7 @@
 					</div>
 
 					<div class="row do-not-print">
-						<div class="large-12 columns">
+						<div class="large-6 columns">
 							<h4>Text search <a data-dropdown="text-search-info" aria-controls="text-search-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
 							<div id="text-search-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
 								<p>Some info on how to use the <strong>free text search</strong>.</p>

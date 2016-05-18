@@ -35,8 +35,9 @@ TEMPLATE_DEBUG = True
 
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'promrep.'
-        'solr_backends.solr_backend_field_collapsing.GroupedSolrEngine',
+        'ENGINE':
+        ('promrep.'
+         'solr_backends.solr_backend_field_collapsing.GroupedSolrEngine'),
         'URL': 'http://127.0.0.1:8182/solr'
     },
 }

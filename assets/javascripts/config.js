@@ -23,4 +23,10 @@ $(document).ready(function() {
 		$('#search-results-box').toggleClass("extra-margin");
 		return false;
 	});
+
+	// Printing search results
+	$('#print').bind("click", function() {
+		// TODO: remove pagination and show full list of results
+		window.print();
+	});
 });

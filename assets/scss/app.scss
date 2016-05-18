@@ -20,12 +20,6 @@ hr {
 	border: 0;
 }
 
-// header.main-header,
-// .header,
-// footer.main-footer {
-// 	min-height: 10rem;
-// }
-
 .content-area {
 	background: $white;
 	padding-top: 1rem;
@@ -194,12 +188,6 @@ h3.quick-home {
 
 /*** Content ***/
 
-.name-row {
-	button {
-		padding: 0 !important;
-	}
-}
-
 .list-page-title {
 	border-bottom: 1px solid $iron;
 	margin-bottom: 1rem;
@@ -272,13 +260,30 @@ h3.quick-home {
 	}
 }
 
+.name-row {
+	button {
+		padding: 3px 0 3px 3px !important;
+		font-size: .75em !important;
+	}
+	.columns {
+		padding: .25rem !important;
+		&:first-child {
+			padding-left: .5rem !important;
+		}
+		&:last-child {
+			padding-right: .5rem !important;
+		}
+	}
+}
+
 button.name-form {
 	color: $dark-gold;
 	font-size: .875rem;
 	background: scale-color($sand, $lightness: 15%);
 	border: 1px solid scale-color($sand, $lightness: -11%);
-	padding: .5rem 1rem;
+	// padding: .5rem 1rem;
 	width: 100%;
+	text-align: left;
 
 	&:hover {
 		color: $dark-gold;
@@ -286,7 +291,10 @@ button.name-form {
 	}
 
 	&:after {
+		border-width: .1875rem !important;
 		border-color: $dark-gold transparent transparent transparent !important;
+		right: .125rem !important;
+		top: .75rem !important;
 	}
 }
 

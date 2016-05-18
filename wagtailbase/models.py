@@ -1,30 +1,23 @@
-from base import (AbstractRelatedLink, AbstractAttachment,
-                  BaseIndexPage, BaseRichTextPage)
-
-from datetime import date
-
-from django.db import models
-from django.conf import settings
-from django.conf.urls import url
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import Http404
-from django.shortcuts import render
-
-from taggit.models import TaggedItemBase
-
-from modelcluster.fields import ParentalKey
-from modelcluster.tags import ClusterTaggableManager
-
-from wagtail.wagtailadmin.edit_handlers import (
-    FieldPanel, InlinePanel, MultiFieldPanel)
-from wagtail.wagtailcore.models import Orderable
-from wagtail.contrib.wagtailroutablepage.models import route
-from wagtailbase.util import unslugify
-
-from wagtail.wagtailsearch import index
-
 import calendar
 import logging
+from datetime import date
+
+from base import (AbstractAttachment, AbstractRelatedLink, BaseIndexPage,
+                  BaseRichTextPage)
+from django.conf import settings
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db import models
+from django.http import Http404
+from django.shortcuts import render
+from modelcluster.fields import ParentalKey
+from modelcluster.tags import ClusterTaggableManager
+from taggit.models import TaggedItemBase
+from wagtail.contrib.wagtailroutablepage.models import route
+from wagtail.wagtailadmin.edit_handlers import (FieldPanel, InlinePanel,
+                                                MultiFieldPanel)
+from wagtail.wagtailcore.models import Orderable
+from wagtail.wagtailsearch import index
+from wagtailbase.util import unslugify
 
 logger = logging.getLogger(__name__)
 

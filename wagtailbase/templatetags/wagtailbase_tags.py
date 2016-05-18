@@ -4,8 +4,8 @@ from django import template
 from django.conf import settings
 from django.template.defaultfilters import stringfilter
 from django.utils.text import slugify
-from wagtail.contrib.wagtailroutablepage.templatetags.wagtailroutablepage_tags import \
-    routablepageurl
+from wagtail.contrib.wagtailroutablepage.\
+    templatetags.wagtailroutablepage_tags import routablepageurl
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore.templatetags.wagtailcore_tags import pageurl
 from wagtailbase.util import unslugify
@@ -174,7 +174,8 @@ def has_menu_children(page):
 # a dropdown class to be applied to a parent
 #
 # adapted from
-#   https://github.com/torchbox/wagtaildemo/blob/master/demo/templatetags/demo_tags.py
+#   github.com/torchbox/wagtaildemo/blob/master/demo/templatetags/demo_tags.py
+
 
 @register.inclusion_tag('wagtailbase/tags/main_menu.html', takes_context=True)
 def main_menu(context, root, current_page=None):
@@ -189,7 +190,10 @@ def main_menu(context, root, current_page=None):
             'current_page': current_page, 'menu_pages': menu_pages}
 
 # Retrieves the children of the top menu items for the drop downs
-@register.inclusion_tag('wagtailbase/tags/top_menu_children.html', takes_context=True)
+
+
+@register.inclusion_tag('wagtailbase/tags/top_menu_children.html',
+                        takes_context=True)
 def top_menu_children(context, parent):
     menuitems_children = parent.get_children()
     menuitems_children = menuitems_children.live().in_menu()
@@ -260,3 +264,24 @@ def get_item(dictionary, key):
         return dictionary[key]
 
     return None
+
+
+@register.assignment_tag(takes_context=True)
+def dprr_has_local_menu(context, current_page):
+    """Returns True if the current page has a local menu, False otherwise. A
+    page has a local menu, if it is not the site root or first level,
+    unless it has children page.
+    """
+
+    try:
+        current_page.id
+    except AttributeError:
+        return False
+
+    # Level 3 corresponds to top navigation and level 4 to sub-nav
+    if current_page.depth >= 3 and not current_page.is_leaf():
+        return True
+    elif current_page.depth >= 4:
+        return True
+
+    return False

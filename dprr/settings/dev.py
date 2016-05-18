@@ -1,4 +1,4 @@
-from base import *
+from base import *  # noqa
 
 DEBUG = True
 
@@ -35,7 +35,9 @@ TEMPLATE_DEBUG = True
 
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'promrep.solr_backends.solr_backend_field_collapsing.GroupedSolrEngine',
+        'ENGINE':
+        ('promrep.'
+         'solr_backends.solr_backend_field_collapsing.GroupedSolrEngine'),
         'URL': 'http://127.0.0.1:8182/solr'
     },
 }
@@ -47,7 +49,7 @@ HAYSTACK_CONNECTIONS = {
 # -----------------------------------------------------------------------------
 
 try:
-    import django_extensions
+    import django_extensions  # noqa
     INSTALLED_APPS = INSTALLED_APPS + ('django_extensions', )
 except ImportError:
     pass
@@ -58,7 +60,7 @@ except ImportError:
 # -----------------------------------------------------------------------------
 
 try:
-    import debug_toolbar
+    import debug_toolbar  # noqa
     INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
     MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + (
         'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -90,7 +92,7 @@ except ImportError:
 # -----------------------------------------------------------------------------
 
 try:
-    import haystack_panel
+    import haystack_panel  # noqa
 
     INSTALLED_APPS = INSTALLED_APPS + ('haystack_panel', )
     DEBUG_TOOLBAR_PANELS.append('haystack_panel.panel.HaystackDebugPanel')
@@ -104,7 +106,7 @@ except ImportError:
 # -----------------------------------------------------------------------------
 
 try:
-    from local import *
+    from local import *  # noqa
 except ImportError:
     print('failed to import local')
     raise ImportError('Error importing local settings')

@@ -17,9 +17,9 @@ project_root = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(project_root)
 
 django.project('dprr')
-from django.conf import settings
+from django.conf import settings  # noqa
 
-REPOSITORY = 'https://scm.cch.kcl.ac.uk/hg/dprr-django'
+REPOSITORY = 'git@github.com:kingsdigitallab/dprr-django.git'
 
 env.user = settings.FABRIC_USER
 env.hosts = ['dprr.dighum.kcl.ac.uk']
@@ -107,7 +107,7 @@ def unlock():
 def set_srvr_vars():
     env.path = os.path.join(env.root_path, env.srvr, 'django', 'dprr-django')
     env.within_virtualenv = 'source {}'.format(
-        os.path.join(env.envs_path, 'dprr-' +  env.srvr, 'bin', 'activate'))
+        os.path.join(env.envs_path, 'dprr-' + env.srvr, 'bin', 'activate'))
 
 
 @task
@@ -128,13 +128,13 @@ def create_virtualenv():
 def clone_repo():
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
     with quiet():
-        if run('ls {}'.format(os.path.join(env.path, '.hg'))).succeeded:
+        if run('ls {}'.format(os.path.join(env.path, '.git'))).succeeded:
             print(green(('repository at'
                          ' [{}] exists').format(env.path)))
             return
 
-    print(yellow('cloneing repository to [{}]'.format(env.path)))
-    run('hg clone {} {}'.format(REPOSITORY, env.path))
+    print(yellow('cloning repository to [{}]'.format(env.path)))
+    run('git clone --recursive {} {}'.format(REPOSITORY, env.path))
 
 
 @task
@@ -145,6 +145,8 @@ def setup_environment():
     install_requirements()
 
 # quicker deployment - no requirements/migrations
+
+
 @task
 def quick_deploy(branch=None):
     update(branch)
@@ -152,6 +154,7 @@ def quick_deploy(branch=None):
     collect_static()
     update_index()
     touch_wsgi()
+
 
 @task
 def deploy(branch=None):
@@ -166,22 +169,22 @@ def deploy(branch=None):
 
 
 @task
-def update(branch=None):
+def update(version=None):
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 
-    if branch:
-        # try specified branch first
-        to_branch = branch
-    elif not branch and env.srvr in ['local', 'vagrant', 'dev']:
-        # if local, vagrant or dev deploy to master
-        to_branch = 'default'
+    if version:
+        # try specified version first
+        to_version = version
+    elif not version and env.srvr in ['local', 'vagrant', 'dev']:
+        # if local, vagrant or dev deploy to develop branch
+        to_version = 'develop'
     else:
-        # else deploy to server tag
-        to_branch = env.srvr
+        # else deploy to master branch
+        to_version = 'master'
 
     with cd(env.path), prefix(env.within_virtualenv):
-        run('hg pull')
-        run('hg up {}'.format(to_branch))
+        run('git pull')
+        run('git checkout {}'.format(to_version))
 
 
 @task

@@ -1,1996 +1,564 @@
 [
 {
-  "pk": 1, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_logentry", 
-    "name": "Can add log entry", 
-    "content_type": [
-      "admin", 
-      "logentry"
-    ]
-  }
-},
-{
-  "pk": 2, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_logentry", 
-    "name": "Can change log entry", 
-    "content_type": [
-      "admin", 
-      "logentry"
-    ]
-  }
-},
-{
-  "pk": 3, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_logentry", 
-    "name": "Can delete log entry", 
-    "content_type": [
-      "admin", 
-      "logentry"
-    ]
-  }
-},
-{
-  "pk": 4, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_permission", 
-    "name": "Can add permission", 
-    "content_type": [
-      "auth", 
-      "permission"
-    ]
-  }
-},
-{
-  "pk": 5, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_permission", 
-    "name": "Can change permission", 
-    "content_type": [
-      "auth", 
-      "permission"
-    ]
-  }
-},
-{
-  "pk": 6, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_permission", 
-    "name": "Can delete permission", 
-    "content_type": [
-      "auth", 
-      "permission"
-    ]
-  }
-},
-{
-  "pk": 7, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_group", 
-    "name": "Can add group", 
-    "content_type": [
-      "auth", 
-      "group"
-    ]
-  }
-},
-{
-  "pk": 8, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_group", 
-    "name": "Can change group", 
-    "content_type": [
-      "auth", 
-      "group"
-    ]
-  }
-},
-{
-  "pk": 9, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_group", 
-    "name": "Can delete group", 
-    "content_type": [
-      "auth", 
-      "group"
-    ]
-  }
-},
-{
-  "pk": 10, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_user", 
-    "name": "Can add user", 
-    "content_type": [
-      "auth", 
-      "user"
-    ]
-  }
-},
-{
-  "pk": 11, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_user", 
-    "name": "Can change user", 
-    "content_type": [
-      "auth", 
-      "user"
-    ]
-  }
-},
-{
-  "pk": 12, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_user", 
-    "name": "Can delete user", 
-    "content_type": [
-      "auth", 
-      "user"
-    ]
-  }
-},
-{
-  "pk": 13, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_contenttype", 
-    "name": "Can add content type", 
-    "content_type": [
-      "contenttypes", 
-      "contenttype"
-    ]
-  }
-},
-{
-  "pk": 14, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_contenttype", 
-    "name": "Can change content type", 
-    "content_type": [
-      "contenttypes", 
-      "contenttype"
-    ]
-  }
-},
-{
-  "pk": 15, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_contenttype", 
-    "name": "Can delete content type", 
-    "content_type": [
-      "contenttypes", 
-      "contenttype"
-    ]
-  }
-},
-{
-  "pk": 16, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_session", 
-    "name": "Can add session", 
-    "content_type": [
-      "sessions", 
-      "session"
-    ]
-  }
-},
-{
-  "pk": 17, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_session", 
-    "name": "Can change session", 
-    "content_type": [
-      "sessions", 
-      "session"
-    ]
-  }
-},
-{
-  "pk": 18, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_session", 
-    "name": "Can delete session", 
-    "content_type": [
-      "sessions", 
-      "session"
-    ]
-  }
-},
-{
-  "pk": 19, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_migrationhistory", 
-    "name": "Can add migration history", 
-    "content_type": [
-      "south", 
-      "migrationhistory"
-    ]
-  }
-},
-{
-  "pk": 20, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_migrationhistory", 
-    "name": "Can change migration history", 
-    "content_type": [
-      "south", 
-      "migrationhistory"
-    ]
-  }
-},
-{
-  "pk": 21, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_migrationhistory", 
-    "name": "Can delete migration history", 
-    "content_type": [
-      "south", 
-      "migrationhistory"
-    ]
-  }
-},
-{
-  "pk": 22, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_tag", 
-    "name": "Can add Tag", 
-    "content_type": [
-      "taggit", 
-      "tag"
-    ]
-  }
-},
-{
-  "pk": 23, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_tag", 
-    "name": "Can change Tag", 
-    "content_type": [
-      "taggit", 
-      "tag"
-    ]
-  }
-},
-{
-  "pk": 24, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_tag", 
-    "name": "Can delete Tag", 
-    "content_type": [
-      "taggit", 
-      "tag"
-    ]
-  }
-},
-{
-  "pk": 25, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_taggeditem", 
-    "name": "Can add Tagged Item", 
-    "content_type": [
-      "taggit", 
-      "taggeditem"
-    ]
-  }
-},
-{
-  "pk": 26, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_taggeditem", 
-    "name": "Can change Tagged Item", 
-    "content_type": [
-      "taggit", 
-      "taggeditem"
-    ]
-  }
-},
-{
-  "pk": 27, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_taggeditem", 
-    "name": "Can delete Tagged Item", 
-    "content_type": [
-      "taggit", 
-      "taggeditem"
-    ]
-  }
-},
-{
-  "pk": 28, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_site", 
-    "name": "Can add site", 
-    "content_type": [
-      "wagtailcore", 
-      "site"
-    ]
-  }
-},
-{
-  "pk": 29, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_site", 
-    "name": "Can change site", 
-    "content_type": [
-      "wagtailcore", 
-      "site"
-    ]
-  }
-},
-{
-  "pk": 30, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_site", 
-    "name": "Can delete site", 
-    "content_type": [
-      "wagtailcore", 
-      "site"
-    ]
-  }
-},
-{
-  "pk": 31, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_page", 
-    "name": "Can add page", 
-    "content_type": [
-      "wagtailcore", 
-      "page"
-    ]
-  }
-},
-{
-  "pk": 32, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_page", 
-    "name": "Can change page", 
-    "content_type": [
-      "wagtailcore", 
-      "page"
-    ]
-  }
-},
-{
-  "pk": 33, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_page", 
-    "name": "Can delete page", 
-    "content_type": [
-      "wagtailcore", 
-      "page"
-    ]
-  }
-},
-{
-  "pk": 34, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_pagerevision", 
-    "name": "Can add page revision", 
-    "content_type": [
-      "wagtailcore", 
-      "pagerevision"
-    ]
-  }
-},
-{
-  "pk": 35, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_pagerevision", 
-    "name": "Can change page revision", 
-    "content_type": [
-      "wagtailcore", 
-      "pagerevision"
-    ]
-  }
-},
-{
-  "pk": 36, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_pagerevision", 
-    "name": "Can delete page revision", 
-    "content_type": [
-      "wagtailcore", 
-      "pagerevision"
-    ]
-  }
-},
-{
-  "pk": 37, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_grouppagepermission", 
-    "name": "Can add group page permission", 
-    "content_type": [
-      "wagtailcore", 
-      "grouppagepermission"
-    ]
-  }
-},
-{
-  "pk": 38, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_grouppagepermission", 
-    "name": "Can change group page permission", 
-    "content_type": [
-      "wagtailcore", 
-      "grouppagepermission"
-    ]
-  }
-},
-{
-  "pk": 39, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_grouppagepermission", 
-    "name": "Can delete group page permission", 
-    "content_type": [
-      "wagtailcore", 
-      "grouppagepermission"
-    ]
-  }
-},
-{
-  "pk": 40, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "access_admin", 
-    "name": "Can access Wagtail admin", 
-    "content_type": [
-      "wagtailadmin", 
-      "admin"
-    ]
-  }
-},
-{
-  "pk": 41, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_document", 
-    "name": "Can add document", 
-    "content_type": [
-      "wagtaildocs", 
-      "document"
-    ]
-  }
-},
-{
-  "pk": 42, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_document", 
-    "name": "Can change document", 
-    "content_type": [
-      "wagtaildocs", 
-      "document"
-    ]
-  }
-},
-{
-  "pk": 43, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_document", 
-    "name": "Can delete document", 
-    "content_type": [
-      "wagtaildocs", 
-      "document"
-    ]
-  }
-},
-{
-  "pk": 44, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_image", 
-    "name": "Can add image", 
-    "content_type": [
-      "wagtailimages", 
-      "image"
-    ]
-  }
-},
-{
-  "pk": 45, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_image", 
-    "name": "Can change image", 
-    "content_type": [
-      "wagtailimages", 
-      "image"
-    ]
-  }
-},
-{
-  "pk": 46, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_image", 
-    "name": "Can delete image", 
-    "content_type": [
-      "wagtailimages", 
-      "image"
-    ]
-  }
-},
-{
-  "pk": 47, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_filter", 
-    "name": "Can add filter", 
-    "content_type": [
-      "wagtailimages", 
-      "filter"
-    ]
-  }
-},
-{
-  "pk": 48, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_filter", 
-    "name": "Can change filter", 
-    "content_type": [
-      "wagtailimages", 
-      "filter"
-    ]
-  }
-},
-{
-  "pk": 49, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_filter", 
-    "name": "Can delete filter", 
-    "content_type": [
-      "wagtailimages", 
-      "filter"
-    ]
-  }
-},
-{
-  "pk": 50, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_rendition", 
-    "name": "Can add rendition", 
-    "content_type": [
-      "wagtailimages", 
-      "rendition"
-    ]
-  }
-},
-{
-  "pk": 51, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_rendition", 
-    "name": "Can change rendition", 
-    "content_type": [
-      "wagtailimages", 
-      "rendition"
-    ]
-  }
-},
-{
-  "pk": 52, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_rendition", 
-    "name": "Can delete rendition", 
-    "content_type": [
-      "wagtailimages", 
-      "rendition"
-    ]
-  }
-},
-{
-  "pk": 53, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_embed", 
-    "name": "Can add embed", 
-    "content_type": [
-      "wagtailembeds", 
-      "embed"
-    ]
-  }
-},
-{
-  "pk": 54, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_embed", 
-    "name": "Can change embed", 
-    "content_type": [
-      "wagtailembeds", 
-      "embed"
-    ]
-  }
-},
-{
-  "pk": 55, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_embed", 
-    "name": "Can delete embed", 
-    "content_type": [
-      "wagtailembeds", 
-      "embed"
-    ]
-  }
-},
-{
-  "pk": 56, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_query", 
-    "name": "Can add query", 
-    "content_type": [
-      "wagtailsearch", 
-      "query"
-    ]
-  }
-},
-{
-  "pk": 57, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_query", 
-    "name": "Can change query", 
-    "content_type": [
-      "wagtailsearch", 
-      "query"
-    ]
-  }
-},
-{
-  "pk": 58, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_query", 
-    "name": "Can delete query", 
-    "content_type": [
-      "wagtailsearch", 
-      "query"
-    ]
-  }
-},
-{
-  "pk": 59, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_querydailyhits", 
-    "name": "Can add query daily hits", 
-    "content_type": [
-      "wagtailsearch", 
-      "querydailyhits"
-    ]
-  }
-},
-{
-  "pk": 60, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_querydailyhits", 
-    "name": "Can change query daily hits", 
-    "content_type": [
-      "wagtailsearch", 
-      "querydailyhits"
-    ]
-  }
-},
-{
-  "pk": 61, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_querydailyhits", 
-    "name": "Can delete query daily hits", 
-    "content_type": [
-      "wagtailsearch", 
-      "querydailyhits"
-    ]
-  }
-},
-{
-  "pk": 62, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_editorspick", 
-    "name": "Can add editors pick", 
-    "content_type": [
-      "wagtailsearch", 
-      "editorspick"
-    ]
-  }
-},
-{
-  "pk": 63, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_editorspick", 
-    "name": "Can change editors pick", 
-    "content_type": [
-      "wagtailsearch", 
-      "editorspick"
-    ]
-  }
-},
-{
-  "pk": 64, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_editorspick", 
-    "name": "Can delete editors pick", 
-    "content_type": [
-      "wagtailsearch", 
-      "editorspick"
-    ]
-  }
-},
-{
-  "pk": 65, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_searchtest", 
-    "name": "Can add search test", 
-    "content_type": [
-      "wagtailsearch", 
-      "searchtest"
-    ]
-  }
-},
-{
-  "pk": 66, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_searchtest", 
-    "name": "Can change search test", 
-    "content_type": [
-      "wagtailsearch", 
-      "searchtest"
-    ]
-  }
-},
-{
-  "pk": 67, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_searchtest", 
-    "name": "Can delete search test", 
-    "content_type": [
-      "wagtailsearch", 
-      "searchtest"
-    ]
-  }
-},
-{
-  "pk": 68, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_searchtestchild", 
-    "name": "Can add search test child", 
-    "content_type": [
-      "wagtailsearch", 
-      "searchtestchild"
-    ]
-  }
-},
-{
-  "pk": 69, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_searchtestchild", 
-    "name": "Can change search test child", 
-    "content_type": [
-      "wagtailsearch", 
-      "searchtestchild"
-    ]
-  }
-},
-{
-  "pk": 70, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_searchtestchild", 
-    "name": "Can delete search test child", 
-    "content_type": [
-      "wagtailsearch", 
-      "searchtestchild"
-    ]
-  }
-},
-{
-  "pk": 71, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_redirect", 
-    "name": "Can add redirect", 
-    "content_type": [
-      "wagtailredirects", 
-      "redirect"
-    ]
-  }
-},
-{
-  "pk": 72, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_redirect", 
-    "name": "Can change redirect", 
-    "content_type": [
-      "wagtailredirects", 
-      "redirect"
-    ]
-  }
-},
-{
-  "pk": 73, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_redirect", 
-    "name": "Can delete redirect", 
-    "content_type": [
-      "wagtailredirects", 
-      "redirect"
-    ]
-  }
-},
-{
-  "pk": 74, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_basepage", 
-    "name": "Can add base page", 
-    "content_type": [
-      "wagtailbase", 
-      "basepage"
-    ]
-  }
-},
-{
-  "pk": 75, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_basepage", 
-    "name": "Can change base page", 
-    "content_type": [
-      "wagtailbase", 
-      "basepage"
-    ]
-  }
-},
-{
-  "pk": 76, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_basepage", 
-    "name": "Can delete base page", 
-    "content_type": [
-      "wagtailbase", 
-      "basepage"
-    ]
-  }
-},
-{
-  "pk": 77, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_baseindexpage", 
-    "name": "Can add base index page", 
-    "content_type": [
-      "wagtailbase", 
-      "baseindexpage"
-    ]
-  }
-},
-{
-  "pk": 78, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_baseindexpage", 
-    "name": "Can change base index page", 
-    "content_type": [
-      "wagtailbase", 
-      "baseindexpage"
-    ]
-  }
-},
-{
-  "pk": 79, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_baseindexpage", 
-    "name": "Can delete base index page", 
-    "content_type": [
-      "wagtailbase", 
-      "baseindexpage"
-    ]
-  }
-},
-{
-  "pk": 80, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_baserichtextpage", 
-    "name": "Can add base rich text page", 
-    "content_type": [
-      "wagtailbase", 
-      "baserichtextpage"
-    ]
-  }
-},
-{
-  "pk": 81, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_baserichtextpage", 
-    "name": "Can change base rich text page", 
-    "content_type": [
-      "wagtailbase", 
-      "baserichtextpage"
-    ]
-  }
-},
-{
-  "pk": 82, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_baserichtextpage", 
-    "name": "Can delete base rich text page", 
-    "content_type": [
-      "wagtailbase", 
-      "baserichtextpage"
-    ]
-  }
-},
-{
-  "pk": 83, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_indexpage", 
-    "name": "Can add index page", 
-    "content_type": [
-      "wagtailbase", 
-      "indexpage"
-    ]
-  }
-},
-{
-  "pk": 84, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_indexpage", 
-    "name": "Can change index page", 
-    "content_type": [
-      "wagtailbase", 
-      "indexpage"
-    ]
-  }
-},
-{
-  "pk": 85, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_indexpage", 
-    "name": "Can delete index page", 
-    "content_type": [
-      "wagtailbase", 
-      "indexpage"
-    ]
-  }
-},
-{
-  "pk": 86, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_indexpagerelatedlink", 
-    "name": "Can add index page related link", 
-    "content_type": [
-      "wagtailbase", 
-      "indexpagerelatedlink"
-    ]
-  }
-},
-{
-  "pk": 87, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_indexpagerelatedlink", 
-    "name": "Can change index page related link", 
-    "content_type": [
-      "wagtailbase", 
-      "indexpagerelatedlink"
-    ]
-  }
-},
-{
-  "pk": 88, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_indexpagerelatedlink", 
-    "name": "Can delete index page related link", 
-    "content_type": [
-      "wagtailbase", 
-      "indexpagerelatedlink"
-    ]
-  }
-},
-{
-  "pk": 89, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_richtextpage", 
-    "name": "Can add rich text page", 
-    "content_type": [
-      "wagtailbase", 
-      "richtextpage"
-    ]
-  }
-},
-{
-  "pk": 90, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_richtextpage", 
-    "name": "Can change rich text page", 
-    "content_type": [
-      "wagtailbase", 
-      "richtextpage"
-    ]
-  }
-},
-{
-  "pk": 91, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_richtextpage", 
-    "name": "Can delete rich text page", 
-    "content_type": [
-      "wagtailbase", 
-      "richtextpage"
-    ]
-  }
-},
-{
-  "pk": 92, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_richtextpagerelatedlink", 
-    "name": "Can add rich text page related link", 
-    "content_type": [
-      "wagtailbase", 
-      "richtextpagerelatedlink"
-    ]
-  }
-},
-{
-  "pk": 93, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_richtextpagerelatedlink", 
-    "name": "Can change rich text page related link", 
-    "content_type": [
-      "wagtailbase", 
-      "richtextpagerelatedlink"
-    ]
-  }
-},
-{
-  "pk": 94, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_richtextpagerelatedlink", 
-    "name": "Can delete rich text page related link", 
-    "content_type": [
-      "wagtailbase", 
-      "richtextpagerelatedlink"
-    ]
-  }
-},
-{
-  "pk": 95, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_homepage", 
-    "name": "Can add Homepage", 
-    "content_type": [
-      "wagtailbase", 
-      "homepage"
-    ]
-  }
-},
-{
-  "pk": 96, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_homepage", 
-    "name": "Can change Homepage", 
-    "content_type": [
-      "wagtailbase", 
-      "homepage"
-    ]
-  }
-},
-{
-  "pk": 97, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_homepage", 
-    "name": "Can delete Homepage", 
-    "content_type": [
-      "wagtailbase", 
-      "homepage"
-    ]
-  }
-},
-{
-  "pk": 98, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_blogindexpage", 
-    "name": "Can add blog index page", 
-    "content_type": [
-      "wagtailbase", 
-      "blogindexpage"
-    ]
-  }
-},
-{
-  "pk": 99, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_blogindexpage", 
-    "name": "Can change blog index page", 
-    "content_type": [
-      "wagtailbase", 
-      "blogindexpage"
-    ]
-  }
-},
-{
-  "pk": 100, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_blogindexpage", 
-    "name": "Can delete blog index page", 
-    "content_type": [
-      "wagtailbase", 
-      "blogindexpage"
-    ]
-  }
-},
-{
-  "pk": 101, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_blogindexpagerelatedlink", 
-    "name": "Can add blog index page related link", 
-    "content_type": [
-      "wagtailbase", 
-      "blogindexpagerelatedlink"
-    ]
-  }
-},
-{
-  "pk": 102, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_blogindexpagerelatedlink", 
-    "name": "Can change blog index page related link", 
-    "content_type": [
-      "wagtailbase", 
-      "blogindexpagerelatedlink"
-    ]
-  }
-},
-{
-  "pk": 103, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_blogindexpagerelatedlink", 
-    "name": "Can delete blog index page related link", 
-    "content_type": [
-      "wagtailbase", 
-      "blogindexpagerelatedlink"
-    ]
-  }
-},
-{
-  "pk": 104, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_blogposttag", 
-    "name": "Can add blog post tag", 
-    "content_type": [
-      "wagtailbase", 
-      "blogposttag"
-    ]
-  }
-},
-{
-  "pk": 105, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_blogposttag", 
-    "name": "Can change blog post tag", 
-    "content_type": [
-      "wagtailbase", 
-      "blogposttag"
-    ]
-  }
-},
-{
-  "pk": 106, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_blogposttag", 
-    "name": "Can delete blog post tag", 
-    "content_type": [
-      "wagtailbase", 
-      "blogposttag"
-    ]
-  }
-},
-{
-  "pk": 107, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_blogpost", 
-    "name": "Can add blog post", 
-    "content_type": [
-      "wagtailbase", 
-      "blogpost"
-    ]
-  }
-},
-{
-  "pk": 108, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_blogpost", 
-    "name": "Can change blog post", 
-    "content_type": [
-      "wagtailbase", 
-      "blogpost"
-    ]
-  }
-},
-{
-  "pk": 109, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_blogpost", 
-    "name": "Can delete blog post", 
-    "content_type": [
-      "wagtailbase", 
-      "blogpost"
-    ]
-  }
-},
-{
-  "pk": 110, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "add_blogpostrelatedlink", 
-    "name": "Can add blog post related link", 
-    "content_type": [
-      "wagtailbase", 
-      "blogpostrelatedlink"
-    ]
-  }
-},
-{
-  "pk": 111, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "change_blogpostrelatedlink", 
-    "name": "Can change blog post related link", 
-    "content_type": [
-      "wagtailbase", 
-      "blogpostrelatedlink"
-    ]
-  }
-},
-{
-  "pk": 112, 
-  "model": "auth.permission", 
-  "fields": {
-    "codename": "delete_blogpostrelatedlink", 
-    "name": "Can delete blog post related link", 
-    "content_type": [
-      "wagtailbase", 
-      "blogpostrelatedlink"
-    ]
-  }
-},
-{
-  "pk": 1, 
-  "model": "auth.group", 
-  "fields": {
-    "name": "Editors", 
-    "permissions": [
-      [
-        "access_admin", 
-        "wagtailadmin", 
-        "admin"
-      ], 
-      [
-        "add_document", 
-        "wagtaildocs", 
-        "document"
-      ], 
-      [
-        "change_document", 
-        "wagtaildocs", 
-        "document"
-      ], 
-      [
-        "delete_document", 
-        "wagtaildocs", 
-        "document"
-      ], 
-      [
-        "add_image", 
-        "wagtailimages", 
-        "image"
-      ], 
-      [
-        "change_image", 
-        "wagtailimages", 
-        "image"
-      ], 
-      [
-        "delete_image", 
-        "wagtailimages", 
-        "image"
-      ]
-    ]
-  }
-},
-{
-  "pk": 2, 
-  "model": "auth.group", 
-  "fields": {
-    "name": "Moderators", 
-    "permissions": [
-      [
-        "access_admin", 
-        "wagtailadmin", 
-        "admin"
-      ], 
-      [
-        "add_document", 
-        "wagtaildocs", 
-        "document"
-      ], 
-      [
-        "change_document", 
-        "wagtaildocs", 
-        "document"
-      ], 
-      [
-        "delete_document", 
-        "wagtaildocs", 
-        "document"
-      ], 
-      [
-        "add_image", 
-        "wagtailimages", 
-        "image"
-      ], 
-      [
-        "change_image", 
-        "wagtailimages", 
-        "image"
-      ], 
-      [
-        "delete_image", 
-        "wagtailimages", 
-        "image"
-      ]
-    ]
-  }
-},
-{
-  "pk": 1, 
-  "model": "auth.user", 
-  "fields": {
-    "username": "alejandro", 
-    "first_name": "", 
-    "last_name": "", 
-    "is_active": true, 
-    "is_superuser": true, 
-    "is_staff": true, 
-    "last_login": "2014-03-14T15:51:27.374Z", 
-    "groups": [], 
-    "user_permissions": [], 
-    "password": "pbkdf2_sha256$12000$larbMvbYMnck$U3iU/tPAXe7FpIf/sXEFSe/rbAe2qmb2OG5NFBo2FhQ=", 
-    "email": "", 
+  "pk": 1,
+  "model": "auth.user",
+  "fields": {
+    "username": "alejandro",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": true,
+    "is_staff": true,
+    "last_login": "2014-03-14T15:51:27.374Z",
+    "groups": [],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$12000$larbMvbYMnck$U3iU/tPAXe7FpIf/sXEFSe/rbAe2qmb2OG5NFBo2FhQ=",
+    "email": "",
     "date_joined": "2014-03-14T15:50:58.433Z"
   }
 },
 {
-  "pk": 1, 
-  "model": "wagtailcore.site", 
+  "pk": 1,
+  "model": "wagtailcore.site",
   "fields": {
-    "root_page": 9, 
-    "hostname": "localhost", 
-    "port": 80, 
+    "root_page": 9,
+    "hostname": "localhost",
+    "port": 80,
     "is_default_site": true
   }
 },
 {
-  "pk": 1, 
-  "model": "wagtailcore.page", 
+  "pk": 1,
+  "model": "wagtailcore.page",
   "fields": {
-    "title": "Root", 
-    "numchild": 1, 
-    "show_in_menus": false, 
-    "live": true, 
-    "seo_title": "", 
-    "depth": 1, 
-    "search_description": "", 
+    "title": "Root",
+    "numchild": 1,
+    "show_in_menus": false,
+    "live": true,
+    "seo_title": "",
+    "depth": 1,
+    "search_description": "",
     "content_type": [
-      "wagtailcore", 
+      "wagtailcore",
       "page"
-    ], 
-    "has_unpublished_changes": false, 
-    "owner": null, 
-    "path": "0001", 
-    "url_path": "/", 
+    ],
+    "has_unpublished_changes": false,
+    "owner": null,
+    "path": "0001",
+    "url_path": "/",
     "slug": "root"
   }
 },
 {
-  "pk": 3, 
-  "model": "wagtailcore.page", 
+  "pk": 3,
+  "model": "wagtailcore.page",
   "fields": {
-    "title": "Standard Index", 
-    "numchild": 2, 
-    "show_in_menus": true, 
-    "live": true, 
-    "seo_title": "", 
-    "depth": 3, 
-    "search_description": "", 
+    "title": "Standard Index",
+    "numchild": 2,
+    "show_in_menus": true,
+    "live": true,
+    "seo_title": "",
+    "depth": 3,
+    "search_description": "",
     "content_type": [
-      "wagtailbase", 
+      "wagtailbase",
       "indexpage"
-    ], 
-    "has_unpublished_changes": false, 
+    ],
+    "has_unpublished_changes": false,
     "owner": [
       "alejandro"
-    ], 
-    "path": "000100020002", 
-    "url_path": "/home/standard-index/", 
+    ],
+    "path": "000100020002",
+    "url_path": "/home/standard-index/",
     "slug": "standard-index"
   }
 },
 {
-  "pk": 4, 
-  "model": "wagtailcore.page", 
+  "pk": 4,
+  "model": "wagtailcore.page",
   "fields": {
-    "title": "First page in index", 
-    "numchild": 0, 
-    "show_in_menus": true, 
-    "live": true, 
-    "seo_title": "", 
-    "depth": 4, 
-    "search_description": "", 
+    "title": "First page in index",
+    "numchild": 0,
+    "show_in_menus": true,
+    "live": true,
+    "seo_title": "",
+    "depth": 4,
+    "search_description": "",
     "content_type": [
-      "wagtailbase", 
+      "wagtailbase",
       "richtextpage"
-    ], 
-    "has_unpublished_changes": false, 
+    ],
+    "has_unpublished_changes": false,
     "owner": [
       "alejandro"
-    ], 
-    "path": "0001000200020001", 
-    "url_path": "/home/standard-index/first-page-index/", 
+    ],
+    "path": "0001000200020001",
+    "url_path": "/home/standard-index/first-page-index/",
     "slug": "first-page-index"
   }
 },
 {
-  "pk": 5, 
-  "model": "wagtailcore.page", 
+  "pk": 5,
+  "model": "wagtailcore.page",
   "fields": {
-    "title": "Blog", 
-    "numchild": 2, 
-    "show_in_menus": true, 
-    "live": true, 
-    "seo_title": "", 
-    "depth": 3, 
-    "search_description": "", 
+    "title": "Blog",
+    "numchild": 2,
+    "show_in_menus": true,
+    "live": true,
+    "seo_title": "",
+    "depth": 3,
+    "search_description": "",
     "content_type": [
-      "wagtailbase", 
+      "wagtailbase",
       "blogindexpage"
-    ], 
-    "has_unpublished_changes": false, 
+    ],
+    "has_unpublished_changes": false,
     "owner": [
       "alejandro"
-    ], 
-    "path": "000100020001", 
-    "url_path": "/home/blog/", 
+    ],
+    "path": "000100020001",
+    "url_path": "/home/blog/",
     "slug": "blog"
   }
 },
 {
-  "pk": 6, 
-  "model": "wagtailcore.page", 
+  "pk": 6,
+  "model": "wagtailcore.page",
   "fields": {
-    "title": "That's It!", 
-    "numchild": 0, 
-    "show_in_menus": false, 
-    "live": true, 
-    "seo_title": "", 
-    "depth": 4, 
-    "search_description": "", 
+    "title": "That's It!",
+    "numchild": 0,
+    "show_in_menus": false,
+    "live": true,
+    "seo_title": "",
+    "depth": 4,
+    "search_description": "",
     "content_type": [
-      "wagtailbase", 
+      "wagtailbase",
       "blogpost"
-    ], 
-    "has_unpublished_changes": false, 
+    ],
+    "has_unpublished_changes": false,
     "owner": [
       "alejandro"
-    ], 
-    "path": "0001000200010001", 
-    "url_path": "/home/blog/s-it/", 
+    ],
+    "path": "0001000200010001",
+    "url_path": "/home/blog/s-it/",
     "slug": "s-it"
   }
 },
 {
-  "pk": 7, 
-  "model": "wagtailcore.page", 
+  "pk": 7,
+  "model": "wagtailcore.page",
   "fields": {
-    "title": "Another blog post", 
-    "numchild": 0, 
-    "show_in_menus": false, 
-    "live": true, 
-    "seo_title": "", 
-    "depth": 4, 
-    "search_description": "", 
+    "title": "Another blog post",
+    "numchild": 0,
+    "show_in_menus": false,
+    "live": true,
+    "seo_title": "",
+    "depth": 4,
+    "search_description": "",
     "content_type": [
-      "wagtailbase", 
+      "wagtailbase",
       "blogpost"
-    ], 
-    "has_unpublished_changes": false, 
+    ],
+    "has_unpublished_changes": false,
     "owner": [
       "alejandro"
-    ], 
-    "path": "0001000200010002", 
-    "url_path": "/home/blog/another-blog-post/", 
+    ],
+    "path": "0001000200010002",
+    "url_path": "/home/blog/another-blog-post/",
     "slug": "another-blog-post"
   }
 },
 {
-  "pk": 8, 
-  "model": "wagtailcore.page", 
+  "pk": 8,
+  "model": "wagtailcore.page",
   "fields": {
-    "title": "Nested Index", 
-    "numchild": 0, 
-    "show_in_menus": true, 
-    "live": true, 
-    "seo_title": "", 
-    "depth": 4, 
-    "search_description": "", 
+    "title": "Nested Index",
+    "numchild": 0,
+    "show_in_menus": true,
+    "live": true,
+    "seo_title": "",
+    "depth": 4,
+    "search_description": "",
     "content_type": [
-      "wagtailbase", 
+      "wagtailbase",
       "indexpage"
-    ], 
-    "has_unpublished_changes": false, 
+    ],
+    "has_unpublished_changes": false,
     "owner": [
       "alejandro"
-    ], 
-    "path": "0001000200020002", 
-    "url_path": "/home/standard-index/nested-index/", 
+    ],
+    "path": "0001000200020002",
+    "url_path": "/home/standard-index/nested-index/",
     "slug": "nested-index"
   }
 },
 {
-  "pk": 9, 
-  "model": "wagtailcore.page", 
+  "pk": 9,
+  "model": "wagtailcore.page",
   "fields": {
-    "title": "Home", 
-    "numchild": 2, 
-    "show_in_menus": true, 
-    "live": true, 
-    "seo_title": "", 
-    "depth": 2, 
-    "search_description": "", 
+    "title": "Home",
+    "numchild": 2,
+    "show_in_menus": true,
+    "live": true,
+    "seo_title": "",
+    "depth": 2,
+    "search_description": "",
     "content_type": [
-      "wagtailbase", 
+      "wagtailbase",
       "homepage"
-    ], 
-    "has_unpublished_changes": false, 
+    ],
+    "has_unpublished_changes": false,
     "owner": [
       "alejandro"
-    ], 
-    "path": "00010002", 
-    "url_path": "/home/", 
+    ],
+    "path": "00010002",
+    "url_path": "/home/",
     "slug": "home"
   }
 },
 {
-  "pk": 1, 
-  "model": "wagtailcore.pagerevision", 
+  "pk": 1,
+  "model": "wagtailcore.pagerevision",
   "fields": {
-    "created_at": "2014-03-14T15:01:24.143Z", 
-    "submitted_for_moderation": false, 
-    "content_json": "{\"related_links\": [{\"link_page\": null, \"title\": \"link to something else\", \"link_external\": \"http://www.duckduckgo.com/\", \"sort_order\": 0, \"link_document\": null, \"pk\": 1, \"page\": 3}], \"title\": \"Standard Index\", \"introduction\": \"<p>Standard Index here we go!</p>\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 3, \"has_unpublished_changes\": false, \"content_type\": 29, \"path\": \"000100010001\", \"owner\": 1, \"pk\": 3, \"url_path\": \"/home/standard-index/\", \"slug\": \"standard-index\"}", 
-    "page": 3, 
+    "created_at": "2014-03-14T15:01:24.143Z",
+    "submitted_for_moderation": false,
+    "content_json": "{\"related_links\": [{\"link_page\": null, \"title\": \"link to something else\", \"link_external\": \"http://www.duckduckgo.com/\", \"sort_order\": 0, \"link_document\": null, \"pk\": 1, \"page\": 3}], \"title\": \"Standard Index\", \"introduction\": \"<p>Standard Index here we go!</p>\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 3, \"has_unpublished_changes\": false, \"content_type\": 29, \"path\": \"000100010001\", \"owner\": 1, \"pk\": 3, \"url_path\": \"/home/standard-index/\", \"slug\": \"standard-index\"}",
+    "page": 3,
     "user": [
       "alejandro"
     ]
   }
 },
 {
-  "pk": 2, 
-  "model": "wagtailcore.pagerevision", 
+  "pk": 2,
+  "model": "wagtailcore.pagerevision",
   "fields": {
-    "created_at": "2014-03-14T15:01:53.444Z", 
-    "submitted_for_moderation": false, 
-    "content_json": "{\"related_links\": [], \"title\": \"First page in index\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>This page has been created so many times...</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 31, \"path\": \"0001000100010001\", \"owner\": 1, \"pk\": 4, \"url_path\": \"/home/standard-index/first-page-index/\", \"slug\": \"first-page-index\"}", 
-    "page": 4, 
+    "created_at": "2014-03-14T15:01:53.444Z",
+    "submitted_for_moderation": false,
+    "content_json": "{\"related_links\": [], \"title\": \"First page in index\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>This page has been created so many times...</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 31, \"path\": \"0001000100010001\", \"owner\": 1, \"pk\": 4, \"url_path\": \"/home/standard-index/first-page-index/\", \"slug\": \"first-page-index\"}",
+    "page": 4,
     "user": [
       "alejandro"
     ]
   }
 },
 {
-  "pk": 3, 
-  "model": "wagtailcore.pagerevision", 
+  "pk": 3,
+  "model": "wagtailcore.pagerevision",
   "fields": {
-    "created_at": "2014-03-14T15:02:21.985Z", 
-    "submitted_for_moderation": false, 
-    "content_json": "{\"related_links\": [], \"title\": \"Blog\", \"introduction\": \"<p>This blog contains no personal feelings</p>\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 3, \"has_unpublished_changes\": false, \"content_type\": 34, \"path\": \"000100010002\", \"owner\": 1, \"pk\": 5, \"url_path\": \"/home/blog/\", \"slug\": \"blog\"}", 
-    "page": 5, 
+    "created_at": "2014-03-14T15:02:21.985Z",
+    "submitted_for_moderation": false,
+    "content_json": "{\"related_links\": [], \"title\": \"Blog\", \"introduction\": \"<p>This blog contains no personal feelings</p>\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 3, \"has_unpublished_changes\": false, \"content_type\": 34, \"path\": \"000100010002\", \"owner\": 1, \"pk\": 5, \"url_path\": \"/home/blog/\", \"slug\": \"blog\"}",
+    "page": 5,
     "user": [
       "alejandro"
     ]
   }
 },
 {
-  "pk": 4, 
-  "model": "wagtailcore.pagerevision", 
+  "pk": 4,
+  "model": "wagtailcore.pagerevision",
   "fields": {
-    "created_at": "2014-03-14T15:02:49.661Z", 
-    "submitted_for_moderation": false, 
-    "content_json": "{\"related_links\": [], \"date\": \"2014-03-14\", \"title\": \"That's It!\", \"tagged_items\": [], \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>Here be Dragons</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 37, \"path\": \"0001000100020001\", \"owner\": 1, \"pk\": 6, \"url_path\": \"/home/blog/s-it/\", \"slug\": \"s-it\"}", 
-    "page": 6, 
+    "created_at": "2014-03-14T15:02:49.661Z",
+    "submitted_for_moderation": false,
+    "content_json": "{\"related_links\": [], \"date\": \"2014-03-14\", \"title\": \"That's It!\", \"tagged_items\": [], \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>Here be Dragons</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 37, \"path\": \"0001000100020001\", \"owner\": 1, \"pk\": 6, \"url_path\": \"/home/blog/s-it/\", \"slug\": \"s-it\"}",
+    "page": 6,
     "user": [
       "alejandro"
     ]
   }
 },
 {
-  "pk": 5, 
-  "model": "wagtailcore.pagerevision", 
+  "pk": 5,
+  "model": "wagtailcore.pagerevision",
   "fields": {
-    "created_at": "2014-03-14T15:46:46.023Z", 
-    "submitted_for_moderation": false, 
-    "content_json": "{\"related_links\": [{\"link_page\": null, \"title\": \"wagtail\", \"link_external\": \"https://github.com/torchbox/wagtail\", \"sort_order\": 0, \"link_document\": null, \"pk\": 1, \"page\": 7}], \"date\": \"2014-03-14\", \"title\": \"Another blog post\", \"tagged_items\": [], \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>this blog post contains an in-detail review of wagtail and how it cannot handle inheritance very well</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 37, \"path\": \"0001000100020002\", \"owner\": 1, \"pk\": 7, \"url_path\": \"/home/blog/another-blog-post/\", \"slug\": \"another-blog-post\"}", 
-    "page": 7, 
+    "created_at": "2014-03-14T15:46:46.023Z",
+    "submitted_for_moderation": false,
+    "content_json": "{\"related_links\": [{\"link_page\": null, \"title\": \"wagtail\", \"link_external\": \"https://github.com/torchbox/wagtail\", \"sort_order\": 0, \"link_document\": null, \"pk\": 1, \"page\": 7}], \"date\": \"2014-03-14\", \"title\": \"Another blog post\", \"tagged_items\": [], \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>this blog post contains an in-detail review of wagtail and how it cannot handle inheritance very well</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 37, \"path\": \"0001000100020002\", \"owner\": 1, \"pk\": 7, \"url_path\": \"/home/blog/another-blog-post/\", \"slug\": \"another-blog-post\"}",
+    "page": 7,
     "user": [
       "alejandro"
     ]
   }
 },
 {
-  "pk": 6, 
-  "model": "wagtailcore.pagerevision", 
+  "pk": 6,
+  "model": "wagtailcore.pagerevision",
   "fields": {
-    "created_at": "2014-03-14T15:47:23.175Z", 
-    "submitted_for_moderation": false, 
-    "content_json": "{\"related_links\": [], \"title\": \"Nested Index\", \"introduction\": \"<p>This index is nested</p>\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 29, \"path\": \"0001000100010002\", \"owner\": 1, \"pk\": 8, \"url_path\": \"/home/standard-index/nested-index/\", \"slug\": \"nested-index\"}", 
-    "page": 8, 
+    "created_at": "2014-03-14T15:47:23.175Z",
+    "submitted_for_moderation": false,
+    "content_json": "{\"related_links\": [], \"title\": \"Nested Index\", \"introduction\": \"<p>This index is nested</p>\", \"numchild\": 0, \"show_in_menus\": false, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 29, \"path\": \"0001000100010002\", \"owner\": 1, \"pk\": 8, \"url_path\": \"/home/standard-index/nested-index/\", \"slug\": \"nested-index\"}",
+    "page": 8,
     "user": [
       "alejandro"
     ]
   }
 },
 {
-  "pk": 7, 
-  "model": "wagtailcore.pagerevision", 
+  "pk": 7,
+  "model": "wagtailcore.pagerevision",
   "fields": {
-    "created_at": "2014-03-21T11:45:09.802Z", 
-    "submitted_for_moderation": false, 
-    "content_json": "{\"title\": \"Home\", \"numchild\": 0, \"show_in_menus\": true, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>Home sweet home</p>\", \"search_description\": \"\", \"depth\": 3, \"has_unpublished_changes\": false, \"content_type\": 33, \"path\": \"000100010003\", \"owner\": 1, \"pk\": 9, \"url_path\": \"/home/home/\", \"slug\": \"home\"}", 
-    "page": 9, 
+    "created_at": "2014-03-21T11:45:09.802Z",
+    "submitted_for_moderation": false,
+    "content_json": "{\"title\": \"Home\", \"numchild\": 0, \"show_in_menus\": true, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>Home sweet home</p>\", \"search_description\": \"\", \"depth\": 3, \"has_unpublished_changes\": false, \"content_type\": 33, \"path\": \"000100010003\", \"owner\": 1, \"pk\": 9, \"url_path\": \"/home/home/\", \"slug\": \"home\"}",
+    "page": 9,
     "user": [
       "alejandro"
     ]
   }
 },
 {
-  "pk": 8, 
-  "model": "wagtailcore.pagerevision", 
+  "pk": 8,
+  "model": "wagtailcore.pagerevision",
   "fields": {
-    "created_at": "2014-03-21T11:48:33.941Z", 
-    "submitted_for_moderation": false, 
-    "content_json": "{\"related_links\": [], \"title\": \"Blog\", \"introduction\": \"<p>This blog contains no personal feelings</p>\", \"numchild\": 2, \"show_in_menus\": true, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 3, \"has_unpublished_changes\": false, \"content_type\": 34, \"path\": \"000100020001\", \"owner\": 1, \"pk\": 5, \"url_path\": \"/home/blog/\", \"slug\": \"blog\"}", 
-    "page": 5, 
+    "created_at": "2014-03-21T11:48:33.941Z",
+    "submitted_for_moderation": false,
+    "content_json": "{\"related_links\": [], \"title\": \"Blog\", \"introduction\": \"<p>This blog contains no personal feelings</p>\", \"numchild\": 2, \"show_in_menus\": true, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 3, \"has_unpublished_changes\": false, \"content_type\": 34, \"path\": \"000100020001\", \"owner\": 1, \"pk\": 5, \"url_path\": \"/home/blog/\", \"slug\": \"blog\"}",
+    "page": 5,
     "user": [
       "alejandro"
     ]
   }
 },
 {
-  "pk": 9, 
-  "model": "wagtailcore.pagerevision", 
+  "pk": 9,
+  "model": "wagtailcore.pagerevision",
   "fields": {
-    "created_at": "2014-03-21T11:48:45.325Z", 
-    "submitted_for_moderation": false, 
-    "content_json": "{\"related_links\": [{\"link_page\": null, \"title\": \"link to something else\", \"link_external\": \"http://www.duckduckgo.com/\", \"sort_order\": 0, \"link_document\": null, \"pk\": 1, \"page\": 3}], \"title\": \"Standard Index\", \"introduction\": \"<p>Standard Index here we go!</p>\", \"numchild\": 2, \"show_in_menus\": true, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 3, \"has_unpublished_changes\": false, \"content_type\": 29, \"path\": \"000100020002\", \"owner\": 1, \"pk\": 3, \"url_path\": \"/home/standard-index/\", \"slug\": \"standard-index\"}", 
-    "page": 3, 
+    "created_at": "2014-03-21T11:48:45.325Z",
+    "submitted_for_moderation": false,
+    "content_json": "{\"related_links\": [{\"link_page\": null, \"title\": \"link to something else\", \"link_external\": \"http://www.duckduckgo.com/\", \"sort_order\": 0, \"link_document\": null, \"pk\": 1, \"page\": 3}], \"title\": \"Standard Index\", \"introduction\": \"<p>Standard Index here we go!</p>\", \"numchild\": 2, \"show_in_menus\": true, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 3, \"has_unpublished_changes\": false, \"content_type\": 29, \"path\": \"000100020002\", \"owner\": 1, \"pk\": 3, \"url_path\": \"/home/standard-index/\", \"slug\": \"standard-index\"}",
+    "page": 3,
     "user": [
       "alejandro"
     ]
   }
 },
 {
-  "pk": 10, 
-  "model": "wagtailcore.pagerevision", 
+  "pk": 10,
+  "model": "wagtailcore.pagerevision",
   "fields": {
-    "created_at": "2014-03-21T11:49:02.544Z", 
-    "submitted_for_moderation": false, 
-    "content_json": "{\"related_links\": [], \"title\": \"Nested Index\", \"introduction\": \"<p>This index is nested</p>\", \"numchild\": 0, \"show_in_menus\": true, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 29, \"path\": \"0001000200020002\", \"owner\": 1, \"pk\": 8, \"url_path\": \"/home/standard-index/nested-index/\", \"slug\": \"nested-index\"}", 
-    "page": 8, 
+    "created_at": "2014-03-21T11:49:02.544Z",
+    "submitted_for_moderation": false,
+    "content_json": "{\"related_links\": [], \"title\": \"Nested Index\", \"introduction\": \"<p>This index is nested</p>\", \"numchild\": 0, \"show_in_menus\": true, \"live\": true, \"seo_title\": \"\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 29, \"path\": \"0001000200020002\", \"owner\": 1, \"pk\": 8, \"url_path\": \"/home/standard-index/nested-index/\", \"slug\": \"nested-index\"}",
+    "page": 8,
     "user": [
       "alejandro"
     ]
   }
 },
 {
-  "pk": 11, 
-  "model": "wagtailcore.pagerevision", 
+  "pk": 11,
+  "model": "wagtailcore.pagerevision",
   "fields": {
-    "created_at": "2014-03-21T11:49:12.179Z", 
-    "submitted_for_moderation": false, 
-    "content_json": "{\"related_links\": [], \"title\": \"First page in index\", \"numchild\": 0, \"show_in_menus\": true, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>This page has been created so many times...</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 31, \"path\": \"0001000200020001\", \"owner\": 1, \"pk\": 4, \"url_path\": \"/home/standard-index/first-page-index/\", \"slug\": \"first-page-index\"}", 
-    "page": 4, 
+    "created_at": "2014-03-21T11:49:12.179Z",
+    "submitted_for_moderation": false,
+    "content_json": "{\"related_links\": [], \"title\": \"First page in index\", \"numchild\": 0, \"show_in_menus\": true, \"live\": true, \"seo_title\": \"\", \"content\": \"<p>This page has been created so many times...</p>\", \"search_description\": \"\", \"depth\": 4, \"has_unpublished_changes\": false, \"content_type\": 31, \"path\": \"0001000200020001\", \"owner\": 1, \"pk\": 4, \"url_path\": \"/home/standard-index/first-page-index/\", \"slug\": \"first-page-index\"}",
+    "page": 4,
     "user": [
       "alejandro"
     ]
   }
 },
 {
-  "pk": 1, 
-  "model": "wagtailcore.grouppagepermission", 
+  "pk": 1,
+  "model": "wagtailcore.grouppagepermission",
   "fields": {
     "group": [
       "Moderators"
-    ], 
-    "page": 1, 
+    ],
+    "page": 1,
     "permission_type": "add"
   }
 },
 {
-  "pk": 2, 
-  "model": "wagtailcore.grouppagepermission", 
+  "pk": 2,
+  "model": "wagtailcore.grouppagepermission",
   "fields": {
     "group": [
       "Moderators"
-    ], 
-    "page": 1, 
+    ],
+    "page": 1,
     "permission_type": "edit"
   }
 },
 {
-  "pk": 3, 
-  "model": "wagtailcore.grouppagepermission", 
+  "pk": 3,
+  "model": "wagtailcore.grouppagepermission",
   "fields": {
     "group": [
       "Moderators"
-    ], 
-    "page": 1, 
+    ],
+    "page": 1,
     "permission_type": "publish"
   }
 },
 {
-  "pk": 4, 
-  "model": "wagtailcore.grouppagepermission", 
+  "pk": 4,
+  "model": "wagtailcore.grouppagepermission",
   "fields": {
     "group": [
       "Editors"
-    ], 
-    "page": 1, 
+    ],
+    "page": 1,
     "permission_type": "add"
   }
 },
 {
-  "pk": 5, 
-  "model": "wagtailcore.grouppagepermission", 
+  "pk": 5,
+  "model": "wagtailcore.grouppagepermission",
   "fields": {
     "group": [
       "Editors"
-    ], 
-    "page": 1, 
+    ],
+    "page": 1,
     "permission_type": "edit"
   }
 },
 {
-  "pk": 3, 
-  "model": "wagtailbase.basepage", 
+  "pk": 3,
+  "model": "wagtailbase.basepage",
   "fields": {}
 },
 {
-  "pk": 4, 
-  "model": "wagtailbase.basepage", 
+  "pk": 4,
+  "model": "wagtailbase.basepage",
   "fields": {}
 },
 {
-  "pk": 5, 
-  "model": "wagtailbase.basepage", 
+  "pk": 5,
+  "model": "wagtailbase.basepage",
   "fields": {}
 },
 {
-  "pk": 6, 
-  "model": "wagtailbase.basepage", 
+  "pk": 6,
+  "model": "wagtailbase.basepage",
   "fields": {}
 },
 {
-  "pk": 7, 
-  "model": "wagtailbase.basepage", 
+  "pk": 7,
+  "model": "wagtailbase.basepage",
   "fields": {}
 },
 {
-  "pk": 8, 
-  "model": "wagtailbase.basepage", 
+  "pk": 8,
+  "model": "wagtailbase.basepage",
   "fields": {}
 },
 {
-  "pk": 9, 
-  "model": "wagtailbase.basepage", 
+  "pk": 9,
+  "model": "wagtailbase.basepage",
   "fields": {}
 },
 {
-  "pk": 3, 
-  "model": "wagtailbase.baseindexpage", 
+  "pk": 3,
+  "model": "wagtailbase.baseindexpage",
   "fields": {
     "introduction": "<p>Standard Index here we go!</p>"
   }
 },
 {
-  "pk": 5, 
-  "model": "wagtailbase.baseindexpage", 
+  "pk": 5,
+  "model": "wagtailbase.baseindexpage",
   "fields": {
     "introduction": "<p>This blog contains no personal feelings</p>"
   }
 },
 {
-  "pk": 8, 
-  "model": "wagtailbase.baseindexpage", 
+  "pk": 8,
+  "model": "wagtailbase.baseindexpage",
   "fields": {
     "introduction": "<p>This index is nested</p>"
   }
 },
 {
-  "pk": 4, 
-  "model": "wagtailbase.baserichtextpage", 
+  "pk": 4,
+  "model": "wagtailbase.baserichtextpage",
   "fields": {
     "content": "<p>This page has been created so many times...</p>"
   }
 },
 {
-  "pk": 6, 
-  "model": "wagtailbase.baserichtextpage", 
+  "pk": 6,
+  "model": "wagtailbase.baserichtextpage",
   "fields": {
     "content": "<p>Here be Dragons</p>"
   }
 },
 {
-  "pk": 7, 
-  "model": "wagtailbase.baserichtextpage", 
+  "pk": 7,
+  "model": "wagtailbase.baserichtextpage",
   "fields": {
     "content": "<p>this blog post contains an in-detail review of wagtail and how it cannot handle inheritance very well</p>"
   }
 },
 {
-  "pk": 9, 
-  "model": "wagtailbase.baserichtextpage", 
+  "pk": 9,
+  "model": "wagtailbase.baserichtextpage",
   "fields": {
     "content": "<p>Home sweet home</p>"
   }
 },
 {
-  "pk": 3, 
-  "model": "wagtailbase.indexpage", 
+  "pk": 3,
+  "model": "wagtailbase.indexpage",
   "fields": {}
 },
 {
-  "pk": 8, 
-  "model": "wagtailbase.indexpage", 
+  "pk": 8,
+  "model": "wagtailbase.indexpage",
   "fields": {}
 },
 {
-  "pk": 1, 
-  "model": "wagtailbase.indexpagerelatedlink", 
+  "pk": 1,
+  "model": "wagtailbase.indexpagerelatedlink",
   "fields": {
-    "link_page": null, 
-    "title": "link to something else", 
-    "link_external": "http://www.duckduckgo.com/", 
-    "sort_order": 0, 
-    "link_document": null, 
+    "link_page": null,
+    "title": "link to something else",
+    "link_external": "http://www.duckduckgo.com/",
+    "sort_order": 0,
+    "link_document": null,
     "page": 3
   }
 },
 {
-  "pk": 4, 
-  "model": "wagtailbase.richtextpage", 
+  "pk": 4,
+  "model": "wagtailbase.richtextpage",
   "fields": {}
 },
 {
-  "pk": 9, 
-  "model": "wagtailbase.homepage", 
+  "pk": 9,
+  "model": "wagtailbase.homepage",
   "fields": {}
 },
 {
-  "pk": 5, 
-  "model": "wagtailbase.blogindexpage", 
+  "pk": 5,
+  "model": "wagtailbase.blogindexpage",
   "fields": {}
 },
 {
-  "pk": 6, 
-  "model": "wagtailbase.blogpost", 
+  "pk": 6,
+  "model": "wagtailbase.blogpost",
   "fields": {
     "date": "2014-03-14"
   }
 },
 {
-  "pk": 7, 
-  "model": "wagtailbase.blogpost", 
+  "pk": 7,
+  "model": "wagtailbase.blogpost",
   "fields": {
     "date": "2014-03-14"
   }
 },
 {
-  "pk": 1, 
-  "model": "wagtailbase.blogpostrelatedlink", 
+  "pk": 1,
+  "model": "wagtailbase.blogpostrelatedlink",
   "fields": {
-    "link_page": null, 
-    "title": "wagtail", 
-    "link_external": "https://github.com/torchbox/wagtail", 
-    "sort_order": 0, 
-    "link_document": null, 
+    "link_page": null,
+    "title": "wagtail",
+    "link_external": "https://github.com/torchbox/wagtail",
+    "sort_order": 0,
+    "link_document": null,
     "page": 7
   }
 }

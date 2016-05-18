@@ -1,13 +1,6 @@
 from django.test import TestCase
-from wagtailbase.models import (
-    IndexPage,
-    RichTextPage,
-    BlogIndexPage,
-    BlogPost,
-    IndexPageRelatedLink)
-
-from wagtail.wagtailcore.models import Page
-
+from wagtailbase.models import (BlogIndexPage, BlogPost, IndexPage,
+                                IndexPageRelatedLink, RichTextPage)
 
 FIXTURES = ['test_data.json']
 
@@ -36,7 +29,8 @@ class TestIndexPage(TestCase):
 
         self.assertEqual(self.child_page,
                          self.index_page.get_children().first().specific)
-        self.assertEqual(self.child_page, self.index_page.children.first().specific)
+        self.assertEqual(self.child_page,
+                         self.index_page.children.first().specific)
 
 
 class TestRichTextPage(TestCase):

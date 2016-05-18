@@ -123,7 +123,7 @@ def read_input_file(ifname):  # noqa
 
 
 def run():
-    ifname = "promrep/scripts/data/life_data/LifeDatesV3.csv"
+    ifname = "promrep/scripts/data/life_data/LifeDatesV4.csv"
 
     print("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

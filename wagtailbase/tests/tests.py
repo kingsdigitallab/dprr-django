@@ -1,10 +1,6 @@
 from django.test import TestCase
-from wagtailbase.models import (
-    IndexPage,
-    RichTextPage,
-    BlogIndexPage,
-    BlogPost,
-    IndexPageRelatedLink)
+from wagtailbase.models import (BlogIndexPage, BlogPost, IndexPage,
+                                IndexPageRelatedLink, RichTextPage)
 
 FIXTURES = ['test_data.json']
 

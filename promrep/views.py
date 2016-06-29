@@ -30,7 +30,9 @@ class PromrepFacetedSearchView(FacetedSearchView):
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
 
         for facet in self.alpha_facet_fields:
-            queryset = queryset.facet(facet, sort='index', limit=-1)
+            # only return results with a mincount of 1
+            queryset = queryset.facet(
+                facet, sort='index', limit=-1, mincount=1)
 
         return queryset
 

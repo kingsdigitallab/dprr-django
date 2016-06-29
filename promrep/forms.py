@@ -164,6 +164,8 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     date_to = forms.IntegerField(
         required=False, max_value=MAX_DATE, min_value=MIN_DATE)
 
+    nomen = forms.CharField(required=False)
+
     def no_query_found(self):
         """Determines the behaviour when no query was found; returns all the
         results."""
@@ -186,5 +188,8 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
                         data.get('date_from', self.MIN_DATE) or self.MIN_DATE,
                         data.get('date_to', self.MAX_DATE) or self.MAX_DATE)
                 )
+
+            if 'nomen' in data:
+                sqs = sqs.narrow('nomen:{}*'.format(data.get('nomen')))
 
         return sqs

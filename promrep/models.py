@@ -491,10 +491,13 @@ class DateInformation(TimeStampedModel):
         else:
             date_str = date_str + str(self.value) + " A.D."
 
-        return "{} {}, {} ({})".format(self.get_date_interval_display(),
-                                       date_str,
-                                       self.date_type,
-                                       self.secondary_source.abbrev_name)
+        di_str = "{} {}, {}".format(self.get_date_interval_display(),
+                                    date_str,
+                                    self.date_type)
+        if self.secondary_source:
+            di_str += " ({})".format(self.secondary_source.abbrev_name)
+
+        return di_str
 
 
 @with_author

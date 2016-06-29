@@ -12,6 +12,19 @@
 	font-size: .875em !important;
 }
 
+.panel.callout {
+	button {
+		margin-bottom: 0;
+	}
+}
+
+.info {
+	font-size: .875rem;
+	color: $primary-color !important;
+	font-style: italic;
+	margin-bottom: .5rem;
+}
+
 /* Handles the offset of the magellan sticky navigation */
 .extra-margin {
 	padding-top: 140px;
@@ -334,6 +347,12 @@ button.name-form {
 
 .panel-head .label {
 	font-size: .75em;
+}
+
+.panel-heading {
+	border-bottom: 1px solid $primary-color;
+	padding-bottom: .25rem;
+	margin-bottom: 0 !important;
 }
 
 .panel-body ul {

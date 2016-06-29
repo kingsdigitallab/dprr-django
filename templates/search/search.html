@@ -9,7 +9,7 @@
 		<header>
 			<h1 id="search-box">Search</h1>
 
-			<button class="small button secondary options"><i class="fa fa-cog"></i> <span id="showhide">Hide</span> filters' settings</button>
+			<button class="small button secondary options"><i class="fa fa-cog"></i> <span id="showhide">Hide</span> search settings</button>
 			<a href="/browse/" class="right options"><span class="small button"><i class="fa fa-refresh"></i> Start new search</span></a>
 		</header>
 			
@@ -25,11 +25,10 @@
 					<div class="row">
 						<div class="large-12 columns">
 							<div class="panel results-preview" data-magellan-expedition="fixed">
-								<h4>Results preview <a data-dropdown="results-preview-info" aria-controls="results-preview-info" aria-expanded="false" class="do-not-print"><i class="fa fa-question-circle"></i></a>
+								<h4>Results preview
 								<a href="#search-results-box" class="less-padding button right do-not-print">Show <strong>{{ paginator.count }}</strong> results</a></h4>
-								<div id="results-preview-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-									<p>Some info on what's displayed by the <strong>results preview</strong>.</p>
-								</div>
+								<p class="info"><i class="fa fa-info-circle"></i> Some info on this section.</p>
+
 								<h3><strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search" class="do-not-print"><i class="fa fa-trash"></i> Clear all</a></h3>
 
 								{% if query or selected_facets or date_filter %}
@@ -74,213 +73,225 @@
 
 					<div class="row do-not-print">
 						<div class="large-12 columns">
-							<h4>Filter by <strong>names</strong> <a data-dropdown="names-info" aria-controls="names-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-							<div id="names-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-								<p>Some info on how to use the <strong>name search</strong>.</p>
-							</div>
+							<div class="panel callout">
+								<h3 class="panel-heading">Name</h3>
+								<p class="info"><i class="fa fa-info-circle"></i> Some info on this filter.</p>
+								<div class="row name-row">
+									<div class="large-2 columns">
+										{% comment %}
+										<label>Praenomen
+											<select>
+												<option></option>
+												{% for term in facets.fields|get_item:"praenomen" %}
+												{% with value=term.0 count=term.1 %}
+												{% if count > 0 %}
+												<option value="{{ value }}">{{ value }} ({{ count }})</option>
+												{% endif %}
+												{% endwith %}
+												{% endfor %}
+											</select>
+										</label>
+										{% endcomment %}
 
-							<div class="row name-row">
-								<div class="large-2 columns">
-									{% comment %}
-									<label>Praenomen
-										<select>
-											<option></option>
+										<button data-dropdown="praenomen" aria-controls="praenomen" aria-expanded="false" class="name-form button dropdown">Praenomen</button><br>
+
+										<ul id="praenomen" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
 											{% for term in facets.fields|get_item:"praenomen" %}
 											{% with value=term.0 count=term.1 %}
 											{% if count > 0 %}
-											<option value="{{ value }}">{{ value }} ({{ count }})</option>
+											<li><a href="{% add_facet_link querydict "praenomen" value %}#search" class="add-filter"><span class="secondary label radius right highlight">{{ count }}</span>{{ value }}</a></li>
 											{% endif %}
 											{% endwith %}
 											{% endfor %}
-										</select>
-									</label>
-									{% endcomment %}
+										</ul>
+									</div>
+									<div class="large-1 columns">
+										{% comment %}
+										<label>Nomen
+											<select>
+												<option></option>
+												{% for term in facets.fields|get_item:"nomen" %}
+												{% with value=term.0 count=term.1 %}
+												{% if count > 0 %}
+												<option value="{{ value }}">{{ value }} ({{ count }})</option>
+												{% endif %}
+												{% endwith %}
+												{% endfor %}
+											</select>
+										</label>
+										{% endcomment %}
 
-									<button data-dropdown="praenomen" aria-controls="praenomen" aria-expanded="false" class="name-form button dropdown">Praenomen</button><br>
+										<button data-dropdown="nomen" aria-controls="nomen" aria-expanded="false" class="name-form button dropdown">Nomen</button><br>
 
-									<ul id="praenomen" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-										{% for term in facets.fields|get_item:"praenomen" %}
-										{% with value=term.0 count=term.1 %}
-										{% if count > 0 %}
-										<li><a href="{% add_facet_link querydict "praenomen" value %}#search" class="add-filter"><span class="secondary label radius right highlight">{{ count }}</span>{{ value }}</a></li>
-										{% endif %}
-										{% endwith %}
-										{% endfor %}
-									</ul>
-								</div>
-								<div class="large-1 columns">
-									{% comment %}
-									<label>Nomen
-										<select>
-											<option></option>
+										<ul id="nomen" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
 											{% for term in facets.fields|get_item:"nomen" %}
 											{% with value=term.0 count=term.1 %}
 											{% if count > 0 %}
-											<option value="{{ value }}">{{ value }} ({{ count }})</option>
+											<li><a href="{% add_facet_link querydict "nomen" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
 											{% endif %}
 											{% endwith %}
 											{% endfor %}
-										</select>
-									</label>
-									{% endcomment %}
+										</ul>
+									</div>
 
-									<button data-dropdown="nomen" aria-controls="nomen" aria-expanded="false" class="name-form button dropdown">Nomen</button><br>
-
-									<ul id="nomen" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-										{% for term in facets.fields|get_item:"nomen" %}
-										{% with value=term.0 count=term.1 %}
-										{% if count > 0 %}
-										<li><a href="{% add_facet_link querydict "nomen" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-										{% endif %}
-										{% endwith %}
-										{% endfor %}
-									</ul>
-								</div>
-
-								<div class="large-1 columns">
-									<button data-dropdown="re" aria-controls="f" aria-expanded="false" class="name-form button dropdown">RE</button><br>
-									<ul id="re" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-										<li><a href="#search"><span class="secondary label radius right">00</span></a></li>
-									</ul>
-								</div>
+									<div class="large-1 columns">
+										<button data-dropdown="re" aria-controls="f" aria-expanded="false" class="name-form button dropdown">RE</button><br>
+										<ul id="re" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
+											<li><a href="#search"><span class="secondary label radius right">00</span></a></li>
+										</ul>
+									</div>
 
 
-								<div class="large-2 columns">
-									{% comment %}
-									<label>Father initial
-										<select>
-											<option></option>
+									<div class="large-2 columns">
+										{% comment %}
+										<label>Father initial
+											<select>
+												<option></option>
+												{% for term in facets.fields|get_item:"f" %}
+												{% with value=term.0 count=term.1 %}
+												{% if count > 0 %}
+												<option value="{{ value }}">{{ value }} ({{ count }})</option>
+												{% endif %}
+												{% endwith %}
+												{% endfor %}
+											</select>
+										</label>
+										{% endcomment %}
+
+										<button data-dropdown="f" aria-controls="f" aria-expanded="false" class="name-form button dropdown">Father initial</button><br>
+
+										<ul id="f" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
 											{% for term in facets.fields|get_item:"f" %}
 											{% with value=term.0 count=term.1 %}
 											{% if count > 0 %}
-											<option value="{{ value }}">{{ value }} ({{ count }})</option>
+											<li><a href="{% add_facet_link querydict "f" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
 											{% endif %}
 											{% endwith %}
 											{% endfor %}
-										</select>
-									</label>
-									{% endcomment %}
+										</ul>
+									</div>
+									<div class="large-2 columns">
+										{% comment %}
+										<label>Grandfather initial
+											<select>
+												<option></option>
+												{% for term in facets.fields|get_item:"n" %}
+												{% with value=term.0 count=term.1 %}
+												{% if count > 0 %}
+												<option value="{{ value }}">{{ value }} ({{ count }})</option>
+												{% endif %}
+												{% endwith %}
+												{% endfor %}
+											</select>
+										</label>
+										{% endcomment %}
 
-									<button data-dropdown="f" aria-controls="f" aria-expanded="false" class="name-form button dropdown">Father initial</button><br>
+										<button data-dropdown="n" aria-controls="n" aria-expanded="false" class="name-form button dropdown">Grandfather initial</button><br>
 
-									<ul id="f" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-										{% for term in facets.fields|get_item:"f" %}
-										{% with value=term.0 count=term.1 %}
-										{% if count > 0 %}
-										<li><a href="{% add_facet_link querydict "f" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-										{% endif %}
-										{% endwith %}
-										{% endfor %}
-									</ul>
-								</div>
-								<div class="large-2 columns">
-									{% comment %}
-									<label>Grandfather initial
-										<select>
-											<option></option>
+										<ul id="n" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
 											{% for term in facets.fields|get_item:"n" %}
 											{% with value=term.0 count=term.1 %}
 											{% if count > 0 %}
-											<option value="{{ value }}">{{ value }} ({{ count }})</option>
+											<li><a href="{% add_facet_link querydict "n" value %}"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
 											{% endif %}
 											{% endwith %}
 											{% endfor %}
-										</select>
-									</label>
-									{% endcomment %}
+										</ul>
+									</div>
+									<div class="large-2 columns">
+										{% comment %}
+										<label>Cognomen
+											<select>
+												<option></option>
+												{% for term in facets.fields|get_item:"cognomen" %}
+												{% with value=term.0 count=term.1 %}
+												{% if count > 0 %}
+												<option value="{{ value }}">{{ value }} ({{ count }})</option>
+												{% endif %}
+												{% endwith %}
+												{% endfor %}
+											</select>
+										</label>
+										{% endcomment %}
 
-									<button data-dropdown="n" aria-controls="n" aria-expanded="false" class="name-form button dropdown">Grandfather initial</button><br>
+										<button data-dropdown="cognomen" aria-controls="cognomen" aria-expanded="false" class="name-form button dropdown">Cognomen</button><br>
 
-									<ul id="n" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-										{% for term in facets.fields|get_item:"n" %}
-										{% with value=term.0 count=term.1 %}
-										{% if count > 0 %}
-										<li><a href="{% add_facet_link querydict "n" value %}"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-										{% endif %}
-										{% endwith %}
-										{% endfor %}
-									</ul>
-								</div>
-								<div class="large-2 columns">
-									{% comment %}
-									<label>Cognomen
-										<select>
-											<option></option>
+										<ul id="cognomen" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
 											{% for term in facets.fields|get_item:"cognomen" %}
 											{% with value=term.0 count=term.1 %}
 											{% if count > 0 %}
-											<option value="{{ value }}">{{ value }} ({{ count }})</option>
+											<li><a href="{% add_facet_link querydict "cognomen" value %}"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
 											{% endif %}
 											{% endwith %}
 											{% endfor %}
-										</select>
-									</label>
-									{% endcomment %}
+										</ul>
+									</div>
+									<div class="large-2 columns">
+										{% comment %}
+										<label>Other names
+											<select>
+												<option></option>
+											</select>
+										</label>
+										{% endcomment %}
 
-									<button data-dropdown="cognomen" aria-controls="cognomen" aria-expanded="false" class="name-form button dropdown">Cognomen</button><br>
+										<button data-dropdown="other-names" aria-controls="many" aria-expanded="false" class="name-form button dropdown">Other names</button><br>
 
-									<ul id="cognomen" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-										{% for term in facets.fields|get_item:"cognomen" %}
-										{% with value=term.0 count=term.1 %}
-										{% if count > 0 %}
-										<li><a href="{% add_facet_link querydict "cognomen" value %}"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-										{% endif %}
-										{% endwith %}
-										{% endfor %}
-									</ul>
-								</div>
-								<div class="large-2 columns">
-									{% comment %}
-									<label>Other names
-										<select>
-											<option></option>
-										</select>
-									</label>
-									{% endcomment %}
-
-									<button data-dropdown="other-names" aria-controls="many" aria-expanded="false" class="name-form button dropdown">Other names</button><br>
-
-									<ul id="other-names" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-										<li><a href="#search"><span class="secondary label radius right">00</span></a></li>
-									</ul>
+										<ul id="other-names" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
+											<li><a href="#search"><span class="secondary label radius right">00</span></a></li>
+										</ul>
+									</div>
 								</div>
 							</div>
 
-							<ul class="inline-list">
-								{% for term in facets.fields|get_item:"gender" %}
-								{% with value=term.0 count=term.1 %}
-								{% if count > 0 %}
-								<li>
-									<a href="{% add_facet_link querydict "gender" value %}#search">
-										{{ value }} <span class="label radius">{{ count }}</span>
-									</a>
-								</li>
-								{% endif %}
-								{% endwith %}
-								{% endfor %}
-							</ul>
+							<div class="panel callout">
+								<h3 class="panel-heading">Personal data</h3>
+								<p class="info"><i class="fa fa-info-circle"></i> Some info on this section.</p>
 
-							<ul class="button-group even-5">
-								<li><a href="#" class="button secondary less-padding smaller-fontsize">Certain birth date <span class="label radius right">00</span></a></li>
-								<li><a href="#" class="button secondary less-padding smaller-fontsize">Natural death <span class="label radius right">00</span></a></li>
-								<li><a href="#" class="button secondary less-padding smaller-fontsize">Violent death <span class="label radius right">00</span></a></li>
-								<li><a href="#" class="button secondary less-padding smaller-fontsize">Exiled <span class="label radius right">00</span></a></li>
-								<li><a href="#" class="button secondary less-padding smaller-fontsize">Adopted <span class="label radius right">00</span></a></li>
-							</ul>
+								{{ form.date_from.errors }}
+								{{ form.date_to.errors }}
 
-							<h3>Biographic data</h3>
-							<ul>
-							</ul>
-						</div>
-					</div>
-
-					<div class="row do-not-print">
-						<div class="large-12 columns">
-							<div class="panel radius">
-								<h4>Filter by <strong>class</strong> <a data-dropdown="class-info" aria-controls="class-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-								<div id="class-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-									<p>Some info on how to use the <strong>class filter</strong>.</p>
+								<div class="row range">
+									<div class="small-1 columns">
+										<h4><br>Date:</h4>
+									</div>
+									<div class="small-5 columns">
+										<label>After</label>
+										{{ form.date_from }}
+									</div>
+									<div class="small-4 columns">
+										<label>Before</label>
+										{{ form.date_to }}
+									</div>
+									<div class="small-2 columns">
+										<label>&nbsp;</label>
+										<button type="submit" class="less-padding expand secondary">Apply</button>
+									</div>
 								</div>
+
+								<ul class="inline-list">
+									{% for term in facets.fields|get_item:"gender" %}
+									{% with value=term.0 count=term.1 %}
+									{% if count > 0 %}
+									<li>
+										<a href="{% add_facet_link querydict "gender" value %}#search">
+											{{ value }} <span class="label radius">{{ count }}</span>
+										</a>
+									</li>
+									{% endif %}
+									{% endwith %}
+									{% endfor %}
+								</ul>
+
+								<ul class="button-group even-5">
+									<li><a href="#" class="button secondary less-padding smaller-fontsize">Certain birth date <span class="label radius right">00</span></a></li>
+									<li><a href="#" class="button secondary less-padding smaller-fontsize">Natural death <span class="label radius right">00</span></a></li>
+									<li><a href="#" class="button secondary less-padding smaller-fontsize">Violent death <span class="label radius right">00</span></a></li>
+									<li><a href="#" class="button secondary less-padding smaller-fontsize">Exiled <span class="label radius right">00</span></a></li>
+									<li><a href="#" class="button secondary less-padding smaller-fontsize">Adopted <span class="label radius right">00</span></a></li>
+								</ul>
+
+								<h4>Class</h4>
 
 								<ul class="inline-list">
 									{% comment %}
@@ -369,40 +380,40 @@
 									<li><a href="#">Senator <span class="label radius">00</span></a></li>
 									<li><a href="#">Senator (Expelled) <span class="label radius">00</span></a></li>
 								</ul>
-							</div>
-						</div>
-					</div>
 
-					<div class="row">
-						<div class="large-6 columns">
-							<button data-dropdown="tribes" aria-controls="tribes" aria-expanded="false" class="secondary less-padding button expand dropdown">Tribes</button><br>
+								<div class="row">
+									<div class="large-6 columns">
+										<button data-dropdown="tribes" aria-controls="tribes" aria-expanded="false" class="secondary less-padding button expand dropdown">Tribes</button><br>
 
-							<ul id="tribes" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-								{% comment %}
-								{% for term in facets.fields|get_item:"tribe" %}
-								{% with value=term.0 count=term.1 %}
-								{% if count > 0 %}
-								<li><a href="{% add_facet_link querydict "tribe" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-								{% endif %}
-								{% endwith %}
-								{% endfor %}
-								{% endcomment %}
-								<li><a href="#">Tribe 1 <span class="secondary label radius right">00</span></a></li>
-								<li><a href="#">Tribe 2 <span class="secondary label radius right">00</span></a></li>
-								<li><a href="#">Tribe 3 <span class="secondary label radius right">00</span></a></li>
-								<li><a href="#">Tribe 4 <span class="secondary label radius right">00</span></a></li>
-								<li><a href="#">Tribe 5 <span class="secondary label radius right">00</span></a></li>
-								<li><a href="#">Tribe 6 <span class="secondary label radius right">00</span></a></li>
-								<li><a href="#">Tribe 7 <span class="secondary label radius right">00</span></a></li>
-							</ul>
-						</div>
-						<div class="large-6 columns">
-							<div class="row collapse">
-								<div class="small-9 columns">
-									<input type="text" name="origin" placeholder="Search for origin">
-								</div>
-								<div class="small-3 columns">
-									<button type="submit" class="postfix secondary button"><i class="fa fa-search"></i></button>
+										<ul id="tribes" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
+											{% comment %}
+											{% for term in facets.fields|get_item:"tribe" %}
+											{% with value=term.0 count=term.1 %}
+											{% if count > 0 %}
+											<li><a href="{% add_facet_link querydict "tribe" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
+											{% endif %}
+											{% endwith %}
+											{% endfor %}
+											{% endcomment %}
+											<li><a href="#">Tribe 1 <span class="secondary label radius right">00</span></a></li>
+											<li><a href="#">Tribe 2 <span class="secondary label radius right">00</span></a></li>
+											<li><a href="#">Tribe 3 <span class="secondary label radius right">00</span></a></li>
+											<li><a href="#">Tribe 4 <span class="secondary label radius right">00</span></a></li>
+											<li><a href="#">Tribe 5 <span class="secondary label radius right">00</span></a></li>
+											<li><a href="#">Tribe 6 <span class="secondary label radius right">00</span></a></li>
+											<li><a href="#">Tribe 7 <span class="secondary label radius right">00</span></a></li>
+										</ul>
+									</div>
+									<div class="large-6 columns">
+										<div class="row collapse">
+											<div class="small-9 columns">
+												<input type="text" name="origin" placeholder="Search for origin">
+											</div>
+											<div class="small-3 columns">
+												<button type="submit" class="postfix secondary button"><i class="fa fa-search"></i></button>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -410,26 +421,70 @@
 
 					<div class="row do-not-print">
 						<div class="large-12 columns">
-							<h4>Filter by <strong>date</strong> <a data-dropdown="dates-info" aria-controls="dates-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-							<div id="dates-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-								<p>Time frame:<br><strong>509 B.C. - 33 B.C.</strong></p>
-							</div>
+							<div class="panel callout">
+								<h3 class="panel-heading">Office</h3>
+								<p class="info"><i class="fa fa-info-circle"></i> Time frame: 509 B.C. - 33 B.C.</p>
 
-							{{ form.date_from.errors }}
-							{{ form.date_to.errors }}
+								{{ form.date_from.errors }}
+								{{ form.date_to.errors }}
 
-							<div class="row range">
-								<div class="small-5 columns">
-									<label>From / After (Leave blank for <em>Before</em>)</label>
-									{{ form.date_from }}
+								<div class="row range">
+									<div class="small-1 columns">
+										<h4><br>Date:</h4>
+									</div>
+									<div class="small-5 columns">
+										<label>After</label>
+										{{ form.date_from }}
+									</div>
+									<div class="small-4 columns">
+										<label>Before</label>
+										{{ form.date_to }}
+									</div>
+									<div class="small-2 columns">
+										<label>&nbsp;</label>
+										<button type="submit" class="less-padding expand secondary">Apply</button>
+									</div>
 								</div>
-								<div class="small-5 columns">
-									<label>To / Before (Leave blank for <em>After</em>)</label>
-									{{ form.date_to }}
-								</div>
-								<div class="large-2 columns">
-									<label>&nbsp;</label>
-									<button type="submit" class="less-padding expand secondary">Update dates</button>
+
+								<div class="row">
+									<div class="large-6 columns">
+										<div class="panel radius fixed-height">
+											<h4>Office type</h4>
+											<ul class="no-bullet">
+												{% for term in facets.fields|get_item:"office" %}
+												{% with value=term.0 count=term.1 %}
+												{% if count > 0 %}
+												<li>
+													<a href="{% add_facet_link querydict "office" value %}#search">
+														<span class="label radius right">{{ count }}</span>
+														{{ value }}
+													</a>
+												</li>
+												{% endif %}
+												{% endwith %}
+												{% endfor %}
+											</ul>
+										</div>
+									</div>
+									<div class="large-6 columns">
+										<div class="panel radius fixed-height">
+											<h4>Province</h4>
+											<ul class="no-bullet">
+												{% for term in facets.fields|get_item:"province" %}
+												{% with value=term.0 count=term.1 %}
+												{% if count > 0 %}
+												<li>
+													<a href="{% add_facet_link querydict "province" value %}#search">
+														<span class="label radius right">{{ count }}</span>
+														{{ value }}
+													</a>
+												</li>
+												{% endif %}
+												{% endwith %}
+												{% endfor %}
+											</ul>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -437,57 +492,7 @@
 
 					<div class="row do-not-print">
 						<div class="large-6 columns">
-							<div class="panel radius fixed-height">
-								<h4>Filter by <strong>office</strong> <a data-dropdown="office-info" aria-controls="office-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-								<div id="office-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-									<p>Some info on how to use the <strong>office filter</strong>.</p>
-								</div>
-								<ul class="no-bullet">
-									{% for term in facets.fields|get_item:"office" %}
-									{% with value=term.0 count=term.1 %}
-									{% if count > 0 %}
-									<li>
-										<a href="{% add_facet_link querydict "office" value %}#search">
-											<span class="label radius right">{{ count }}</span>
-											{{ value }}
-										</a>
-									</li>
-									{% endif %}
-									{% endwith %}
-									{% endfor %}
-								</ul>
-							</div>
-						</div>
-						<div class="large-6 columns">
-							<div class="panel radius fixed-height">
-								<h4>Filter by <strong>province</strong> <a data-dropdown="province-info" aria-controls="province-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-								<div id="province-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-									<p>Some info on how to use the <strong>province filter</strong>.</p>
-								</div>
-								<ul class="no-bullet">
-									{% for term in facets.fields|get_item:"province" %}
-									{% with value=term.0 count=term.1 %}
-									{% if count > 0 %}
-									<li>
-										<a href="{% add_facet_link querydict "province" value %}#search">
-											<span class="label radius right">{{ count }}</span>
-											{{ value }}
-										</a>
-									</li>
-									{% endif %}
-									{% endwith %}
-									{% endfor %}
-								</ul>
-							</div>
-						</div>
-					</div>
-
-					<div class="row do-not-print">
-						<div class="large-6 columns">
-							<h4>Text search <a data-dropdown="text-search-info" aria-controls="text-search-info" aria-expanded="false"><i class="fa fa-question-circle"></i></a></h4>
-							<div id="text-search-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-								<p>Some info on how to use the <strong>free text search</strong>.</p>
-							</div>
+							<h4>Text search</h4>
 							<div class="row collapse">
 								<div class="small-9 columns">
 									{{ form.q }}
@@ -497,11 +502,9 @@
 								</div>
 							</div>
 						</div>
-					</div>
-
-					<div class="row do-not-print">
-						<div class="large-12 columns">
-							<a href="#search-results-box" class="less-padding button right">Show <strong>{{ paginator.count }}</strong> results</a>
+						<div class="large-3 large-offset-3 columns">
+							<h4>&nbsp;</h4>
+							<a href="#search-results-box" class="less-padding expand button">Show <strong>{{ paginator.count }}</strong> results</a>
 						</div>
 					</div>
 				</section>

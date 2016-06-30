@@ -13,7 +13,10 @@ class PromrepFacetedSearchView(FacetedSearchView):
     facet_fields = ['cognomen', 'eques', 'f', 'gender', 'n', 'nobilis',
                     'nomen', 'novus', 'office', 'patrician', 'praenomen',
                     'province']
-    alpha_facet_fields = ['cognomen', 'nomen', 'office', 'province']
+
+    autocomplete_facets = ['praenomen', 'nomen',
+                           'cognomen', 're_number', 'office', 'province']
+
     form_class = PromrepFacetedSearchForm
     load_all = True
     queryset = GroupedSearchQuerySet().models(
@@ -29,7 +32,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
     def get_queryset(self):
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
 
-        for facet in self.alpha_facet_fields:
+        for facet in self.autocomplete_facets:
             # only return results with a mincount of 1
             queryset = queryset.facet(
                 facet, sort='index', limit=-1, mincount=1)
@@ -90,12 +93,12 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 date_text = "After " + self.request.GET.get('date_from')
 
             # if neither dates have values
-            #  no need to print the filter...
+            #   no need to print the filter...
             if date_text != "":
                 context['date_filter'] = (url, date_text)
 
-        # used to generate teh lists for the autocomplete dictionary
-        context['autocomplete_facets'] = ['praenomen', 'nomen', 'cognomen']
+        # used to generate the lists for the autocomplete dictionary
+        context['autocomplete_facets'] = self.autocomplete_facets
 
         for afacet in context['autocomplete_facets']:
 

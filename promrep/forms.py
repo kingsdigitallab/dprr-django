@@ -164,7 +164,8 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     date_to = forms.IntegerField(
         required=False, max_value=MAX_DATE, min_value=MIN_DATE)
 
-    nomen = forms.CharField(required=False)
+    nomen = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete'}))
 
     def no_query_found(self):
         """Determines the behaviour when no query was found; returns all the

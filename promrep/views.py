@@ -8,14 +8,11 @@ from promrep.solr_backends.solr_backend_field_collapsing import \
 
 
 class PromrepFacetedSearchView(FacetedSearchView):
-    # TODO: check how to set facet.mincount, can facet_fields be declared as a
-    # dictionary?
-    facet_fields = ['cognomen', 'eques', 'f', 'gender', 'n', 'nobilis',
-                    'nomen', 'novus', 'office', 'patrician', 'praenomen',
-                    'province']
+    facet_fields = ['eques', 'gender', 'nobilis', 'novus', 'office',
+                    'patrician', 'province']
 
-    autocomplete_facets = ['praenomen', 'nomen',
-                           'cognomen', 're_number', 'office', 'province']
+    autocomplete_facets = ['praenomen', 'nomen', 'cognomen', 're_number',
+                           'office', 'province', 'n', 'f', 'other_names']
 
     form_class = PromrepFacetedSearchForm
     load_all = True
@@ -32,7 +29,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
     def get_queryset(self):
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
 
-        for facet in self.autocomplete_facets:
+        for facet in self.autocomplete_facets + self.facet_fields:
             # only return results with a mincount of 1
             queryset = queryset.facet(
                 facet, sort='index', limit=-1, mincount=1)

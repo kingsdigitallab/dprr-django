@@ -24,7 +24,9 @@
                                 <p class="info"><i class="fa fa-info-circle"></i> Some info on this section.</p>
                                 <h3>
 									<strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search" class="do-not-print"><i class="fa fa-trash"></i> Clear all</a>
-								</h3> {% if query or selected_facets or date_filter or praenomen or nomen or cognomen or other_names or re_number %}
+								</h3>
+
+								{% if query or selected_facets or date_filter or praenomen or nomen or cognomen or other_names or re_number or n or f or other_names %}
                                 <ul class="inline-list no-bullet free-filters">
                                     {% if praenomen %}
                                     <li>
@@ -34,7 +36,8 @@
 											</a>
 										</span>
                                     </li>
-                                    {% endif %} {% if nomen %}
+                                    {% endif %}
+                                    {% if nomen %}
                                     <li>
                                         <span class="label radius">
 											<a href="{{ nomen.0 }}#search" title="Remove filter">Nomen: {{ nomen.1 }}
@@ -42,7 +45,8 @@
 											</a>
 										</span>
                                     </li>
-                                    {% endif %} {% if cognomen %}
+                                    {% endif %}
+                                    {% if cognomen %}
                                     <li>
                                         <span class="label radius">
 											<a href="{{ cognomen.0 }}#search" title="Remove filter">Cognomen: {{ cognomen.1 }}
@@ -50,7 +54,8 @@
 											</a>
 										</span>
                                     </li>
-                                    {% endif %} {% if re_number %}
+                                    {% endif %}
+                                    {% if re_number %}
                                     <li>
                                         <span class="label radius">
 											<a href="{{ re_number.0 }}#search" title="Remove filter">RE Number: {{ re_number.1 }}
@@ -58,7 +63,35 @@
 											</a>
 										</span>
                                     </li>
-                                    {% endif %} {% if query %}
+									{% endif %}
+									{% if f %}
+									<li>
+                                        <span class="label radius">
+											<a href="{{ f.0 }}#search" title="Remove filter">f.: {{ f.1 }}
+												<i class="fa fa-times-circle"></i>
+											</a>
+										</span>
+                                    </li>
+									{% endif %}
+									{% if n %}
+                                    <li>
+                                        <span class="label radius">
+											<a href="{{ n.0 }}#search" title="Remove filter">n.: {{ n.1 }}
+												<i class="fa fa-times-circle"></i>
+											</a>
+										</span>
+                                    </li>
+                                    {% endif %}
+									{% if other_names %}
+                                    <li>
+                                        <span class="label radius">
+											<a href="{{ other_names.0 }}#search" title="Remove filter">Other names: {{ other_names.1 }}
+												<i class="fa fa-times-circle"></i>
+											</a>
+										</span>
+                                    </li>
+                                    {% endif %}
+                                    {% if query %}
                                     <li>
                                         <span class="label radius">
 											<a href="{{ remove_text_filter }}#search" title="Remove filter">Text: {{ query }}
@@ -66,7 +99,8 @@
 											</a>
 										</span>
                                     </li>
-                                    {% endif %} {% if date_filter %}
+                                    {% endif %}
+                                    {% if date_filter %}
                                     <li>
                                         <span class="label radius">
 											<a href="{{ date_filter.0}}#search" title="Remove filter">Post Date: {{ date_filter.1 }}
@@ -74,7 +108,8 @@
 											</a>
 										</span>
                                     </li>
-                                    {% endif %} {% for facet in selected_facets %}
+                                    {% endif %}
+                                    {% for facet in selected_facets %}
                                     <li>
                                         <span class="label radius">
 											{{ facet }}
@@ -108,60 +143,20 @@
                                         {{form.re_number}}
                                     </div>
                                     <div class="large-2 columns">
-                                        {% comment %}
-                                        <label>Father initial
-                                            <select>
-                                                <option></option>
-                                                {% for term in facets.fields|get_item:"f" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
-                                                <option value="{{ value }}">{{ value }} ({{ count }})</option>
-                                                {% endif %} {% endwith %} {% endfor %}
-                                            </select>
-                                        </label>
-                                        {% endcomment %}
-                                        <button data-dropdown="f" aria-controls="f" aria-expanded="false" class="name-form button dropdown">Father initial</button>
-                                        <br>
-                                        <ul id="f" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-                                            {% for term in facets.fields|get_item:"f" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
-                                            <li><a href="{% add_facet_link querydict " f " value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-                                            {% endif %} {% endwith %} {% endfor %}
-                                        </ul>
+                                        <label>Father initial</label>
+                                        {{form.f}}
                                     </div>
                                     <div class="large-2 columns">
-                                        {% comment %}
-                                        <label>Grandfather initial
-                                            <select>
-                                                <option></option>
-                                                {% for term in facets.fields|get_item:"n" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
-                                                <option value="{{ value }}">{{ value }} ({{ count }})</option>
-                                                {% endif %} {% endwith %} {% endfor %}
-                                            </select>
-                                        </label>
-                                        {% endcomment %}
-                                        <button data-dropdown="n" aria-controls="n" aria-expanded="false" class="name-form button dropdown">Grandfather initial</button>
-                                        <br>
-                                        <ul id="n" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-                                            {% for term in facets.fields|get_item:"n" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
-                                            <li><a href="{% add_facet_link querydict " n " value %}"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-                                            {% endif %} {% endwith %} {% endfor %}
-                                        </ul>
+                                        <label>Grandfather initial</label>
+                                        {{form.n}}
                                     </div>
                                     <div class="large-2 columns">
                                         <label>Cognomen</label>
                                         {{form.cognomen}}
                                     </div>
                                     <div class="large-2 columns">
-                                        {% comment %}
-                                        <label>Other names
-                                            <select>
-                                                <option></option>
-                                            </select>
-                                        </label>
-                                        {% endcomment %}
-                                        <button data-dropdown="other-names" aria-controls="many" aria-expanded="false" class="name-form button dropdown">Other names</button>
-                                        <br>
-                                        <ul id="other-names" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-                                            <li><a href="#search"><span class="secondary label radius right">00</span></a></li>
-                                        </ul>
+                                    	<label>Other names</label>
+										{{form.other_names}}
                                     </div>
                                 </div>
                             </div>

@@ -175,6 +175,12 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
         attrs={'class': 'autocomplete'}))
     re_number = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'autocomplete'}))
+    n = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete'}))
+    f = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete'}))
+    other_names = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete'}))
 
     def no_query_found(self):
         """Determines the behaviour when no query was found; returns all the
@@ -205,7 +211,8 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
                     sqs = sqs.narrow(
                         'praenomen:{}'.format(data.get('praenomen')))
 
-            for field in ('nomen', 'cognomen', 're_number'):
+            for field in ('nomen', 'cognomen', 're_number',
+                          'n', 'f', 'other_names'):
                 if field in data:
                     if data.get(field):
                         sqs = sqs.narrow('{}:{}'.format(

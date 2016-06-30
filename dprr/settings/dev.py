@@ -3,7 +3,7 @@ from base import *  # noqa
 DEBUG = True
 
 CACHE_REDIS_DATABASE = '3'
-CACHES['default']['LOCATION'] = '127.0.0.1:6379:' + CACHE_REDIS_DATABASE
+CACHES['default']['LOCATION'] = '127.0.0.1:6379:' + CACHE_REDIS_DATABASE  # noqa
 
 INTERNAL_IPS = ('dprr-dev.dighum.kcl.ac.uk', '137.73.123.239', )
 
@@ -17,11 +17,11 @@ DATABASES = {
     }
 }
 
-LOGGING_LEVEL = logging.DEBUG
+LOGGING_LEVEL = logging.DEBUG  # noqa
 
-LOGGING['loggers']['django']['level'] = LOGGING_LEVEL
-LOGGING['loggers']['django_auth_ldap']['level'] = LOGGING_LEVEL
-LOGGING['loggers']['promrep']['level'] = LOGGING_LEVEL
+LOGGING['loggers']['django']['level'] = LOGGING_LEVEL  # noqa
+LOGGING['loggers']['django_auth_ldap']['level'] = LOGGING_LEVEL  # noqa
+LOGGING['loggers']['promrep']['level'] = LOGGING_LEVEL  # noqa
 
 TEMPLATE_DEBUG = True
 
@@ -50,7 +50,7 @@ HAYSTACK_CONNECTIONS = {
 
 try:
     import django_extensions  # noqa
-    INSTALLED_APPS = INSTALLED_APPS + ('django_extensions', )
+    INSTALLED_APPS = INSTALLED_APPS + ('django_extensions', )  # noqa
 except ImportError:
     pass
 
@@ -62,7 +62,7 @@ except ImportError:
 try:
     import debug_toolbar  # noqa
     INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
-    MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + (
+    MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + (  # noqa
         'debug_toolbar.middleware.DebugToolbarMiddleware',
     )
     DEBUG_TOOLBAR_PATCH_SETTINGS = False

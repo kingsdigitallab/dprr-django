@@ -164,6 +164,11 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     date_to = forms.IntegerField(
         required=False, max_value=MAX_DATE, min_value=MIN_DATE)
 
+    nomen = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete'}))
+    cognomen = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete'}))
+
     def no_query_found(self):
         """Determines the behaviour when no query was found; returns all the
         results."""
@@ -179,6 +184,7 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
         # Requires, of course, that the form be bound.
         if self.is_bound:
             data = self.cleaned_data
+            print data
 
             if 'date_from' in data or 'date_to' in data:
                 sqs = sqs.narrow(
@@ -186,5 +192,13 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
                         data.get('date_from', self.MIN_DATE) or self.MIN_DATE,
                         data.get('date_to', self.MAX_DATE) or self.MAX_DATE)
                 )
+
+            if 'nomen' in data:
+                if data.get('nomen'):
+                    sqs = sqs.narrow('nomen:{}'.format(data.get('nomen')))
+            if 'cognomen' in data:
+                if data.get('cognomen'):
+                    sqs = sqs.narrow(
+                        'cognomen:{}'.format(data.get('cognomen')))
 
         return sqs

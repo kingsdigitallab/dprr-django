@@ -166,6 +166,8 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
 
     nomen = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'autocomplete'}))
+    cognomen = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete'}))
 
     def no_query_found(self):
         """Determines the behaviour when no query was found; returns all the
@@ -191,6 +193,8 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
                 )
 
             if 'nomen' in data:
-                sqs = sqs.narrow('nomen:{}*'.format(data.get('nomen')))
+                sqs = sqs.narrow('nomen:{}'.format(data.get('nomen')))
+            if 'cognomen' in data:
+                sqs = sqs.narrow('cognomen:{}'.format(data.get('cognomen')))
 
         return sqs

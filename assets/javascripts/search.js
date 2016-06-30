@@ -18,6 +18,9 @@ var autocomplete = {
                 },
                 sort: {
                     enabled: true
+                },
+                onSelectItemEvent: function() {
+                    $input.closest('form').submit();
                 }
             },
             placeholder: $input.attr("name")

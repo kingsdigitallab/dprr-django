@@ -164,6 +164,8 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     date_to = forms.IntegerField(
         required=False, max_value=MAX_DATE, min_value=MIN_DATE)
 
+    praenomen = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete'}))
     nomen = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'autocomplete'}))
     cognomen = forms.CharField(required=False, widget=forms.TextInput(

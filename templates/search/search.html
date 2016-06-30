@@ -35,12 +35,24 @@
 								<a href="#search-results-box" class="less-padding button right do-not-print">Show <strong>{{ paginator.count }}</strong> results</a></h4>
 								<p class="info"><i class="fa fa-info-circle"></i> Some info on this section.</p>
 
-								<h3><strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search" class="do-not-print"><i class="fa fa-trash"></i> Clear all</a></h3>
+								<h3>
+									<strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search" class="do-not-print"><i class="fa fa-trash"></i> Clear all</a>
+								</h3>
 
-								{% if query or selected_facets or date_filter %}
+								{% if query or selected_facets or date_filter or nomen or cognomen or other_names %}
 
 								<ul class="inline-list no-bullet free-filters">
+									{% if nomen %}
+									<li>
+										<span class="label radius">
+											<a href="{{ nomen.0 }}#search" title="Remove filter">Nomen: {{ nomen.1 }}
+												<i class="fa fa-times-circle"></i>
+											</a>
+										</span>
+									</li>
+									{% endif %}
 
+								<ul class="inline-list no-bullet free-filters">
 									{% if query %}
 									<li>
 										<span class="label radius">

@@ -90,11 +90,25 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 date_text = "After " + self.request.GET.get('date_from')
 
             # if neither dates have values
-            # no need to print the filter...
+            #  no need to print the filter...
             if date_text != "":
                 context['date_filter'] = (url, date_text)
 
-        context['autocomplete_facets'] = ['nomen', 'cognomen', ]
+        # used to generate teh lists for the autocomplete dictionary
+        context['autocomplete_facets'] = ['praenomen', 'nomen', 'cognomen']
+
+        for afacet in context['autocomplete_facets']:
+
+            if self.request.GET.get(afacet):
+                qs = self.request.GET.copy()
+                qs.pop(afacet)
+
+                url = reverse('haystack_search')
+
+                if len(qs):
+                    url = '?{0}'.format(qs.urlencode())
+
+                context[afacet] = (url, self.request.GET.get(afacet))
 
         return context
 

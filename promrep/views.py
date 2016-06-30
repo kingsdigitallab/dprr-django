@@ -94,7 +94,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
             if date_text != "":
                 context['date_filter'] = (url, date_text)
 
-        context['autocomplete_facets'] = ['nomen', ]
+        context['autocomplete_facets'] = ['nomen', 'cognomen', ]
 
         return context
 

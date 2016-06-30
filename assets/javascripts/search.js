@@ -1,8 +1,11 @@
+
 $( document ).ready(function() {
 
     var options = {
-        data: nomen_list,
+        data: autocompleteDict['nomen'],
+
         // placeholder: "Nomen",
+
         getValue: "name",
         template: {
             type: "custom",
@@ -21,4 +24,6 @@ $( document ).ready(function() {
     };
 
     $("#id_nomen").easyAutocomplete(options);
+
+    // InputAutocomplete.init();
 });

@@ -179,32 +179,8 @@
 									</ul>
 								</div>
 								<div class="large-2 columns">
-									{% comment %}
-									<label>Cognomen
-										<select>
-											<option></option>
-											{% for term in facets.fields|get_item:"cognomen" %}
-											{% with value=term.0 count=term.1 %}
-											{% if count > 0 %}
-											<option value="{{ value }}">{{ value }} ({{ count }})</option>
-											{% endif %}
-											{% endwith %}
-											{% endfor %}
-										</select>
-									</label>
-									{% endcomment %}
-
-									<button data-dropdown="cognomen" aria-controls="cognomen" aria-expanded="false" class="name-form button dropdown">Cognomen</button><br>
-
-									<ul id="cognomen" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-										{% for term in facets.fields|get_item:"cognomen" %}
-										{% with value=term.0 count=term.1 %}
-										{% if count > 0 %}
-										<li><a href="{% add_facet_link querydict "cognomen" value %}"><span class="label radius right">{{ count }}</span>{{ value }}</a></li>
-										{% endif %}
-										{% endwith %}
-										{% endfor %}
-									</ul>
+									<label>Cognomen</label>
+									{{form.cognomen}}
 								</div>
 								<div class="large-2 columns">
 									{% comment %}

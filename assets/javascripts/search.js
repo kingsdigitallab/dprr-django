@@ -1,29 +1,39 @@
+var autocomplete = {
+    // options for the EasyAutocomplete API
+    setUp: function(input) {
+        $input = $(input);
 
-$( document ).ready(function() {
+        options = {
+            data: autocompleteDict[$input.attr("name")],
+            getValue: "name",
+            template: {
+                type: "custom",
+                method: function(value, item) {
+                    return value + ' <span class="label radius">' + item.count + '</span>';
+                }
+            },
+            list: {
+                match: {
+                    enabled: true
+                },
+                sort: {
+                    enabled: true
+                }
+            },
+            placeholder: $input.attr("name")
+        };
 
-    var options = {
-        data: autocompleteDict['nomen'],
+        $input.easyAutocomplete(options);
+    },
 
-        // placeholder: "Nomen",
+    init: function() {
+        self = this;
+        $('input.autocomplete').each(function() {
+            self.setUp(this);
+        })
+    }
+}
 
-        getValue: "name",
-        template: {
-            type: "custom",
-            method: function(value, item) {
-                return item.name + "(" + item.count + ")";
-            }
-        },
-        list: {
-            match: {
-                enabled: true
-            }
-        },
-        sort: {
-            enabled: true
-        }
-    };
-
-    $("#id_nomen").easyAutocomplete(options);
-
-    // InputAutocomplete.init();
+$(document).ready(function() {
+    autocomplete.init();
 });

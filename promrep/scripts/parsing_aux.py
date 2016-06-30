@@ -245,12 +245,11 @@ def parse_brennan_person(text):  # noqa
             pat_uncertain = True
         is_pat = True
 
-    tribe = None
-    if len(captured.captures('tribe')):
-        tribe_abbrev = captured.captures('tribe')[0].strip()
-        tribe = Tribe.objects.get(abbrev=tribe_abbrev)
+    # tribe = None
+    # if len(captured.captures('tribe')):
+    #     tribe_abbrev = captured.captures('tribe')[0].strip()
+    #     tribe = Tribe.objects.get(abbrev=tribe_abbrev)
 
-    print("Tribe: {}".format(tribe))
     cog_list = captured.captures('cognomen')[0].strip().split(' ')
 
     cognomen_first = ''

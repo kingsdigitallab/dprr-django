@@ -12,7 +12,7 @@
 	<!-- TODO: implement keywords and description -->
 	<meta name="keywords" content="{% block meta_keywords %}{% endblock %}">
 	<meta name="description" content="{% block meta_description %}{% endblock %}">
-	
+
 	<title>{% block meta_title %}{% endblock %} | DPRR</title>
 
 	<!-- <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" /> -->
@@ -21,6 +21,10 @@
 	{# SCSS compilation relies on django compressor #}
 	<link rel="stylesheet" type="text/x-scss" href="{% static 'scss/app.scss' %}" />
 	{% endcompress %}
+
+	{% block headercss %}
+	{% endblock %}
+
 
 	<script src="{% static 'vendor/modernizr/modernizr.js' %}"></script>
 </head>
@@ -43,9 +47,12 @@
 	<script src="{% static 'vendor/foundation/js/foundation.min.js' %}"></script>
 	<script src="{% static 'javascripts/config.js' %}"></script>
 
+	{% block footerscripts %}
+	{% endblock %}
+
 	<script>
 		$(document).foundation();
 	</script>
-	
+
 </body>
 </html>

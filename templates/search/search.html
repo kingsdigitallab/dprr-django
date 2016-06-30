@@ -1,7 +1,13 @@
 {% extends "base.html" %}
-{% load ddh_utils_tags wagtailbase_tags highlight %}
+{% load ddh_utils_tags wagtailbase_tags highlight staticfiles %}
 
 {% block meta_title %}Search Results{% if query %} for {{ query }}{% endif %}{% endblock %}
+
+
+{% block headercss %}
+	<!-- EasyAutocomplete CSS file -->
+	<link rel="stylesheet" href="{% static 'vendor/EasyAutocomplete/dist/easy-autocomplete.min.css' %}">
+{% endblock %}
 
 {% block main %}
 <div class="row">
@@ -12,8 +18,8 @@
 			<button class="small button secondary options"><i class="fa fa-cog"></i> <span id="showhide">Hide</span> search settings</button>
 			<a href="/browse/" class="right options"><span class="small button"><i class="fa fa-refresh"></i> Start new search</span></a>
 		</header>
-			
-		<form method="get" action=".">		
+
+		<form method="get" action=".">
 			<div class="search-box">
 				<section data-section="non-expandable" data-expandable-group-member="facets" id="dprr-filter">
 					<div class="row do-not-print">
@@ -21,7 +27,7 @@
 							<h4>Refine your search</h4>
 						</div>
 					</div>
-					
+
 					<div class="row">
 						<div class="large-12 columns">
 							<div class="panel results-preview" data-magellan-expedition="fixed">
@@ -106,32 +112,8 @@
 										</ul>
 									</div>
 									<div class="large-1 columns">
-										{% comment %}
-										<label>Nomen
-											<select>
-												<option></option>
-												{% for term in facets.fields|get_item:"nomen" %}
-												{% with value=term.0 count=term.1 %}
-												{% if count > 0 %}
-												<option value="{{ value }}">{{ value }} ({{ count }})</option>
-												{% endif %}
-												{% endwith %}
-												{% endfor %}
-											</select>
-										</label>
-										{% endcomment %}
-
-										<button data-dropdown="nomen" aria-controls="nomen" aria-expanded="false" class="name-form button dropdown">Nomen</button><br>
-
-										<ul id="nomen" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-											{% for term in facets.fields|get_item:"nomen" %}
-											{% with value=term.0 count=term.1 %}
-											{% if count > 0 %}
-											<li><a href="{% add_facet_link querydict "nomen" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-											{% endif %}
-											{% endwith %}
-											{% endfor %}
-										</ul>
+									<label>Nomen</label>
+									{{form.nomen}}
 									</div>
 
 									<div class="large-1 columns">
@@ -199,32 +181,8 @@
 										</ul>
 									</div>
 									<div class="large-2 columns">
-										{% comment %}
-										<label>Cognomen
-											<select>
-												<option></option>
-												{% for term in facets.fields|get_item:"cognomen" %}
-												{% with value=term.0 count=term.1 %}
-												{% if count > 0 %}
-												<option value="{{ value }}">{{ value }} ({{ count }})</option>
-												{% endif %}
-												{% endwith %}
-												{% endfor %}
-											</select>
-										</label>
-										{% endcomment %}
-
-										<button data-dropdown="cognomen" aria-controls="cognomen" aria-expanded="false" class="name-form button dropdown">Cognomen</button><br>
-
-										<ul id="cognomen" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-											{% for term in facets.fields|get_item:"cognomen" %}
-											{% with value=term.0 count=term.1 %}
-											{% if count > 0 %}
-											<li><a href="{% add_facet_link querydict "cognomen" value %}"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-											{% endif %}
-											{% endwith %}
-											{% endfor %}
-										</ul>
+									<label>Cognomen</label>
+									{{form.cognomen}}
 									</div>
 									<div class="large-2 columns">
 										{% comment %}
@@ -586,7 +544,7 @@
 									<g>
 										<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
 											L120,224.664"/>
-										
+
 											<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.995,4.9748" d="
 											M125.31,224.441c100.252-6.197,103.002-182.519,204.875-185.894"/>
 										<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,38.664L333,38.664
@@ -595,7 +553,7 @@
 									<g>
 										<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
 											L120,224.664"/>
-										
+
 											<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0072,5.0359" d="
 											M125.369,224.498c100.182-4.019,102.964-117.105,204.773-119.302"/>
 										<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,105.664
@@ -770,7 +728,7 @@
 											<g>
 												<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
 													L120,224.664"/>
-												
+
 													<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.995,4.9748" d="
 													M125.31,224.441c100.252-6.197,103.002-182.519,204.875-185.894"/>
 												<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,38.664L333,38.664
@@ -779,7 +737,7 @@
 											<g>
 												<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
 													L120,224.664"/>
-												
+
 													<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0072,5.0359" d="
 													M125.369,224.498c100.182-4.019,102.964-117.105,204.773-119.302"/>
 												<path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,105.664
@@ -962,3 +920,26 @@
 
 </div>
 {% endblock main %}
+
+{% block footerscripts %}
+
+	<script type="text/javascript">
+
+		var autocompleteDict = {
+			{% for item in autocomplete_facets %}
+				"{{ item }}": [
+					{% for term in facets.fields|get_item:item %}
+						{% with value=term.0 count=term.1 %}
+							{ "name": "{{ value.strip }}", "count": "{{count}}" }
+							{% if not forloop.last %},{% endif %}
+						{% endwith %}
+				{% endfor %}
+				] {% if not forloop.last %},{% endif %}
+			{% endfor %}
+			}
+	</script>
+
+	<!-- EasyAutocomplete -->
+	<script src="{% static 'vendor/EasyAutocomplete/dist/jquery.easy-autocomplete.js' %}"></script>
+	<script src="{% static 'javascripts/search.js' %}"></script>
+{% endblock %}

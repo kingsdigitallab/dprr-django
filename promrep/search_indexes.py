@@ -27,6 +27,10 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     nomen = indexes.CharField(faceted=True, null=True)
     f = indexes.CharField(model_attr='person__f', faceted=True, null=True)
     n = indexes.CharField(model_attr='person__n', faceted=True, null=True)
+
+    re_number = indexes.CharField(model_attr='person__re_number',
+                                  faceted=True, null=True)
+
     cognomen = indexes.CharField(faceted=True, null=True)
 
     gender = indexes.CharField(
@@ -115,6 +119,8 @@ class StatusAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         model_attr='person__praenomen__abbrev', faceted=True, null=True)
     f = indexes.CharField(model_attr='person__f', faceted=True, null=True)
     n = indexes.CharField(model_attr='person__n', faceted=True, null=True)
+    re_number = indexes.CharField(model_attr='person__re_number',
+                                  faceted=True, null=True)
 
     gender = indexes.CharField(
         model_attr='person__sex__name', faceted=True, null=True)

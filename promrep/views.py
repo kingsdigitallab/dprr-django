@@ -8,12 +8,12 @@ from promrep.solr_backends.solr_backend_field_collapsing import \
 
 
 class PromrepFacetedSearchView(FacetedSearchView):
-    # TODO: check how to set facet.mincount, can facet_fields be declared as a
-    # dictionary?
-    facet_fields = ['cognomen', 'eques', 'f', 'gender', 'n', 'nobilis',
-                    'nomen', 'novus', 'office', 'patrician', 'praenomen',
-                    'province']
-    alpha_facet_fields = ['cognomen', 'nomen', 'office', 'province']
+    facet_fields = ['eques', 'gender', 'nobilis', 'novus', 'office',
+                    'patrician', 'province']
+
+    autocomplete_facets = ['praenomen', 'nomen', 'cognomen', 're_number',
+                           'office', 'province', 'n', 'f', 'other_names']
+
     form_class = PromrepFacetedSearchForm
     load_all = True
     queryset = GroupedSearchQuerySet().models(
@@ -29,7 +29,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
     def get_queryset(self):
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
 
-        for facet in self.alpha_facet_fields:
+        for facet in self.autocomplete_facets + self.facet_fields:
             # only return results with a mincount of 1
             queryset = queryset.facet(
                 facet, sort='index', limit=-1, mincount=1)
@@ -90,11 +90,25 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 date_text = "After " + self.request.GET.get('date_from')
 
             # if neither dates have values
-            # no need to print the filter...
+            #   no need to print the filter...
             if date_text != "":
                 context['date_filter'] = (url, date_text)
 
-        context['autocomplete_facets'] = ['nomen', 'cognomen', ]
+        # used to generate the lists for the autocomplete dictionary
+        context['autocomplete_facets'] = self.autocomplete_facets
+
+        for afacet in context['autocomplete_facets']:
+
+            if self.request.GET.get(afacet):
+                qs = self.request.GET.copy()
+                qs.pop(afacet)
+
+                url = reverse('haystack_search')
+
+                if len(qs):
+                    url = '?{0}'.format(qs.urlencode())
+
+                context[afacet] = (url, self.request.GET.get(afacet))
 
         return context
 

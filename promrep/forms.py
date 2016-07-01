@@ -164,9 +164,22 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     date_to = forms.IntegerField(
         required=False, max_value=MAX_DATE, min_value=MIN_DATE)
 
+    # class autocomplete is used by the search.js script to select the fields
+    # the name of the fields has to match the facet names defined in
+    #  views.py
+    praenomen = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete'}))
     nomen = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'autocomplete'}))
     cognomen = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete'}))
+    re_number = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete'}))
+    n = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete'}))
+    f = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete'}))
+    other_names = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'autocomplete'}))
 
     def no_query_found(self):
@@ -193,12 +206,16 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
                         data.get('date_to', self.MAX_DATE) or self.MAX_DATE)
                 )
 
-            if 'nomen' in data:
-                if data.get('nomen'):
-                    sqs = sqs.narrow('nomen:{}'.format(data.get('nomen')))
-            if 'cognomen' in data:
-                if data.get('cognomen'):
+            if 'praenomen' in data:
+                if data.get('praenomen'):
                     sqs = sqs.narrow(
-                        'cognomen:{}'.format(data.get('cognomen')))
+                        'praenomen:{}'.format(data.get('praenomen')))
+
+            for field in ('nomen', 'cognomen', 're_number',
+                          'n', 'f', 'other_names'):
+                if field in data:
+                    if data.get(field):
+                        sqs = sqs.narrow('{}:{}'.format(
+                            field, data.get(field)))
 
         return sqs

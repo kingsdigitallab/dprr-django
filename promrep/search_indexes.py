@@ -47,7 +47,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     nobilis = indexes.BooleanField(
         model_attr='person__nobilis', default=False, faceted=True)
 
-    office = indexes.CharField(model_attr='office__name', faceted=True)
+    office = indexes.FacetMultiValueField()
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
 
     province = indexes.MultiValueField(faceted=True)
@@ -108,6 +108,11 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
             '-date_end', '-date_end')[0]
 
         return pa.office.abbrev_name.title() + " " + pa.print_date()
+
+    def prepare_office(self, object):
+
+        # Hierarquical facet
+        return [o.name for o in object.office.get_ancestors(include_self=True)]
 
 
 class StatusAssertionIndex(indexes.SearchIndex, indexes.Indexable):

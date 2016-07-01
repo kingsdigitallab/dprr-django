@@ -1,4 +1,6 @@
-{% extends "base.html" %} {% load ddh_utils_tags wagtailbase_tags highlight staticfiles %} {% block meta_title %}Search Results{% if query %} for {{ query }}{% endif %}{% endblock %} {% block headercss %}
+{% extends "base.html" %}
+{% load ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags %} {% block meta_title %}Search Results{% if query %} for {{ query }}{% endif %}{% endblock %} {% block headercss %}
+
 <!-- EasyAutocomplete CSS file -->
 <link rel="stylesheet" href="{% static 'vendor/EasyAutocomplete/dist/easy-autocomplete.min.css' %}"> {% endblock %} {% block main %}
 <div class="row">
@@ -302,13 +304,38 @@
                                         <div class="panel radius fixed-height">
                                             <h4>Office type</h4>
                                             <ul class="no-bullet">
-                                                {% for term in facets.fields|get_item:"office" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
-                                                <li>
-                                                    <a href="{% add_facet_link querydict " office " value %}#search">
-                                                        <span class="label radius right">{{ count }}</span> {{ value }}
-                                                    </a>
-                                                </li>
-                                                {% endif %} {% endwith %} {% endfor %}
+
+      										{% comment %}
+      										  Add options for the hierarchical facets:
+      										  using the MPTT template tags to rebuild the tree:
+      										        https://django-mptt.github.io/django-mptt/templates.html
+      										{% endcomment %}
+
+   											{% with treenodes=office_list %}
+  											{% recursetree treenodes %}
+
+        									{% with num=office_fdict|lookup:node.name %}
+
+        									{% if num %}
+	      										{% comment %} parent node {% endcomment %}
+    	  										    {% if not node.is_leaf_node %}
+      											    <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
+
+      											      	<a href="{% select_facet_link 'office' node.name %}"><span class="label radius secondary pull-right">Add all</											span></a><a class="show" href="{% select_facet_link 'office' node.name %}"><i class="fa fa-caret-right"></i>&nbsp;{{ node.name }}</a>
+      										        	<ul class="veryhidden">
+      										          		{{ children }}
+      										        	</ul>
+      										      	</li>
+      										    	{% else %}
+      										      	{% comment %} no children {% endcomment %}
+      										      	<li><a href="{% select_facet_link 'office' node.name %}"><span class="label secondary radius pull-right">{{num}}</span>{{ node.name }}</a></li>
+      										    {% endif %}
+    										{% endif %}
+											{% endwith %}
+      										{% endrecursetree %}
+      										{% endwith %}
+      										{% comment %} closes the with treenodes {% endcomment %}
+
                                             </ul>
                                         </div>
                                     </div>

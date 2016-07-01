@@ -2,17 +2,17 @@ from django.core.urlresolvers import reverse
 from django.views.generic.detail import DetailView
 from haystack.generic_views import FacetedSearchView
 from promrep.forms import PromrepFacetedSearchForm
-from promrep.models import Person, PostAssertion, StatusAssertion
+from promrep.models import Person, PostAssertion, StatusAssertion, Office
 from promrep.solr_backends.solr_backend_field_collapsing import \
     GroupedSearchQuerySet
 
 
 class PromrepFacetedSearchView(FacetedSearchView):
-    facet_fields = ['eques', 'gender', 'nobilis', 'novus', 'office',
-                    'patrician', 'province']
+    facet_fields = ['eques', 'gender', 'nobilis', 'novus',
+                    'patrician', 'province', 'office']
 
     autocomplete_facets = ['praenomen', 'nomen', 'cognomen', 're_number',
-                           'office', 'province', 'n', 'f', 'other_names']
+                           'province', 'n', 'f', 'other_names']
 
     form_class = PromrepFacetedSearchForm
     load_all = True
@@ -28,8 +28,9 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
     def get_queryset(self):
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
+        all_facets = self.autocomplete_facets + self.facet_fields
 
-        for facet in self.autocomplete_facets + self.facet_fields:
+        for facet in all_facets:
             # only return results with a mincount of 1
             queryset = queryset.facet(
                 facet, sort='index', limit=-1, mincount=1)
@@ -109,6 +110,12 @@ class PromrepFacetedSearchView(FacetedSearchView):
                     url = '?{0}'.format(qs.urlencode())
 
                 context[afacet] = (url, self.request.GET.get(afacet))
+
+        # hierarchical facets data
+        # TODO: simplify?
+        context['office_list'] = Office.objects.all()
+        context['office_fdict'] = dict(
+            context['facets']['fields']['office'])
 
         return context
 

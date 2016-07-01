@@ -266,6 +266,17 @@ def get_item(dictionary, key):
     return None
 
 
+@register.filter(name='lookup')
+def lookup(dict, index):
+    # used to lookup keys in dictionary
+    #  useful to use variables in templates
+    # differs from get item as it checks if key exists
+
+    if index in dict:
+        return dict[index]
+    return ''
+
+
 @register.assignment_tag(takes_context=True)
 def dprr_has_local_menu(context, current_page):
     """Returns True if the current page has a local menu, False otherwise. A
@@ -285,3 +296,18 @@ def dprr_has_local_menu(context, current_page):
         return True
 
     return False
+
+
+@register.simple_tag(takes_context=True)
+def select_facet_link(context, facetname, option):
+    query = context['request'].GET.copy()
+
+    if 'selected_facets' in query:
+        query.update({'selected_facets': facetname + ":" + option})
+    else:
+        query['selected_facets'] = facetname + ":" + option
+
+    if 'page' in query:
+        del query['page']
+
+    return "?" + query.urlencode(safe=":?")

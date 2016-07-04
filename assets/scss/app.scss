@@ -277,48 +277,47 @@ h3.quick-home {
 	}
 }
 
-.name-row {
-	button {
-		padding: 3px 0 3px 3px !important;
-		font-size: .75em !important;
-	}
-	.columns {
-		padding: .25rem !important;
-		&:first-child {
-			padding-left: .5rem !important;
-		}
-		&:last-child {
-			padding-right: .5rem !important;
-		}
-	}
+// .name-row {
+// 	button {
+// 		padding: 3px 0 3px 3px !important;
+// 		font-size: .75em !important;
+// 	}
+// 	.columns {
+// 		padding: .25rem !important;
+// 		&:first-child {
+// 			padding-left: .5rem !important;
+// 		}
+// 		&:last-child {
+// 			padding-right: .5rem !important;
+// 		}
+// 	}
 
-	.secondary.label {
-		padding: 2px 4px !important;
-		font-size: .75em !important;
-	}
-}
+// 	.secondary.label {
+// 		padding: 2px 4px !important;
+// 		font-size: .75em !important;
+// 	}
+// }
 
-button.name-form {
-	color: $dark-gold;
-	font-size: .875rem;
-	background: scale-color($sand, $lightness: 15%);
-	border: 1px solid scale-color($sand, $lightness: -11%);
-	// padding: .5rem 1rem;
-	width: 100%;
-	text-align: left;
+// button.name-form {
+// 	color: $dark-gold;
+// 	font-size: .875rem;
+// 	background: scale-color($sand, $lightness: 15%);
+// 	border: 1px solid scale-color($sand, $lightness: -11%);
+// 	width: 100%;
+// 	text-align: left;
 
-	&:hover {
-		color: $dark-gold;
-		background: scale-color($sand, $lightness: 15%);
-	}
+// 	&:hover {
+// 		color: $dark-gold;
+// 		background: scale-color($sand, $lightness: 15%);
+// 	}
 
-	&:after {
-		border-width: .1875rem !important;
-		border-color: $dark-gold transparent transparent transparent !important;
-		right: .125rem !important;
-		top: .75rem !important;
-	}
-}
+// 	&:after {
+// 		border-width: .1875rem !important;
+// 		border-color: $dark-gold transparent transparent transparent !important;
+// 		right: .125rem !important;
+// 		top: .75rem !important;
+// 	}
+// }
 
 .drop-list {
 	max-height: 550px; /* To overcome the overflow: hidden that cuts the list off */
@@ -328,6 +327,32 @@ button.name-form {
 	}
 	li:last-child {
 		border: none;
+	}
+}
+
+/* Auto-complete */
+
+.name-row {
+	input {
+		margin-bottom: 0;
+		border-radius: 0 !important;
+		padding: 0;
+	}
+
+	.columns {
+		padding: 0 .25rem !important;
+		&:first-child {
+			padding-left: .5rem !important;
+		}
+		&:last-child {
+			padding-right: .5rem !important;
+		}
+	}
+}
+
+.easy-autocomplete-container {
+	ul {
+		margin-left: 0;
 	}
 }
 

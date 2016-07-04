@@ -193,7 +193,7 @@ class RelationshipAssertionReference(Note):
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     def related_label(self):
-        return u"[%s] %s (%s)<br /><br />" % (
+        return u"[%s] %s (%s)<br><br>" % (
             self.secondary_source.abbrev_name,
             self.text, self.print_primary_source_refs())
 
@@ -212,7 +212,7 @@ class PostAssertionNote(Note):
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     def related_label(self):
-        return u"[%s - %s] %s<br /><br />" % (
+        return u"[%s - %s] %s <br>" % (
             self.note_type,
             self.secondary_source.abbrev_name, self.text)
 
@@ -226,7 +226,7 @@ class PersonNote(Note):
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     def related_label(self):
-        return u"[%s - %s] %s<br /><br />" % (
+        return u"[%s - %s] %s<br><br>" % (
             self.note_type,
             self.secondary_source.abbrev_name,
             self.text)
@@ -241,7 +241,7 @@ class StatusAssertionNote(Note):
         return u'<a href="%s">%s</a>' % (url, self.__unicode__())
 
     def related_label(self):
-        return u"[%s - %s] %s<br /><br />" % (
+        return u"[%s - %s] %s<br><br>" % (
             self.note_type,
             self.secondary_source.abbrev_name,
             self.text)

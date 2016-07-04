@@ -4,6 +4,7 @@ var autocomplete = {
         $input = $(input);
 
         options = {
+            adjustWidth: false,
             data: autocompleteDict[$input.attr("name")],
             getValue: "name",
             template: {

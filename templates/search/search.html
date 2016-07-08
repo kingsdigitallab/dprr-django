@@ -191,10 +191,10 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         <button type="submit" class="less-padding expand secondary">Apply</button>
                                     </div>
                                 </div>
-                                <ul class="inline-list">
+                                <ul class="button-group">
                                     {% for term in facets.fields|get_item:"gender" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
                                     <li>
-                                        <a href="{% add_facet_link querydict " gender " value %}#search">
+                                        <a href="{% add_facet_link querydict " gender " value %}#search" class="button secondary less-padding">
 											{{ value }} <span class="label radius">{{ count }}</span>
 										</a>
                                     </li>
@@ -208,7 +208,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     <li><a href="#" class="button secondary less-padding smaller-fontsize">Adopted <span class="label radius right">00</span></a></li>
                                 </ul>
                                 <h4>Class</h4>
-                                <ul class="inline-list">
+                                <ul class="button-group">
                                     {% comment %} {% for term in facets.fields|get_item:"eques" %} {% with value=term.0 count=term.1 %} {% if value == "true" %}
                                     <li>
                                         <input id="eques-id" type="checkbox" value="eques" {% if count=0 %} disabled{% endif %}>
@@ -231,27 +231,27 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %} {% endcomment %} {% for term in facets.fields|get_item:"nobilis" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
                                     <li>
-                                        <a href="{% add_facet_link querydict " nobilis " value %}#search">Nobilis <span class="label radius">{{ count }}</span></a>
+                                        <a href="{% add_facet_link querydict " nobilis " value %}#search" class="button secondary less-padding">Nobilis <span class="label radius">{{ count }}</span></a>
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %} {% for term in facets.fields|get_item:"novus" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
                                     <li>
-                                        <a href="{% add_facet_link querydict " novus " value %}#search">Novus <span class="label radius">{{ count }}</span></a>
+                                        <a href="{% add_facet_link querydict " novus " value %}#search" class="button secondary less-padding">Novus <span class="label radius">{{ count }}</span></a>
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %} {% for term in facets.fields|get_item:"patrician" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
                                     <li>
-                                        <a href="{% add_facet_link querydict " patrician " value %}#search">Patrician <span class="label radius">{{ count }}</span></a>
+                                        <a href="{% add_facet_link querydict " patrician " value %}#search" class="button secondary less-padding">Patrician <span class="label radius">{{ count }}</span></a>
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %}
                                 </ul>
-                                <ul class="inline-list">
+                                <ul class="button-group">
                                     {% for term in facets.fields|get_item:"eques" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
                                     <li>
-                                        <a href="{% add_facet_link querydict " eques " value %}#search">Eques R. <span class="label radius">{{ count }}</span></a>
+                                        <a href="{% add_facet_link querydict " eques " value %}#search" class="button secondary less-padding">Eques R. <span class="label radius">{{ count }}</span></a>
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %}
-                                    <li><a href="#">Eques R. (Expelled) <span class="label radius">00</span></a></li>
-                                    <li><a href="#">Senator <span class="label radius">00</span></a></li>
-                                    <li><a href="#">Senator (Expelled) <span class="label radius">00</span></a></li>
+                                    <li><a href="#" class="button secondary less-padding">Eques R. (Expelled) <span class="label radius">00</span></a></li>
+                                    <li><a href="#" class="button secondary less-padding">Senator <span class="label radius">00</span></a></li>
+                                    <li><a href="#" class="button secondary less-padding">Senator (Expelled) <span class="label radius">00</span></a></li>
                                 </ul>
                                 <div class="row">
                                     <div class="large-6 columns">

@@ -1,8 +1,16 @@
 {% extends "base.html" %}
-{% load ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags %} {% block meta_title %}Search Results{% if query %} for {{ query }}{% endif %}{% endblock %} {% block headercss %}
+{% load ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags %}
 
+{% block meta_title %}
+Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcomment %}
+{% endblock %}
+
+{% block headercss %}
 <!-- EasyAutocomplete CSS file -->
-<link rel="stylesheet" href="{% static 'vendor/EasyAutocomplete/dist/easy-autocomplete.min.css' %}"> {% endblock %} {% block main %}
+<link rel="stylesheet" href="{% static 'vendor/EasyAutocomplete/dist/easy-autocomplete.min.css' %}">
+{% endblock %}
+
+{% block main %}
 <div class="row">
     <div class="large-12 columns" id="search">
         <header>
@@ -383,7 +391,7 @@
     <div class="large-12 columns">
         <hr>
         <h2>Search Results <span class="label radius">{{ paginator.count }}</span> <a href="#search" class="less-padding button right edit-search do-not-print"><i class="fa fa-edit"></i> Edit search</a></h2>
-        <ul class="inline-list left export do-not-print">
+        <ul class="inline-list right export do-not-print">
             <li>
                 <a class="right" aria-lablledby="#print" id="printme"><i class="fa fa-print"></i><label id="print">Print</label></a>
             </li>
@@ -394,10 +402,11 @@
                 <a class="right" aria-lablledby="#csv"><i class="fa fa-save"></i><label id="cvs">CSV</label></a>
             </li>
         </ul>
-        <ul class="inline-list right key">
+        <ul class="inline-list left key">
             <li>Dates can be: </li>
-            <li><span class="label radius green-bg">Certain <i class="fa fa-check-circle"></i></span></li>
-            <li><span class="label radius gray-bg">Uncertain <i class="fa fa-minus-circle"></i></span></li>
+            <li>Certain <i class="fa fa-check-circle fa-lg green"></i></li>
+            <li>or</li>
+            <li>Uncertain <i class="fa fa-question-circle fa-lg gray"></i></li>
         </ul>
         <hr>
         <ol start="{{page_obj.start_index}}" class="search-results">
@@ -405,9 +414,9 @@
             <li>
                 {% with doc=result.documents.0 %}
                 <h3>
-					<span class="label radius right{% if doc.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ doc.highest_office }}{% if doc.uncertain == True %} <i class="fa fa-minus-circle"></i>{% else %} <i class="fa fa-check-circle"></i>{% endif %}</span>
-					<a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a>
-				</h3> {% for dd in result.documents %}
+					<a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }} <span class="label radius secondary{% comment %}{% if doc.uncertain == True %} gray-bg{% else %} green-bg{% endif %}{% endcomment %}">{{ doc.highest_office }}{% if doc.uncertain == True %} <i class="fa fa-question-circle gray"></i>{% else %} <i class="fa fa-check-circle green"></i>{% endif %}</span></a>
+				</h3>
+                {% for dd in result.documents %}
                 <p>
                     {% highlight dd.text with query html_tag 'strong' max_length 120 %}
                 </p>
@@ -826,22 +835,23 @@
         {% display_pagination querydict page_obj %}
     </div>
 </div>
-{% endblock main %} {% block footerscripts %}
+{% endblock main %}
 
-<script type="text/javascript">
-	var autocompleteDict = {
-	    {% for item in autocomplete_facets %}
-	    "{{ item }}": [
-	    	{% for term in facets.fields|get_item:item %}
-	    		{% with value=term.0 count=term.1 %}
-	    			{"name": "{{ value.strip }}", "count": "{{count}}"}
-	    			{% if not forloop.last %}, {% endif %} {% endwith %}
-	    	{% endfor %}
-	    	]
-	    	{% if not forloop.last %},{% endif %}
-	    {% endfor %}
-	}
-	</script>
+{% block footerscripts %}
+    <script type="text/javascript">
+    	var autocompleteDict = {
+    	    {% for item in autocomplete_facets %}
+    	    "{{ item }}": [
+    	    	{% for term in facets.fields|get_item:item %}
+    	    		{% with value=term.0 count=term.1 %}
+    	    			{"name": "{{ value.strip }}", "count": "{{count}}"}
+    	    			{% if not forloop.last %}, {% endif %} {% endwith %}
+    	    	{% endfor %}
+    	    	]
+    	    	{% if not forloop.last %},{% endif %}
+    	    {% endfor %}
+    	}
+    </script>
 
 	<!-- EasyAutocomplete -->
 	<script src="{% static 'vendor/EasyAutocomplete/dist/jquery.easy-autocomplete.js' %}"></script>

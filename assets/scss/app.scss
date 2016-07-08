@@ -244,6 +244,7 @@ h3.quick-home {
 .key {
 	font-style: italic;
 	font-size: .875rem;
+	margin-top: 1.25rem;
 }
 
 /*** Search / Facets / Filters ***/
@@ -428,6 +429,8 @@ h3.quick-home {
 	color: #444;
 	.label {
 		margin-top: .5rem;
+		font-size: 1rem;
+		font-family: 'Open Sans Condensed Light', sans-serif;
 	}
 
 	li {	

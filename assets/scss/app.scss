@@ -25,6 +25,10 @@
 	margin-bottom: .5rem;
 }
 
+.textright {
+	text-align: right;
+}
+
 /* Handles the offset of the magellan sticky navigation */
 .extra-margin {
 	padding-top: 140px;
@@ -65,8 +69,24 @@ li.greyed-out a {
 .expander {
 	padding: 0 0 .5rem;
 	margin-bottom: .5rem;
-	text-align: right;
+	// text-align: right;
 	display: block;
+}
+
+.hierarchical-facets {
+	a {
+		margin: 0;
+		padding: 0;
+	}
+	li {
+		border-bottom: 1px solid scale-color($secondary-color, $lightness: -10%);
+		.label {
+			margin-top: .25rem;
+		}
+		&:last-child {
+			border-bottom: none;
+		}
+	}
 }
 
 .bottom-margin {

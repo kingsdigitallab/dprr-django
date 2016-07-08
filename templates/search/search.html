@@ -311,7 +311,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     <div class="large-6 columns">
                                         <div class="panel radius fixed-height">
                                             <h4>Office type</h4>
-                                            <ul class="no-bullet">
+                                            <ul class="no-bullet hierarchical-facets">
 
       										{% comment %}
       										  Add options for the hierarchical facets:
@@ -326,17 +326,18 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
 
         									{% if num %}
 	      										{% comment %} parent node {% endcomment %}
-    	  										    {% if not node.is_leaf_node %}
-      											    <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
+	  										    {% if not node.is_leaf_node %}
+  											    <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
 
-      											      	<a href="{% select_facet_link 'office' node.name %}"><span class="label radius secondary pull-right">Add all</											span></a><a class="show" href="{% select_facet_link 'office' node.name %}"><i class="fa fa-caret-right"></i>&nbsp;{{ node.name }}</a>
-      										        	<ul class="veryhidden">
-      										          		{{ children }}
-      										        	</ul>
-      										      	</li>
-      										    	{% else %}
-      										      	{% comment %} no children {% endcomment %}
-      										      	<li><a href="{% select_facet_link 'office' node.name %}"><span class="label secondary radius pull-right">{{num}}</span>{{ node.name }}</a></li>
+  											      	<a href="{% select_facet_link 'office' node.name %}"><span class="label radius secondary pull-right">Add all</a>
+                                                    <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
+  										        	<ul class="hide collapsible">
+  										          		{{ children }}
+  										        	</ul>
+  										      	</li>
+  										    	{% else %}
+  										      	{% comment %} no children {% endcomment %}
+  										      	<li><a href="{% select_facet_link 'office' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
       										    {% endif %}
     										{% endif %}
 											{% endwith %}
@@ -426,7 +427,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                     <div class="large-6 columns">
                         <p>Placeholder</p>
                         <p><em>&lt;List of offices held&gt;</em></p>
-                        <!--
+                        <!-- TODO: List offices held, if any
 						<h4>Offices held</h4>
 						<ul class="no-bullet list-offices">
 							{# for #}

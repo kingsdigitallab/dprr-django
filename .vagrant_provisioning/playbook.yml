@@ -163,7 +163,6 @@
       line: "local    all    all    {{ postgresql.default_auth_method }}"
     notify:
       - postgresql | restart postgres
-      - elasticsearch | restart elasticsearch
     tags:
       - db
 

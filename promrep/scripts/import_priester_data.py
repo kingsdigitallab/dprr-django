@@ -1,8 +1,8 @@
 
 import unicodecsv as csv
 from promrep.models import (
-    NoteType, Office, Person, PersonNote, PostAssertion, Praenomen,
-    SecondarySource, Sex
+    DateInformation, DateType, NoteType, Office, Person, PersonNote,
+    PostAssertion, Praenomen, SecondarySource, Sex
 )
 
 
@@ -36,17 +36,6 @@ def add_post_assertion_to_person(person, row_dict, ssource):
     # TODO: possible error source...
     office, created = Office.objects.get_or_create(name=row_dict["office"])
 
-    #    "missing",
-    #    "office",
-    #    "pa_date_source_text",
-    #    "pa_date_start",
-    #    "pa_date_start_uncertain",
-    #    "pa_date_end",
-    #    "pa_date_end_uncertain",
-    #    "pa_years",
-    #    "unc_pa_years",
-    #    "uncertain_postassertion",
-
     pa_dict = {
         "office": office,
         "person": person,
@@ -75,6 +64,56 @@ def add_post_assertion_to_person(person, row_dict, ssource):
     return pa.id
 
 
+def add_dates_to_person(person, row_dict, ssource):
+
+    for n in ["1", "2"]:
+        if row_dict["Date_" + n]:
+            date_str = row_dict["Date_" + n]
+
+            # date can be in intervals;
+            # if we have a before or after,
+            #    we'll only create a single point
+            interval = "S"
+
+            if "before" in date_str:
+                # B: Before
+                interval = "B"
+                date_str = date_str.replace('before', '').strip()
+                date_str = - int(date_str)
+            elif "after" in date_str:
+                # A: After
+                interval = "A"
+                date_str = date_str.replace('after', '').strip()
+                date_str = - int(date_str)
+            elif "by" in date_str:
+                # B: Before
+                interval = "B"
+                date_str = date_str.replace('by', '').strip()
+                date_str = - int(date_str) - 1
+            elif "AD" in date_str:
+                date_str = date_str.replace('AD', '').strip()
+                date_str = int(date_str)
+            else:
+                date_str = - int(date_str)
+
+            dtype, created = DateType.objects.get_or_create(
+                name=row_dict["DateType_" + n])
+
+            ddict = {
+                "person": person,
+                "value": date_str,
+                "date_type": dtype,
+                "uncertain": row_dict["DateUncertain_" + n],
+                "secondary_source": ssource,
+                "date_interval": interval
+            }
+
+            di, created = DateInformation.objects.get_or_create(**ddict)
+
+            if created:
+                print("Added new date {} to person {}".format(di, person.id))
+
+
 def add_notes_fields_to_person(person, row_dict, ssource):
     """tests if the notes fields exist; if not adds these to the person object
 
@@ -96,8 +135,7 @@ def add_notes_fields_to_person(person, row_dict, ssource):
     ]
 
     for note_field in note_fields:
-        if note_field in row_dict:
-
+        if row_dict[note_field]:
             ntext = row_dict[note_field]
 
             nt_str = note_field
@@ -118,8 +156,7 @@ def add_notes_fields_to_person(person, row_dict, ssource):
 
             # if note doesn't exist, we'll create it and add it to the person
             if not notes:
-                print
-                note = PersonNote.create(**note_dict)
+                note = PersonNote.objects.create(**note_dict)
                 note.person_set.add(person)
                 note.save()
 
@@ -156,8 +193,6 @@ def load_bio_data(ifname):
                     "LA",
                     "N",
                     "other",
-                    "note",
-                    "Input Date",
                     "Date_1",
                     "DateUncertain_1",
                     "DateType_1",
@@ -214,7 +249,7 @@ def load_bio_data(ifname):
     return persons_dict
 
 
-def get_or_create_person(person_name, persons_dict):
+def get_or_create_person(person_name, persons_dict, secondary_source):
     """Returns a Person object
     or None if unable to create
 
@@ -243,9 +278,11 @@ def get_or_create_person(person_name, persons_dict):
         "other_names",
         "re_number",
         "filiation",
+        "patrician",
+        "patrician_uncertain",
     ]
 
-    params_dict = {param: pdict[param] for param in params if pdict[param]}
+    params_dict = {param: pdict[param] for param in params if param in pdict}
 
     # for param in params:
     #     if pdict[param]:
@@ -268,7 +305,8 @@ def get_or_create_person(person_name, persons_dict):
         print("Plenty")
         return None
 
-    # TODO: should we enrich the person object here?
+    add_notes_fields_to_person(person, pdict, secondary_source)
+    add_dates_to_person(person, pdict, secondary_source)
 
     return person
 
@@ -326,12 +364,10 @@ def load_fastii_data(csv_fname, persons_dict):
                 person_name = row_dict["name_lookup"]
 
             # gets a person object or None
-            person = get_or_create_person(person_name, persons_dict)
+            person = get_or_create_person(person_name, persons_dict, ssource)
 
-            # adds the notes to the person
             # and creates the PostAssertion
             if person:
-                add_notes_fields_to_person(person, row_dict, ssource)
 
                 # should write the id to the output file
                 pa_id = add_post_assertion_to_person(

@@ -20,8 +20,18 @@ var autocomplete = {
                 sort: {
                     enabled: true
                 },
-                onSelectItemEvent: function() {
+                onChooseEvent: function() {
                     $input.closest('form').submit();
+                },
+                match: {
+                    enabled: true,
+                    method: function(element, phrase) {
+                        if (element.indexOf(phrase) === 0) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
                 }
             },
             placeholder: $input.attr("name")

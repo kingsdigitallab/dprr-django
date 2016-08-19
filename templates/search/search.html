@@ -1,8 +1,16 @@
 {% extends "base.html" %}
-{% load ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags %} {% block meta_title %}Search Results{% if query %} for {{ query }}{% endif %}{% endblock %} {% block headercss %}
+{% load ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags %}
 
+{% block meta_title %}
+Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcomment %}
+{% endblock %}
+
+{% block headercss %}
 <!-- EasyAutocomplete CSS file -->
-<link rel="stylesheet" href="{% static 'vendor/EasyAutocomplete/dist/easy-autocomplete.min.css' %}"> {% endblock %} {% block main %}
+<link rel="stylesheet" href="{% static 'vendor/EasyAutocomplete/dist/easy-autocomplete.min.css' %}">
+{% endblock %}
+
+{% block main %}
 <div class="row">
     <div class="large-12 columns" id="search">
         <header>
@@ -130,33 +138,33 @@
                         <div class="large-12 columns">
                             <div class="panel callout">
                                 <h3 class="panel-heading">Name</h3>
-                                <p class="info"><i class="fa fa-info-circle"></i> Some info on this filter.</p>
+                                <p class="info"><i class="fa fa-info-circle"></i> Start typing.</p>
                                 <div class="row name-row">
-                                    <div class="large-2 columns">
+                                    <div class="medium-2 columns">
                                         <label>Praenomen</label>
                                         {{form.praenomen}}
                                     </div>
-                                    <div class="large-1 columns">
+                                    <div class="medium-1 columns">
                                         <label>Nomen</label>
                                         {{form.nomen}}
                                     </div>
-                                    <div class="large-1 columns">
+                                    <div class="medium-1 columns">
                                         <label>RE</label>
                                         {{form.re_number}}
                                     </div>
-                                    <div class="large-2 columns">
+                                    <div class="medium-2 columns">
                                         <label>Father initial</label>
                                         {{form.f}}
                                     </div>
-                                    <div class="large-2 columns">
+                                    <div class="medium-2 columns">
                                         <label>Grandfather initial</label>
                                         {{form.n}}
                                     </div>
-                                    <div class="large-2 columns">
+                                    <div class="medium-2 columns">
                                         <label>Cognomen</label>
                                         {{form.cognomen}}
                                     </div>
-                                    <div class="large-2 columns">
+                                    <div class="medium-2 columns">
                                     	<label>Other names</label>
 										{{form.other_names}}
                                     </div>
@@ -183,10 +191,10 @@
                                         <button type="submit" class="less-padding expand secondary">Apply</button>
                                     </div>
                                 </div>
-                                <ul class="inline-list">
+                                <ul class="button-group">
                                     {% for term in facets.fields|get_item:"gender" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
                                     <li>
-                                        <a href="{% add_facet_link querydict " gender " value %}#search">
+                                        <a href="{% add_facet_link querydict " gender " value %}#search" class="button secondary less-padding">
 											{{ value }} <span class="label radius">{{ count }}</span>
 										</a>
                                     </li>
@@ -200,7 +208,7 @@
                                     <li><a href="#" class="button secondary less-padding smaller-fontsize">Adopted <span class="label radius right">00</span></a></li>
                                 </ul>
                                 <h4>Class</h4>
-                                <ul class="inline-list">
+                                <ul class="button-group">
                                     {% comment %} {% for term in facets.fields|get_item:"eques" %} {% with value=term.0 count=term.1 %} {% if value == "true" %}
                                     <li>
                                         <input id="eques-id" type="checkbox" value="eques" {% if count=0 %} disabled{% endif %}>
@@ -223,27 +231,27 @@
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %} {% endcomment %} {% for term in facets.fields|get_item:"nobilis" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
                                     <li>
-                                        <a href="{% add_facet_link querydict " nobilis " value %}#search">Nobilis <span class="label radius">{{ count }}</span></a>
+                                        <a href="{% add_facet_link querydict " nobilis " value %}#search" class="button secondary less-padding">Nobilis <span class="label radius">{{ count }}</span></a>
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %} {% for term in facets.fields|get_item:"novus" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
                                     <li>
-                                        <a href="{% add_facet_link querydict " novus " value %}#search">Novus <span class="label radius">{{ count }}</span></a>
+                                        <a href="{% add_facet_link querydict " novus " value %}#search" class="button secondary less-padding">Novus <span class="label radius">{{ count }}</span></a>
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %} {% for term in facets.fields|get_item:"patrician" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
                                     <li>
-                                        <a href="{% add_facet_link querydict " patrician " value %}#search">Patrician <span class="label radius">{{ count }}</span></a>
+                                        <a href="{% add_facet_link querydict " patrician " value %}#search" class="button secondary less-padding">Patrician <span class="label radius">{{ count }}</span></a>
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %}
                                 </ul>
-                                <ul class="inline-list">
+                                <ul class="button-group">
                                     {% for term in facets.fields|get_item:"eques" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
                                     <li>
-                                        <a href="{% add_facet_link querydict " eques " value %}#search">Eques R. <span class="label radius">{{ count }}</span></a>
+                                        <a href="{% add_facet_link querydict " eques " value %}#search" class="button secondary less-padding">Eques R. <span class="label radius">{{ count }}</span></a>
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %}
-                                    <li><a href="#">Eques R. (Expelled) <span class="label radius">00</span></a></li>
-                                    <li><a href="#">Senator <span class="label radius">00</span></a></li>
-                                    <li><a href="#">Senator (Expelled) <span class="label radius">00</span></a></li>
+                                    <li><a href="#" class="button secondary less-padding">Eques R. (Expelled) <span class="label radius">00</span></a></li>
+                                    <li><a href="#" class="button secondary less-padding">Senator <span class="label radius">00</span></a></li>
+                                    <li><a href="#" class="button secondary less-padding">Senator (Expelled) <span class="label radius">00</span></a></li>
                                 </ul>
                                 <div class="row">
                                     <div class="large-6 columns">
@@ -303,7 +311,7 @@
                                     <div class="large-6 columns">
                                         <div class="panel radius fixed-height">
                                             <h4>Office type</h4>
-                                            <ul class="no-bullet">
+                                            <ul class="no-bullet hierarchical-facets">
 
       										{% comment %}
       										  Add options for the hierarchical facets:
@@ -318,17 +326,18 @@
 
         									{% if num %}
 	      										{% comment %} parent node {% endcomment %}
-    	  										    {% if not node.is_leaf_node %}
-      											    <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
+	  										    {% if not node.is_leaf_node %}
+  											    <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
 
-      											      	<a href="{% select_facet_link 'office' node.name %}"><span class="label radius secondary pull-right">Add all</											span></a><a class="show" href="{% select_facet_link 'office' node.name %}"><i class="fa fa-caret-right"></i>&nbsp;{{ node.name }}</a>
-      										        	<ul class="veryhidden">
-      										          		{{ children }}
-      										        	</ul>
-      										      	</li>
-      										    	{% else %}
-      										      	{% comment %} no children {% endcomment %}
-      										      	<li><a href="{% select_facet_link 'office' node.name %}"><span class="label secondary radius pull-right">{{num}}</span>{{ node.name }}</a></li>
+  											      	<a href="{% select_facet_link 'office' node.name %}"><span class="label radius secondary pull-right">Add all</a>
+                                                    <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
+  										        	<ul class="hide collapsible">
+  										          		{{ children }}
+  										        	</ul>
+  										      	</li>
+  										    	{% else %}
+  										      	{% comment %} no children {% endcomment %}
+  										      	<li><a href="{% select_facet_link 'office' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
       										    {% endif %}
     										{% endif %}
 											{% endwith %}
@@ -383,7 +392,7 @@
     <div class="large-12 columns">
         <hr>
         <h2>Search Results <span class="label radius">{{ paginator.count }}</span> <a href="#search" class="less-padding button right edit-search do-not-print"><i class="fa fa-edit"></i> Edit search</a></h2>
-        <ul class="inline-list left export do-not-print">
+        <ul class="inline-list right export do-not-print">
             <li>
                 <a class="right" aria-lablledby="#print" id="printme"><i class="fa fa-print"></i><label id="print">Print</label></a>
             </li>
@@ -394,10 +403,11 @@
                 <a class="right" aria-lablledby="#csv"><i class="fa fa-save"></i><label id="cvs">CSV</label></a>
             </li>
         </ul>
-        <ul class="inline-list right key">
+        <ul class="inline-list left key">
             <li>Dates can be: </li>
-            <li><span class="label radius green-bg">Certain <i class="fa fa-check-circle"></i></span></li>
-            <li><span class="label radius gray-bg">Uncertain <i class="fa fa-minus-circle"></i></span></li>
+            <li>Certain <i class="fa fa-check-circle fa-lg green"></i></li>
+            <li>or</li>
+            <li>Uncertain <i class="fa fa-question-circle fa-lg gray"></i></li>
         </ul>
         <hr>
         <ol start="{{page_obj.start_index}}" class="search-results">
@@ -405,9 +415,9 @@
             <li>
                 {% with doc=result.documents.0 %}
                 <h3>
-					<span class="label radius right{% if doc.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ doc.highest_office }}{% if doc.uncertain == True %} <i class="fa fa-minus-circle"></i>{% else %} <i class="fa fa-check-circle"></i>{% endif %}</span>
-					<a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }}</a>
-				</h3> {% for dd in result.documents %}
+					<a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }} <span class="label radius secondary{% comment %}{% if doc.uncertain == True %} gray-bg{% else %} green-bg{% endif %}{% endcomment %}">{{ doc.highest_office }}{% if doc.uncertain == True %} <i class="fa fa-question-circle gray"></i>{% else %} <i class="fa fa-check-circle green"></i>{% endif %}</span></a>
+				</h3>
+                {% for dd in result.documents %}
                 <p>
                     {% highlight dd.text with query html_tag 'strong' max_length 120 %}
                 </p>
@@ -417,7 +427,7 @@
                     <div class="large-6 columns">
                         <p>Placeholder</p>
                         <p><em>&lt;List of offices held&gt;</em></p>
-                        <!--
+                        <!-- TODO: List offices held, if any
 						<h4>Offices held</h4>
 						<ul class="no-bullet list-offices">
 							{# for #}
@@ -826,22 +836,23 @@
         {% display_pagination querydict page_obj %}
     </div>
 </div>
-{% endblock main %} {% block footerscripts %}
+{% endblock main %}
 
-<script type="text/javascript">
-	var autocompleteDict = {
-	    {% for item in autocomplete_facets %}
-	    "{{ item }}": [
-	    	{% for term in facets.fields|get_item:item %}
-	    		{% with value=term.0 count=term.1 %}
-	    			{"name": "{{ value.strip }}", "count": "{{count}}"}
-	    			{% if not forloop.last %}, {% endif %} {% endwith %}
-	    	{% endfor %}
-	    	]
-	    	{% if not forloop.last %},{% endif %}
-	    {% endfor %}
-	}
-	</script>
+{% block footerscripts %}
+    <script type="text/javascript">
+    	var autocompleteDict = {
+    	    {% for item in autocomplete_facets %}
+    	    "{{ item }}": [
+    	    	{% for term in facets.fields|get_item:item %}
+    	    		{% with value=term.0 count=term.1 %}
+    	    			{"name": "{{ value.strip }}", "count": "{{count}}"}
+    	    			{% if not forloop.last %}, {% endif %} {% endwith %}
+    	    	{% endfor %}
+    	    	]
+    	    	{% if not forloop.last %},{% endif %}
+    	    {% endfor %}
+    	}
+    </script>
 
 	<!-- EasyAutocomplete -->
 	<script src="{% static 'vendor/EasyAutocomplete/dist/jquery.easy-autocomplete.js' %}"></script>

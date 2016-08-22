@@ -55,6 +55,16 @@ def add_post_assertion_to_person(person, row_dict, ssource):
         if row_dict[field]:
             pa_dict[field.lstrip("pa_")] = row_dict[field]
 
+    if pa_dict["date_start"]:
+        date_start = int(pa_dict["date_start"])
+        if date_start > 0:
+            pa_dict["date_start"] = - date_start
+
+    if pa_dict["date_end"]:
+        date_end = int(pa_dict["date_end"])
+        if date_end > 0:
+            pa_dict["date_end"] = - date_end
+
     if "uncertain" in row_dict["uncertain_postassertion"]:
         pa_dict["uncertain"] = True
 

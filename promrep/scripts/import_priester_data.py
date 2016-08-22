@@ -284,8 +284,6 @@ def get_or_create_person(person_name, persons_dict, secondary_source):
         "sex",
         "praenomen",
         "nomen",
-        "cognomen",
-        "other_names",
         "re_number",
     ]
 
@@ -319,6 +317,15 @@ def get_or_create_person(person_name, persons_dict, secondary_source):
 
     if "patrician_uncertain" in pdict:
         person.patrician_uncertain = True
+        person.save()
+
+    # TODO: should Ruepke info always supersede?
+    if not person.cognomen and "cognomen" in pdict:
+        person.cognomen = pdict["cognomen"]
+        person.save()
+
+    if not person.other_names and "other_names" in pdict:
+        person.other_names = pdict["other_names"]
         person.save()
 
     # add filiation in case it's missing

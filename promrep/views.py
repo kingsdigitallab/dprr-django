@@ -1,8 +1,11 @@
 from django.core.urlresolvers import reverse
 from django.views.generic.detail import DetailView
+from django.http import JsonResponse
 from haystack.generic_views import FacetedSearchView
 from promrep.forms import PromrepFacetedSearchForm
-from promrep.models import Person, PostAssertion, StatusAssertion, Office
+from promrep.models import (
+    Office, Person, PostAssertion, RelationshipAssertion, StatusAssertion
+)
 from promrep.solr_backends.solr_backend_field_collapsing import \
     GroupedSearchQuerySet
 
@@ -37,7 +40,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
         return queryset
 
-    def get_context_data(self, **kwargs):  # noqa
+    def get_context_data(self, **kwargs):
         context = super(
             PromrepFacetedSearchView, self).get_context_data(**kwargs)
         context['querydict'] = self.request.GET
@@ -79,20 +82,20 @@ class PromrepFacetedSearchView(FacetedSearchView):
             if len(qs):
                 url = '?{0}'.format(qs.urlencode())
 
-            date_text = ""
+            date_text = ''
             if self.request.GET.get(
                     'date_to') and self.request.GET.get('date_from'):
                 date_text = self.request.GET.get(
-                    'date_from') + " to " + self.request.GET.get(
+                    'date_from') + ' to ' + self.request.GET.get(
                     'date_to')
             elif self.request.GET.get('date_to'):
-                date_text = "Before " + self.request.GET.get('date_to')
+                date_text = 'Before ' + self.request.GET.get('date_to')
             elif self.request.GET.get('date_from'):
-                date_text = "After " + self.request.GET.get('date_from')
+                date_text = 'After ' + self.request.GET.get('date_from')
 
             # if neither dates have values
             #   no need to print the filter...
-            if date_text != "":
+            if date_text != '':
                 context['date_filter'] = (url, date_text)
 
         # used to generate the lists for the autocomplete dictionary
@@ -123,3 +126,77 @@ class PromrepFacetedSearchView(FacetedSearchView):
 class PersonDetailView(DetailView):
     model = Person
     template_name = 'promrep/persons/detail.html'
+
+
+def get_relationships_network(request, pk):
+    network = {}
+
+    try:
+        person = Person.objects.get(pk=pk)
+        network = _get_relationships_network(person)
+    except Person.DoesNotExist:
+        network = {'error': 'Person with id {} does not exit'.format(pk)}
+
+    return JsonResponse(network)
+
+
+def _get_relationships_network(person):
+    relationships, _ = _get_relationships_and_persons(person, [], [])
+
+    nodes = []
+    edges = []
+
+    for relationship in relationships:
+        for person in [relationship.person, relationship.related_person]:
+            node = {
+                'id': person.id,
+                'label': person.__unicode__()
+            }
+
+            if node not in nodes:
+                nodes.append(node)
+
+        edge = {
+            'id': relationship.id,
+            'label': relationship.relationship.__unicode__(),
+            'source': relationship.person.id,
+            'target': relationship.related_person.id,
+        }
+
+        if edge not in edges:
+            edges.append(edge)
+
+    return {'nodes': nodes, 'edges': edges}
+
+
+def _get_relationships_and_persons(person, relationships, persons):
+    '''Recursive function that given a person returns two lists:
+    relationships - list of relationships linked to that person
+    persons - list of persons linked to that person via relationships
+    '''
+
+    if person in persons:
+        return relationships, persons
+
+    persons.append(person)
+
+    direct_rels = list(RelationshipAssertion.objects.filter(person=person))
+    indirect_rels = list(
+        RelationshipAssertion.objects.filter(related_person=person))
+
+    if not direct_rels and not indirect_rels:
+        return relationships, persons
+
+    if direct_rels:
+        relationships += direct_rels
+    if indirect_rels:
+        relationships += indirect_rels
+
+    # for rel in direct_rels:
+    #     _get_relationships_and_persons(
+    #         rel.related_person, relationships, persons)
+
+    # for rel in indirect_rels:
+    #     _get_relationships_and_persons(rel.person, relationships, persons)
+
+    return relationships, persons

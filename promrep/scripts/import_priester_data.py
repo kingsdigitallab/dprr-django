@@ -51,6 +51,11 @@ def add_post_assertion_to_person(person, row_dict, ssource):
                  "pa_date_end_uncertain",
                  "pa_date_start_uncertain", ]
 
+    unc_years_array = []
+
+    if row_dict['unc_pa_years']:
+        unc_years_array = [int(v) for v in row_dict['unc_pa_years'].split(',')]
+
     for field in pa_fields:
         if row_dict[field]:
             pa_dict[field.lstrip("pa_")] = row_dict[field]
@@ -58,7 +63,12 @@ def add_post_assertion_to_person(person, row_dict, ssource):
     if pa_dict["date_start"]:
         date_start = int(pa_dict["date_start"])
         if date_start > 0:
-            pa_dict["date_start"] = - date_start
+            date_start = - date_start
+
+        if unc_years_array:
+            date_start = min(date_start, min(unc_years_array))
+
+        pa_dict["date_start"] = date_start
 
     if pa_dict["date_end"]:
         date_end = int(pa_dict["date_end"])
@@ -420,5 +430,5 @@ def run():
     persons_dict = load_bio_data(bio_csv_fname)
     print(persons_dict)
 
-    fas_csv_fname = "promrep/scripts/data/ruepke/dprr_ruepke_fas-9.csv"
+    fas_csv_fname = "promrep/scripts/data/ruepke/dprr_ruepke_fas-10.csv"
     load_fastii_data(fas_csv_fname, persons_dict)

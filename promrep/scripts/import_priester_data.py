@@ -277,9 +277,6 @@ def get_or_create_person(person_name, persons_dict, secondary_source):
         "cognomen",
         "other_names",
         "re_number",
-        "filiation",
-        "patrician",
-        "patrician_uncertain",
     ]
 
     params_dict = {param: pdict[param] for param in params if param in pdict}
@@ -299,11 +296,25 @@ def get_or_create_person(person_name, persons_dict, secondary_source):
     elif p_arr.count() == 1:
         # found exactly one result - will create a new PA
         person = p_arr.first()
+
     else:
         # cannot create the postassertion
         # TODO: print error log
-        print("Plenty")
         return None
+
+    # extra info from Ruepke
+    if "patrician" in pdict:
+        person.patrician = True
+        person.save()
+
+    if "patrician_uncertain" in pdict:
+        person.patrician_uncertain = True
+        person.save()
+
+    # add filiation in case it's missing
+    if not person.filiation and "filiation" in pdict:
+        person.filiation = pdict["filiation"]
+        person.save()
 
     add_notes_fields_to_person(person, pdict, secondary_source)
     add_dates_to_person(person, pdict, secondary_source)

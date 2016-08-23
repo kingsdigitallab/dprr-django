@@ -6,7 +6,6 @@ var networkGraph = {
                     type: 'canvas'
                 },
                 settings: {
-                    defaultEdgeType: 'curvedArrow',
                     defaultNodeColor: '#607a7a',
 
                     minNodeSize: 1,
@@ -47,6 +46,17 @@ var networkGraph = {
                 sigma.plugins.dragNodes(s, s.renderers[0]);
 
                 s.refresh();
+
+                // configure the ForceLink algorithm
+                fa = sigma.layouts.configForceLink(s, {
+                    worker: true,
+                    autoStop: true,
+                    background: true,
+                    easing: 'cubicInOut'
+                });
+
+                // start the ForceLink algorithm
+                sigma.layouts.startForceLink();
             });
     }
 }

@@ -141,11 +141,10 @@ def get_relationships_network(request, pk):
 
 
 def _get_relationships_network(person):
-    relationships, _ = _get_relationships_and_persons(person, [], [])
-
     nodes = []
     edges = []
 
+    relationships = RelationshipAssertion.objects.filter(person=person)
     for relationship in relationships:
         for person in [relationship.person, relationship.related_person]:
             node = {
@@ -167,36 +166,3 @@ def _get_relationships_network(person):
             edges.append(edge)
 
     return {'nodes': nodes, 'edges': edges}
-
-
-def _get_relationships_and_persons(person, relationships, persons):
-    '''Recursive function that given a person returns two lists:
-    relationships - list of relationships linked to that person
-    persons - list of persons linked to that person via relationships
-    '''
-
-    if person in persons:
-        return relationships, persons
-
-    persons.append(person)
-
-    direct_rels = list(RelationshipAssertion.objects.filter(person=person))
-    indirect_rels = list(
-        RelationshipAssertion.objects.filter(related_person=person))
-
-    if not direct_rels and not indirect_rels:
-        return relationships, persons
-
-    if direct_rels:
-        relationships += direct_rels
-    if indirect_rels:
-        relationships += indirect_rels
-
-    # for rel in direct_rels:
-    #     _get_relationships_and_persons(
-    #         rel.related_person, relationships, persons)
-
-    # for rel in indirect_rels:
-    #     _get_relationships_and_persons(rel.person, relationships, persons)
-
-    return relationships, persons

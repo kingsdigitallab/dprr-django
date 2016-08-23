@@ -7,6 +7,7 @@ var networkGraph = {
                 },
                 settings: {
                     defaultNodeColor: '#607a7a',
+                    defaultEdgeType: 'arrow',
 
                     minNodeSize: 1,
                     maxNodeSize: 10,
@@ -23,6 +24,10 @@ var networkGraph = {
                 }
             },
             function(s) {
+                if (s.graph.nodes().length == 0) {
+                    $('#network-container').hide();
+                }
+
                 // puts nodes in a circle
                 s.graph.nodes().forEach(function(node, i, nodes) {
                     node.size = 3;

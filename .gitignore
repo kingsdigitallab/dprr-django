@@ -60,7 +60,7 @@ target/
 .babelrc
 local.py
 logs/
-node_modules
+node_modules/
 static/
 
 # Vagrant

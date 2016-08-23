@@ -85,5 +85,5 @@ var tooltipsConfig = {
             // Returns an HTML string:
             return Mustache.render(template, node);
         }
-    }];
+    }]
 };

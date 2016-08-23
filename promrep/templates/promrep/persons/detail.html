@@ -42,36 +42,91 @@
                     height: 600px;
                     margin: 10px;
                 }
-            </style>
-        </div>
 
-        <h2>Offices</h2>
-        <ul class="timeline no-bullet bottom-margin">
-            {% for pa in person.post_assertions.all %}
-            <li><span class="label radius{% if pa.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ pa.print_date | safe}}</span> <strong>{{ pa.office | title}} {% if pa.provinces %} <a href="#">{{ pa.print_provinces }}</a> {% endif %}</strong>
+                .sigma-tooltip {
+                  max-width: 400px;
+                  max-height: 280px;
+                  background-color: rgb(249, 247, 237);
+                  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+                  border-radius: 6px;
+              }
 
-                {% if pa.notes.count %}
-                <ul class="no-bullet">
-                    {% for note in pa.notes.all %}
-                    <li>{{note.text}} (in <em>{{note.secondary_source.abbrev_name}}</em>)</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
+              .sigma-tooltip-header {
+                  font-variant: small-caps;
+                  font-size: 120%;
+                  color: #437356;
+                  border-bottom: 1px solid #aac789;
+                  padding: 10px;
+              }
 
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
+              .sigma-tooltip-body {
+                  padding: 10px;
+              }
+
+              .sigma-tooltip-body th {
+                  color: #999;
+                  text-align: left;
+              }
+
+              .sigma-tooltip-footer {
+                  padding: 10px;
+                  border-top: 1px solid #aac789;
+              }
+
+              .sigma-tooltip > .arrow {
+                  border-width: 10px;
+                  position: absolute;
+                  display: block;
+                  width: 0;
+                  height: 0;
+                  border-color: transparent;
+                  border-style: solid;
+              }
+
+              .sigma-tooltip.top {
+                  margin-top: -12px;
+              }
+              .sigma-tooltip.top > .arrow {
+                  left: 50%;
+                  bottom: -10px;
+                  margin-left: -10px;
+                  border-top-color: rgb(249, 247, 237);
+                  border-bottom-width: 0;
+              }
+          </style>
+      </div>
+
+      <h2>Offices</h2>
+      <ul class="timeline no-bullet bottom-margin">
+        {% for pa in person.post_assertions.all %}
+        <li><span class="label radius{% if pa.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ pa.print_date | safe}}</span> <strong>{{ pa.office | title}} {% if pa.provinces %} <a href="#">{{ pa.print_provinces }}</a> {% endif %}</strong>
+
+            {% if pa.notes.count %}
+            <ul class="no-bullet">
+                {% for note in pa.notes.all %}
+                <li>{{note.text}} (in <em>{{note.secondary_source.abbrev_name}}</em>)</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+        </li>
+        {% endfor %}
+    </ul>
+</div>
 </div>
 
 {% endblock %}
 
 {% block footerscripts %}
 <script src="{% static 'vendor/linkurious.js/dist/sigma.min.js' %}"></script>
+<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.layouts.forceLink.min.js' %}"></script>
 <script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.parsers.json.min.js' %}"></script>
+<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.plugins.animate.min.js' %}"></script>
 <script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.plugins.dragNodes.min.js' %}"></script>
+<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.plugins.tooltips.min.js' %}"></script>
 <script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.renderers.edgeLabels.min.js' %}"></script>
 <script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.renderers.linkurious.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
 <script src="{% static 'javascripts/network.js' %}"></script>
 
 <script>

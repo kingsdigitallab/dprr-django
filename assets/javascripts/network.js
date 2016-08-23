@@ -70,8 +70,7 @@ var networkGraph = {
 
 var tooltipsConfig = {
     node: [{
-        show: 'hovers',
-        hide: 'hovers',
+        show: 'clickNode',
         cssClass: 'sigma-tooltip',
         position: 'top',
         //autoadjust: true,

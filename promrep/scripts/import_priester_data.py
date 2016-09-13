@@ -33,8 +33,9 @@ def clean_field(field, a_string):
 def add_post_assertion_to_person(person, row_dict, ssource):
     """Returns a PostAssertion object or None if unable to create it"""
 
-    # TODO: possible error source...
-    office, created = Office.objects.get_or_create(name=row_dict["office"])
+    office, created = Office.objects.get_or_create(
+        name=row_dict["office_abbrev"]
+    )
 
     pa_dict = {
         "office": office,
@@ -42,45 +43,22 @@ def add_post_assertion_to_person(person, row_dict, ssource):
         "secondary_source": ssource
     }
 
-    # TODO: quick hack to truncate long strings
-    row_dict["pa_date_source_text"] = row_dict["pa_date_source_text"][:1024]
+    # date_source_text    date_start  date_start_uncertain    date_end
+    # date_end_uncertain
 
-    pa_fields = ["pa_date_source_text",
-                 "pa_date_start",
-                 "pa_date_end",
-                 "pa_date_end_uncertain",
-                 "pa_date_start_uncertain", ]
+    pa_dict["date_source_text"] = row_dict['date_source_text']
 
-    unc_years_array = []
+    pa_dict["date_start"] = - int(row_dict['date_start'])
+    pa_dict["date_end"] = - int(row_dict['date_end'])
 
-    if row_dict['unc_pa_years']:
-        unc_years_array = [int(v) for v in row_dict['unc_pa_years'].split(',')]
+    pa_dict["date_start_uncertain"] = row_dict['date_start_uncertain']
+    pa_dict["date_end_uncertain"] = row_dict['date_end_uncertain']
 
-    for field in pa_fields:
-        if row_dict[field]:
-            pa_dict[field.lstrip("pa_")] = row_dict[field]
-
-    if pa_dict["date_start"]:
-        date_start = int(pa_dict["date_start"])
-        if date_start > 0:
-            date_start = - date_start
-
-        if unc_years_array:
-            date_start = min(date_start, min(unc_years_array))
-
-        pa_dict["date_start"] = date_start
-
-    if pa_dict["date_end"]:
-        date_end = int(pa_dict["date_end"])
-        if date_end > 0:
-            pa_dict["date_end"] = - date_end
-
-    if "uncertain" in row_dict["uncertain_postassertion"]:
-        pa_dict["uncertain"] = True
+    pa_dict["uncertain"] = row_dict['uncertain']
 
     pa = PostAssertion.objects.create(**pa_dict)
 
-    # TODO: return id?
+    # TODO: return try:?
     return pa.id
 
 
@@ -241,7 +219,8 @@ def load_bio_data(ifname):
             else:
                 person_dict["sex"] = Sex.objects.get(name="Male")
 
-            praenomen_str = row_dict.get('praenomen')
+            praenomen_orig = row_dict.get('praenomen')
+            praenomen_str = praenomen_orig
 
             if praenomen_str:
                 if "." not in praenomen_str:
@@ -262,63 +241,94 @@ def load_bio_data(ifname):
             if "Patric." in row_dict["patrician"]:
                 person_dict['patrician'] = True
 
-            key = row_dict["name_original"]
+            # will use either the ruepke number a tuple w/ names
+            key_1 = row_dict["ruepke_number"].strip("-")
 
-            persons_dict.update({key: person_dict})
+            key_2 = (
+                praenomen_orig.strip().strip('.'),
+                row_dict["nomen"],
+            )
+
+            if key_1:
+                persons_dict.update({key_1: person_dict})
+            else:
+                persons_dict.update({key_2: person_dict})
 
     return persons_dict
 
 
-def get_or_create_person(person_name, persons_dict, secondary_source):
-    """Returns a Person object
-    or None if unable to create
+def get_or_create_person(fas_row_dict, bio_dict, secondary_source):  # noqa
+    """Returns a Person object or None if unable to create
 
     need to check if the notes have already been added to the person object
     """
 
-    pdict = persons_dict.get(person_name, None)
+    praenomen = fas_row_dict["praenomen"].strip('-')
+    nomen = fas_row_dict["nomen"]
+    ruepke_number = fas_row_dict["ruepke_number"].strip('-').strip()
+    person_id = fas_row_dict["person_id"].strip('-').strip()
+
+    # flag indicates if person was created
+    created = False
+
+    if ruepke_number:
+        pdict = bio_dict[ruepke_number]
+    else:
+        pdict = bio_dict[(praenomen, nomen)]
 
     # when we cannot find info for the person
     if not pdict:
-        return None
+        return None, created
 
-    # these should be ignored as well
     if not pdict['nomen']:
-        return None
+        return None, created
 
-    # if a person is created we add the person_id to the pdict
-    # test if person exists; we start with at least the nomen
-    p_arr = Person.objects.filter()
-
-    params = [
-        "sex",
-        "praenomen",
-        "nomen",
-        "re_number",
-    ]
-
-    params_dict = {param: pdict[param] for param in params if param in pdict}
-
-    # for param in params:
-    #     if pdict[param]:
-    #         p_arr = p_arr.filter(**{param: pdict[param]})
-
-    p_arr = p_arr.filter(**params_dict)
-
-    if p_arr.count() == 0:
-        # did not find a person - will create a person and then a PA
-        # Person.objects.create()
-
-        person = Person.objects.create(**params_dict)
-
-    elif p_arr.count() == 1:
-        # found exactly one result - will create a new PA
-        person = p_arr.first()
-
+    person_id = int(person_id)
+    # most will already have a person_id
+    if person_id:
+        person = Person.objects.get(id=person_id)
     else:
-        # cannot create the postassertion
-        # TODO: print error log
-        return None
+        # if a person is created we add the person_id to the pdict
+        # test if person exists; we start with at least the nomen
+        p_arr = Person.objects.filter()
+
+        params = [
+            "sex",
+            "praenomen",
+            "nomen",
+            "re_number",
+        ]
+
+        params_dict = {param: pdict[param]
+                       for param in params if param in pdict}
+
+        # for param in params:
+        #     if pdict[param]:
+        #         p_arr = p_arr.filter(**{param: pdict[param]})
+
+        p_arr = p_arr.filter(**params_dict)
+
+        if p_arr.count() == 0:
+            # did not find a person - will create a person and then a PA
+            # Person.objects.create()
+
+            person = Person.objects.create(**params_dict)
+            created = True
+
+        elif p_arr.count() == 1:
+            # found exactly one result - will create a new PA
+            person = p_arr.first()
+
+        else:
+            # cannot create the postassertion
+            # TODO: print error log
+            return None, created
+
+    # also updates all RE numbers to follow the fastii file
+    if person.re_number != fas_row_dict["re"]:
+        person.re_number = fas_row_dict["re"]
+        person.save()
+        print("Updated RE for {}".format(person.id))
 
     # extra info from Ruepke
     if "patrician" in pdict:
@@ -346,7 +356,7 @@ def get_or_create_person(person_name, persons_dict, secondary_source):
     add_notes_fields_to_person(person, pdict, secondary_source)
     add_dates_to_person(person, pdict, secondary_source)
 
-    return person
+    return person, created
 
 
 def load_fastii_data(csv_fname, persons_dict):
@@ -362,63 +372,93 @@ def load_fastii_data(csv_fname, persons_dict):
         abbrev_name="Ruepke")
 
     fas_csv_cols = [
-        "name_original",
-        "name_lookup",
-        "missing",
-        "office",
-        "pa_date_source_text",
-        "pa_date_start",
-        "pa_date_start_uncertain",
-        "pa_date_end",
-        "pa_date_end_uncertain",
-        "pa_years",
-        "unc_pa_years",
-        "uncertain_postassertion",
+        "person_id",
+        "ruepke_number",
+        "secondary_source",
+        "post_assertion_note_1",
+        "praenomen",
+        "nomen",
+        "re",
+        "filiation",
+        "cognomen",
+        "other_names",
+        "office_abbrev",
+        "uncertain",
+        "date_source_text",
+        "date_start",
+        "date_start_uncertain",
+        "date_end",
+        "date_end_uncertain",
+        "tribe_1",
+        "tribe_secondary_source_1",
+        "tribe_notes_1",
+        "person_notes_1",
+        "province_1",
+        "province_uncertain_1",
+        "province_notes_1"
     ]
 
     # output csv file file
-    ocsv_fname = csv_fname.rstrip(".csv") + "-out.csv"
+    ocsv_fname = csv_fname.split("/")[-1].rstrip(".csv") + "-log.csv"
 
     # output file columns
-    ocsv_cols = ["pa_id", "person_id"] + fas_csv_cols
+    ocsv_cols = ["postassertion_id", "created_person"] + fas_csv_cols
 
     # open CSV files for reading and writing
     with open(csv_fname, 'rU') as csvfile, open(ocsv_fname, 'w') as ocsvfile:
 
         # sweep csv file
-        csv_line = csv.DictReader(csvfile, fieldnames=fas_csv_cols)
+        csv_line = csv.DictReader(csvfile,
+                                  fieldnames=fas_csv_cols,
+                                  dialect='excel',
+                                  delimiter=";")
         # skips first row
         csv_line.next()
 
         # writer for "log" file
-        csv_writer = csv.DictWriter(ocsvfile, fieldnames=ocsv_cols)
+        csv_writer = csv.DictWriter(
+            ocsvfile,
+            fieldnames=ocsv_cols,
+            extrasaction='ignore'
+        )
         csv_writer.writeheader()
 
         for row_dict in csv_line:
             pa_id = None
-            person_name = row_dict["name_original"]
+            created = False
 
-            if row_dict["name_lookup"]:
-                person_name = row_dict["name_lookup"]
+            # if row_dict["name_lookup"]:
+            #     person_name = row_dict["name_lookup"]
+
+            person = None
 
             # gets a person object or None
-            person = get_or_create_person(person_name, persons_dict, ssource)
+            try:
+                person, created = get_or_create_person(row_dict,
+                                                       persons_dict,
+                                                       ssource)
+
+            except Exception as e:
+                print e.__doc__
+                print e.message
 
             # and creates the PostAssertion
             if person:
-
-                # should write the id to the output file
                 pa_id = add_post_assertion_to_person(
                     person,
                     row_dict,
                     ssource)
 
                 # used to write to the output csv file
-                row_dict["pa_id"] = pa_id
+                row_dict["postassertion_id"] = pa_id
                 row_dict["person_id"] = person.id
 
+                if created:
+                    row_dict["created_person"] = person.id
+                    row_dict["person_id"] = ""
+
             else:
-                pass
+                print("Unable to create PostAssertion")
 
             csv_writer.writerow(row_dict)
 
@@ -428,7 +468,6 @@ def load_fastii_data(csv_fname, persons_dict):
 def run():
     bio_csv_fname = "promrep/scripts/data/ruepke/dprr_ruepke_bio-1.csv"
     persons_dict = load_bio_data(bio_csv_fname)
-    print(persons_dict)
 
-    fas_csv_fname = "promrep/scripts/data/ruepke/dprr_ruepke_fas-10.csv"
+    fas_csv_fname = "promrep/scripts/data/ruepke/RuepkePostsOutV1.csv"
     load_fastii_data(fas_csv_fname, persons_dict)

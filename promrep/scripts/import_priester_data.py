@@ -97,19 +97,40 @@ def add_dates_to_person(person, row_dict, ssource):
             dtype, created = DateType.objects.get_or_create(
                 name=row_dict["DateType_" + n])
 
+            uncertain = row_dict["DateUncertain_" + n]
+
             ddict = {
                 "person": person,
                 "value": date_str,
                 "date_type": dtype,
-                "uncertain": row_dict["DateUncertain_" + n],
+                "uncertain": uncertain,
                 "secondary_source": ssource,
                 "date_interval": interval
             }
 
-            di, created = DateInformation.objects.get_or_create(**ddict)
+            # if we already have a life date of the same type
+            # (birth (type 1) or death (type 2 or 4) or attested (type 3))
+            # and with the same date value and certainty,
+            # then don't add the new (repeated) life date record.
 
-            if created:
-                print("Added new date {} to person {}".format(di, person.id))
+            exc_dtypes = [DateType.objects.get(name='death'),
+                          DateType.objects.get(name='birth'),
+                          DateType.objects.get(name='attested')]
+
+            if dtype in exc_dtypes and DateInformation.objects.filter(
+                    person=person,
+                    date_type=dtype,
+                    uncertain=uncertain,
+                    value=date_str).count():
+
+                print "Did not create {} date for {}".format(
+                    dtype.name, person.id)
+
+            else:
+                di, created = DateInformation.objects.get_or_create(**ddict)
+
+                if created:
+                    print("Added date {} to person {}".format(di, person.id))
 
 
 def add_notes_fields_to_person(person, row_dict, ssource):

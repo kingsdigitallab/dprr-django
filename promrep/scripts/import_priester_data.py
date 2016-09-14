@@ -126,6 +126,17 @@ def add_dates_to_person(person, row_dict, ssource):
                 print "Did not create {} date for {}".format(
                     dtype.name, person.id)
 
+            # need to check violent death separately
+            elif dtype == DateType.objects.get(name='death')\
+                and DateInformation.objects.filter(
+                    person=person,
+                    date_type=DateType.objects.get(name='death - violent'),
+                    uncertain=uncertain,
+                    value=date_str).count():
+
+                print("Did not create date for {}; had violent death ".format(
+                    person.id))
+
             else:
                 di, created = DateInformation.objects.get_or_create(**ddict)
 

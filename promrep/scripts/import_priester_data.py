@@ -310,8 +310,8 @@ def get_or_create_person(fas_row_dict, bio_dict, secondary_source):  # noqa
 
         if p_arr.count() == 0:
             # did not find a person - will create a person and then a PA
-            # Person.objects.create()
-
+            # prefer to use the Fastii RE number
+            params_dict["re_number"] = fas_row_dict["re"]
             person = Person.objects.create(**params_dict)
             created = True
 
@@ -323,12 +323,6 @@ def get_or_create_person(fas_row_dict, bio_dict, secondary_source):  # noqa
             # cannot create the postassertion
             # TODO: print error log
             return None, created
-
-    # also updates all RE numbers to follow the fastii file
-    if person.re_number != fas_row_dict["re"]:
-        person.re_number = fas_row_dict["re"]
-        person.save()
-        print("Updated RE for {}".format(person.id))
 
     # extra info from Ruepke
     if "patrician" in pdict:
@@ -469,5 +463,5 @@ def run():
     bio_csv_fname = "promrep/scripts/data/ruepke/dprr_ruepke_bio-1.csv"
     persons_dict = load_bio_data(bio_csv_fname)
 
-    fas_csv_fname = "promrep/scripts/data/ruepke/RuepkePostsOutV1.csv"
+    fas_csv_fname = "promrep/scripts/data/ruepke/RuepkePostsOutV2.csv"
     load_fastii_data(fas_csv_fname, persons_dict)

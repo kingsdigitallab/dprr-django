@@ -215,24 +215,22 @@ def read_input_file(ifname):
             primary_references_str = row_dict[
                 'primary_source_refs'].strip()
 
-            # if text and primary sources are the same, then there's
-            # no need to create a new secondary source
-            ra_reference, created = \
-                RelationshipAssertionReference.objects.get_or_create(
-                    secondary_source=sec_source,
-                    extra_info=primary_references_str,
-                )
+            if primary_references_str:
+                ra_reference = \
+                    RelationshipAssertionReference.objects.create(
+                        secondary_source=sec_source,
+                        extra_info=primary_references_str,
+                    )
 
-            rel.references.add(ra_reference)
+                rel.references.add(ra_reference)
 
-            if created:
-                # only creates the PrimarySourceReferences if the
-                # RelAssertionRef was created
+                # create individual PrimarySourceReferences
+                # TODO: review create vs get_or_create
                 for psource in primary_references_str.split(","):
-                    primary_reference = PrimarySourceReference(
-                        content_object=ra_reference,
-                        text=psource.strip())
-                    primary_reference.save()
+                        primary_reference = PrimarySourceReference(
+                            content_object=ra_reference,
+                            text=psource.strip())
+                        primary_reference.save()
 
             # Upgrades and saves the row
             row_dict.update({"p1_id": p1.id,

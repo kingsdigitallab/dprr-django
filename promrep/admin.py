@@ -384,10 +384,12 @@ admin.site.register(PostAssertionNote, NoteAdmin)
 admin.site.register(PersonNote, NoteAdmin)
 
 
-class ProvinceAdmin(admin.ModelAdmin):
+class ProvinceAdmin(DjangoMpttAdmin):
+    readonly_fields = ('id', 'created', 'modified')
+    mptt_indent_field = "name"
+
     list_display = ('id', 'name', 'created', 'modified', )
     list_display_links = ('id', 'name', )
-    readonly_fields = ('id', 'created', 'modified')
 
     search_fields = ['id', 'name', ]
     fields = ('id', 'name', 'description')

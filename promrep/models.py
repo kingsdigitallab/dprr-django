@@ -537,13 +537,20 @@ class RelationshipType(TimeStampedModel):
 
 
 @with_author
-class Province(TimeStampedModel):
+class Province(MPTTModel, TimeStampedModel):
     name = models.CharField(max_length=256, unique=True)
     description = models.CharField(max_length=1024, blank=True)
+
+    parent = TreeForeignKey(
+        'self', null=True, blank=True, related_name='children')
 
     class Meta:
         verbose_name_plural = 'Provinces'
         verbose_name = 'Province'
+        ordering = ['tree_id', 'lft', 'name']
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
 
     def __unicode__(self):
         return self.name

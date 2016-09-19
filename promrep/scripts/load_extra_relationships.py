@@ -131,7 +131,7 @@ def create_or_update_person(person_idx, row_dict):  # noqa
     return person
 
 
-def read_input_file(ifname):
+def read_input_file(ifname):  # noqa
 
     file_basename = path.basename(ifname)
     file_basename = path.splitext(file_basename)[0]
@@ -193,41 +193,51 @@ def read_input_file(ifname):
                     abbrev_name=ssource_str
                 )
 
-            # create RelationshipAssertion
-            rel, created = RelationshipAssertion.objects.get_or_create(
-                person_id=p1.id,
-                related_person_id=p2.id,
-                relationship=rel_type,
-                uncertain=uncertain_flag,
-                secondary_source=sec_source,
-                relationship_number=rel_num)
+            ra_dict = {
+                "person_id": p1.id,
+                "related_person_id": p2.id,
+                "relationship": rel_type,
+                "uncertain": uncertain_flag,
+            }
 
-            if created:
-                print("Created new relationship with id={}".format(rel.id))
-
-                # The relationship assertion reference is only created
-                #   if it doesn't exist already.
-                primary_references_str = row_dict[
-                    'primary_source_refs'].strip()
-
-                if primary_references_str:
-                    ra_reference, created = \
-                        RelationshipAssertionReference.objects.get_or_create(
-                            secondary_source=sec_source,
-                            extra_info=primary_references_str,
-                        )
-                    rel.references.add(ra_reference)
-
-                    # create individual PrimarySourceReferences only if also
-                    # created the ra_ref
-                    if created:
-                        for psource in primary_references_str.split(","):
-                            primary_reference = PrimarySourceReference(
-                                content_object=ra_reference,
-                                text=psource.strip())
-                            primary_reference.save()
+            if len(RelationshipAssertion.objects.filter(**ra_dict)):
+                print("Duplicate relationship found: {}".format(ra_dict))
             else:
-                print("Relationship already existed with id={}".format(rel.id))
+                ra_dict["secondary_source"] = sec_source
+                ra_dict["relationship_number"] = rel_num
+
+                # create RelationshipAssertion
+                rel, created = RelationshipAssertion.objects.get_or_create(
+                    **ra_dict)
+
+                if created:
+                    print("Created new relationship with id={}".format(rel.id))
+
+                    # The relationship assertion reference is only created
+                    #   if it doesn't exist already.
+                    primary_references_str = row_dict[
+                        'primary_source_refs'].strip()
+
+                    if primary_references_str:
+                        ra_reference, created = \
+                            RelationshipAssertionReference.\
+                            objects.get_or_create(
+                                secondary_source=sec_source,
+                                extra_info=primary_references_str,
+                            )
+                        rel.references.add(ra_reference)
+
+                        # create individual PrimarySourceReferences only if
+                        # created the ra_ref
+                        if created:
+                            for psource in primary_references_str.split(","):
+                                primary_reference = PrimarySourceReference(
+                                    content_object=ra_reference,
+                                    text=psource.strip())
+                                primary_reference.save()
+                else:
+                    print("Relationship already existed with id={}".format(
+                        rel.id))
 
             # Upgrades and saves the row
             row_dict.update({"p1_id": p1.id,

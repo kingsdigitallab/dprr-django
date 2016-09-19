@@ -22,5 +22,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(rebuild_province_mptt)
+        migrations.RunPython(rebuild_province_mptt,
+                             migrations.RunPython.noop)
     ]

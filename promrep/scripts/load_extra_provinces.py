@@ -4,7 +4,7 @@ import csv
 from os import path
 
 from promrep.models import (
-    Province, PostAssertion, PostAssertionProvince
+    Province, PostAssertion, Office, PostAssertionProvince
 )
 
 ICSV_COLUMNS = ["post_id", "office_abbrev", "province"]
@@ -24,54 +24,57 @@ def read_input_file(ifname):  # noqa
 
         for row_dict in csvDict:
             post_id = int(row_dict["post_id"])
-            print post_id
+            pa = PostAssertion.objects.get(id=post_id)
 
-            try:
-                pa = PostAssertion.objects.get(id=post_id)
+            # only used if necessary to correct info
+            office_abbrev = row_dict.get("office_abbrev", "").strip()
 
-                # TODO: only used if necessary to correct info
-                # office_abbrev = row_dict.get("office_abbrev", "").strip()
+            if office_abbrev:
+                office_abbrev = office_abbrev.lower().strip(".").strip(",")
+                office_abbrev = office_abbrev + "."
 
-                # provinces are separated by commas,
-                # question mark indicates uncertainty
-                province_str = row_dict.get("province", "")
-                province_str = province_str.strip('"').strip("'")
+                office = Office.objects.get(abbrev_name__iexact=office_abbrev)
 
-                province_arr = [p.strip() for p in province_str.split(",")]
-                print province_arr
+                pa.office = office
+                pa.save()
+                print("Updated office for PostAssertion {}".format(pa.id))
 
-                for prov in province_arr:
-                    if "?" in prov:
-                        prov = prov.strip("?")
-                        unc = True
-                    else:
-                        unc = False
+            # provinces are separated by commas,
+            # question mark indicates uncertainty
+            province_str = row_dict.get("province", "")
+            province_str = province_str.strip('"').strip("'")
 
-                    print row_dict
+            province_arr = [p.strip() for p in province_str.split(",")]
 
-                    try:
-                        province = Province.objects.get(
-                            name__iexact=prov.lower()
-                        )
+            for prov in province_arr:
+                if "?" in prov:
+                    prov = prov.strip("?")
+                    unc = True
+                else:
+                    unc = False
 
-                        # if created:
-                        #     print("Created new province {}".format(province))
+                print row_dict
 
-                        pap, created = \
-                            PostAssertionProvince.objects.get_or_create(
-                                post_assertion=pa,
-                                province=province,
-                                uncertain=unc
-                            )
-                    except:
-                        print "missing_province: {}".format(prov)
+                try:
+                    province = Province.objects.get(
+                        name__iexact=prov.lower()
+                    )
+                except:
+                    province = Province(name=prov)
+                    province.save()
 
-            except:
-                print "missing_postassertion: {}".format(post_id)
+                    print("Created new province {}".format(province))
+
+                pap, created = \
+                    PostAssertionProvince.objects.get_or_create(
+                        post_assertion=pa,
+                        province=province,
+                        uncertain=unc
+                    )
 
 
 def run():
-    ifname = "promrep/scripts/data/ProvincesV2.csv"
+    ifname = "promrep/scripts/data/ProvincesV3.csv"
 
     print("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

@@ -24,53 +24,60 @@ def read_input_file(ifname):  # noqa
 
         for row_dict in csvDict:
             post_id = int(row_dict["post_id"])
-            pa = PostAssertion.objects.get(id=post_id)
 
-            # only used if necessary to correct info
-            office_abbrev = row_dict.get("office_abbrev", "").strip()
+            pa = None
+            try:
+                pa = PostAssertion.objects.get(id=post_id)
+            except:
+                print("PostAssertion not found {}".format(post_id))
 
-            if office_abbrev:
-                office_abbrev = office_abbrev.lower().strip(".").strip(",")
-                office_abbrev = office_abbrev + "."
+            if pa:
+                # only used if necessary to correct info
+                office_abbrev = row_dict.get("office_abbrev", "").strip()
 
-                office = Office.objects.get(abbrev_name__iexact=office_abbrev)
+                if office_abbrev:
+                    office_abbrev = office_abbrev.lower().strip(".").strip(",")
+                    office_abbrev = office_abbrev + "."
 
-                pa.office = office
-                pa.save()
-                print("Updated office for PostAssertion {}".format(pa.id))
+                    office = Office.objects.get(
+                        abbrev_name__iexact=office_abbrev)
 
-            # provinces are separated by commas,
-            # question mark indicates uncertainty
-            province_str = row_dict.get("province", "")
-            province_str = province_str.strip('"').strip("'")
+                    pa.office = office
+                    pa.save()
+                    print("Updated office for PostAssertion {}".format(pa.id))
 
-            province_arr = [p.strip() for p in province_str.split(",")]
+                # provinces are separated by commas,
+                # question mark indicates uncertainty
+                province_str = row_dict.get("province", "")
+                province_str = province_str.strip('"').strip("'")
 
-            for prov in province_arr:
-                if "?" in prov:
-                    prov = prov.strip("?")
-                    unc = True
-                else:
-                    unc = False
+                province_arr = [p.strip() for p in province_str.split(",")]
 
-                print row_dict
+                for prov in province_arr:
+                    if "?" in prov:
+                        prov = prov.strip("?")
+                        unc = True
+                    else:
+                        unc = False
 
-                try:
-                    province = Province.objects.get(
-                        name__iexact=prov.lower()
-                    )
-                except:
-                    province = Province(name=prov)
-                    province.save()
+                    print row_dict
 
-                    print("Created new province {}".format(province))
+                    try:
+                        province = Province.objects.get(
+                            name__iexact=prov.lower()
+                        )
+                    except:
+                        province = Province(name=prov)
+                        province.save()
 
-                pap, created = \
-                    PostAssertionProvince.objects.get_or_create(
-                        post_assertion=pa,
-                        province=province,
-                        uncertain=unc
-                    )
+                        print("Created new province {}".format(province))
+
+                    pap, created = \
+                        PostAssertionProvince.objects.get_or_create(
+                            post_assertion=pa,
+                            province=province,
+                            uncertain=unc
+                        )
 
 
 def run():

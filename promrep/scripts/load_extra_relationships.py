@@ -70,7 +70,11 @@ def create_or_update_person(person_idx, row_dict):  # noqa
     person = None
     prefix = "person_" + person_idx
 
-    person_id = int(row_dict[prefix + "_id"])
+    person_id_str = row_dict[prefix + "_id"]
+    if person_id_str is not "":
+        person_id = int(person_id_str)
+    else:
+        person_id = 0
 
     if row_dict[prefix + '_sex'].strip() == "F":
         sex = Sex.objects.get(name="Female")
@@ -110,6 +114,14 @@ def create_or_update_person(person_idx, row_dict):  # noqa
 
     # default value
     person = None
+
+    try:
+        person = Person.objects.get(id=person_id)
+    except:
+        if person_id != 0:
+            print("ERROR: Person with ID={} not in db".format(person_id))
+            # we'll simply create this person from scratch...
+            person_id = 0
 
     if not person_id:
         # only creates if person does not exist
@@ -250,7 +262,7 @@ def read_input_file(ifname):  # noqa
 
 
 def run():
-    ifname = "promrep/scripts/data/RelationshipsSampleFileV3.csv"
+    ifname = "promrep/scripts/data/NewRelationshipsOtherV1.csv"
 
     print("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

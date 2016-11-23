@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import re
 from os import path
 
 import unicodecsv as csv
@@ -86,7 +85,7 @@ def create_person(row_dict):
     person_dict.update(praenomen_dic)
 
     # cleans the remining person name fields
-    for field in ['nomen', 'cognomen', 'other_names']:
+    for field in ['nomen', 'cognomen', 'other_names', 'filiation']:
         field_string = row_dict.get(field)
 
         if field_string:
@@ -106,37 +105,63 @@ def create_person(row_dict):
     return person.id, created
 
 
+def get_sec_source_from_abbrev_str(ssource_str):
+
+    sec_source = None
+    # tests if sec_source already exists
+    slist = SecondarySource.objects.filter(abbrev_name=ssource_str)
+
+    if len(slist) == 1:
+        sec_source = slist.first()
+    else:
+        sec_source, cted = SecondarySource.objects.get_or_create(
+            name=ssource_str + " Descriptive name",
+            biblio=ssource_str + " Biblio",
+            abbrev_name=ssource_str
+        )
+
+    return sec_source
+
+
 def read_input_file(ifname):  # noqa
 
     file_basename = path.basename(ifname)
     file_basename = path.splitext(file_basename)[0]
+    log_fname = file_basename + "-log.csv"
 
     # log file with the ids of the objects created in the database
-    csv_log = csv.DictWriter(open("extra_posts.log", 'wb'),
-                             ["person_id", "person", "post_assertion"],
-                             dialect='excel',
-                             delimiter=";",
-                             extrasaction='ignore')
+    csv_log = csv.DictWriter(
+        open(log_fname, 'wb'),
+        ["post_assertion_id", "person_id_new"] + ICSV_COLUMNS,
+        dialect='excel',
+        delimiter=",",
+        extrasaction='ignore')
     csv_log.writeheader()
 
     with open(ifname, 'rU') as csvfile:
 
-        csvDict = csv.DictReader(csvfile,
-                                 fieldnames=ICSV_COLUMNS,
-                                 delimiter=";")
+        csvDict = csv.DictReader(csvfile, fieldnames=ICSV_COLUMNS)
 
         # skips header row
         csvDict.next()
 
         for row_dict in csvDict:
 
+            # tries to find teh person
             person_id = int(row_dict['person_id'])
+
+            try:
+                if person_id:
+                    Person.objects.get(id=person_id)
+            except:
+                print("ERROR: person id does not exist: {}".format(person_id))
+                person_id = 0
 
             if not person_id:
                 person_dict = {
                     "praenomen": row_dict["praenomen"],
                     "nomen": row_dict["nomen"],
-                    "re": row_dict["RE"],
+                    "re": row_dict["re"],
                     "filiation": row_dict["filiation"],
                     "cognomen": row_dict["cognomen"],
                     "other_names": row_dict["other_names"],
@@ -154,113 +179,99 @@ def read_input_file(ifname):  # noqa
 
             person = Person.objects.get(id=person_id)
 
-            # create the secondary sources
-            sec_source = None
+            # Secondary Source
             ssource_str = row_dict["secondary_source"]
+            sec_source = get_sec_source_from_abbrev_str(ssource_str)
 
-            slist = SecondarySource.objects.filter(
-                abbrev_name=ssource_str)
+            # office info
+            office, created = Office.objects.get_or_create(
+                name=row_dict.get("office_abbrev"))
 
-            if len(slist) == 1:
-                sec_source = slist.first()
-            else:
-                sec_source, cted = SecondarySource.objects.get_or_create(
-                    name=ssource_str + " Descriptive name",
-                    biblio=ssource_str + " Biblio",
-                    abbrev_name=ssource_str
+            print("Created new office {}".format(office))
+
+            office_uncertain = row_dict.get("office_uncertain", 0)
+
+            date_start = row_dict.get("date_start", None)
+
+            date_start_uncertain = False
+            if row_dict["date_start_uncertain"].strip():
+                date_start_uncertain = True
+
+            date_end = row_dict.get("date_end", None)
+
+            date_end_uncertain = False
+            if row_dict["date_end_uncertain"].strip():
+                date_end_uncertain = True
+
+            if person_id == 2173:
+                print "DEBUG>>> '{}' {}, '{}' {}".format(
+                    row_dict["date_start_uncertain"],
+                    date_start_uncertain,
+                    row_dict["date_end_uncertain"],
+                    date_end_uncertain)
+
+            date_source_text = row_dict.get("date_source_text", "")
+
+            post_assertion = PostAssertion(
+                person=person,
+                office=office,
+                uncertain=office_uncertain,
+                date_start=date_start,
+                date_start_uncertain=date_start_uncertain,
+                date_end=date_end,
+                date_end_uncertain=date_end_uncertain,
+                date_source_text=date_source_text,
+                secondary_source=sec_source
+            )
+
+            post_assertion.save()
+
+            # only adds the note to the post assertion
+            #    if there's text
+            pa_note_text = row_dict.get("post_assertion_note", "")
+            if pa_note_text:
+                pa_note = PostAssertionNote.objects.create(
+                    secondary_source=sec_source,
+                    text=pa_note_text
                 )
 
-            # add the tribe info
+                post_assertion.notes.add(pa_note)
+                post_assertion.save()
+
+            # Tribe info
             if row_dict['tribe']:
                 for tribe in row_dict['tribe'].split(" or "):
                     tribe_str = tribe.strip()
 
                     if tribe_str:
                         tribes = Tribe.objects.filter(name__iexact=tribe_str)
-
+#
                         if tribes.count() == 0:
                             tribe_obj = Tribe.objects.create(
                                 name=tribe_str, abbrev=tribe_str)
                         else:
                             tribe_obj = tribes.first()
 
-                        tribe_uncertain = row_dict["tribe_uncertain"]
+                        tribe_ssource_str = row_dict["tribe_secondary_source"]
+                        tribe_sec_source = get_sec_source_from_abbrev_str(
+                            tribe_ssource_str)
 
                         # only created if doesn't exist already
-                        if tribe_obj not in person.tribes.all():
-                            tr_assert, cr = \
-                                TribeAssertion.objects.get_or_create(
-                                    person=person,
-                                    tribe=tribe_obj,
-                                    uncertain=tribe_uncertain,
-                                    secondary_source=sec_source)
-
-            date_start_type = row_dict["date_start_type"].strip()
-            date_end_type = row_dict["date_end_type"].strip()
-            date_start = row_dict["date_start"].strip()
-            date_end = row_dict["date_end"].strip()
-            date_source_text = row_dict["date_source_text"].strip()
-
-            date_start_uncertain = True
-            if row_dict["date_start_uncertain"].strip() == "0":
-                date_start_uncertain = False
-
-            date_end_uncertain = True
-            if row_dict["date_end_uncertain"].strip() == "0":
-                date_end_uncertain = False
-
-            # creates a PostAssertion
-            if (date_start_type or date_end_type) == "Office":
-                if row_dict["post"].strip() == "0":
-                    office_name = row_dict['office_name'].strip()
-                    office_list = Office.objects.filter(
-                        name__iexact=office_name)
-
-                    if len(office_list):
-                        office = Office.objects.get(name__iexact=office_name)
-                    else:
-                        office, created = Office.objects.get_or_create(
-                            name=office_name)
-
-                    pa_assertion, created = \
-                        PostAssertion.objects.get_or_create(
+                        # if tribe_obj not in person.tribes.all():
+                        tr_assert, cr = TribeAssertion.objects.get_or_create(
                             person=person,
-                            office=office,
-                            secondary_source=sec_source,
-                            date_source_text=date_source_text,
-                            uncertain=row_dict['office_uncertain'],
-                            original_text=row_dict['original_text'],
-                            review_flag=row_dict['review_flag']
-                        )
+                            tribe=tribe_obj,
+                            secondary_source=tribe_sec_source)
 
-                    if date_start:
-                        pa_assertion.date_start = date_start
-                    if date_end:
-                        pa_assertion.date_end = date_end
+            row_dict.update({'person_id_new': person_id,
+                             'post_assertion_id': post_assertion.id})
+            csv_log.writerow(row_dict)
 
-                    pa_assertion.date_source_text = date_source_text
-                    pa_assertion.date_start_uncertain = date_start_uncertain
-                    pa_assertion.date_end_uncertain = date_end_uncertain
-
-                    # in the case of the post assertions, we can ignore the
-                    #   text after Nicolet Ref. XYZ.
-                    print row_dict["notes"]
-                    pa_txt = re.sub(
-                        r"(Nicolet\sRef\s[0-9]+\.).*", r"\1",
-                        row_dict["notes"])
-                    print pa_txt
-
-                    # adds the note to the post assertion
-                    pa_note = PostAssertionNote.objects.create(
-                        secondary_source=sec_source,
-                        text=pa_txt,)
-
-                    pa_assertion.notes.add(pa_note)
-                    pa_assertion.save()
+    print("Wrote log file \"{}\"".format(log_fname))
 
 
 def run():
-    ifname = "promrep/scripts/data/PostsFileV1.csv"
+    ifname = "promrep/scripts/data/PostsFileV5.csv"
 
     print("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

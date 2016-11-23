@@ -143,6 +143,37 @@ def create_or_update_person(person_idx, row_dict):  # noqa
     return person
 
 
+def get_sec_source_from_abbrev_str(ssource_str):
+
+    sec_source = None
+    ssource_str = ssource_str.strip()
+
+    # workaround to make sure source names match the db
+    if ssource_str == "Brennan":
+        ssource_str = "Brennan Praetors"
+    elif ssource_str == "Badian":
+        ssource_str = "Badian Consuls"
+
+    # tests if sec_source already exists
+    slist = SecondarySource.objects.filter(
+        abbrev_name__iexact=ssource_str.strip())
+
+    if len(slist) == 1:
+        sec_source = slist.first()
+    else:
+        sec_source, cted = SecondarySource.objects.get_or_create(
+            name=ssource_str + " Descriptive name",
+            biblio=ssource_str + " Biblio",
+            abbrev_name=ssource_str
+        )
+        if cted:
+            print("DEBUG>>CREATED SSOURCE: {} {}".format(
+                sec_source,
+                ssource_str))
+
+    return sec_source
+
+
 def read_input_file(ifname):  # noqa
 
     file_basename = path.basename(ifname)
@@ -152,8 +183,8 @@ def read_input_file(ifname):  # noqa
 
     # log file with the ids of the objects created in the database
     writer = csv.DictWriter(open(log_fname, 'wb'),
-                            ["person_1_id", "person_2_id",
-                                "relationshipassertion_id"],
+                            ["p1_id", "p2_id",
+                                "relationshipassertion_id"] + ICSV_COLUMNS,
                             dialect='excel',
                             extrasaction='ignore')
     writer.writeheader()
@@ -190,20 +221,9 @@ def read_input_file(ifname):  # noqa
             if marriage_no:
                 rel_num = int(marriage_no)
 
-            sec_source = None
-            ssource_str = row_dict["secondary_source"]
-
-            slist = SecondarySource.objects.filter(
-                abbrev_name=ssource_str)
-
-            if len(slist) == 1:
-                sec_source = slist.first()
-            else:
-                sec_source, cted = SecondarySource.objects.get_or_create(
-                    name=ssource_str + " Descriptive name",
-                    biblio=ssource_str + " Biblio",
-                    abbrev_name=ssource_str
-                )
+            print row_dict
+            ssource_str = row_dict["secondary_source"].strip()
+            sec_source = get_sec_source_from_abbrev_str(ssource_str)
 
             ra_dict = {
                 "person_id": p1.id,

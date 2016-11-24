@@ -282,7 +282,7 @@ def read_input_file(ifname):  # noqa
 
 
 def run():
-    ifname = "promrep/scripts/data/NewRelationshipsOtherV2.csv"
+    ifname = "promrep/scripts/data/NewRelationshipsOtherV3.csv"
 
     print("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

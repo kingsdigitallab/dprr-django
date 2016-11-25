@@ -159,9 +159,11 @@ def read_input_file(ifname):  # noqa
 
         for row_dict in csvDict:
             person_id = int(row_dict['person_id'])
+            print("DEBUG --> person_id {}".format(person_id)),
 
             try:
                 if person_id:
+                    # simply tries to check if the person exists...
                     Person.objects.get(id=person_id)
 
                 if not person_id:
@@ -261,14 +263,14 @@ def read_input_file(ifname):  # noqa
                 })
                 csv_log.writerow(row_dict)
 
-            except:
-                print("ERROR: person id does not exist: {}".format(person_id))
+            except Exception as e:
+                print("ERROR: {}".format(e))
 
     print("Wrote log file \"{}\"".format(log_fname))
 
 
 def run():
-    ifname = "promrep/scripts/data/LifeDataOtherSourcesV1.csv"
+    ifname = "promrep/scripts/data/LifeDataOtherSourcesV2.csv"
 
     print("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

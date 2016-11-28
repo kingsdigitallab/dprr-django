@@ -203,14 +203,28 @@ def read_input_file(ifname):  # noqa
             if row_dict["date_end_uncertain"].strip():
                 date_end_uncertain = True
 
-            if person_id == 2173:
-                print "DEBUG>>> '{}' {}, '{}' {}".format(
-                    row_dict["date_start_uncertain"],
-                    date_start_uncertain,
-                    row_dict["date_end_uncertain"],
-                    date_end_uncertain)
-
             date_source_text = row_dict.get("date_source_text", "")
+
+            # dates should be BC
+            if date_start:
+                try:
+                    date_start = int(date_start)
+                    if date_start > 0:
+                        date_start = -date_start
+                except:
+                    print("ERROR: Date '{}' is not an integer."
+                          .format(date_start))
+                    date_start = None
+
+            if date_end:
+                try:
+                    date_end = int(date_end)
+                    if date_end > 0:
+                        date_end = -date_end
+                except:
+                    print("ERROR: Date '{}' is not an integer."
+                          .format(date_end))
+                    date_end = None
 
             post_assertion = PostAssertion(
                 person=person,
@@ -261,7 +275,12 @@ def read_input_file(ifname):  # noqa
                         tr_assert, cr = TribeAssertion.objects.get_or_create(
                             person=person,
                             tribe=tribe_obj,
-                            secondary_source=tribe_sec_source)
+                        )
+
+                        # only updates the secondary source if empty
+                        if not tr_assert.secondary_source:
+                            tr_assert.secondary_source = tribe_sec_source
+                            tr_assert.save()
 
             row_dict.update({'person_id_new': person_id,
                              'post_assertion_id': post_assertion.id})
@@ -271,7 +290,7 @@ def read_input_file(ifname):  # noqa
 
 
 def run():
-    ifname = "promrep/scripts/data/PostsFileV5.csv"
+    ifname = "promrep/scripts/data/PostsFileV7.csv"
 
     print("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

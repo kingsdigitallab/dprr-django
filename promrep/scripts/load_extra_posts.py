@@ -277,13 +277,10 @@ def read_input_file(ifname):  # noqa
                             tribe=tribe_obj,
                         )
 
+                        # only updates the secondary source if empty
                         if not tr_assert.secondary_source:
                             tr_assert.secondary_source = tribe_sec_source
                             tr_assert.save()
-                        else:
-                            print("DEBUG: person already had tribe with "
-                                  "different secondary source {}! {}".format(
-                                      person_id, tr_assert.secondary_source))
 
             row_dict.update({'person_id_new': person_id,
                              'post_assertion_id': post_assertion.id})
@@ -293,7 +290,7 @@ def read_input_file(ifname):  # noqa
 
 
 def run():
-    ifname = "promrep/scripts/data/PostsFileV6.csv"
+    ifname = "promrep/scripts/data/PostsFileV7.csv"
 
     print("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

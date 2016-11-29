@@ -105,6 +105,68 @@ def create_person(row_dict):
     return person.id, created
 
 
+def get_praenomen_dict(praenomen_str):
+    # praenomen special case
+    # we initially clean the string, and then add the object to the dictionary
+
+    if praenomen_str:
+        if "." not in praenomen_str:
+            praenomen_str = praenomen_str + "."
+
+    praenomen_dict = clean_field('praenomen', praenomen_str)
+
+    try:
+        praenomen = Praenomen.objects.get(abbrev=praenomen_dict['praenomen'])
+    except Praenomen.DoesNotExist:
+        praenomen = Praenomen.objects.get(abbrev='-.')
+
+    praenomen_dict['praenomen'] = praenomen
+
+    return praenomen_dict
+
+
+def update_person_from_csv_dict_row(person, row_dict):
+    updated = False
+
+    # Updates person empty fields
+    # updates praenomen
+    praenomen_str = row_dict["praenomen"].replace(
+        "(", "").replace(")", "").strip("")
+
+    if person.praenomen.abbrev == "-.":
+        if praenomen_str not in ["-", ""]:
+            praenomen_dict = get_praenomen_dict(praenomen_str)
+            person.praenomen = praenomen_dict['praenomen']
+            person.praenomen_uncertain = praenomen_dict.get(
+                'praenomen_uncertain', False)
+
+            updated = True
+            print("DEBUG: Updated praenomen for person {}").format(person.id)
+
+    # check if the csv has extra info
+    for field in ["nomen", "filiation", "cognomen", "other_names"]:
+        fvalue = row_dict[field].strip()
+
+        if getattr(person, field) == "":
+            if fvalue != "":
+                setattr(person, field, fvalue)
+                updated = True
+                print("DEBUG: Updated field {} for person {}").format(
+                    field, person.id)
+
+    # re case
+    if person.re_number != "":
+        re_str = row_dict['re'].strip()
+        if re_str != "":
+            person.re_number = re_str
+            updated = True
+
+    if updated:
+        person.save()
+
+    return person, updated
+
+
 def get_sec_source_from_abbrev_str(ssource_str):
 
     sec_source = None
@@ -178,6 +240,8 @@ def read_input_file(ifname):  # noqa
                 print("Found Person: id={}".format(person_id))
 
             person = Person.objects.get(id=person_id)
+
+            person, updated = update_person_from_csv_dict_row(person, row_dict)
 
             # Secondary Source
             ssource_str = row_dict["secondary_source"]

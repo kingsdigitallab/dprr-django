@@ -10,6 +10,8 @@ from promrep.models import (
     StatusType
 )
 
+import csv
+
 
 def run():
     print("Adding Senator Status Assertions")
@@ -18,6 +20,17 @@ def run():
 
 
 def add_simple_senators():
+
+    log_fname = "senator_data.log"
+
+    csv_log = csv.DictWriter(
+        open(log_fname, 'wb'),
+        ["person", "statusassertion"],
+        dialect='excel',
+        delimiter=",",
+        extrasaction='ignore')
+    csv_log.writeheader()
+
     # This process affects each person who has a post assertion with a start
     # date after -180, for the following offices - quaestor, tribunis plebis,
     # aedilis (and subtypes), praetor (and subtypes), consul (and subtypes),
@@ -65,6 +78,7 @@ def add_simple_senators():
         print("Created new Status Assertion {}".format(sa))
 
         date_start, uncertain = compute_start_date(person)
+        date_end, uncertain = compute_end_date(person, all_offices)
 
 
 def compute_start_date(person):
@@ -72,7 +86,7 @@ def compute_start_date(person):
     """
 
     date_start = None
-    certain = True
+    uncertain = None
 
     aed_list = [o.name for o in Office.objects.get(
         name="aedilis").get_descendants(include_self=True)]
@@ -93,6 +107,7 @@ def compute_start_date(person):
     # senator post assertion = quaestor start date + 1, certainty = certain.
     if pa_list.exists():
         date_start = pa_list.first().date_start
+        uncertain = False
         print(date_start)
     else:
         pa_list = PostAssertion.objects.filter(
@@ -103,21 +118,21 @@ def compute_start_date(person):
         if pa_list.exists():
             # if the person has no quaestor post assertion
 
-            if pa_list.first.office in aed_list:
+            if pa_list.first().office in aed_list:
                 # earliest postassertion is aedile (and subtypes)
                 # start date of the senator post assertion is the start date of
                 # the aedileship - 2, certainty = uncertain
 
                 date_start = pa_list.first().date_start - 2
-                certain = False
+                uncertain = True
 
-            elif pa_list.first.office in pra_list:
+            elif pa_list.first().office in pra_list:
                 # earliest postassertion is praetor (and subtypes)
                 # start date of the senator post assertion is the start date of
                 # the praetorship - 2, certainty = uncertain
 
                 date_start = pa_list.first().date_start - 2
-                certain = False
+                uncertain = True
 
             else:
                 # earliest post assertion is consul (and subtypes)
@@ -125,6 +140,41 @@ def compute_start_date(person):
                 # the consulship - 5, certainty = uncertain
 
                 date_start = pa_list.first().date_start - 5
-                certain = False
+                uncertain = True
 
-    return date_start, certain
+    return date_start, uncertain
+
+
+def compute_end_date(person, all_offices_list):
+    #   The only time we can be sure that a person is no longer a senator
+    #   is when they are dead (all types !!), exiled or expelled.)
+
+    date_end = None
+    uncertain = None
+
+    date_types = ["death", "death - natural", "death - violent",
+                  "exile", "expelled from Senate", "extradited",
+                  "proscribed"]
+
+    dates = person.dateinformation_set.filter(
+        date_type__name__in=date_types).order_by('value')
+
+    if dates.exists():
+        # If the person has a life date of expelled or exiled or death or
+        #   death - violent, set the end date of the senator status assertion
+        #   to the earliest of these life dates, certainty = the same
+        #   certainty as the life date
+        date_end = dates.first().value
+        uncertain = dates.first().uncertain
+
+    else:
+        # Otherwise set end date to the latest end date of any of the offices
+        #   listed above including senator and subtypes, certainty = uncertain
+        pa_list = person.post_assertions.filter(
+            office__name__in=all_offices_list)
+        if pa_list.exists():
+            pa = pa_list.order_by('-date_end').first()
+            date_end = pa.date_end
+            uncertain = True
+
+    return date_end, uncertain

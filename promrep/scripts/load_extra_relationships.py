@@ -115,13 +115,26 @@ def create_or_update_person(person_idx, row_dict):  # noqa
     # default value
     person = None
 
-    try:
-        person = Person.objects.get(id=person_id)
-    except:
-        if person_id != 0:
+    if person_id != 0:
+        try:
+            person = Person.objects.get(id=person_id)
+        except:
             print("ERROR: Person with ID={} not in db".format(person_id))
             # we'll simply create this person from scratch...
             person_id = 0
+
+    else:
+        # cases where person_id = 0
+        # the person mught have been created before
+        p_list = Person.objects.filter(**p_dict)
+
+        if len(p_list) == 1:
+            person_id = p_list.first().id
+            print("DEBUG: found person with same info {}".format(p_dict))
+        elif len(p_list) == 0:
+            print("DEBUG: couldn't find any matches for {}".format(p_dict))
+        else:
+            print("DEBUG: found too many matches for {}".format(p_dict))
 
     if not person_id:
         # only creates if person does not exist
@@ -221,7 +234,6 @@ def read_input_file(ifname):  # noqa
             if marriage_no:
                 rel_num = int(marriage_no)
 
-            print row_dict
             ssource_str = row_dict["secondary_source"].strip()
             sec_source = get_sec_source_from_abbrev_str(ssource_str)
 

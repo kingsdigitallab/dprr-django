@@ -290,7 +290,7 @@ def read_input_file(ifname):  # noqa
 
 
 def run():
-    ifname = "promrep/scripts/data/PostsFileV7.csv"
+    ifname = "promrep/scripts/data/PostsFileV8.csv"
 
     print("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

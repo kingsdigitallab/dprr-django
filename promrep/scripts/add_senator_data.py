@@ -52,11 +52,12 @@ def add_simple_senators():
 
     # create Senator StatusAssertions
 
-    status_type = StatusType.objects.get_or_create(name="senator")
-    sec_source = SecondarySource.objects.get_or_create(name="DPRR Team")
+    status_type, created = StatusType.objects.get_or_create(name="senator")
+    sec_source, created = SecondarySource.objects.get_or_create(
+        name="DPRR Team")
 
     for person in person_list:
-        sa = StatusAssertion.objects.new(
+        sa = StatusAssertion(
             person=person,
             status=status_type,
             secondary_source=sec_source)
@@ -73,29 +74,57 @@ def compute_start_date(person):
     date_start = None
     certain = True
 
+    aed_list = [o.name for o in Office.objects.get(
+        name="aedilis").get_descendants(include_self=True)]
+    pra_list = [o.name for o in Office.objects.get(
+        name="praetor").get_descendants(include_self=True)]
+    con_list = [o.name for o in Office.objects.get(
+        name="consul").get_descendants(include_self=True)]
+
+    other_offices_list = aed_list + pra_list + con_list
+
+    # quaestors
     pa_list = PostAssertion.objects.filter(
         person=person,
         office__name='quaestor',
-        date_start__gte=-180)  # .order_by('year_start')
+        date_start__gte=-180).order_by('date_start')
 
     # If person has a quaestor post assertion, then set the start date of the
     # senator post assertion = quaestor start date + 1, certainty = certain.
     if pa_list.exists():
         date_start = pa_list.first().date_start
         print(date_start)
+    else:
+        pa_list = PostAssertion.objects.filter(
+            person=person,
+            office__name__in=other_offices_list,
+            date_start__gte=-180).order_by('date_start')
 
-    """
-    If the person has no quaestor post assertion, then set the start date
-      according to the following rules:
-    * If the earliest post assertion is for an office of aedile (and subtypes)
-     set the start date of the senator post assertion to the start date of
-     the aedileship - 2, certainty = uncertain
-    * If the earliest post assertion is for an office of praetor (and subtypes)
-     set the start date of the senator post assertion to the start date of
-     the praetorship - 2, certainty = uncertain
-     * If the earliest post assertion is for an office of consul (and subtypes)
-     set the start date of the senator post assertion to the start date of
-     the consulship - 5, certainty = uncertain
-    """
+        if pa_list.exists():
+            # if the person has no quaestor post assertion
+
+            if pa_list.first.office in aed_list:
+                # earliest postassertion is aedile (and subtypes)
+                # start date of the senator post assertion is the start date of
+                # the aedileship - 2, certainty = uncertain
+
+                date_start = pa_list.first().date_start - 2
+                certain = False
+
+            elif pa_list.first.office in pra_list:
+                # earliest postassertion is praetor (and subtypes)
+                # start date of the senator post assertion is the start date of
+                # the praetorship - 2, certainty = uncertain
+
+                date_start = pa_list.first().date_start - 2
+                certain = False
+
+            else:
+                # earliest post assertion is consul (and subtypes)
+                # start date of the senator post assertion to the start date of
+                # the consulship - 5, certainty = uncertain
+
+                date_start = pa_list.first().date_start - 5
+                certain = False
 
     return date_start, certain

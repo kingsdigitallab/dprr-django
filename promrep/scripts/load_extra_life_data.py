@@ -335,7 +335,7 @@ def read_input_file(ifname):  # noqa
 
 
 def run():
-    ifname = "promrep/scripts/data/LifeDataOtherSourcesV2.csv"
+    ifname = "promrep/scripts/data/LifeDataOtherSourcesV3.csv"
 
     print("Importing data from \"{}\"".format(ifname))
     read_input_file(ifname)

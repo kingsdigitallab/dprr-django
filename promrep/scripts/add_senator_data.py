@@ -16,20 +16,96 @@ import csv
 def run():
     print("Adding Senator Status Assertions")
 
-    add_simple_senators()
+    status_type, created = StatusType.objects.get_or_create(name="senator")
+    sec_source, created = SecondarySource.objects.get_or_create(
+        name="DPRR Team")
 
+    non_senator_offices_list = ['quaestor', 'tribunus plebis', 'aedilis',
+                                'praetor', 'consul', 'censor',
+                                'princeps senatus', ]
 
-def add_simple_senators():
+    # all offices EXCEPT senator and subtypes
+    non_senator_offices = []
+
+    for oname in non_senator_offices_list:
+        off = Office.objects.get(name=oname)
+        non_senator_offices += list(off.get_descendants(include_self=True))
+
+    print("Filtering {} different offices.".format(len(non_senator_offices)))
 
     log_fname = "senator_data.log"
+    with open(log_fname, 'wb') as ofile:
+        csv_log = csv.DictWriter(
+            ofile,
+            ["person", "statusassertion", "date_start", "date_end", "log"],
+            dialect='excel',
+            delimiter=",",
+            extrasaction='ignore')
+        csv_log.writeheader()
 
-    csv_log = csv.DictWriter(
-        open(log_fname, 'wb'),
-        ["person", "statusassertion"],
-        dialect='excel',
-        delimiter=",",
-        extrasaction='ignore')
-    csv_log.writeheader()
+        add_non_senator_officials(
+            csv_log,
+            status_type,
+            sec_source,
+            non_senator_offices)
+
+        add_senator_only_postassertions(
+            csv_log,
+            status_type,
+            sec_source,
+            non_senator_offices)
+
+    print("Wrote {}".format(log_fname))
+
+
+def add_senator_only_postassertions(csv_log,
+                                    status_type,
+                                    sec_source,
+                                    non_senator_offices):
+
+    senator_offices = Office.objects.get(
+        name='senator').get_descendants(include_self=True)
+
+    # If a person is listed with a senator post assertion but none of
+    #   the other offices in the list, then create a senator status assertion
+    #   with the same start and end date as the existing senator post assertion
+    only_senators = Person.objects.filter(
+        post_assertions__office__in=senator_offices
+    ).exclude(post_assertions__office__in=non_senator_offices,)
+
+    for person in only_senators:
+        sa = StatusAssertion(
+            person=person,
+            status=status_type,
+            secondary_source=sec_source,
+        )
+
+        # dates; need
+        sen_postassertions = person.post_assertions.order_by('date_start')
+
+        date_start = sen_postassertions.first().date_start
+        date_end = sen_postassertions.last().date_end
+        sa.date_start = date_start
+        sa.date_end = date_end
+        sa.save()
+
+        log_dict = {
+            'person': person.id,
+            'statusassertion': sa.id,
+            'date_start': date_start,
+            'date_end': date_end,
+            'log': 'senator, no other offices held'
+        }
+
+        csv_log.writerow(log_dict)
+
+    print("OSEN {}".format(only_senators.count()))
+
+
+def add_non_senator_officials(csv_log,
+                              status_type,
+                              sec_source,
+                              non_senator_offices):
 
     # This process affects each person who has a post assertion with a start
     # date after -180, for the following offices - quaestor, tribunis plebis,
@@ -40,50 +116,50 @@ def add_simple_senators():
     # If a person has post assertion as listed above except senator and its
     # subtypes, then create a senator status assertion
 
-    office_list = ['quaestor', 'tribunus plebis', 'aedilis',
-                   'praetor', 'consul', 'censor', 'princeps senatus',
-                   'senator']
-
-    all_offices = []
-
-    for oname in office_list:
-        off = Office.objects.get(name=oname)
-        all_offices += list(off.get_descendants(include_self=True))
-
-    print("Filtering {} different offices.".format(len(all_offices)))
-
-    print all_offices
+    print non_senator_offices
 
     person_list = Person.objects.filter(
-        post_assertions__office__in=all_offices,
+        post_assertions__office__in=non_senator_offices,
         post_assertions__date_start__gte=-180
-    ).exclude(
-        post_assertions__office=Office.objects.get(name='senator')
     ).distinct()
 
     print("Will add {} new Senator Status Assertions".format(len(person_list)))
 
     # create Senator StatusAssertions
 
-    status_type, created = StatusType.objects.get_or_create(name="senator")
-    sec_source, created = SecondarySource.objects.get_or_create(
-        name="DPRR Team")
-
     for person in person_list:
+        log_msg = "No senator post assertions; "
+
         sa = StatusAssertion(
             person=person,
             status=status_type,
             secondary_source=sec_source)
 
-        print("Created new Status Assertion {}".format(sa))
+        sa.save()
 
-        date_start, uncertain = compute_start_date(person)
-        date_end, uncertain = compute_end_date(person, all_offices)
+        date_start, date_start_uncertain, msg = compute_start_date(person)
+        log_msg += msg
+
+        date_end, date_end_uncertain, msg = compute_end_date(
+            person,
+            non_senator_offices)
+        log_msg += msg
+
+        log_dict = {
+            'person': person.id,
+            'statusassertion': sa.id,
+            'date_start': date_start,
+            'date_end': date_end,
+            'log': log_msg
+        }
+
+        csv_log.writerow(log_dict)
 
 
 def compute_start_date(person):
     """ Given a person, returns the start date and the uncertian flag
     """
+    log_message = ""
 
     date_start = None
     uncertain = None
@@ -98,17 +174,24 @@ def compute_start_date(person):
     other_offices_list = aed_list + pra_list + con_list
 
     # quaestors
-    pa_list = PostAssertion.objects.filter(
+    qua_pa_list = PostAssertion.objects.filter(
         person=person,
         office__name='quaestor',
         date_start__gte=-180).order_by('date_start')
 
+    # Eques Status Assertion end date
+    #   If senator status assertion has been created and a status assertion
+    #   of eques already exists, set the end date of the eques status assertion
+    #   to the year before the start date of the new senator status assertion.
+
+    log_message = "date_start: "
+
     # If person has a quaestor post assertion, then set the start date of the
     # senator post assertion = quaestor start date + 1, certainty = certain.
-    if pa_list.exists():
-        date_start = pa_list.first().date_start
+    if qua_pa_list.exists():
+        date_start = qua_pa_list.first().date_start
         uncertain = False
-        print(date_start)
+        log_message += "quaestor; "
     else:
         pa_list = PostAssertion.objects.filter(
             person=person,
@@ -125,6 +208,7 @@ def compute_start_date(person):
 
                 date_start = pa_list.first().date_start - 2
                 uncertain = True
+                log_message += "aedilis; "
 
             elif pa_list.first().office in pra_list:
                 # earliest postassertion is praetor (and subtypes)
@@ -133,6 +217,7 @@ def compute_start_date(person):
 
                 date_start = pa_list.first().date_start - 2
                 uncertain = True
+                log_message += "praetor; "
 
             else:
                 # earliest post assertion is consul (and subtypes)
@@ -141,8 +226,9 @@ def compute_start_date(person):
 
                 date_start = pa_list.first().date_start - 5
                 uncertain = True
+                log_message += "consul; "
 
-    return date_start, uncertain
+    return date_start, uncertain, log_message
 
 
 def compute_end_date(person, all_offices_list):
@@ -159,6 +245,8 @@ def compute_end_date(person, all_offices_list):
     dates = person.dateinformation_set.filter(
         date_type__name__in=date_types).order_by('value')
 
+    log_message = "date_end: "
+
     if dates.exists():
         # If the person has a life date of expelled or exiled or death or
         #   death - violent, set the end date of the senator status assertion
@@ -166,6 +254,7 @@ def compute_end_date(person, all_offices_list):
         #   certainty as the life date
         date_end = dates.first().value
         uncertain = dates.first().uncertain
+        log_message += "{}; ".format(dates.first().date_type.name)
 
     else:
         # Otherwise set end date to the latest end date of any of the offices
@@ -176,5 +265,6 @@ def compute_end_date(person, all_offices_list):
             pa = pa_list.order_by('-date_end').first()
             date_end = pa.date_end
             uncertain = True
+            log_message = "end date is date of last office held; "
 
-    return date_end, uncertain
+    return date_end, uncertain, log_message

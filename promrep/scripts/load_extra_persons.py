@@ -204,7 +204,7 @@ def read_input_file(ifname):  # noqa
                                 field, person.id)
 
                 # re case
-                if person.re_number != "":
+                if person.re_number == "":
                     re_str = row_dict['re'].strip()
                     if re_str != "":
                         person.re_number = re_str

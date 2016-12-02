@@ -244,9 +244,20 @@ def read_input_file(ifname):  # noqa
                                 TribeAssertion.objects.get_or_create(
                                     person=person,
                                     tribe=tribe_obj,
-                                    uncertain=tribe_uncertain,
-                                    secondary_source=tribe_sec_source,
-                                    notes=tribe_notes)
+                                )
+
+                            # only updates the secondary source if empty
+                            if not tr_assert.secondary_source:
+                                tr_assert.secondary_source = tribe_sec_source
+                                tr_assert.save()
+
+                            if not tr_assert.notes:
+                                tr_assert.notes = tribe_notes
+                                tr_assert.save()
+
+                            if not tr_assert.uncertain:
+                                tr_assert.uncertain = tribe_uncertain
+                                tr_assert.save()
 
                 row_dict.update({
                     'person_id_new': person_id

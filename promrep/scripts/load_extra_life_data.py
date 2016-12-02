@@ -183,8 +183,9 @@ def update_person_from_csv_dict_row(person, row_dict):
                     print("DEBUG: Updated field {} for person {}").format(
                         field, person.id)
 
-    # re case
-    if person.re_number != "":
+    # RE case
+    # only update if existing is empty
+    if person.re_number == "":
         re_str = row_dict['re'].strip()
         if re_str != "":
             person.re_number = re_str

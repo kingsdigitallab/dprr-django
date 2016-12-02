@@ -204,6 +204,7 @@ def read_input_file(ifname):  # noqa
                                 field, person.id)
 
                 # re case
+                #  only update if existing is empty
                 if person.re_number == "":
                     re_str = row_dict['re'].strip()
                     if re_str != "":

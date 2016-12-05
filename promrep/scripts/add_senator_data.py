@@ -9,7 +9,7 @@ from promrep.models import (
     Office, Person, PostAssertion, SecondarySource, StatusAssertion,
     StatusType
 )
-
+import datetime
 import csv
 
 
@@ -33,11 +33,22 @@ def run():
 
     print("Filtering {} different offices.".format(len(non_senator_offices)))
 
-    log_fname = "senator_data.log"
+    now = datetime.datetime.now()
+    date = now.strftime("%d_%B_%Y")
+    log_fname = "senator_data_log-{}.csv".format(date)
+
     with open(log_fname, 'wb') as ofile:
         csv_log = csv.DictWriter(
             ofile,
-            ["person", "statusassertion", "date_start", "date_end", "log"],
+            [
+                "person",
+                "statusassertion",
+                "date_start",
+                "date_start_uncertain",
+                "date_end",
+                "date_end_uncertain",
+                "log"
+            ],
             dialect='excel',
             delimiter=",",
             extrasaction='ignore')
@@ -149,7 +160,9 @@ def add_non_senator_officials(csv_log,
             'person': person.id,
             'statusassertion': sa.id,
             'date_start': date_start,
+            'date_start_uncertain': date_start_uncertain,
             'date_end': date_end,
+            'date_end_uncertain': date_end_uncertain,
             'log': log_msg
         }
 
@@ -166,12 +179,17 @@ def compute_start_date(person):
 
     aed_list = [o.name for o in Office.objects.get(
         name="aedilis").get_descendants(include_self=True)]
+
     pra_list = [o.name for o in Office.objects.get(
         name="praetor").get_descendants(include_self=True)]
+
     con_list = [o.name for o in Office.objects.get(
         name="consul").get_descendants(include_self=True)]
 
-    other_offices_list = aed_list + pra_list + con_list
+    tri_list = [o.name for o in Office.objects.get(
+        name="tribunus plebis").get_descendants(include_self=True)]
+
+    other_offices_list = aed_list + pra_list + con_list + tri_list
 
     # quaestors
     qua_pa_list = PostAssertion.objects.filter(
@@ -200,25 +218,33 @@ def compute_start_date(person):
 
         if pa_list.exists():
             # if the person has no quaestor post assertion
+            office_name = pa_list.first().office.name
+            log_message += "{}; ".format(office_name)
 
-            if pa_list.first().office in aed_list:
+            if office_name in aed_list:
                 # earliest postassertion is aedile (and subtypes)
                 # start date of the senator post assertion is the start date of
                 # the aedileship - 2, certainty = uncertain
 
                 date_start = pa_list.first().date_start - 2
                 uncertain = True
-                log_message += "aedilis; "
 
-            elif pa_list.first().office in pra_list:
+            elif office_name in tri_list:
+                # earliest post assertion is tribune of the plebs and subtypes
+                # start date of the senator status assertion to the start
+                # date of the tribunate of the plebs,
+                # certainty = the same as the post assertion
+
+                date_start = pa_list.first().date_start
+                uncertain = pa_list.first().date_start_uncertain
+
+            elif office_name in pra_list:
                 # earliest postassertion is praetor (and subtypes)
                 # start date of the senator post assertion is the start date of
                 # the praetorship - 2, certainty = uncertain
 
                 date_start = pa_list.first().date_start - 2
                 uncertain = True
-                log_message += "praetor; "
-
             else:
                 # earliest post assertion is consul (and subtypes)
                 # start date of the senator post assertion to the start date of
@@ -226,7 +252,6 @@ def compute_start_date(person):
 
                 date_start = pa_list.first().date_start - 5
                 uncertain = True
-                log_message += "consul; "
 
     return date_start, uncertain, log_message
 

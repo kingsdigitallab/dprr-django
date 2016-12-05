@@ -151,9 +151,7 @@ def add_non_senator_officials(csv_log,
         date_start, date_start_uncertain, msg = compute_start_date(person)
         log_msg += msg
 
-        date_end, date_end_uncertain, msg = compute_end_date(
-            person,
-            non_senator_offices)
+        date_end, date_end_uncertain, msg = compute_end_date(person)
         log_msg += msg
 
         log_dict = {
@@ -256,7 +254,7 @@ def compute_start_date(person):
     return date_start, uncertain, log_message
 
 
-def compute_end_date(person, all_offices_list):
+def compute_end_date(person):
     #   The only time we can be sure that a person is no longer a senator
     #   is when they are dead (all types !!), exiled or expelled.)
 
@@ -282,14 +280,12 @@ def compute_end_date(person, all_offices_list):
         log_message += "{}; ".format(dates.first().date_type.name)
 
     else:
-        # Otherwise set end date to the latest end date of any of the offices
-        #   listed above including senator and subtypes, certainty = uncertain
-        pa_list = person.post_assertions.filter(
-            office__name__in=all_offices_list)
+        # Otherwise set end date to the end date of the last known office
+        pa_list = person.post_assertions.filter()
         if pa_list.exists():
             pa = pa_list.order_by('-date_end').first()
             date_end = pa.date_end
             uncertain = True
-            log_message = "end date is date of last office held; "
+            log_message = "last known office; "
 
     return date_end, uncertain, log_message

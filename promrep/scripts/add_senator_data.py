@@ -203,10 +203,11 @@ def compute_start_date(person):
     log_message = "date_start: "
 
     # If person has a quaestor post assertion, then set the start date of the
-    # senator post assertion = quaestor start date + 1, certainty = certain.
+    # senator post assertion = quaestor start date + 1
+    # same certainty as postasserion
     if qua_pa_list.exists():
-        date_start = qua_pa_list.first().date_start
-        uncertain = False
+        date_start = qua_pa_list.first().date_start + 1
+        uncertain = qua_pa_list.first().date_start_uncertain
         log_message += "quaestor; "
     else:
         pa_list = PostAssertion.objects.filter(

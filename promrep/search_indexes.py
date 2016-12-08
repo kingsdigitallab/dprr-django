@@ -94,16 +94,16 @@ class PostAssertionIndex(AssertionIndex):
 
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
+
         return self.get_model().objects.all()
 
     def prepare_province(self, object):
         # hierarchical facet
 
-        #    provinces
-        return [re.sub(
-            r'[\?\[\]\(\)]',
-            '',
-            p.name.strip().capitalize()) for p in object.provinces.all()]
+        return [pp.name
+                for p in object.provinces.all()
+                for pp in p.get_ancestors(include_self=True)
+                ]
 
     def prepare_date(self, object):
         """range of dates for the post"""

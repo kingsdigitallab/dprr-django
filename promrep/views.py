@@ -1,10 +1,11 @@
 from django.core.urlresolvers import reverse
-from django.views.generic.detail import DetailView
 from django.http import JsonResponse
+from django.views.generic.detail import DetailView
 from haystack.generic_views import FacetedSearchView
 from promrep.forms import PromrepFacetedSearchForm
 from promrep.models import (
-    Office, Person, PostAssertion, RelationshipAssertion, StatusAssertion
+    Office, Person, PostAssertion, Province, RelationshipAssertion,
+    StatusAssertion
 )
 from promrep.solr_backends.solr_backend_field_collapsing import \
     GroupedSearchQuerySet
@@ -120,6 +121,11 @@ class PromrepFacetedSearchView(FacetedSearchView):
         context['office_fdict'] = dict(
             context['facets']['fields']['offices'])
 
+        context['province_list'] = Province.objects.all()
+        context['province_fdict'] = dict(
+            context['facets']['fields']['province'])
+
+        print context['province_fdict']
         return context
 
 

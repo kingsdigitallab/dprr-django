@@ -185,8 +185,9 @@ class GroupedSolrSearchBackend(SolrSearchBackend):
             *args, **kwargs)
 
         res.update(group_kwargs)
+
         if group_kwargs and 'sort' not in kwargs:
-            res['sort'] = 'score desc, item_id asc'
+            res['sort'] = 'score desc'
 
         return res
 

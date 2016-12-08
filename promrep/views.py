@@ -11,7 +11,7 @@ from promrep.solr_backends.solr_backend_field_collapsing import \
 
 
 class PromrepFacetedSearchView(FacetedSearchView):
-    facet_fields = ['eques', 'gender', 'nobilis', 'novus',
+    facet_fields = ['eques', 'gender', 'nobilis', 'novus', 'tribe',
                     'patrician', 'province', 'offices', 'life_date_types']
 
     autocomplete_facets = ['praenomen', 'nomen', 'cognomen', 're_number',

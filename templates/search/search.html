@@ -262,16 +262,9 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         <button data-dropdown="tribes" aria-controls="tribes" aria-expanded="false" class="secondary less-padding button expand dropdown">Tribes</button>
                                         <br>
                                         <ul id="tribes" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-                                            {% comment %} {% for term in facets.fields|get_item:"tribe" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
-                                            <li><a href="{% add_facet_link querydict " tribe " value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-                                            {% endif %} {% endwith %} {% endfor %} {% endcomment %}
-                                            <li><a href="#">Tribe 1 <span class="secondary label radius right">00</span></a></li>
-                                            <li><a href="#">Tribe 2 <span class="secondary label radius right">00</span></a></li>
-                                            <li><a href="#">Tribe 3 <span class="secondary label radius right">00</span></a></li>
-                                            <li><a href="#">Tribe 4 <span class="secondary label radius right">00</span></a></li>
-                                            <li><a href="#">Tribe 5 <span class="secondary label radius right">00</span></a></li>
-                                            <li><a href="#">Tribe 6 <span class="secondary label radius right">00</span></a></li>
-                                            <li><a href="#">Tribe 7 <span class="secondary label radius right">00</span></a></li>
+                                            {% for term in facets.fields|get_item:"tribe" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
+                                            <li><a href="{% add_facet_link querydict "tribe" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
+                                            {% endif %} {% endwith %} {% endfor %}
                                         </ul>
                                     </div>
                                     <div class="large-6 columns">

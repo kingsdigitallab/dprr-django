@@ -68,7 +68,7 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
         return re.sub(r'[\?\[\]\(\)]', '', cognomen)
 
     def prepare_tribe(self, object):
-        return list(set(object.person.tribes.values_list('name')))
+        return list(set(object.person.tribes.values_list('name', flat=True)))
 
 
 class PostAssertionIndex(AssertionIndex):
@@ -95,7 +95,7 @@ class PostAssertionIndex(AssertionIndex):
 
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
-        return self.get_model().objects.all()
+        return self.get_model().objects.filter(id__lte=1000)
 
     def prepare_province(self, object):
         return [re.sub(

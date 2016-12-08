@@ -72,9 +72,8 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
 
 class PostAssertionIndex(AssertionIndex):
-    item_id = indexes.CharField(model_attr='id')
-
-    text = indexes.CharField(document=True, use_template=True)
+    # TODO: is this needed?
+    # text = indexes.CharField(document=True, use_template=True)
 
     # TODO: remove; deprecated?
     office = indexes.FacetMultiValueField()
@@ -95,10 +94,12 @@ class PostAssertionIndex(AssertionIndex):
 
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
-
         return self.get_model().objects.all()
 
     def prepare_province(self, object):
+        # hierarchical facet
+
+        #    provinces
         return [re.sub(
             r'[\?\[\]\(\)]',
             '',
@@ -153,10 +154,6 @@ class PostAssertionIndex(AssertionIndex):
 
 
 class StatusAssertionIndex(AssertionIndex):
-    item_id = indexes.CharField(model_attr='id')
-
-    text = indexes.CharField(document=True, use_template=True)
-
     status = indexes.CharField(model_attr='status__name', faceted=True)
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
     date = MultiValueIntegerField(faceted=True)

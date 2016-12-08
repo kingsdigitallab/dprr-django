@@ -194,19 +194,23 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 <ul class="button-group">
                                     {% for term in facets.fields|get_item:"gender" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
                                     <li>
-                                        <a href="{% add_facet_link querydict "gender" value %}#search" class="button secondary less-padding">
-											{{ value }} <span class="label radius">{{ count }}</span>
+                                        <a href="{% add_facet_link querydict "gender" value %}#search" class="button secondary less-padding smaller-fontsize">
+											{{ value }}&nbsp;<span class="label radius">{{ count }}</span>
 										</a>
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %}
                                 </ul>
-                                <ul class="button-group even-5">
-                                    <li><a href="#" class="button secondary less-padding smaller-fontsize">Certain birth date <span class="label radius right">00</span></a></li>
-                                    <li><a href="#" class="button secondary less-padding smaller-fontsize">Natural death <span class="label radius right">00</span></a></li>
-                                    <li><a href="#" class="button secondary less-padding smaller-fontsize">Violent death <span class="label radius right">00</span></a></li>
-                                    <li><a href="#" class="button secondary less-padding smaller-fontsize">Exiled <span class="label radius right">00</span></a></li>
-                                    <li><a href="#" class="button secondary less-padding smaller-fontsize">Adopted <span class="label radius right">00</span></a></li>
+
+                                <ul>
+                                    {% for term in facets.fields|get_item:"life_dates_types" %} {% with value=term.0 count=term.1 %}
+                                    <li>
+                                        <a href="{% add_facet_link querydict "life_dates_types" value %}#search" class="button secondary less-padding smaller-fontsize">
+                                            {{ value|title }}&nbsp;<span class="label radius right">{{ count }}</span>
+                                        </a>
+                                    </li>
+                                    {% endwith %} {% endfor %}
                                 </ul>
+
                                 <h4>Class</h4>
                                 <ul class="button-group">
                                     {% comment %} {% for term in facets.fields|get_item:"eques" %} {% with value=term.0 count=term.1 %} {% if value == "true" %}

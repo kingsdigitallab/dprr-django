@@ -14,9 +14,8 @@ class MultiValueIntegerField(indexes.MultiValueField):
         return list([int(x) for x in value])
 
 
-class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
-    item_id = indexes.CharField(model_attr='id')
-
+class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
+    # generic class for shared functions
     text = indexes.CharField(document=True, use_template=True)
 
     person = indexes.CharField(model_attr='person', faceted=True)
@@ -25,6 +24,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     praenomen = indexes.CharField(
         model_attr='person__praenomen__abbrev', faceted=True, null=True)
     nomen = indexes.CharField(faceted=True, null=True)
+
     f = indexes.CharField(model_attr='person__f', faceted=True, null=True)
     n = indexes.CharField(model_attr='person__n', faceted=True, null=True)
 
@@ -47,6 +47,35 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     nobilis = indexes.BooleanField(
         model_attr='person__nobilis', default=False, faceted=True)
 
+    tribe = indexes.MultiValueField(faceted=True)
+
+    def get_model(self):
+        # implemented in the specific facets
+        pass
+
+    def prepare_nomen(self, object):
+        """The list of nomens to filter on should not show parentheses or
+        brackets."""
+
+        nomen = object.person.nomen.strip()
+        return re.sub(r'[\?\[\]\(\)]', '', nomen)
+
+    def prepare_cognomen(self, object):
+        """The list of cognomens to filter on should not show parentheses or
+        brackets."""
+
+        cognomen = object.person.cognomen.strip()
+        return re.sub(r'[\?\[\]\(\)]', '', cognomen)
+
+    def prepare_tribe(self, object):
+        return list(set(object.person.tribes.values_list('name')))
+
+
+class PostAssertionIndex(AssertionIndex):
+    item_id = indexes.CharField(model_attr='id')
+
+    text = indexes.CharField(document=True, use_template=True)
+
     # TODO: remove; deprecated?
     office = indexes.FacetMultiValueField()
     offices = indexes.FacetMultiValueField()
@@ -67,20 +96,6 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
-
-    def prepare_nomen(self, object):
-        """The list of nomens to filter on should not show parentheses or
-        brackets."""
-
-        nomen = object.person.nomen.strip()
-        return re.sub(r'[\?\[\]\(\)]', '', nomen)
-
-    def prepare_cognomen(self, object):
-        """The list of cognomens to filter on should not show parentheses or
-        brackets."""
-
-        cognomen = object.person.cognomen.strip()
-        return re.sub(r'[\?\[\]\(\)]', '', cognomen)
 
     def prepare_province(self, object):
         return [re.sub(
@@ -136,31 +151,10 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
                     'date_type__name', flat=True)))
 
 
-class StatusAssertionIndex(indexes.SearchIndex, indexes.Indexable):
+class StatusAssertionIndex(AssertionIndex):
     item_id = indexes.CharField(model_attr='id')
 
     text = indexes.CharField(document=True, use_template=True)
-
-    person = indexes.CharField(model_attr='person', faceted=True)
-    person_id = indexes.IntegerField(model_attr='person__id')
-
-    praenomen = indexes.CharField(
-        model_attr='person__praenomen__abbrev', faceted=True, null=True)
-    f = indexes.CharField(model_attr='person__f', faceted=True, null=True)
-    n = indexes.CharField(model_attr='person__n', faceted=True, null=True)
-    re_number = indexes.CharField(model_attr='person__re_number',
-                                  faceted=True, null=True)
-    other_names = indexes.CharField(
-        model_attr='person__other_names', faceted=True, null=True)
-
-    gender = indexes.CharField(
-        model_attr='person__sex__name', faceted=True, null=True)
-    patrician = indexes.BooleanField(
-        model_attr='person__patrician', default=False, faceted=True)
-    novus = indexes.BooleanField(
-        model_attr='person__novus', default=False, faceted=True)
-    nobilis = indexes.BooleanField(
-        model_attr='person__nobilis', default=False, faceted=True)
 
     status = indexes.CharField(model_attr='status__name', faceted=True)
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)

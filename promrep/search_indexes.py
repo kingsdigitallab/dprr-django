@@ -59,7 +59,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     # used to display the highest office achieved in the search page
     highest_office = indexes.CharField(faceted=False)
 
-    life_dates_types = indexes.MultiValueField(faceted=True)
+    life_date_types = indexes.MultiValueField(faceted=True)
 
     def get_model(self):
         return PostAssertion
@@ -130,7 +130,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
                 for off in olist
                 for o in off.get_ancestors(include_self=True)]
 
-    def prepare_life_dates_types(self, object):
+    def prepare_life_date_types(self, object):
         return list(set(
             object.person.dateinformation_set.all().values_list(
                     'date_type__name', flat=True)))

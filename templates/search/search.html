@@ -202,9 +202,9 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 </ul>
 
                                 <ul>
-                                    {% for term in facets.fields|get_item:"life_dates_types" %} {% with value=term.0 count=term.1 %}
+                                    {% for term in facets.fields|get_item:"life_date_types" %} {% with value=term.0 count=term.1 %}
                                     <li>
-                                        <a href="{% add_facet_link querydict "life_dates_types" value %}#search" class="button secondary less-padding smaller-fontsize">
+                                        <a href="{% add_facet_link querydict "life_date_types" value %}#search" class="button secondary less-padding smaller-fontsize">
                                             {{ value|title }}&nbsp;<span class="label radius right">{{ count }}</span>
                                         </a>
                                     </li>

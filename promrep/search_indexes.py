@@ -2,7 +2,7 @@ import re
 
 from haystack import indexes
 from promrep.forms import PromrepFacetedSearchForm
-from promrep.models import PostAssertion, StatusAssertion
+from promrep.models import PostAssertion, StatusAssertion, Office
 
 
 class MultiValueIntegerField(indexes.MultiValueField):
@@ -47,7 +47,10 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     nobilis = indexes.BooleanField(
         model_attr='person__nobilis', default=False, faceted=True)
 
+    # TODO: remove; deprecated?
     office = indexes.FacetMultiValueField()
+    offices = indexes.FacetMultiValueField()
+
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
 
     province = indexes.MultiValueField(faceted=True)
@@ -82,6 +85,17 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
             r'[\?\[\]\(\)]',
             '',
             p.name.strip().capitalize()) for p in object.provinces.all()]
+
+    def prepare_offices(self, object):
+        # flat list of different office ids the person held
+        olist = object.person.post_assertions.all().values_list(
+            'office__id', flat=True)
+        # list of Office objects
+        olist = [Office.objects.get(id=o) for o in list(set(olist))]
+
+        return [o.name
+                for off in olist
+                for o in off.get_ancestors(include_self=True)]
 
     def prepare_date(self, object):
         """range of dates for the post"""

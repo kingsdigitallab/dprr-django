@@ -12,7 +12,7 @@ from promrep.solr_backends.solr_backend_field_collapsing import \
 
 class PromrepFacetedSearchView(FacetedSearchView):
     facet_fields = ['eques', 'gender', 'nobilis', 'novus',
-                    'patrician', 'province', 'office']
+                    'patrician', 'province', 'offices']
 
     autocomplete_facets = ['praenomen', 'nomen', 'cognomen', 're_number',
                            'province', 'n', 'f', 'other_names']
@@ -40,7 +40,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
         return queryset
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):  # noqa
         context = super(
             PromrepFacetedSearchView, self).get_context_data(**kwargs)
         context['querydict'] = self.request.GET
@@ -118,7 +118,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
         # TODO: simplify?
         context['office_list'] = Office.objects.all()
         context['office_fdict'] = dict(
-            context['facets']['fields']['office'])
+            context['facets']['fields']['offices'])
 
         return context
 

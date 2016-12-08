@@ -19,8 +19,6 @@ from haystack.query import SearchQuerySet
 
 # Since there's no chance of this being portable (yet!) we'll import explicitly
 # rather than using the generic imports:
-
-
 class GroupedSearchQuery(SolrSearchQuery):
 
     def __init__(self, *args, **kwargs):

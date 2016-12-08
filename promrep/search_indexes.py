@@ -59,6 +59,8 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     # used to display the highest office achieved in the search page
     highest_office = indexes.CharField(faceted=False)
 
+    life_dates_types = indexes.MultiValueField(faceted=True)
+
     def get_model(self):
         return PostAssertion
 
@@ -85,17 +87,6 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
             r'[\?\[\]\(\)]',
             '',
             p.name.strip().capitalize()) for p in object.provinces.all()]
-
-    def prepare_offices(self, object):
-        # flat list of different office ids the person held
-        olist = object.person.post_assertions.all().values_list(
-            'office__id', flat=True)
-        # list of Office objects
-        olist = [Office.objects.get(id=o) for o in list(set(olist))]
-
-        return [o.name
-                for off in olist
-                for o in off.get_ancestors(include_self=True)]
 
     def prepare_date(self, object):
         """range of dates for the post"""
@@ -127,6 +118,22 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
         # Hierarquical facet
         return [o.name for o in object.office.get_ancestors(include_self=True)]
+
+    def prepare_offices(self, object):
+        # flat list of different office ids the person held
+        olist = object.person.post_assertions.all().values_list(
+            'office__id', flat=True)
+        # list of Office objects
+        olist = [Office.objects.get(id=o) for o in list(set(olist))]
+
+        return [o.name
+                for off in olist
+                for o in off.get_ancestors(include_self=True)]
+
+    def prepare_life_dates_types(self, object):
+        return list(set(
+            object.person.dateinformation_set.all().values_list(
+                    'date_type__name', flat=True)))
 
 
 class StatusAssertionIndex(indexes.SearchIndex, indexes.Indexable):

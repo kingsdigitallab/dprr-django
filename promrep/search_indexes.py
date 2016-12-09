@@ -2,7 +2,9 @@ import re
 
 from haystack import indexes
 from promrep.forms import PromrepFacetedSearchForm
-from promrep.models import PostAssertion, StatusAssertion, Office
+from promrep.models import (
+    Office, PostAssertion, RelationshipAssertion, StatusAssertion
+)
 
 
 class MultiValueIntegerField(indexes.MultiValueField):
@@ -181,3 +183,12 @@ class StatusAssertionIndex(AssertionIndex):
         res = range(start, end + 1, 1)
 
         return res
+
+
+class RelationshipAssertionIndex(AssertionIndex):
+    def get_model(self):
+        return RelationshipAssertion
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()

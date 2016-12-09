@@ -21,7 +21,9 @@ class PromrepFacetedSearchView(FacetedSearchView):
     form_class = PromrepFacetedSearchForm
     load_all = True
     queryset = GroupedSearchQuerySet().models(
-        PostAssertion, StatusAssertion).group_by('person_id')
+        PostAssertion,
+        StatusAssertion,
+        RelationshipAssertion).group_by('person_id')
 
     def get_initial(self):
         initial = super(PromrepFacetedSearchView, self).get_initial()

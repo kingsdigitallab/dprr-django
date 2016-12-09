@@ -201,70 +201,78 @@ def get_date_start(post_assertions):
     tri_list = [o.name for o in Office.objects.get(
         name="tribunus plebis").get_descendants(include_self=True)]
 
-    other_offices_list = aed_list + pra_list + con_list + tri_list
+    sen_list = [o.name for o in Office.objects.get(
+        name="senator").get_descendants(include_self=True)]
 
-    # quaestors
-    qua_pa_list = post_assertions.filter(
-        office__name='quaestor',
-        date_start__gte=-180).order_by('date_start')
+    qua_list = [o.name for o in Office.objects.get(
+        name="quaestor").get_descendants(include_self=True)]
+
+    offices_list = \
+        aed_list + pra_list + con_list + tri_list + sen_list + qua_list
 
     # If person has a quaestor post assertion, then set the start date of the
     # senator post assertion = quaestor start date + 1
     # same certainty as postasserion
-    if qua_pa_list.exists():
-        pa = qua_pa_list.first()
-        date_start = pa.date_start + 1
-        uncertain = pa.date_start_uncertain
-        office_name_log = "{} ({})".format(pa.office.name, pa.date_start)
-    else:
-        pa_list = post_assertions.filter(
-            office__name__in=other_offices_list,
-            date_start__gte=-180).order_by('date_start')
+    pa_list = post_assertions.filter(
+        office__name__in=offices_list,
+        date_start__gte=-180).order_by('date_start')
 
-        if pa_list.exists():
-            earliest_pa = pa_list.first()
+    if pa_list.exists():
 
-            # if the person has no quaestor post assertion
-            office_name = earliest_pa.office.name
+        earliest_pa = pa_list.first()
+        office_name = earliest_pa.office.name
+        # if the person has no quaestor post assertion
+        office_name_log = "{} ({})".format(
+            office_name,
+            earliest_pa.date_start
+        )
+
+        if office_name in sen_list:
+            date_start = earliest_pa.date_start
+            uncertain = earliest_pa.date_start_uncertain
             office_name_log = "{} ({})".format(
-                office_name,
-                earliest_pa.date_start
-            )
+                earliest_pa.office.name, earliest_pa.date_start)
 
-            if office_name in aed_list:
-                # earliest postassertion is aedile (and subtypes)
-                # start date of the senator post assertion is the start date of
-                # the aedileship - 2, certainty = uncertain
+        elif office_name in qua_list:
+            date_start = earliest_pa.date_start + 1
+            uncertain = earliest_pa.date_start_uncertain
+            office_name_log = "{} ({})".format(
+                earliest_pa.office.name, earliest_pa.date_start)
 
-                date_start = earliest_pa.date_start - 2
-                uncertain = True
+        elif office_name in aed_list:
+            # earliest postassertion is aedile (and subtypes)
+            # start date of the senator post assertion is the start date of
+            # the aedileship - 2, certainty = uncertain
 
-            elif office_name in tri_list:
-                # earliest post assertion is tribune of the plebs and subtypes
-                # start date of the senator status assertion to the start
-                # date of the tribunate of the plebs,
-                # certainty = the same as the post assertion
+            date_start = earliest_pa.date_start - 2
+            uncertain = True
 
-                date_start = earliest_pa.date_start
-                uncertain = earliest_pa.date_start_uncertain
+        elif office_name in tri_list:
+            # earliest post assertion is tribune of the plebs and subtypes
+            # start date of the senator status assertion to the start
+            # date of the tribunate of the plebs,
+            # certainty = the same as the post assertion
 
-            elif office_name in pra_list:
-                # earliest postassertion is praetor (and subtypes)
-                # start date of the senator post assertion is the start date of
-                # the praetorship - 2, certainty = uncertain
+            date_start = earliest_pa.date_start
+            uncertain = earliest_pa.date_start_uncertain
 
-                date_start = earliest_pa.date_start - 2
-                uncertain = True
-            elif office_name in con_list:
-                # earliest post assertion is consul (and subtypes)
-                # start date of the senator post assertion to the start date of
-                # the consulship - 5, certainty = uncertain
+        elif office_name in pra_list:
+            # earliest postassertion is praetor (and subtypes)
+            # start date of the senator post assertion is the start date of
+            # the praetorship - 2, certainty = uncertain
 
-                date_start = earliest_pa.date_start - 5
-                uncertain = True
-            else:
-                print("Couldn't start date: person {}, office {}".format(
-                    earliest_pa.person.id, office_name_log))
+            date_start = earliest_pa.date_start - 2
+            uncertain = True
+        elif office_name in con_list:
+            # earliest post assertion is consul (and subtypes)
+            # start date of the senator post assertion to the start date of
+            # the consulship - 5, certainty = uncertain
+
+            date_start = earliest_pa.date_start - 5
+            uncertain = True
+        else:
+            print("Couldn't start date: person {}, office {}".format(
+                earliest_pa.person.id, office_name_log))
 
     odict = {
         'date_start': date_start,

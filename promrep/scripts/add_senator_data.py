@@ -207,12 +207,20 @@ def get_date_start(post_assertions):
     qua_list = [o.name for o in Office.objects.get(
         name="quaestor").get_descendants(include_self=True)]
 
-    offices_list = \
-        aed_list + pra_list + con_list + tri_list + sen_list + qua_list
+    pri_list = [o.name for o in Office.objects.get(
+        name="princeps senatus").get_descendants(include_self=True)]
+
+    cen_list = [o.name for o in Office.objects.get(
+        name="censor").get_descendants(include_self=True)]
+
+    offices_list = aed_list + pra_list + con_list + tri_list + \
+        sen_list + qua_list + cen_list + pri_list
 
     # If person has a quaestor post assertion, then set the start date of the
     # senator post assertion = quaestor start date + 1
     # same certainty as postasserion
+
+    # TODO: add princeps senatus and censores
     pa_list = post_assertions.filter(
         office__name__in=offices_list,
         date_start__gte=-180).order_by('date_start')
@@ -271,8 +279,11 @@ def get_date_start(post_assertions):
             date_start = earliest_pa.date_start - 5
             uncertain = True
         else:
-            print("Couldn't start date: person {}, office {}".format(
-                earliest_pa.person.id, office_name_log))
+            date_start = earliest_pa.date_start - 5
+            uncertain = earliest_pa.date_start_uncertain
+
+            # print("Couldn't start date: person {}, office {}".format(
+            #     earliest_pa.person.id, office_name_log))
 
     odict = {
         'date_start': date_start,
@@ -299,7 +310,7 @@ def get_last_life_date(person):
                   "proscribed"]
 
     dates = person.dateinformation_set.filter(
-        date_type__name__in=date_types).order_by('-value')
+        date_type__name__in=date_types).order_by('value')
 
     if dates.exists():
         # If the person has a life date of expelled or exiled or death or

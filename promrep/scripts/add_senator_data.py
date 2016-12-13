@@ -143,7 +143,6 @@ def run():
                 # to compute the end date we want *any* office
                 last_pa = person.post_assertions.order_by('date_start').last()
                 date_last_office = last_pa.date_end
-                date_last_office_unc = last_pa.date_end_uncertain
 
                 use_last_life_date = False
 
@@ -158,7 +157,7 @@ def run():
                     sa.save()
                 else:
                     sa.date_end = date_last_office
-                    sa.date_end_uncertain = date_last_office_unc
+                    sa.date_end_uncertain = True
                     sa.save()
 
                 log_dict.update({

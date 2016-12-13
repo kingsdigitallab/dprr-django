@@ -556,6 +556,12 @@ class PersonAdmin(admin.ModelAdmin):
              ('re_number', 're_number_old', ),
          )}
          ),
+        ('Highest Office',
+         {'classes': ('grp-collapse grp-open',),
+          'fields': (
+             ('highest_office', 'highest_office_edited', ),
+         )}
+         ),
         ('Patrician', {
             'classes': ('grp-collapse grp-open',),
             'fields': (('patrician', 'patrician_uncertain'),

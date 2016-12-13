@@ -127,7 +127,6 @@ class PromrepFacetedSearchView(FacetedSearchView):
         context['province_fdict'] = dict(
             context['facets']['fields']['province'])
 
-        print context['province_fdict']
         return context
 
 

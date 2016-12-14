@@ -38,7 +38,7 @@ class StatusAssertionInline(admin.StackedInline):
     ordering = ('-date_start', '-date_end', )
     readonly_fields = ('id', )
 
-    fields = (('id', 'review_flag', ),
+    fields = (('id', 'review_flag', 'is_verified'),
               ('status', 'uncertain'),
               ('secondary_source', ),
               ('original_text', ),

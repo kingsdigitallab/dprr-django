@@ -325,6 +325,9 @@ class Person(TimeStampedModel):
 
     review_notes = models.TextField(blank=True)
 
+    highest_office = models.CharField(max_length=1024, blank=True, null=True)
+    highest_office_edited = models.BooleanField(default=False)
+
     class Meta:
         ordering = ['id', ]
 
@@ -655,6 +658,20 @@ class PostAssertion(TimeStampedModel):
         verbose_name="Review needed", default=False)
     review_flag.help_text = "Manual revision needed."
 
+    class Meta:
+        ordering = ['-date_end', '-date_start', ]
+
+    def __unicode__(self):
+
+        off = "No office"
+        if self.office:
+            off = self.office.__unicode__()
+
+        name = str(self.person.__unicode__()) + \
+            ": " + off + " " + self.print_date()
+        name = name + " (" + self.secondary_source.abbrev_name + ")"
+        return name
+
     def print_provinces(self):
         provinces = []
 
@@ -670,20 +687,6 @@ class PostAssertion(TimeStampedModel):
 
     print_provinces.allow_tags = True
     print_provinces.short_description = 'Provinces'
-
-    class Meta:
-        ordering = ['-date_end', '-date_start', ]
-
-    def __unicode__(self):
-
-        off = "No office"
-        if self.office:
-            off = self.office.__unicode__()
-
-        name = str(self.person.__unicode__()) + \
-            ": " + off + " " + self.print_date()
-        name = name + " (" + self.secondary_source.abbrev_name + ")"
-        return name
 
     def print_date(self):
         date_str = ""

@@ -197,9 +197,11 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
         # Requires, of course, that the form be bound.
         if self.is_bound:
             data = self.cleaned_data
-            print data
 
-            if 'date_from' in data or 'date_to' in data:
+            date_from = data.get('date_from', None)
+            date_to = data.get('date_to', None)
+
+            if date_from or date_to:
                 sqs = sqs.narrow(
                     'date:[{} TO {}]'.format(
                         data.get('date_from', self.MIN_DATE) or self.MIN_DATE,

@@ -56,5 +56,8 @@ In order to display them correctly all hierarchical model objects need to exist 
 
 #### Scripts and data 
 
-There are various scripts in the `promrep/scripts` folder. Most were written to be used only once to load data in the staging database. The data itself (usually `csv` files created by the project partners) is not stored on the server but, for provenance reasons, all scripts refer to the name/version of the data file thet was loaded into the database.
+There are various scripts in the `promrep/scripts` folder. Most were written to be used only once to load data in the staging database. The data itself (usually `csv` files created by the project partners) is not stored on the server but, for provenance reasons, all scripts refer to the name/version of the data file that was loaded into the database.
 
+##### Management Scripts
+
+* `add_highest_office`: script that adds the `highest_office` field to all persons on the database. The script checks if the `highest_office_edited` field is False and, if so, overwrites it.

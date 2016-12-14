@@ -65,14 +65,24 @@ class Command(BaseCommand):
             name='senator').get_descendants(include_self=True)
         sen_q = Q(post_assertions__office__in=senator_offices)
 
-        only_senators = Person.objects.filter(
-            sen_q).exclude(non_sen_q).distinct()
+        # we need to delete all existing StatusAssertions that have not been
+        # edited yet, and add new ones
 
-        # sen_and_other = \
-        # Person.objects.filter(sen_q).filter(non_sen_q).distinct()
-        # oth_senatorial = \
-        # Person.objects.exclude(sen_q).filter(non_sen_q).distinct()
-        all_senatorial = Person.objects.filter(sen_q | non_sen_q).filter(
+        # delete existing status assertions that are not marked "is_verified"
+        sad_list = StatusAssertion.objects.filter(
+            Q(is_verified=False) and Q(status__name='senator'))
+        print("Will delete {} Status Assertions".format(sad_list.count()))
+        for sad in sad_list:
+            sad.delete()
+
+        # we don't want to add any assertions to the persons that already have
+        # assertions marked as "is_verified"
+        persons = Person.objects.exclude(
+            Q(statusassertion__is_verified=True) and
+            Q(statusassertion__status__name='senator'))
+        only_senators = persons.filter(sen_q).exclude(non_sen_q).distinct()
+
+        all_senatorial = persons.filter(sen_q | non_sen_q).filter(
             post_assertions__date_start__gte=-180).distinct()
 
         print("Will add {} new St Assertions".format(all_senatorial.count()))
@@ -143,8 +153,8 @@ class Command(BaseCommand):
 
                     date_start_dict = get_date_start(pa_list)
 
-                    log_dict['first_qualifying_office'] = \
-                        date_start_dict['first_qualifying_office']
+                    log_dict['first_qualifying_office'] = date_start_dict[
+                        'first_qualifying_office']
 
                     sa.date_start = date_start_dict['date_start']
                     sa.date_start_uncertain = date_start_dict[

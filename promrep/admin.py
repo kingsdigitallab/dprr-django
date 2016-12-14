@@ -676,7 +676,7 @@ class StatusAssertionAdmin(admin.ModelAdmin):
     list_display = ('id', 'person', 'status',
                     'uncertain', 'date_start', 'date_end')
 
-    fields = (('id', 'review_flag', ),
+    fields = (('id', 'review_flag', 'is_verified'),
               ('person', 'status', ),
               ('secondary_source', 'uncertain',),
               ('original_text'),

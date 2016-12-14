@@ -799,6 +799,12 @@ class StatusAssertion(TimeStampedModel):
     review_flag = models.BooleanField(
         verbose_name="Review needed", default=False)
 
+    # flag indicates that the Status Assertion was manually verified
+    #   and should not be edited/deleted automatically
+    #   used by add_senator_data script to create new senator StatusAssertions
+    is_verified = models.BooleanField(
+        verbose_name="Editor Verified", default=False)
+
     # date information
     date_start = models.IntegerField(blank=True, null=True)
     date_start_uncertain = models.BooleanField(default=False)

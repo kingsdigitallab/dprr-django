@@ -168,7 +168,8 @@ class Command(BaseCommand):
                     use_last_life_date = False
 
                     if last_life_date:
-                        if last_life_date['last_life_date'] > date_last_office:
+                        if(last_life_date['last_life_date'] >=
+                           date_last_office):
                             use_last_life_date = True
 
                     if use_last_life_date:

@@ -32,27 +32,27 @@
     tags:
       -system
 
-  - name: apt | add node key
-    become: yes
-    apt_key:
-      url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-      state: present
-    tags:
-      - system
+  # - name: apt | add node key
+  #   become: yes
+  #   apt_key:
+  #     url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+  #     state: present
+  #   tags:
+  #     - system
 
-  - name: apt | add nodejs sources
-    apt_repository:
-      repo: 'deb https://deb.nodesource.com/node wheezy main'
-      state: present
-    tags:
-      - system
+  # - name: apt | add nodejs sources
+  #   apt_repository:
+  #     repo: 'deb https://deb.nodesource.com/node wheezy main'
+  #     state: present
+  #   tags:
+  #     - system
 
-  - name: apt | add nodejs sourcecode sources
-    apt_repository:
-      repo: 'deb-src https://deb.nodesource.com/node wheezy main'
-      state: present
-    tags:
-      - system
+  # - name: apt | add nodejs sourcecode sources
+  #   apt_repository:
+  #     repo: 'deb-src https://deb.nodesource.com/node wheezy main'
+  #     state: present
+  #   tags:
+  #     - system
 
   - name: apt | add postgresql key
     become: yes
@@ -74,7 +74,7 @@
       pkg: "{{item}}"
       state: installed
       update_cache: yes
-    with_items: system_packages
+    with_items: "{{system_packages}}"
     tags:
       - system
 

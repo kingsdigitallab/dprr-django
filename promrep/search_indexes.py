@@ -1,8 +1,11 @@
 import re
 
+from django.db.models import Q
 from haystack import indexes
 from promrep.forms import PromrepFacetedSearchForm
-from promrep.models import PostAssertion, StatusAssertion
+from promrep.models import (
+    Office, PostAssertion, RelationshipAssertion, StatusAssertion
+)
 
 
 class MultiValueIntegerField(indexes.MultiValueField):
@@ -14,9 +17,8 @@ class MultiValueIntegerField(indexes.MultiValueField):
         return list([int(x) for x in value])
 
 
-class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
-    item_id = indexes.CharField(model_attr='id')
-
+class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
+    # generic class for shared functions
     text = indexes.CharField(document=True, use_template=True)
 
     person = indexes.CharField(model_attr='person', faceted=True)
@@ -25,6 +27,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     praenomen = indexes.CharField(
         model_attr='person__praenomen__abbrev', faceted=True, null=True)
     nomen = indexes.CharField(faceted=True, null=True)
+
     f = indexes.CharField(model_attr='person__f', faceted=True, null=True)
     n = indexes.CharField(model_attr='person__n', faceted=True, null=True)
 
@@ -47,21 +50,11 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     nobilis = indexes.BooleanField(
         model_attr='person__nobilis', default=False, faceted=True)
 
-    office = indexes.FacetMultiValueField()
-    uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
-
-    province = indexes.MultiValueField(faceted=True)
-    date = MultiValueIntegerField(faceted=True)
-
-    # used to display the highest office achieved in the search page
-    highest_office = indexes.CharField(faceted=False)
+    tribe = indexes.MultiValueField(faceted=True)
 
     def get_model(self):
-        return PostAssertion
-
-    def index_queryset(self, using=None):
-        """Used when the entire index for model is updated."""
-        return self.get_model().objects.all()
+        # implemented in the specific facets
+        pass
 
     def prepare_nomen(self, object):
         """The list of nomens to filter on should not show parentheses or
@@ -77,11 +70,43 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         cognomen = object.person.cognomen.strip()
         return re.sub(r'[\?\[\]\(\)]', '', cognomen)
 
+    def prepare_tribe(self, object):
+        return list(set(object.person.tribes.values_list('name', flat=True)))
+
+
+class PostAssertionIndex(AssertionIndex):
+    # TODO: is this needed?
+    # text = indexes.CharField(document=True, use_template=True)
+
+    # TODO: remove; deprecated?
+    office = indexes.FacetMultiValueField()
+    offices = indexes.FacetMultiValueField()
+
+    uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
+
+    province = indexes.MultiValueField(faceted=True)
+    date = MultiValueIntegerField(faceted=True)
+
+    # used to display the highest office achieved in the search page
+    highest_office = indexes.CharField(faceted=False)
+
+    life_date_types = indexes.MultiValueField(faceted=True)
+
+    def get_model(self):
+        return PostAssertion
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+
+        return self.get_model().objects.all()
+
     def prepare_province(self, object):
-        return [re.sub(
-            r'[\?\[\]\(\)]',
-            '',
-            p.name.strip().capitalize()) for p in object.provinces.all()]
+        # hierarchical facet
+
+        return [pp.name
+                for p in object.provinces.all()
+                for pp in p.get_ancestors(include_self=True)
+                ]
 
     def prepare_date(self, object):
         """range of dates for the post"""
@@ -114,33 +139,32 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         # Hierarquical facet
         return [o.name for o in object.office.get_ancestors(include_self=True)]
 
+    def prepare_offices(self, object):
+        # we don't want any senator post assertions
+        # these should all be recorded as Status assertions instead
+        #      see: https://jira.dighum.kcl.ac.uk/browse/DPRR-256
 
-class StatusAssertionIndex(indexes.SearchIndex, indexes.Indexable):
-    item_id = indexes.CharField(model_attr='id')
+        senator_offices = Office.objects.get(
+            name='senator').get_descendants(include_self=True)
+        sen_q = Q(office__in=senator_offices)
 
-    text = indexes.CharField(document=True, use_template=True)
+        # flat list of different office ids the person held
+        olist = object.person.post_assertions.exclude(sen_q).values_list(
+            'office__id', flat=True)
+        # list of Office objects
+        olist = [Office.objects.get(id=o) for o in list(set(olist))]
 
-    person = indexes.CharField(model_attr='person', faceted=True)
-    person_id = indexes.IntegerField(model_attr='person__id')
+        return [o.name
+                for off in olist
+                for o in off.get_ancestors(include_self=True)]
 
-    praenomen = indexes.CharField(
-        model_attr='person__praenomen__abbrev', faceted=True, null=True)
-    f = indexes.CharField(model_attr='person__f', faceted=True, null=True)
-    n = indexes.CharField(model_attr='person__n', faceted=True, null=True)
-    re_number = indexes.CharField(model_attr='person__re_number',
-                                  faceted=True, null=True)
-    other_names = indexes.CharField(
-        model_attr='person__other_names', faceted=True, null=True)
+    def prepare_life_date_types(self, object):
+        return list(set(
+            object.person.dateinformation_set.all().values_list(
+                    'date_type__name', flat=True)))
 
-    gender = indexes.CharField(
-        model_attr='person__sex__name', faceted=True, null=True)
-    patrician = indexes.BooleanField(
-        model_attr='person__patrician', default=False, faceted=True)
-    novus = indexes.BooleanField(
-        model_attr='person__novus', default=False, faceted=True)
-    nobilis = indexes.BooleanField(
-        model_attr='person__nobilis', default=False, faceted=True)
 
+class StatusAssertionIndex(AssertionIndex):
     status = indexes.CharField(model_attr='status__name', faceted=True)
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
     date = MultiValueIntegerField(faceted=True)
@@ -168,3 +192,13 @@ class StatusAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         res = range(start, end + 1, 1)
 
         return res
+
+
+class RelationshipAssertionIndex(AssertionIndex):
+
+    def get_model(self):
+        return RelationshipAssertion
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()

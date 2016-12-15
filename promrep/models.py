@@ -325,43 +325,51 @@ class Person(TimeStampedModel):
 
     review_notes = models.TextField(blank=True)
 
+    highest_office = models.CharField(max_length=1024, blank=True, null=True)
+    highest_office_edited = models.BooleanField(default=False)
+
     class Meta:
         ordering = ['id', ]
 
     def __unicode__(self):  # noqa
-        name = ""
+        name_l = []
 
-        # only show praenomen for men
+        # TODO: only showing praenomen for men
         if self.sex.name == "Male":
 
             if self.praenomen:
-                name = self.praenomen.abbrev
+                prae_str = self.praenomen.abbrev
 
                 if self.alt_praenomen:
-                    name = name + " (or " + self.alt_praenomen.abbrev + ")"
+                    prae_str += " (or {})".format(self.alt_praenomen.abbrev)
                 elif self.praenomen_uncertain:
-                    name = name + "?"
+                    prae_str += "?"
+
+                if prae_str.strip():
+                    name_l.append(prae_str)
 
         if self.nomen:
-            name = name + ' ' + self.nomen
+            name_l.append(self.nomen)
 
         if self.re_number:
-            name = name + ' ' + '(' + self.re_number + ')'
+            name_l.append("({})".format(self.re_number))
 
         if self.filiation:
             if self.filiation not in ['- f. - n.', '- f.', '- n.']:
-                name = name + ' ' + self.filiation
+                name_l.append("{}".format(self.filiation))
 
-        for t in self.tribes.all():
-            name = name + ' ' + t.abbrev
+        if self.tribeassertion_set.exists():
+            name_l += ['{}{}'.format(ta.tribe.abbrev,
+                                     '?' if ta.uncertain else '')
+                       for ta in self.tribeassertion_set.all()]
 
         if self.cognomen:
-            name = name + ' ' + self.cognomen
+            name_l.append(self.cognomen)
 
         if self.other_names:
-            name = name + ' ' + self.other_names
+            name_l.append(self.other_names)
 
-        return name.strip()
+        return " ".join(name_l)
 
     @property
     def f(self):
@@ -418,8 +426,7 @@ class TribeAssertion(TimeStampedModel):
         verbose_name = 'Tribe'
 
     def __unicode__(self):
-        return u'{}{}'.format(
-            self.tribe.abbrev, ' ?' if self.uncertain else '')
+        return u'{}{}'.format(self.tribe.abbrev, '?' if self.uncertain else '')
 
 
 @with_author
@@ -537,13 +544,20 @@ class RelationshipType(TimeStampedModel):
 
 
 @with_author
-class Province(TimeStampedModel):
+class Province(MPTTModel, TimeStampedModel):
     name = models.CharField(max_length=256, unique=True)
     description = models.CharField(max_length=1024, blank=True)
+
+    parent = TreeForeignKey(
+        'self', null=True, blank=True, related_name='children')
 
     class Meta:
         verbose_name_plural = 'Provinces'
         verbose_name = 'Province'
+        ordering = ['tree_id', 'lft', 'name']
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
 
     def __unicode__(self):
         return self.name
@@ -644,6 +658,20 @@ class PostAssertion(TimeStampedModel):
         verbose_name="Review needed", default=False)
     review_flag.help_text = "Manual revision needed."
 
+    class Meta:
+        ordering = ['-date_end', '-date_start', ]
+
+    def __unicode__(self):
+
+        off = "No office"
+        if self.office:
+            off = self.office.__unicode__()
+
+        name = str(self.person.__unicode__()) + \
+            ": " + off + " " + self.print_date()
+        name = name + " (" + self.secondary_source.abbrev_name + ")"
+        return name
+
     def print_provinces(self):
         provinces = []
 
@@ -659,20 +687,6 @@ class PostAssertion(TimeStampedModel):
 
     print_provinces.allow_tags = True
     print_provinces.short_description = 'Provinces'
-
-    class Meta:
-        ordering = ['-date_end', '-date_start', ]
-
-    def __unicode__(self):
-
-        off = "No office"
-        if self.office:
-            off = self.office.__unicode__()
-
-        name = str(self.person.__unicode__()) + \
-            ": " + off + " " + self.print_date()
-        name = name + " (" + self.secondary_source.abbrev_name + ")"
-        return name
 
     def print_date(self):
         date_str = ""
@@ -784,6 +798,12 @@ class StatusAssertion(TimeStampedModel):
 
     review_flag = models.BooleanField(
         verbose_name="Review needed", default=False)
+
+    # flag indicates that the Status Assertion was manually verified
+    #   and should not be edited/deleted automatically
+    #   used by add_senator_data script to create new senator StatusAssertions
+    is_verified = models.BooleanField(
+        verbose_name="Editor Verified", default=False)
 
     # date information
     date_start = models.IntegerField(blank=True, null=True)

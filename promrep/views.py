@@ -1,18 +1,19 @@
 from django.core.urlresolvers import reverse
-from django.views.generic.detail import DetailView
 from django.http import JsonResponse
+from django.views.generic.detail import DetailView
 from haystack.generic_views import FacetedSearchView
 from promrep.forms import PromrepFacetedSearchForm
 from promrep.models import (
-    Office, Person, PostAssertion, RelationshipAssertion, StatusAssertion
+    Office, Person, PostAssertion, Province, RelationshipAssertion,
+    StatusAssertion
 )
 from promrep.solr_backends.solr_backend_field_collapsing import \
     GroupedSearchQuerySet
 
 
 class PromrepFacetedSearchView(FacetedSearchView):
-    facet_fields = ['eques', 'gender', 'nobilis', 'novus',
-                    'patrician', 'province', 'office']
+    facet_fields = ['eques', 'gender', 'nobilis', 'novus', 'tribe',
+                    'patrician', 'province', 'offices', 'life_date_types']
 
     autocomplete_facets = ['praenomen', 'nomen', 'cognomen', 're_number',
                            'province', 'n', 'f', 'other_names']
@@ -20,7 +21,9 @@ class PromrepFacetedSearchView(FacetedSearchView):
     form_class = PromrepFacetedSearchForm
     load_all = True
     queryset = GroupedSearchQuerySet().models(
-        PostAssertion, StatusAssertion).group_by('person_id')
+        PostAssertion,
+        StatusAssertion,
+        RelationshipAssertion).group_by('person_id')
 
     def get_initial(self):
         initial = super(PromrepFacetedSearchView, self).get_initial()
@@ -40,7 +43,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
         return queryset
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):  # noqa
         context = super(
             PromrepFacetedSearchView, self).get_context_data(**kwargs)
         context['querydict'] = self.request.GET
@@ -118,7 +121,11 @@ class PromrepFacetedSearchView(FacetedSearchView):
         # TODO: simplify?
         context['office_list'] = Office.objects.all()
         context['office_fdict'] = dict(
-            context['facets']['fields']['office'])
+            context['facets']['fields']['offices'])
+
+        context['province_list'] = Province.objects.all()
+        context['province_fdict'] = dict(
+            context['facets']['fields']['province'])
 
         return context
 

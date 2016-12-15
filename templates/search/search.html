@@ -194,19 +194,23 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 <ul class="button-group">
                                     {% for term in facets.fields|get_item:"gender" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
                                     <li>
-                                        <a href="{% add_facet_link querydict "gender" value %}#search" class="button secondary less-padding">
-											{{ value }} <span class="label radius">{{ count }}</span>
+                                        <a href="{% add_facet_link querydict "gender" value %}#search" class="button secondary less-padding smaller-fontsize">
+											{{ value }}&nbsp;<span class="label radius">{{ count }}</span>
 										</a>
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %}
                                 </ul>
-                                <ul class="button-group even-5">
-                                    <li><a href="#" class="button secondary less-padding smaller-fontsize">Certain birth date <span class="label radius right">00</span></a></li>
-                                    <li><a href="#" class="button secondary less-padding smaller-fontsize">Natural death <span class="label radius right">00</span></a></li>
-                                    <li><a href="#" class="button secondary less-padding smaller-fontsize">Violent death <span class="label radius right">00</span></a></li>
-                                    <li><a href="#" class="button secondary less-padding smaller-fontsize">Exiled <span class="label radius right">00</span></a></li>
-                                    <li><a href="#" class="button secondary less-padding smaller-fontsize">Adopted <span class="label radius right">00</span></a></li>
+
+                                <ul>
+                                    {% for term in facets.fields|get_item:"life_date_types" %} {% with value=term.0 count=term.1 %}
+                                    <li>
+                                        <a href="{% add_facet_link querydict "life_date_types" value %}#search" class="button secondary less-padding smaller-fontsize">
+                                            {{ value|title }}&nbsp;<span class="label radius right">{{ count }}</span>
+                                        </a>
+                                    </li>
+                                    {% endwith %} {% endfor %}
                                 </ul>
+
                                 <h4>Class</h4>
                                 <ul class="button-group">
                                     {% comment %} {% for term in facets.fields|get_item:"eques" %} {% with value=term.0 count=term.1 %} {% if value == "true" %}
@@ -258,16 +262,9 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         <button data-dropdown="tribes" aria-controls="tribes" aria-expanded="false" class="secondary less-padding button expand dropdown">Tribes</button>
                                         <br>
                                         <ul id="tribes" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-                                            {% comment %} {% for term in facets.fields|get_item:"tribe" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
-                                            <li><a href="{% add_facet_link querydict " tribe " value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-                                            {% endif %} {% endwith %} {% endfor %} {% endcomment %}
-                                            <li><a href="#">Tribe 1 <span class="secondary label radius right">00</span></a></li>
-                                            <li><a href="#">Tribe 2 <span class="secondary label radius right">00</span></a></li>
-                                            <li><a href="#">Tribe 3 <span class="secondary label radius right">00</span></a></li>
-                                            <li><a href="#">Tribe 4 <span class="secondary label radius right">00</span></a></li>
-                                            <li><a href="#">Tribe 5 <span class="secondary label radius right">00</span></a></li>
-                                            <li><a href="#">Tribe 6 <span class="secondary label radius right">00</span></a></li>
-                                            <li><a href="#">Tribe 7 <span class="secondary label radius right">00</span></a></li>
+                                            {% for term in facets.fields|get_item:"tribe" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
+                                            <li><a href="{% add_facet_link querydict "tribe" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
+                                            {% endif %} {% endwith %} {% endfor %}
                                         </ul>
                                     </div>
                                     <div class="large-6 columns">
@@ -329,7 +326,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
 	  										    {% if not node.is_leaf_node %}
   											    <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
 
-  											      	<a href="{% select_facet_link 'office' node.name %}"><span class="label radius secondary pull-right">Add all</a>
+  											      	<a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</a>
                                                     <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
   										        	<ul class="hide collapsible">
   										          		{{ children }}
@@ -337,7 +334,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
   										      	</li>
   										    	{% else %}
   										      	{% comment %} no children {% endcomment %}
-  										      	<li><a href="{% select_facet_link 'office' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
+  										      	<li><a href="{% select_facet_link 'offices' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
       										    {% endif %}
     										{% endif %}
 											{% endwith %}
@@ -351,14 +348,41 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     <div class="large-6 columns">
                                         <div class="panel radius fixed-height">
                                             <h4>Province</h4>
-                                            <ul class="no-bullet">
-                                                {% for term in facets.fields|get_item:"province" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
-                                                <li>
-                                                    <a href="{% add_facet_link querydict "province" value %}#search">
-                                                        <span class="label radius right">{{ count }}</span> {{ value }}
-                                                    </a>
+                                            <ul class="no-bullet hierarchical-facets">
+
+                                            {% comment %}
+                                              Add options for the hierarchical facets:
+                                              using the MPTT template tags to rebuild the tree:
+                                                    https://django-mptt.github.io/django-mptt/templates.html
+                                            {% endcomment %}
+
+                                            {% with treenodes=province_list %}
+                                            {% recursetree treenodes %}
+
+                                            {% with num=province_fdict|lookup:node.name %}
+
+                                            {% if num %}
+                                                {% comment %} parent node {% endcomment %}
+                                                {% if not node.is_leaf_node %}
+                                                <li><span class="label radius pull-right">{{province_fdict|lookup:node.name}}</span>
+
+                                                    <a href="{% select_facet_link 'province' node.name %}"><span class="label radius secondary pull-right">Add all</a>
+                                                    <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
+                                                    <ul class="hide collapsible">
+                                                        {{ children }}
+                                                    </ul>
                                                 </li>
-                                                {% endif %} {% endwith %} {% endfor %}
+                                                {% else %}
+                                                {% comment %} no children {% endcomment %}
+                                                <li><a href="{% select_facet_link 'province' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endrecursetree %}
+                                            {% endwith %}
+                                            {% comment %} closes the with treenodes {% endcomment %}
+
+
                                             </ul>
                                         </div>
                                     </div>

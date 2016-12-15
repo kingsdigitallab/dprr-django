@@ -38,7 +38,7 @@ class StatusAssertionInline(admin.StackedInline):
     ordering = ('-date_start', '-date_end', )
     readonly_fields = ('id', )
 
-    fields = (('id', 'review_flag', ),
+    fields = (('id', 'review_flag', 'is_verified'),
               ('status', 'uncertain'),
               ('secondary_source', ),
               ('original_text', ),
@@ -384,10 +384,12 @@ admin.site.register(PostAssertionNote, NoteAdmin)
 admin.site.register(PersonNote, NoteAdmin)
 
 
-class ProvinceAdmin(admin.ModelAdmin):
+class ProvinceAdmin(DjangoMpttAdmin):
+    readonly_fields = ('id', 'created', 'modified')
+    mptt_indent_field = "name"
+
     list_display = ('id', 'name', 'created', 'modified', )
     list_display_links = ('id', 'name', )
-    readonly_fields = ('id', 'created', 'modified')
 
     search_fields = ['id', 'name', ]
     fields = ('id', 'name', 'description')
@@ -554,6 +556,12 @@ class PersonAdmin(admin.ModelAdmin):
              ('re_number', 're_number_old', ),
          )}
          ),
+        ('Highest Office',
+         {'classes': ('grp-collapse grp-open',),
+          'fields': (
+             ('highest_office', 'highest_office_edited', ),
+         )}
+         ),
         ('Patrician', {
             'classes': ('grp-collapse grp-open',),
             'fields': (('patrician', 'patrician_uncertain'),
@@ -668,7 +676,7 @@ class StatusAssertionAdmin(admin.ModelAdmin):
     list_display = ('id', 'person', 'status',
                     'uncertain', 'date_start', 'date_end')
 
-    fields = (('id', 'review_flag', ),
+    fields = (('id', 'review_flag', 'is_verified'),
               ('person', 'status', ),
               ('secondary_source', 'uncertain',),
               ('original_text'),

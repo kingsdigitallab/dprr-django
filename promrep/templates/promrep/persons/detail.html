@@ -11,25 +11,34 @@
         <h1>{{ person }}</h1>
 
         <p>
-            ID: {{ person.id }} <br />
-
-            {% if person.patrician %}
-            Patrician: {% if person.patrician_uncertainty %}?{% endif %}{{ person.patrician }} <br />
-            {% endif %}
-            {% if person.gens %}
-            Gens: {% if person.gens_uncertainty %}?{% endif %}{{ person.gens }} <br />
-            {% endif %}
+            Project ID: {{ person.id }}
         </p>
 
+        {% if person.patrician %}
+        <p>
+            Patrician{% if person.patrician_uncertainty %}?{% endif %}
+        </p>
+        {% endif %}
+
+        {% if person.gens %}
+        <p>
+            Gens: {{ person.gens }}{% if person.gens_uncertainty %}?{% endif %}
+        </p>
+        {% endif %}
+
         {% if person.review_flag %}
-        <p><b>Warning: person needs revision</b></p>
+            <p><b>Warning: person needs revision</b></p>
         {% endif %}
 
         {% if person.dateinformation_set.all %}
         <h2>Life Dates</h2>
         <ul>
             {% for di in person.dateinformation_set.all %}
-            <li>{{ di }}</li>
+            <li>{{ di }}
+                {% if di.notes %}
+                    <p class="date-notes">{{di.notes|capfirst}}</p>
+                {% endif %}
+            </li>
             {% endfor %}
         </ul>
         {% endif %}

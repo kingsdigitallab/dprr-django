@@ -78,14 +78,14 @@ class Command(BaseCommand):
         # we don't want to add any assertions to the persons that already have
         # assertions marked as "is_verified"
         persons = Person.objects.exclude(
-            Q(statusassertion__is_verified=True) and
+            Q(statusassertion__is_verified=True),
             Q(statusassertion__status__name='senator'))
-        only_senators = persons.filter(sen_q).exclude(non_sen_q).distinct()
 
+        only_senators = persons.filter(sen_q).exclude(non_sen_q).distinct()
         all_senatorial = persons.filter(sen_q | non_sen_q).filter(
             post_assertions__date_start__gte=-180).distinct()
 
-        print("Will add {} new St Assertions".format(all_senatorial.count()))
+        print("Will add new Senator Status Assertions")
 
         with open(log_fname, 'wb') as ofile:
             csv_log = csv.DictWriter(
@@ -331,7 +331,7 @@ def get_last_life_date(person):
                   "proscribed"]
 
     dates = person.dateinformation_set.filter(
-        date_type__name__in=date_types).order_by('value')
+        date_type__name__in=date_types).order_by('-value')
 
     if dates.exists():
         # If the person has a life date of expelled or exiled or death or

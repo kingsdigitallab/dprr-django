@@ -169,6 +169,9 @@ class StatusAssertionIndex(AssertionIndex):
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
     date = MultiValueIntegerField(faceted=True)
 
+    senator = indexes.BooleanField(faceted=True, default=False)
+    eques = indexes.BooleanField(faceted=True, default=False)
+
     def get_model(self):
         return StatusAssertion
 
@@ -192,6 +195,14 @@ class StatusAssertionIndex(AssertionIndex):
         res = range(start, end + 1, 1)
 
         return res
+
+    def prepare_senator(self, object):
+        if object.status.name == "senator":
+            return True
+
+    def prepare_eques(self, object):
+        if object.status.name == "eques":
+            return True
 
 
 class RelationshipAssertionIndex(AssertionIndex):

@@ -69,8 +69,8 @@ class Command(BaseCommand):
         # edited yet, and add new ones
 
         # delete existing status assertions that are not marked "is_verified"
-        sad_list = StatusAssertion.objects.filter(
-            Q(is_verified=False) and Q(status__name='senator'))
+        sad_list = StatusAssertion.objects.filter(Q(is_verified=False),
+                                                  Q(status__name='senator'))
         print("Will delete {} Status Assertions".format(sad_list.count()))
         for sad in sad_list:
             sad.delete()
@@ -78,14 +78,14 @@ class Command(BaseCommand):
         # we don't want to add any assertions to the persons that already have
         # assertions marked as "is_verified"
         persons = Person.objects.exclude(
-            Q(statusassertion__is_verified=True) and
+            Q(statusassertion__is_verified=True),
             Q(statusassertion__status__name='senator'))
-        only_senators = persons.filter(sen_q).exclude(non_sen_q).distinct()
 
+        only_senators = persons.filter(sen_q).exclude(non_sen_q).distinct()
         all_senatorial = persons.filter(sen_q | non_sen_q).filter(
             post_assertions__date_start__gte=-180).distinct()
 
-        print("Will add {} new St Assertions".format(all_senatorial.count()))
+        print("Will add new Senator Status Assertions")
 
         with open(log_fname, 'wb') as ofile:
             csv_log = csv.DictWriter(

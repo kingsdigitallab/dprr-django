@@ -233,30 +233,41 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         <input id="patrician-id" type="checkbox" value="patrician" {% if count=0 %} disabled{% endif %}>
                                         <label for="patrician-id" {% if count=0 %} class="grayed-out" {% endif %}>Patrician <span class="label radius">{{ count }}</span></label>
                                     </li>
-                                    {% endif %} {% endwith %} {% endfor %} {% endcomment %} {% for term in facets.fields|get_item:"nobilis" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
+                                    {% endif %} {% endwith %} {% endfor %} {% endcomment %}
+
+                                    {% for term in facets.fields|get_item:"nobilis" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
                                     <li>
                                         <a href="{% add_facet_link querydict "nobilis" value %}#search" class="button secondary less-padding">Nobilis <span class="label radius">{{ count }}</span></a>
                                     </li>
-                                    {% endif %} {% endwith %} {% endfor %} {% for term in facets.fields|get_item:"novus" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
+                                    {% endif %} {% endwith %} {% endfor %}
+
+                                    {% for term in facets.fields|get_item:"novus" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
                                     <li>
                                         <a href="{% add_facet_link querydict "novus" value %}#search" class="button secondary less-padding">Novus <span class="label radius">{{ count }}</span></a>
                                     </li>
-                                    {% endif %} {% endwith %} {% endfor %} {% for term in facets.fields|get_item:"patrician" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
+                                    {% endif %} {% endwith %} {% endfor %}
+
+                                    {% for term in facets.fields|get_item:"patrician" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
                                     <li>
                                         <a href="{% add_facet_link querydict "patrician" value %}#search" class="button secondary less-padding">Patrician <span class="label radius">{{ count }}</span></a>
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %}
                                 </ul>
+
                                 <ul class="button-group">
                                     {% for term in facets.fields|get_item:"eques" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
                                     <li>
                                         <a href="{% add_facet_link querydict "eques" value %}#search" class="button secondary less-padding">Eques R. <span class="label radius">{{ count }}</span></a>
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %}
-                                    <li><a href="#" class="button secondary less-padding">Eques R. (Expelled) <span class="label radius">00</span></a></li>
-                                    <li><a href="#" class="button secondary less-padding">Senator <span class="label radius">00</span></a></li>
-                                    <li><a href="#" class="button secondary less-padding">Senator (Expelled) <span class="label radius">00</span></a></li>
+
+                                    {% for term in facets.fields|get_item:"senator" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
+                                    <li>
+                                        <a href="{% add_facet_link querydict "senator" value %}#search" class="button secondary less-padding">Senator <span class="label radius">{{ count }}</span></a>
+                                    </li>
+                                    {% endif %} {% endwith %} {% endfor %}
                                 </ul>
+
                                 <div class="row">
                                     <div class="large-6 columns">
                                         <button data-dropdown="tribes" aria-controls="tribes" aria-expanded="false" class="secondary less-padding button expand dropdown">Tribes</button>

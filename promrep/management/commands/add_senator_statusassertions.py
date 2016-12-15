@@ -331,7 +331,7 @@ def get_last_life_date(person):
                   "proscribed"]
 
     dates = person.dateinformation_set.filter(
-        date_type__name__in=date_types).order_by('-value')
+        date_type__name__in=date_types).order_by('value')
 
     if dates.exists():
         # If the person has a life date of expelled or exiled or death or

@@ -69,8 +69,8 @@ class Command(BaseCommand):
         # edited yet, and add new ones
 
         # delete existing status assertions that are not marked "is_verified"
-        sad_list = StatusAssertion.objects.filter(
-            Q(is_verified=False) and Q(status__name='senator'))
+        sad_list = StatusAssertion.objects.filter(Q(is_verified=False),
+                                                  Q(status__name='senator'))
         print("Will delete {} Status Assertions".format(sad_list.count()))
         for sad in sad_list:
             sad.delete()

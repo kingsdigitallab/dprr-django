@@ -1,5 +1,6 @@
 import re
 
+from django.db.models import Q
 from haystack import indexes
 from promrep.forms import PromrepFacetedSearchForm
 from promrep.models import (
@@ -139,8 +140,16 @@ class PostAssertionIndex(AssertionIndex):
         return [o.name for o in object.office.get_ancestors(include_self=True)]
 
     def prepare_offices(self, object):
+        # we don't want any senator post assertions
+        # these should all be recorded as Status assertions instead
+        #      see: https://jira.dighum.kcl.ac.uk/browse/DPRR-256
+
+        senator_offices = Office.objects.get(
+            name='senator').get_descendants(include_self=True)
+        sen_q = Q(office__in=senator_offices)
+
         # flat list of different office ids the person held
-        olist = object.person.post_assertions.all().values_list(
+        olist = object.person.post_assertions.exclude(sen_q).values_list(
             'office__id', flat=True)
         # list of Office objects
         olist = [Office.objects.get(id=o) for o in list(set(olist))]
@@ -186,6 +195,7 @@ class StatusAssertionIndex(AssertionIndex):
 
 
 class RelationshipAssertionIndex(AssertionIndex):
+
     def get_model(self):
         return RelationshipAssertion
 

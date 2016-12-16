@@ -32,7 +32,7 @@ regex==2014.05.23
 requests==2.5.1
 requests-oauthlib==0.4.0
 six==1.9.0
-sqlparse==0.1.14
+sqlparse
 tzlocal==1.0
 unicodecsv==0.9.4
 wsgiref

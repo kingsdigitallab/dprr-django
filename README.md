@@ -4,6 +4,14 @@
 
 Python/Django requirements can be found in the `requirements.txt` file.
 
+### Setting up 
+
+#### Cloning the project 
+
+ `git clone -b develop --recursive git@github.com:kingsdigitallab/dprr-django.git`
+
+The above command will clone the development branch, as well as all the submodules.  
+
 ### Project Structure 
 
 The main application is `promrep`. 
@@ -61,3 +69,4 @@ There are various scripts in the `promrep/scripts` folder. Most were written to 
 ##### Management Scripts
 
 * `add_highest_office`: script that adds the `highest_office` field to all persons on the database. The script checks if the `highest_office_edited` field is False and, if so, overwrites it.
+* `add_senator_statusassertions`: # this script enriches the database with the Senator StatusAssertions; for full rules and dicussion please see the [original JIRA ticket]( https://jira.dighum.kcl.ac.uk/projects/DPRR/issues/DPRR-256)

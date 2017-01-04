@@ -30,103 +30,103 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                         <div class="large-12 columns">
                             <div class="panel results-preview" data-magellan-expedition="fixed">
                                 <h4>Results preview
-								<a href="#search-results-box" class="less-padding button right do-not-print">Show <strong>{{ paginator.count }}</strong> results</a></h4>
+                                <a href="#search-results-box" class="less-padding button right do-not-print">Show <strong>{{ paginator.count }}</strong> results</a></h4>
                                 <p class="info"><i class="fa fa-info-circle"></i> Some info on this section.</p>
                                 <h3>
-									<strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search" class="do-not-print"><i class="fa fa-trash"></i> Clear all</a>
-								</h3>
+                                    <strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search" class="do-not-print"><i class="fa fa-trash"></i> Clear all</a>
+                                </h3>
 
-								{% if query or selected_facets or date_filter or praenomen or nomen or cognomen or other_names or re_number or n or f or other_names %}
+                                {% if query or selected_facets or date_filter or praenomen or nomen or cognomen or other_names or re_number or n or f or other_names %}
                                 <ul class="inline-list no-bullet free-filters">
                                     {% if praenomen %}
                                     <li>
                                         <span class="label radius">
-											<a href="{{ praenomen.0 }}#search" title="Remove filter">Praenomen: {{ praenomen.1 }}
-												<i class="fa fa-times-circle"></i>
-											</a>
-										</span>
+                                            <a href="{{ praenomen.0 }}#search" title="Remove filter">Praenomen: {{ praenomen.1 }}
+                                                <i class="fa fa-times-circle"></i>
+                                            </a>
+                                        </span>
                                     </li>
                                     {% endif %}
                                     {% if nomen %}
                                     <li>
                                         <span class="label radius">
-											<a href="{{ nomen.0 }}#search" title="Remove filter">Nomen: {{ nomen.1 }}
-												<i class="fa fa-times-circle"></i>
-											</a>
-										</span>
+                                            <a href="{{ nomen.0 }}#search" title="Remove filter">Nomen: {{ nomen.1 }}
+                                                <i class="fa fa-times-circle"></i>
+                                            </a>
+                                        </span>
                                     </li>
                                     {% endif %}
                                     {% if cognomen %}
                                     <li>
                                         <span class="label radius">
-											<a href="{{ cognomen.0 }}#search" title="Remove filter">Cognomen: {{ cognomen.1 }}
-												<i class="fa fa-times-circle"></i>
-											</a>
-										</span>
+                                            <a href="{{ cognomen.0 }}#search" title="Remove filter">Cognomen: {{ cognomen.1 }}
+                                                <i class="fa fa-times-circle"></i>
+                                            </a>
+                                        </span>
                                     </li>
                                     {% endif %}
                                     {% if re_number %}
                                     <li>
                                         <span class="label radius">
-											<a href="{{ re_number.0 }}#search" title="Remove filter">RE Number: {{ re_number.1 }}
-												<i class="fa fa-times-circle"></i>
-											</a>
-										</span>
-                                    </li>
-									{% endif %}
-									{% if f %}
-									<li>
-                                        <span class="label radius">
-											<a href="{{ f.0 }}#search" title="Remove filter">f.: {{ f.1 }}
-												<i class="fa fa-times-circle"></i>
-											</a>
-										</span>
-                                    </li>
-									{% endif %}
-									{% if n %}
-                                    <li>
-                                        <span class="label radius">
-											<a href="{{ n.0 }}#search" title="Remove filter">n.: {{ n.1 }}
-												<i class="fa fa-times-circle"></i>
-											</a>
-										</span>
+                                            <a href="{{ re_number.0 }}#search" title="Remove filter">RE Number: {{ re_number.1 }}
+                                                <i class="fa fa-times-circle"></i>
+                                            </a>
+                                        </span>
                                     </li>
                                     {% endif %}
-									{% if other_names %}
+                                    {% if f %}
                                     <li>
                                         <span class="label radius">
-											<a href="{{ other_names.0 }}#search" title="Remove filter">Other names: {{ other_names.1 }}
-												<i class="fa fa-times-circle"></i>
-											</a>
-										</span>
+                                            <a href="{{ f.0 }}#search" title="Remove filter">f.: {{ f.1 }}
+                                                <i class="fa fa-times-circle"></i>
+                                            </a>
+                                        </span>
+                                    </li>
+                                    {% endif %}
+                                    {% if n %}
+                                    <li>
+                                        <span class="label radius">
+                                            <a href="{{ n.0 }}#search" title="Remove filter">n.: {{ n.1 }}
+                                                <i class="fa fa-times-circle"></i>
+                                            </a>
+                                        </span>
+                                    </li>
+                                    {% endif %}
+                                    {% if other_names %}
+                                    <li>
+                                        <span class="label radius">
+                                            <a href="{{ other_names.0 }}#search" title="Remove filter">Other names: {{ other_names.1 }}
+                                                <i class="fa fa-times-circle"></i>
+                                            </a>
+                                        </span>
                                     </li>
                                     {% endif %}
                                     {% if query %}
                                     <li>
                                         <span class="label radius">
-											<a href="{{ remove_text_filter }}#search" title="Remove filter">Text: {{ query }}
-												<i class="fa fa-times-circle"></i>
-											</a>
-										</span>
+                                            <a href="{{ remove_text_filter }}#search" title="Remove filter">Text: {{ query }}
+                                                <i class="fa fa-times-circle"></i>
+                                            </a>
+                                        </span>
                                     </li>
                                     {% endif %}
                                     {% if date_filter %}
                                     <li>
                                         <span class="label radius">
-											<a href="{{ date_filter.0}}#search" title="Remove filter">Post Date: {{ date_filter.1 }}
-												<i class="fa fa-times-circle"></i>
-											</a>
-										</span>
+                                            <a href="{{ date_filter.0}}#search" title="Remove filter">Post Date: {{ date_filter.1 }}
+                                                <i class="fa fa-times-circle"></i>
+                                            </a>
+                                        </span>
                                     </li>
                                     {% endif %}
                                     {% for facet in selected_facets %}
                                     <li>
                                         <span class="label radius">
-											{{ facet }}
-											<a href="{% remove_facet_link querydict facet %}#search">
-												<i class="fa fa-times-circle"></i>
-											</a>
-										</span>
+                                            {{ facet }}
+                                            <a href="{% remove_facet_link querydict facet %}#search">
+                                                <i class="fa fa-times-circle"></i>
+                                            </a>
+                                        </span>
                                     </li>
                                     {% endfor %}
                                 </ul>
@@ -165,8 +165,8 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         {{form.cognomen}}
                                     </div>
                                     <div class="medium-2 columns">
-                                    	<label>Other names</label>
-										{{form.other_names}}
+                                        <label>Other names</label>
+                                        {{form.other_names}}
                                     </div>
                                 </div>
                             </div>
@@ -195,8 +195,8 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     {% for term in facets.fields|get_item:"gender" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
                                     <li>
                                         <a href="{% add_facet_link querydict "gender" value %}#search" class="button secondary less-padding smaller-fontsize">
-											{{ value }}&nbsp;<span class="label radius">{{ count }}</span>
-										</a>
+                                            {{ value }}&nbsp;<span class="label radius">{{ count }}</span>
+                                        </a>
                                     </li>
                                     {% endif %} {% endwith %} {% endfor %}
                                 </ul>
@@ -299,37 +299,37 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                             <h4>Office type</h4>
                                             <ul class="no-bullet hierarchical-facets">
 
-      										{% comment %}
-      										  Add options for the hierarchical facets:
-      										  using the MPTT template tags to rebuild the tree:
-      										        https://django-mptt.github.io/django-mptt/templates.html
-      										{% endcomment %}
+                                            {% comment %}
+                                              Add options for the hierarchical facets:
+                                              using the MPTT template tags to rebuild the tree:
+                                                    https://django-mptt.github.io/django-mptt/templates.html
+                                            {% endcomment %}
 
-   											{% with treenodes=office_list %}
-  											{% recursetree treenodes %}
+                                            {% with treenodes=office_list %}
+                                            {% recursetree treenodes %}
 
-        									{% with num=office_fdict|lookup:node.name %}
+                                            {% with num=office_fdict|lookup:node.name %}
 
-        									{% if num %}
-	      										{% comment %} parent node {% endcomment %}
-	  										    {% if not node.is_leaf_node %}
-  											    <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
+                                            {% if num %}
+                                                {% comment %} parent node {% endcomment %}
+                                                {% if not node.is_leaf_node %}
+                                                <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
 
-  											      	<a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</a>
+                                                    <a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</a>
                                                     <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
-  										        	<ul class="hide collapsible">
-  										          		{{ children }}
-  										        	</ul>
-  										      	</li>
-  										    	{% else %}
-  										      	{% comment %} no children {% endcomment %}
-  										      	<li><a href="{% select_facet_link 'offices' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
-      										    {% endif %}
-    										{% endif %}
-											{% endwith %}
-      										{% endrecursetree %}
-      										{% endwith %}
-      										{% comment %} closes the with treenodes {% endcomment %}
+                                                    <ul class="hide collapsible">
+                                                        {{ children }}
+                                                    </ul>
+                                                </li>
+                                                {% else %}
+                                                {% comment %} no children {% endcomment %}
+                                                <li><a href="{% select_facet_link 'offices' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endrecursetree %}
+                                            {% endwith %}
+                                            {% comment %} closes the with treenodes {% endcomment %}
 
                                             </ul>
                                         </div>
@@ -426,8 +426,8 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
             <li>
                 {% with doc=result.documents.0 %}
                 <h3>
-					<a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }} <span class="label radius secondary{% comment %}{% if doc.uncertain == True %} gray-bg{% else %} green-bg{% endif %}{% endcomment %}">{{ doc.highest_office }}{% if doc.uncertain == True %} <i class="fa fa-question-circle gray"></i>{% else %} <i class="fa fa-check-circle green"></i>{% endif %}</span></a>
-				</h3>
+                    <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }} <span class="label radius secondary{% comment %}{% if doc.uncertain == True %} gray-bg{% else %} green-bg{% endif %}{% endcomment %}">{{ doc.highest_office }}{% if doc.uncertain == True %} <i class="fa fa-question-circle gray"></i>{% else %} <i class="fa fa-check-circle green"></i>{% endif %}</span></a>
+                </h3>
                 {% for dd in result.documents %}
                 <p>
                     {% highlight dd.text with query html_tag 'strong' max_length 120 %}
@@ -439,24 +439,24 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                         <p>Placeholder</p>
                         <p><em>&lt;List of offices held&gt;</em></p>
                         <!-- TODO: List offices held, if any
-						<h4>Offices held</h4>
-						<ul class="no-bullet list-offices">
-							{# for #}
-							<li><span class="label radius secondary">87 B.C. Flamen Dialis</span></li>
-							<li><span class="label radius secondary">81 B.C. Legatus (Envoy)</span></li>
-							<li><span class="label radius secondary">73-44 B.C. Pontifex</span></li>
-							<li><span class="label radius secondary">71 B.C. Tribunus Militum</span></li>
-							<li><span class="label radius secondary">69 B.C. Quaestor</span></li>
-							<li><span class="label radius secondary">68-49 B.C. Promagistrate</span></li>
-							<li><span class="label radius secondary">65 B.C. Aedilis Curulis</span></li>
-							<li><span class="label radius secondary">64 B.C. Iudex Quaestionis</span></li>
-							<li><span class="label radius secondary">63 B.C. Duumvir Perduellionis</span></li>
-							<li><span class="label radius secondary">62 B.C. Praetor</span></li>
-							<li><span class="label radius secondary">59-44 B.C. Consul</span></li>
-							<li><span class="label radius secondary">49-44 B.C. Dictator</span></li>
-							{# endfor #}
-						</ul>
-						-->
+                        <h4>Offices held</h4>
+                        <ul class="no-bullet list-offices">
+                            {# for #}
+                            <li><span class="label radius secondary">87 B.C. Flamen Dialis</span></li>
+                            <li><span class="label radius secondary">81 B.C. Legatus (Envoy)</span></li>
+                            <li><span class="label radius secondary">73-44 B.C. Pontifex</span></li>
+                            <li><span class="label radius secondary">71 B.C. Tribunus Militum</span></li>
+                            <li><span class="label radius secondary">69 B.C. Quaestor</span></li>
+                            <li><span class="label radius secondary">68-49 B.C. Promagistrate</span></li>
+                            <li><span class="label radius secondary">65 B.C. Aedilis Curulis</span></li>
+                            <li><span class="label radius secondary">64 B.C. Iudex Quaestionis</span></li>
+                            <li><span class="label radius secondary">63 B.C. Duumvir Perduellionis</span></li>
+                            <li><span class="label radius secondary">62 B.C. Praetor</span></li>
+                            <li><span class="label radius secondary">59-44 B.C. Consul</span></li>
+                            <li><span class="label radius secondary">49-44 B.C. Dictator</span></li>
+                            {# endfor #}
+                        </ul>
+                        -->
                     </div>
                     <div class="large-6 columns">
                         <p>Placeholder visualisation</p>
@@ -465,53 +465,53 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 <g transform="translate(40,0)">
                                     <g>
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
-											L120,224.664" />
+                                            L120,224.664" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.995,4.9748" d="
-											M125.31,224.441c100.252-6.197,103.002-182.519,204.875-185.894" />
+                                            M125.31,224.441c100.252-6.197,103.002-182.519,204.875-185.894" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,38.664L333,38.664
-											" />
+                                            " />
                                     </g>
                                     <g>
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
-											L120,224.664" />
+                                            L120,224.664" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0072,5.0359" d="
-											M125.369,224.498c100.182-4.019,102.964-117.105,204.773-119.302" />
+                                            M125.369,224.498c100.182-4.019,102.964-117.105,204.773-119.302" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,105.664
-											L333,105.664" />
+                                            L333,105.664" />
                                     </g>
                                     <path fill="none" stroke="#DF6800" stroke-width="2" d="M119.833,224.608c106.667,0,106.667-52.778,213.333-52.778" />
                                     <path fill="none" stroke="#DF6800" stroke-width="2" d="M119.833,224.608c106.667,0,106.667,13.889,213.333,13.889" />
                                     <path fill="none" stroke="#DF6800" stroke-width="2" d="M119.833,224.608c106.667,0,106.667,113.89,213.333,113.89" />
                                     <g>
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
-											L120,224.664" />
+                                            L120,224.664" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0073,5.0363" d="
-											M125.363,224.82c100.189,7.75,102.968,226.051,204.786,230.281" />
+                                            M125.363,224.82c100.189,7.75,102.968,226.051,204.786,230.281" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.668,455.162
-											c0.166,0.001,0.332,0.002,0.499,0.002" />
+                                            c0.166,0.001,0.332,0.002,0.499,0.002" />
                                     </g>
                                     <g>
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,39.5h1" />
                                         <path fill="#330099" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1,5" d="
-											M338.5,39.5h205" />
+                                            M338.5,39.5h205" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,38.664
-											C546.166,38.664,546,38.664,546,38.664" />
+                                            C546.166,38.664,546,38.664,546,38.664" />
                                     </g>
                                     <g>
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,106.5h1" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1,5" d="
-												M338.5,106.5h205" />
+                                                M338.5,106.5h205" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,105.664
-												C546.166,105.664,546,105.664,546,105.664" />
+                                                C546.166,105.664,546,105.664,546,105.664" />
                                     </g>
                                     <path fill="#DF6800" stroke="#DF6800" stroke-width="2" d="M332.5,172.5h213" />
                                     <path fill="none" stroke="#DF6800" stroke-width="2" d="M332.5,239.5h213" />
                                     <g>
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,339.5h1" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0045,5.0225" d="
-												M338.69,338.469c100.196-1.119,102.972-32.686,204.798-33.296" />
+                                                M338.69,338.469c100.196-1.119,102.972-32.686,204.798-33.296" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,305.664
-												C546.166,305.664,546,305.664,546,305.664" />
+                                                C546.166,305.664,546,305.664,546,305.664" />
                                     </g>
                                     <g>
                                         <path fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,339.5h3" />
@@ -529,13 +529,13 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     <g>
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,456.5h1" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.9919,4.9593" d="
-												M338.627,455.149c100.271-0.555,103.014-16.347,204.895-16.648" />
+                                                M338.627,455.149c100.271-0.555,103.014-16.347,204.895-16.648" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,438.664 C546.166,438.664,546,438.664,546,438.664" />
                                     </g>
                                     <g>
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,456.5h1" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.9919,4.9593" d="
-												M338.627,455.179c100.271,0.555,103.014,16.347,204.895,16.648" />
+                                                M338.627,455.179c100.271,0.555,103.014,16.347,204.895,16.648" />
                                         <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,471.664 C546.166,471.664,546,471.664,546,471.664" />
                                     </g>
                                     <g id="{{ person.id }}" transform="translate(213.33333333333337,219.44444444444443)">
@@ -653,53 +653,53 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         <g transform="translate(40,0)">
                                             <g>
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
-													L120,224.664" />
+                                                    L120,224.664" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.995,4.9748" d="
-													M125.31,224.441c100.252-6.197,103.002-182.519,204.875-185.894" />
+                                                    M125.31,224.441c100.252-6.197,103.002-182.519,204.875-185.894" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,38.664L333,38.664
-													" />
+                                                    " />
                                             </g>
                                             <g>
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
-													L120,224.664" />
+                                                    L120,224.664" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0072,5.0359" d="
-													M125.369,224.498c100.182-4.019,102.964-117.105,204.773-119.302" />
+                                                    M125.369,224.498c100.182-4.019,102.964-117.105,204.773-119.302" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,105.664
-													L333,105.664" />
+                                                    L333,105.664" />
                                             </g>
                                             <path fill="none" stroke="#DF6800" stroke-width="2" d="M119.833,224.608c106.667,0,106.667-52.778,213.333-52.778" />
                                             <path fill="none" stroke="#DF6800" stroke-width="2" d="M119.833,224.608c106.667,0,106.667,13.889,213.333,13.889" />
                                             <path fill="none" stroke="#DF6800" stroke-width="2" d="M119.833,224.608c106.667,0,106.667,113.89,213.333,113.89" />
                                             <g>
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
-													L120,224.664" />
+                                                    L120,224.664" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0073,5.0363" d="
-													M125.363,224.82c100.189,7.75,102.968,226.051,204.786,230.281" />
+                                                    M125.363,224.82c100.189,7.75,102.968,226.051,204.786,230.281" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.668,455.162
-													c0.166,0.001,0.332,0.002,0.499,0.002" />
+                                                    c0.166,0.001,0.332,0.002,0.499,0.002" />
                                             </g>
                                             <g>
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,39.5h1" />
                                                 <path fill="#330099" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1,5" d="
-													M338.5,39.5h205" />
+                                                    M338.5,39.5h205" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,38.664
-													C546.166,38.664,546,38.664,546,38.664" />
+                                                    C546.166,38.664,546,38.664,546,38.664" />
                                             </g>
                                             <g>
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,106.5h1" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1,5" d="
-														M338.5,106.5h205" />
+                                                        M338.5,106.5h205" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,105.664
-														C546.166,105.664,546,105.664,546,105.664" />
+                                                        C546.166,105.664,546,105.664,546,105.664" />
                                             </g>
                                             <path fill="#DF6800" stroke="#DF6800" stroke-width="2" d="M332.5,172.5h213" />
                                             <path fill="none" stroke="#DF6800" stroke-width="2" d="M332.5,239.5h213" />
                                             <g>
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,339.5h1" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0045,5.0225" d="
-														M338.69,338.469c100.196-1.119,102.972-32.686,204.798-33.296" />
+                                                        M338.69,338.469c100.196-1.119,102.972-32.686,204.798-33.296" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,305.664
-														C546.166,305.664,546,305.664,546,305.664" />
+                                                        C546.166,305.664,546,305.664,546,305.664" />
                                             </g>
                                             <g>
                                                 <path fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,339.5h3" />
@@ -717,13 +717,13 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                             <g>
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,456.5h1" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.9919,4.9593" d="
-														M338.627,455.149c100.271-0.555,103.014-16.347,204.895-16.648" />
+                                                        M338.627,455.149c100.271-0.555,103.014-16.347,204.895-16.648" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,438.664 C546.166,438.664,546,438.664,546,438.664" />
                                             </g>
                                             <g>
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,456.5h1" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.9919,4.9593" d="
-														M338.627,455.179c100.271,0.555,103.014,16.347,204.895,16.648" />
+                                                        M338.627,455.179c100.271,0.555,103.014,16.347,204.895,16.648" />
                                                 <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,471.664 C546.166,471.664,546,471.664,546,471.664" />
                                             </g>
                                             <g id="{{ person.id }}" transform="translate(213.33333333333337,219.44444444444443)">
@@ -851,21 +851,21 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
 
 {% block footerscripts %}
     <script type="text/javascript">
-    	var autocompleteDict = {
-    	    {% for item in autocomplete_facets %}
-    	    "{{ item }}": [
-    	    	{% for term in facets.fields|get_item:item %}
-    	    		{% with value=term.0 count=term.1 %}
-    	    			{"name": "{{ value.strip }}", "count": "{{count}}"}
-    	    			{% if not forloop.last %}, {% endif %} {% endwith %}
-    	    	{% endfor %}
-    	    	]
-    	    	{% if not forloop.last %},{% endif %}
-    	    {% endfor %}
-    	}
+        var autocompleteDict = {
+            {% for item in autocomplete_facets %}
+            "{{ item }}": [
+                {% for term in facets.fields|get_item:item %}
+                    {% with value=term.0 count=term.1 %}
+                        {"name": "{{ value.strip }}", "count": "{{count}}"}
+                        {% if not forloop.last %}, {% endif %} {% endwith %}
+                {% endfor %}
+                ]
+                {% if not forloop.last %},{% endif %}
+            {% endfor %}
+        }
     </script>
 
-	<!-- EasyAutocomplete -->
-	<script src="{% static 'vendor/EasyAutocomplete/dist/jquery.easy-autocomplete.js' %}"></script>
-	<script src="{% static 'javascripts/search.js' %}"></script>
+    <!-- EasyAutocomplete -->
+    <script src="{% static 'vendor/EasyAutocomplete/dist/jquery.easy-autocomplete.js' %}"></script>
+    <script src="{% static 'javascripts/search.js' %}"></script>
 {% endblock %}

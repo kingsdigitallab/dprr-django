@@ -51,10 +51,10 @@
       <h2>Offices</h2>
       <ul class="timeline no-bullet bottom-margin">
         {% for pa in person.post_assertions.all %}
-        <li><span class="label radius{% if pa.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ pa.print_date | safe}}</span> <strong>{{ pa.office | title}} {% if pa.provinces %} <a href="#">{{ pa.print_provinces }}</a> {% endif %}</strong>
-
+        <li><span class="label radius{% if pa.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ pa.print_date | safe }}</span> <strong>{{ pa.office | title }} {% if pa.provinces %} <a href="#">{{ pa.print_provinces }}</a> {% endif %}</strong>
+          <a href="#" class="expander right">Description <i class="fa fa-caret-right"></i></a>
             {% if pa.notes.count %}
-            <ul class="no-bullet">
+            <ul class="no-bullet hide collapsible">
                 {% for note in pa.notes.all %}
                 <li>{{note.text}} (in <em>{{note.secondary_source.abbrev_name}}</em>)</li>
                 {% endfor %}

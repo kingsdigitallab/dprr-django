@@ -8,32 +8,6 @@
 
 /*** Global ***/
 
-.smaller-fontsize {
-    font-size: .875em !important;
-}
-
-.panel.callout {
-    button {
-        margin-bottom: 0;
-    }
-}
-
-.info {
-    font-size: .875rem;
-    color: $primary-color !important;
-    font-style: italic;
-    margin-bottom: .5rem;
-}
-
-.textright {
-    text-align: right;
-}
-
-/* Handles the offset of the magellan sticky navigation */
-.extra-margin {
-    padding-top: 140px;
-}
-
 hr {
     height: 1px;
     color: scale-color($primary-color, $lightness: 60%);
@@ -41,36 +15,48 @@ hr {
     border: 0;
 }
 
-.content-area {
-    background: $white;
-    padding-top: 1rem;
-}
-
 li.greyed-out a {
     color: rgba(0, 0, 0, 0.3) !important;
-}
-
-.rich-text {
-    padding-bottom: 1rem;
 }
 
 .active {
     font-weight: 700;
 }
 
-.less-padding {
-    padding: .5rem !important;
+.bottom-margin {
+    li {
+        margin-bottom: 1rem;
+    }
 }
 
-// .hidden {
-//  display: none;
-// }
+.content-area {
+    background: $white;
+    padding-top: 1rem;
+}
 
 .expander {
     padding: 0 0 .5rem;
     margin-bottom: .5rem;
-    // text-align: right;
     display: block;
+}
+
+.export {
+    text-align: center;
+    label {
+        font-size: .75em;
+    }
+}
+
+/* Handles the offset of the magellan sticky navigation */
+.extra-margin {
+    padding-top: 140px;
+}
+
+.grayed-out {
+    color: $jumbo;
+    .label {
+        background: $jumbo;
+    }
 }
 
 .hierarchical-facets {
@@ -89,17 +75,47 @@ li.greyed-out a {
     }
 }
 
-.bottom-margin {
-    li {
-        margin-bottom: 1rem;
+.info {
+    font-size: .875rem;
+    color: $primary-color !important;
+    font-style: italic;
+    margin-bottom: .5rem;
+}
+
+.inline-list i {
+    display: inline-block;
+}
+
+.less-padding {
+    padding: .5rem !important;
+}
+
+.panel.callout {
+    button {
+        margin-bottom: 0;
     }
 }
 
-.grayed-out {
-    color: $jumbo;
-    .label {
-        background: $jumbo;
-    }
+.rich-text {
+    padding-bottom: 1rem;
+}
+
+.smaller-fontsize {
+    font-size: .875em !important;
+}
+
+.textright {
+    text-align: right;
+}
+
+/* Colours */
+
+.gray {
+    color: gray;
+}
+
+.gray-bg {
+    background: gray;
 }
 
 .green {
@@ -110,27 +126,8 @@ li.greyed-out a {
     background: green;
 }
 
-.gray {
-    color: gray;
-}
-
-.gray-bg {
-    background: gray;
-}
-
 .red {
     color: red;
-}
-
-.inline-list i {
-    display: inline-block;
-}
-
-.export {
-    text-align: center;
-    label {
-        font-size: .75em;
-    }
 }
 
 /* Highlight newly added filters in the preview box */

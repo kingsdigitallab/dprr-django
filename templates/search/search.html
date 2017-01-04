@@ -139,34 +139,34 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                             <div class="panel callout">
                                 <h3 class="panel-heading">Name</h3>
                                 <p class="info"><i class="fa fa-info-circle"></i> Start typing</p>
-                                <div class="row name-row">
+                                <div class="row name-row hyphen">
                                     <div class="medium-2 columns">
+                                        {{ form.praenomen }}
                                         <label>Praenomen</label>
-                                        {{form.praenomen}}
                                     </div>
-                                    <div class="medium-1 columns">
+                                    <div class="medium-3 columns">
+                                        {{ form.nomen }}
                                         <label>Nomen</label>
-                                        {{form.nomen}}
                                     </div>
                                     <div class="medium-1 columns">
+                                        {{ form.re_number }}
                                         <label>RE</label>
-                                        {{form.re_number}}
                                     </div>
-                                    <div class="medium-2 columns">
+                                    <div class="medium-1 columns">
+                                        {{ form.f }}
                                         <label>Father initial</label>
-                                        {{form.f}}
                                     </div>
-                                    <div class="medium-2 columns">
+                                    <div class="medium-1 columns">
+                                        {{ form.n }}
                                         <label>Grandfather initial</label>
-                                        {{form.n}}
                                     </div>
                                     <div class="medium-2 columns">
+                                        {{ form.cognomen }}
                                         <label>Cognomen</label>
-                                        {{form.cognomen}}
                                     </div>
                                     <div class="medium-2 columns">
+                                        {{ form.other_names }}
                                         <label>Other names</label>
-                                        {{form.other_names}}
                                     </div>
                                 </div>
                             </div>

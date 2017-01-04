@@ -298,48 +298,6 @@ h3.quick-home {
     }
 }
 
-// .name-row {
-//  button {
-//      padding: 3px 0 3px 3px !important;
-//      font-size: .75em !important;
-//  }
-//  .columns {
-//      padding: .25rem !important;
-//      &:first-child {
-//          padding-left: .5rem !important;
-//      }
-//      &:last-child {
-//          padding-right: .5rem !important;
-//      }
-//  }
-
-//  .secondary.label {
-//      padding: 2px 4px !important;
-//      font-size: .75em !important;
-//  }
-// }
-
-// button.name-form {
-//  color: $dark-gold;
-//  font-size: .875rem;
-//  background: scale-color($sand, $lightness: 15%);
-//  border: 1px solid scale-color($sand, $lightness: -11%);
-//  width: 100%;
-//  text-align: left;
-
-//  &:hover {
-//      color: $dark-gold;
-//      background: scale-color($sand, $lightness: 15%);
-//  }
-
-//  &:after {
-//      border-width: .1875rem !important;
-//      border-color: $dark-gold transparent transparent transparent !important;
-//      right: .125rem !important;
-//      top: .75rem !important;
-//  }
-// }
-
 .drop-list {
     max-height: 550px; /* To overcome the overflow: hidden that cuts the list off */
     overflow: scroll;

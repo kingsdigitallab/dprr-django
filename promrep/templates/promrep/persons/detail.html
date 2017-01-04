@@ -44,75 +44,17 @@
         {% endif %}
 
         <div id="network-container">
-            <h2 class="svg-title">Relationships recorded in the sources</h2>
-            <style type="text/css">
-                #network {
-                    width: 100%;
-                    height: 600px;
-                    margin: 10px;
-                }
-
-                .sigma-tooltip {
-                  max-width: 400px;
-                  max-height: 280px;
-                  background-color: rgb(249, 247, 237);
-                  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-                  border-radius: 6px;
-              }
-
-              .sigma-tooltip-header {
-                  font-variant: small-caps;
-                  font-size: 120%;
-                  color: #437356;
-                  border-bottom: 1px solid #aac789;
-                  padding: 10px;
-              }
-
-              .sigma-tooltip-body {
-                  padding: 10px;
-              }
-
-              .sigma-tooltip-body th {
-                  color: #999;
-                  text-align: left;
-              }
-
-              .sigma-tooltip-footer {
-                  padding: 10px;
-                  border-top: 1px solid #aac789;
-              }
-
-              .sigma-tooltip > .arrow {
-                  border-width: 10px;
-                  position: absolute;
-                  display: block;
-                  width: 0;
-                  height: 0;
-                  border-color: transparent;
-                  border-style: solid;
-              }
-
-              .sigma-tooltip.top {
-                  margin-top: -12px;
-              }
-              .sigma-tooltip.top > .arrow {
-                  left: 50%;
-                  bottom: -10px;
-                  margin-left: -10px;
-                  border-top-color: rgb(249, 247, 237);
-                  border-bottom-width: 0;
-              }
-          </style>
+          <h2 class="svg-title">Relationships recorded in the sources</h2>
           <div id="network"></div>
       </div>
 
       <h2>Offices</h2>
       <ul class="timeline no-bullet bottom-margin">
         {% for pa in person.post_assertions.all %}
-        <li><span class="label radius{% if pa.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ pa.print_date | safe}}</span> <strong>{{ pa.office | title}} {% if pa.provinces %} <a href="#">{{ pa.print_provinces }}</a> {% endif %}</strong>
-
+        <li><span class="label radius{% if pa.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ pa.print_date | safe }}</span> <strong>{{ pa.office | title }} {% if pa.provinces %} <a href="#">{{ pa.print_provinces }}</a> {% endif %}</strong>
+          <a href="#" class="expander right">Description <i class="fa fa-caret-right"></i></a>
             {% if pa.notes.count %}
-            <ul class="no-bullet">
+            <ul class="no-bullet hide collapsible">
                 {% for note in pa.notes.all %}
                 <li>{{note.text}} (in <em>{{note.secondary_source.abbrev_name}}</em>)</li>
                 {% endfor %}

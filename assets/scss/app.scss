@@ -75,6 +75,11 @@ li.greyed-out a {
     }
 }
 
+.hyphen {
+    hyphens: auto;
+    word-wrap: break-word;
+}
+
 .info {
     font-size: .875rem;
     color: $primary-color !important;

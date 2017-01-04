@@ -8,44 +8,58 @@
 <div class="row">
     <div class="large-12 columns">
 
-        <h1>{{ person }}</h1>
+      <h1>{{ person }}</h1>
 
-        <p>
-            Project ID: {{ person.id }}
-        </p>
+      <p>
+          Project ID: {{ person.id }}
+      </p>
 
-        {% if person.patrician %}
-        <p>
-            Patrician{% if person.patrician_uncertainty %}?{% endif %}
-        </p>
-        {% endif %}
+      {% if person.patrician %}
+      <p>
+          Patrician{% if person.patrician_uncertainty %}?{% endif %}
+      </p>
+      {% endif %}
 
-        {% if person.gens %}
-        <p>
-            Gens: {{ person.gens }}{% if person.gens_uncertainty %}?{% endif %}
-        </p>
-        {% endif %}
+      {% if person.gens %}
+      <p>
+          Gens: {{ person.gens }}{% if person.gens_uncertainty %}?{% endif %}
+      </p>
+      {% endif %}
 
-        {% if person.review_flag %}
-            <p><b>Warning: person needs revision</b></p>
-        {% endif %}
+      {% if person.review_flag %}
+          <p><strong>Warning: person needs revision</strong></p>
+      {% endif %}
 
-        {% if person.dateinformation_set.all %}
-        <h2>Life Dates</h2>
-        <ul>
-            {% for di in person.dateinformation_set.all %}
-            <li>{{ di }}
-                {% if di.notes %}
-                    <p class="date-notes">{{di.notes|capfirst}}</p>
-                {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+      {% if person.dateinformation_set.all %}
+      <a href="#" class="expander life-dates"><h2>Life Dates <i class="fa fa-caret-right"></i></h2></a>
+      <ul class="hide collapsible">
+          {% for di in person.dateinformation_set.all %}
+          <li>{{ di }}
+              {% if di.notes %}
+                  <p>{{ di.notes|capfirst }}</p>
+              {% endif %}
+          </li>
+          {% endfor %}
+      </ul>
+      {% endif %}
 
-        <div id="network-container">
-          <h2 class="svg-title">Relationships recorded in the sources</h2>
-          <div id="network"></div>
+
+      <a href="#" class="expander life-dates"><h2>Life Dates <i class="fa fa-caret-right"></i></h2></a>
+      <ul class="hide collapsible">
+          <li>
+            <p>Single ?142 B.C., birth (Sumner Orators)<br>
+            Sumner R94 (before 142), Develin p. 90 (by 151).</p>
+          </li>
+          <li>
+            <p>Single 89 B.C., death - violent (Broughton MRR II)<br>
+            Murdered in mutiny.</p>
+          </li>
+      </ul>
+      <span class="info show"><i class="fa fa-info-circle"></i> Click to display life dates</span>
+
+      <div id="network-container">
+        <h2 class="svg-title">Relationships recorded in the sources</h2>
+        <div id="network"></div>
       </div>
 
       <h2>Offices</h2>

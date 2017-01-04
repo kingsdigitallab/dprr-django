@@ -225,14 +225,34 @@ h3.quick-home {
 
 /*** Content ***/
 
+.key {
+    font-size: .875rem;
+    font-style: italic;
+    margin-top: 1.25rem;
+}
+
+.life-dates {
+    margin: 0;
+    padding: 0;
+
+    h2 {
+        margin: 0;
+        padding: 0;
+    }
+}
+
 .list-page-title {
     border-bottom: 1px solid $iron;
+    font-size: 1.5rem;
     margin-bottom: 1rem;
     padding-bottom: .5rem;
-    font-size: 1.5rem;
 }
 
 .timeline {
+    .label {
+        font-size: 1rem;
+    }
+
     li {
         &:before {
             font-family: "FontAwesome";
@@ -249,22 +269,12 @@ h3.quick-home {
         content: none;
     }
 
-    .label {
-        font-size: 1rem;
-    }
-
     ul {
         border-left: 1px dotted $primary-color;
         padding-left: 1.25rem;
         margin-left: .28125rem !important;
         margin-top: -.5rem;
     }
-}
-
-.key {
-    font-style: italic;
-    font-size: .875rem;
-    margin-top: 1.25rem;
 }
 
 /*** Search / Facets / Filters ***/

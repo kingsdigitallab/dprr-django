@@ -11,6 +11,7 @@ $(document).ready(function() {
 	$('.expander').bind("click", function() {
 		$(this).next('.collapsible').slideToggle(400).removeClass("hide");
 		$("i", this).toggleClass("fa-caret-down fa-caret-right");
+		$(".expander ~ span.info").toggleClass("hide show");
 		return false;
 	});
 

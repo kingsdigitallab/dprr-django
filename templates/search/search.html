@@ -138,7 +138,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                         <div class="large-12 columns">
                             <div class="panel callout">
                                 <h3 class="panel-heading">Name</h3>
-                                <p class="info"><i class="fa fa-info-circle"></i> Start typing.</p>
+                                <p class="info"><i class="fa fa-info-circle"></i> Start typing</p>
                                 <div class="row name-row">
                                     <div class="medium-2 columns">
                                         <label>Praenomen</label>
@@ -172,7 +172,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                             </div>
                             <div class="panel callout">
                                 <h3 class="panel-heading">Personal data</h3>
-                                <p class="info"><i class="fa fa-info-circle"></i> Some info on this section.</p>
+                                <p class="info"><i class="fa fa-info-circle"></i> Some info on this section</p>
                                 {{ form.date_from.errors }} {{ form.date_to.errors }}
                                 <div class="row range">
                                     <div class="small-1 columns">
@@ -213,28 +213,6 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
 
                                 <h4>Class</h4>
                                 <ul class="button-group">
-                                    {% comment %} {% for term in facets.fields|get_item:"eques" %} {% with value=term.0 count=term.1 %} {% if value == "true" %}
-                                    <li>
-                                        <input id="eques-id" type="checkbox" value="eques" {% if count=0 %} disabled{% endif %}>
-                                        <label for="eques-id" {% if count=0 %} class="grayed-out" {% endif %}>Eques <span class="label radius">{{ count }}</span></label>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %} {% for term in facets.fields|get_item:"nobilis" %} {% with value=term.0 count=term.1 %} {% if value == "true" %}
-                                    <li>
-                                        <input id="nobilis-id" type="checkbox" value="nobilis" {% if count=0 %} disabled{% endif %}>
-                                        <label for="nobilis-id" {% if count=0 %} class="grayed-out" {% endif %}>Nobilis <span class="label radius">{{ count }}</span></label>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %} {% for term in facets.fields|get_item:"novus" %} {% with value=term.0 count=term.1 %} {% if value == "true" %}
-                                    <li>
-                                        <input id="novus-id" type="checkbox" value="novus" {% if count=0 %} disabled{% endif %}>
-                                        <label for="novus-id" {% if count=0 %} class="grayed-out" {% endif %}>Novus <span class="label radius">{{ count }}</span></label>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %} {% for term in facets.fields|get_item:"patrician" %} {% with value=term.0 count=term.1 %} {% if value == "true" %}
-                                    <li>
-                                        <input id="patrician-id" type="checkbox" value="patrician" {% if count=0 %} disabled{% endif %}>
-                                        <label for="patrician-id" {% if count=0 %} class="grayed-out" {% endif %}>Patrician <span class="label radius">{{ count }}</span></label>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %} {% endcomment %}
-
                                     {% for term in facets.fields|get_item:"nobilis" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
                                     <li>
                                         <a href="{% add_facet_link querydict "nobilis" value %}#search" class="button secondary less-padding">Nobilis <span class="label radius">{{ count }}</span></a>
@@ -361,18 +339,18 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                             <h4>Province</h4>
                                             <ul class="no-bullet hierarchical-facets">
 
-                                            {% comment %}
-                                              Add options for the hierarchical facets:
-                                              using the MPTT template tags to rebuild the tree:
-                                                    https://django-mptt.github.io/django-mptt/templates.html
-                                            {% endcomment %}
+                                                {% comment %}
+                                                  Add options for the hierarchical facets:
+                                                  using the MPTT template tags to rebuild the tree:
+                                                        https://django-mptt.github.io/django-mptt/templates.html
+                                                {% endcomment %}
 
-                                            {% with treenodes=province_list %}
-                                            {% recursetree treenodes %}
+                                                {% with treenodes=province_list %}
+                                                {% recursetree treenodes %}
 
-                                            {% with num=province_fdict|lookup:node.name %}
+                                                {% with num=province_fdict|lookup:node.name %}
 
-                                            {% if num %}
+                                                {% if num %}
                                                 {% comment %} parent node {% endcomment %}
                                                 {% if not node.is_leaf_node %}
                                                 <li><span class="label radius pull-right">{{province_fdict|lookup:node.name}}</span>
@@ -387,13 +365,11 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                                 {% comment %} no children {% endcomment %}
                                                 <li><a href="{% select_facet_link 'province' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
                                                 {% endif %}
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endrecursetree %}
-                                            {% endwith %}
-                                            {% comment %} closes the with treenodes {% endcomment %}
-
-
+                                                {% endif %}
+                                                {% endwith %}
+                                                {% endrecursetree %}
+                                                {% endwith %}
+                                                {% comment %} closes the with treenodes {% endcomment %}
                                             </ul>
                                         </div>
                                     </div>
@@ -445,7 +421,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
             <li>Uncertain <i class="fa fa-question-circle fa-lg gray"></i></li>
         </ul>
         <hr>
-        <ol start="{{page_obj.start_index}}" class="search-results">
+        <ol start="{{ page_obj.start_index }}" class="search-results">
             {% for result in object_list %}
             <li>
                 {% with doc=result.documents.0 %}

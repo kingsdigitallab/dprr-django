@@ -31,12 +31,13 @@
       {% endif %}
 
       {% if person.dateinformation_set.all %}
-      <a href="#" class="expander life-dates"><h2>Life Dates <i class="fa fa-caret-right"></i></h2></a>
-      <ul class="hide collapsible">
+      <h2>Life Dates</h2>
+      <ul>
           {% for di in person.dateinformation_set.all %}
           <li>{{ di }}
               {% if di.notes %}
-                  <p>{{ di.notes|capfirst }}</p>
+                <a href="#" class="small button round less-padding expander life-dates right">Info <i class="fa fa-caret-right"></i></a>
+                <p class="hide collapsible">{{ di.notes|capfirst }}</p>
               {% endif %}
           </li>
           {% endfor %}

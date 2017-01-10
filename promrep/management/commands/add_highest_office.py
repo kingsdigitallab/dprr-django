@@ -70,6 +70,7 @@ class Command(BaseCommand):
                     aed = pas.filter(office__name__in=aed_list)
                     tri = pas.filter(office__name__in=tri_list)
                     qua = pas.filter(office__name__in=qua_list)
+
                     sas = p.statusassertion_set.all().order_by('date_start')
 
                     # TODO: test if any of these exist!!!
@@ -102,7 +103,7 @@ class Command(BaseCommand):
                 # TODO: we're only checking direct, because we expect to calc
                 #     the inverse relationships - see DPRR-257
                 # Highest relationship
-                elif p.relationships_as_object.exists():
+                elif p.relationships_as_subject.exists():
 
                     rel_per = None
                     rel_str = ""
@@ -113,26 +114,29 @@ class Command(BaseCommand):
 
                     rel_is_male_q = Q(related_person__sex__name="Male")
 
-                    ra_son = p.relationships_as_object.filter(
-                        son_q and rel_is_male_q)
-                    ra_dau = p.relationships_as_object.filter(
-                        dau_q and rel_is_male_q)
-                    ra_wif = p.relationships_as_object.filter(wif_q)
+                    ra_son = p.relationships_as_subject.filter(
+                        son_q, rel_is_male_q)
+                    ra_dau = p.relationships_as_subject.filter(
+                        dau_q, rel_is_male_q)
+                    ra_wif = p.relationships_as_subject.filter(wif_q)
 
-                    ra_any = p.relationships_as_object.all()
+                    ra_any = p.relationships_as_subject.all()
 
                     # son of (male) display as (s.), otherwise
                     if ra_son.exists():
                         rel_str = "s. of"
                         rel_per = ra_son.first().related_person
+
                     # daughter of (male) display as (d.), otherwise
                     elif ra_dau.exists():
                         rel_str = "d. of"
                         rel_per = ra_dau.first().related_person
+
                     # wife of display as (w.), otherwise
                     elif ra_wif.exists():
                         rel_str = "w. of"
                         rel_per = ra_dau.first().related_person
+
                     # any other relationship else
                     elif ra_any.exists():
                         rel_str = ra_any.first().relationship
@@ -140,6 +144,13 @@ class Command(BaseCommand):
 
                     if rel_per and rel_str:
                         hoffice = "{} {}".format(rel_str, rel_per)
+
+                # default case, print the last office the person had
+                if hoffice == "":
+                    if p.post_assertions.exists():
+                        pa = p.post_assertions.order_by('-date_start').first()
+                        hoffice = "{} ({} B.C.)".format(pa.office.abbrev_name,
+                                                        pa.date_start)
 
                 csv_log.writerow({
                                  "id": p.id,

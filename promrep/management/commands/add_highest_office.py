@@ -98,7 +98,7 @@ class Command(BaseCommand):
                             date = -int(date)
                         except:
                             pass
-                        hoffice = "{} ({} B.C.)".format(off, date)
+                        hoffice = "{} ({})".format(off, date)
 
                 # TODO: we're only checking direct, because we expect to calc
                 #     the inverse relationships - see DPRR-257
@@ -149,8 +149,9 @@ class Command(BaseCommand):
                 if hoffice == "":
                     if p.post_assertions.exists():
                         pa = p.post_assertions.order_by('-date_start').first()
-                        hoffice = "{} ({} B.C.)".format(pa.office.abbrev_name,
-                                                        pa.date_start)
+                        hoffice = "{} ({})".format(
+                            pa.office.abbrev_name,
+                            pa.date_start)
 
                 csv_log.writerow({
                                  "id": p.id,

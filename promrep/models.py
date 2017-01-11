@@ -30,7 +30,7 @@ def date_to_string(date_int, date_uncertain, date_suffix=True):
         if date_suffix:
             date_str = date_str + suffix
     else:
-        date_str = "<em>(no date info)</em>"
+        date_str = "uncertain date"
 
     return date_str
 
@@ -661,6 +661,22 @@ class PostAssertion(TimeStampedModel):
     class Meta:
         ordering = ['-date_end', '-date_start', ]
 
+    def office_str(self):
+        """ returns the office name, using the abbreviated version
+        also includes a question mark if uncertain"""
+
+        name = ""
+
+        if self.office.abbrev_name != "":
+            name = self.office.abbrev_name
+        else:
+            name = self.office.name
+
+        if self.uncertain:
+            name = "{}?".format(name)
+
+        return name
+
     def __unicode__(self):
 
         off = "No office"
@@ -669,6 +685,7 @@ class PostAssertion(TimeStampedModel):
 
         name = str(self.person.__unicode__()) + \
             ": " + off + " " + self.print_date()
+
         name = name + " (" + self.secondary_source.abbrev_name + ")"
         return name
 
@@ -713,6 +730,32 @@ class PostAssertion(TimeStampedModel):
                 date_str = date_str + "?"
 
         return date_str.strip()
+
+    def date_str(self):
+        """returns a friendly version of the dates"""
+
+        # So where the post has uncertain start and certain end,
+        #    this represents 'before' the end date plus 1.
+        # e.g.
+        # start date = -91 uncertain, end date = -91 certain means 'before 90'.
+        # start date = -91 certain, end date = -91 uncertain means 'after 92'.
+        # start date = 91 = end date, both uncertain means 'c. 91'.
+
+        date = self.print_date()
+
+        if self.date_start:
+            if self.date_start == self.date_end:
+
+                date_val = -int(self.date_start)
+
+                if self.date_start_uncertain and not self.date_end_uncertain:
+                    date = "before {}".format(date_val - 1)
+                elif not self.date_start_uncertain and self.date_end_uncertain:
+                    date = "after {}".format(date_val + 1)
+                elif self.date_start_uncertain and self.date_end_uncertain:
+                    date = "c. {}".format(date_val)
+
+        return date
 
 
 @with_author

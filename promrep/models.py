@@ -14,6 +14,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 
 def date_to_string(date_int, date_uncertain, date_suffix=True):
+
     date_str = ""
     suffix = " B.C."
 
@@ -30,7 +31,7 @@ def date_to_string(date_int, date_uncertain, date_suffix=True):
         if date_suffix:
             date_str = date_str + suffix
     else:
-        date_str = "<em>(no date info)</em>"
+        date_str = "date uncertain"
 
     return date_str
 
@@ -661,6 +662,22 @@ class PostAssertion(TimeStampedModel):
     class Meta:
         ordering = ['-date_end', '-date_start', ]
 
+    def office_str(self):
+        """ returns the office name, using the abbreviated version
+        also includes a question mark if uncertain"""
+
+        name = ""
+
+        if self.office.abbrev_name != "":
+            name = self.office.abbrev_name
+        else:
+            name = self.office.name
+
+        if self.uncertain:
+            name = "{}?".format(name)
+
+        return name
+
     def __unicode__(self):
 
         off = "No office"
@@ -669,6 +686,7 @@ class PostAssertion(TimeStampedModel):
 
         name = str(self.person.__unicode__()) + \
             ": " + off + " " + self.print_date()
+
         name = name + " (" + self.secondary_source.abbrev_name + ")"
         return name
 
@@ -688,29 +706,62 @@ class PostAssertion(TimeStampedModel):
     print_provinces.allow_tags = True
     print_provinces.short_description = 'Provinces'
 
-    def print_date(self):
+    def print_date(self):  # noqa
+        """returns a friendly version of the post assertion dates"""
+
+        # So where the post has uncertain start and certain end,
+        #    this represents 'before' the end date plus 1.
+        # e.g.
+        # start date = -91 uncertain, end date = -91 certain means 'before 90'.
+        # start date = -91 certain, end date = -91 uncertain means 'after 92'.
+        # start date = 91 = end date, both uncertain means 'c. 91'.
+
         date_str = ""
 
         if self.date_display_text:
-            date_str = self.date_display_text
-        elif self.date_start == self.date_end and \
-                self.date_start_uncertain == self.date_end_uncertain:
-            date_str = date_to_string(
-                self.date_start, self.date_start_uncertain)
-        else:
-            if self.date_start:
-                date_str = date_to_string(
-                    self.date_start, self.date_start_uncertain, False)
-            else:
-                date_str = "?"
+            return self.date_display_text
 
-            date_str = date_str + " - "
+        elif self.date_start == self.date_end:
+            # single value dates
+            # safe to convert, all dates are negative
+            if self.date_start is None:
+                return "date uncertain"
+
+            date_val = abs(self.date_start)
+
+            if self.date_start_uncertain and not self.date_end_uncertain:
+                date_str = "before {}".format(date_val - 1)
+            elif not self.date_start_uncertain and self.date_end_uncertain:
+                date_str = "after {}".format(date_val + 1)
+            elif self.date_start_uncertain and self.date_end_uncertain:
+                date_str = "c. {}".format(date_val)
+            else:
+                date_str = str(date_val)
+
+        else:
+            st = ""
+            en = ""
+            # if both dates differ, we need to print the interval
+            if self.date_start:
+                st = str(abs(int(self.date_start)))
+
+                if self.date_start_uncertain:
+                    st = "{}?".format(st)
 
             if self.date_end:
-                date_str = date_str + \
-                    date_to_string(self.date_end, self.date_end_uncertain)
+                en = str(abs(self.date_end))
+
+                if self.date_end_uncertain:
+                    en = "{}?".format(en)
+
+            if st and en:
+                date_str = "{} to {}".format(st, en)
+            elif st:
+                date_str = "after {}".format(st)
+            elif en:
+                date_str = "before {}".format(en)
             else:
-                date_str = date_str + "?"
+                date_str = "date uncertain"
 
         return date_str.strip()
 

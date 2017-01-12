@@ -8,7 +8,7 @@ import datetime
 
 class Command(BaseCommand):
     args = '<page document_path document_path ...>'
-    help = 'Adds the Highest office info to the Persons'
+    help = 'Adds the Highest office info to the Person model'
 
     logger = logging.getLogger(__name__)
 
@@ -33,6 +33,12 @@ class Command(BaseCommand):
         qua_list = [o.name for o in Office.objects.get(
             name="quaestor").get_descendants(include_self=True)]
 
+        cos_Q = Q(office__name__in=cos_list)
+        pra_Q = Q(office__name__in=pra_list)
+        aed_Q = Q(office__name__in=aed_list)
+        tri_Q = Q(office__name__in=tri_list)
+        qua_Q = Q(office__name__in=qua_list)
+
         with open(log_fname, 'wb') as ofile:
             csv_log = csv.DictWriter(
                 ofile,
@@ -46,7 +52,9 @@ class Command(BaseCommand):
                 extrasaction='ignore')
             csv_log.writeheader()
 
+            # don't overwrite manually edited fields
             persons = Person.objects.filter(highest_office_edited=False)
+
             print("Adding highest office info: {} persons".format(
                 persons.count()))
 
@@ -59,44 +67,53 @@ class Command(BaseCommand):
                 # tr.pl. if achieved,(first one), otherwise
                 # q. if achieved,(first one), otherwise
                 # sen. if achieved/eq. R.
-                pas = p.post_assertions.order_by('date_start')
+                pas = p.post_assertions.filter(
+                    cos_Q or pra_Q or aed_Q or tri_Q or qua_Q).order_by(
+                    'date_start')
+
+                sas = p.statusassertion_set.all().order_by('date_start')
 
                 if pas.exists():
                     off = ""
                     date = ""
 
-                    cos = pas.filter(office__name__in=cos_list)
-                    pra = pas.filter(office__name__in=pra_list)
-                    aed = pas.filter(office__name__in=aed_list)
-                    tri = pas.filter(office__name__in=tri_list)
-                    qua = pas.filter(office__name__in=qua_list)
-
-                    sas = p.statusassertion_set.all().order_by('date_start')
+                    cos = pas.filter(cos_Q)
+                    pra = pas.filter(pra_Q)
+                    aed = pas.filter(aed_Q)
+                    tri = pas.filter(tri_Q)
+                    qua = pas.filter(qua_Q)
 
                     # TODO: test if any of these exist!!!
                     if cos.exists():
                         off = cos.first().office_str()
-                        date = cos.first().date_str()
+                        date = cos.first().print_date()
                     elif pra.exists():
                         off = pra.first().office_str()
-                        date = pra.first().date_str()
+                        date = pra.first().print_date()
                     elif aed.exists():
                         off = aed.first().office_str()
-                        date = aed.first().date_str()
+                        date = aed.first().print_date()
                     elif tri.exists():
                         off = tri.first().office_str()
-                        date = tri.first().date_str()
+                        date = tri.first().print_date()
                     elif qua.exists():
                         off = qua.first().office_str()
-                        date = qua.first().date_str()
-                    elif sas.exists():
-                        off = sas.first().status.name
-                        date = sas.first().date_start
+                        date = qua.first().print_date()
 
-                        try:
-                            date = -int(date)
-                        except:
-                            date = "uncertain date"
+                    if not date:
+                        date = "uncertain date"
+
+                    if off and date:
+                        hoffice = "{} {}".format(off, date)
+
+                elif sas.exists():
+                    off = sas.first().status.name
+                    date = sas.first().date_start
+
+                    if date is not None:
+                        date = abs(date)
+                    else:
+                        date = "uncertain date"
 
                     if off and date:
                         hoffice = "{} {}".format(off, date)
@@ -115,8 +132,11 @@ class Command(BaseCommand):
 
                     rel_is_male_q = Q(related_person__sex__name="Male")
 
+                    # son of male
                     ra_son = p.relationships_as_subject.filter(
                         son_q, rel_is_male_q)
+
+                    # daughter of male
                     ra_dau = p.relationships_as_subject.filter(
                         dau_q, rel_is_male_q)
 
@@ -163,7 +183,7 @@ class Command(BaseCommand):
                         pa = p.post_assertions.order_by('-date_start').first()
                         off = pa.office_str()
 
-                        date = pa.date_str()
+                        date = pa.print_date()
 
                         if off and date:
                             hoffice = "{} {}".format(off, date)

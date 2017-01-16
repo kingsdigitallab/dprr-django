@@ -68,7 +68,7 @@ class Command(BaseCommand):
                 # q. if achieved,(first one), otherwise
                 # sen. if achieved/eq. R.
                 pas = p.post_assertions.filter(
-                    cos_Q or pra_Q or aed_Q or tri_Q or qua_Q).order_by(
+                    cos_Q | pra_Q | aed_Q | tri_Q | qua_Q).order_by(
                     'date_start')
 
                 sas = p.statusassertion_set.all().order_by('date_start')

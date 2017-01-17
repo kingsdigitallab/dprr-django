@@ -117,16 +117,21 @@ $steel       : #666666;
 // $oil         : #333333;
 $dark-gold		: #4A412A;
 $royal-blue		: #607a7a;
-// $jet         : #222222;
+$jet 	        : #222222;
 // $black       : #000000;
+$info-blue		: #a0d3e8;
+$warning-orange	: #f08a24;
 
 // We use these as default colors throughout
 $primary-color: $royal-blue;
 // $secondary-color: $dark-gold;
+$secondary-color: $sand;
 // $alert-color: #f04124;
 // $success-color: #43AC6A;
 // $warning-color: #f08a24;
+$warning-color: scale-color($warning-orange, $lightness: 70%);
 // $info-color: #a0d3e8;
+$info-color: scale-color($info-blue, $lightness: 50%);
 
 // We use these to control various global styles
 $body-bg: scale-color($primary-color, $lightness: 40%);
@@ -843,7 +848,9 @@ $tabbar-bg: $royal-blue;
 
 // Off Canvas Menu Variables
 // $off-canvas-width: rem-calc(250);
-$off-canvas-bg: $royal-blue;
+$off-canvas-width: 80%;
+// $off-canvas-bg: $royal-blue;
+$off-canvas-bg: white;
 
 // Off Canvas Menu List Variables
 // $off-canvas-label-padding: 0.3rem rem-calc(15);
@@ -884,8 +891,11 @@ $off-canvas-bg: $royal-blue;
 // $off-canvas-overlay-transition: background 300ms ease;
 // $off-canvas-overlay-cursor: pointer;
 // $off-canvas-overlay-box-shadow: -4px 0 4px rgba($black, 0.5), 4px 0 4px rgba($black, 0.5);
+$off-canvas-overlay-box-shadow: 0 0 4px rgba($primary-color, 0.5), 0 0 4px rgba($primary-color, 0.5);
 // $off-canvas-overlay-background: rgba($white, 0.2);
 // $off-canvas-overlay-background-hover: rgba($white, 0.05);
+$off-canvas-overlay-background: rgba(white, .7);
+$off-canvas-overlay-background-hover: rgba(white, .3);
 
 // Transition Variables
 // $menu-slide: "transform 500ms ease";

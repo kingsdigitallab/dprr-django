@@ -1,17 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import codecs
 import csv
 import os
-from promrep.models import SecondarySource, PostAssertionNote
-import codecs
+
+from promrep.models import PostAssertionNote, SecondarySource
+
 
 def run():
 
-    note_files = [ 'promrep/scripts/data/MRR3ShortNotesV2.csv',
-                   'promrep/scripts/data/MRR3LongNotesV2.csv']
+    note_files = ['promrep/scripts/data/MRR3ShortNotesV2.csv',
+                  'promrep/scripts/data/MRR3LongNotesV2.csv']
 
-    source = SecondarySource.objects.get( abbrev_name = 'Broughton MRR3' )
+    source = SecondarySource.objects.get(abbrev_name='Broughton MRR3')
 
     for ifname in note_files:
         print 'Will read notes from file', ifname, '\n\n'
@@ -20,14 +22,19 @@ def run():
         log_fname = os.path.splitext(os.path.basename(ifname))[0] + '.log'
 
         with open(log_fname, 'wb') as log_file:
-            spamwriter = csv.writer(log_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            spamwriter = csv.writer(
+                log_file,
+                delimiter=',',
+                quotechar='"',
+                quoting=csv.QUOTE_MINIMAL)
             spamwriter.writerow(('id', 'note'))
 
             for i, line in enumerate(ifile):
 
                 note_text = line.encode('utf-8').replace("**", ";").strip('"')
 
-                print str(i) + ":" , note_text
+                print str(i) + ":", note_text
 
-                note = PostAssertionNote.objects.create(text=note_text, secondary_source=source)
+                note = PostAssertionNote.objects.create(
+                    text=note_text, secondary_source=source)
                 spamwriter.writerow((note.id, note_text[0:20]))

@@ -1,0 +1,13 @@
+language: python
+python:
+- 2.7
+install:
+- pip install tox-travis
+script:
+- tox
+notifications:
+  slack:
+    rooms:
+      secure: v0SWl8ZYtGy5+1QC4pQP2TeUbIby0x91zPg1QCa7LcOSjAwDvNbWYIX9fUpXD6SoAO3rsUJcs+msJUMXnnCQJ/tMwUw8cn5cI7Jzg4bfHvCgFxhHE5V5iZwWhhP5cYVRNEVMQ14ENcY2br5Gq0lng7Me8+l7ynsefzJRCb3RYWlCsE+QIAYA2KjTdh5ZjfIDVVB/DIxHQ2jDFPKxX1WkJvdI0r/96WhjaFZdipRWQrw5EOV6qhCjBrmnjvep7HlslKf/YbCyWM4nEN7leo/mNliHavvvNY9/zZ9C0oe0m21e95Ou1PJLNUSfZZU7zFivrBxy1nr/7J6KXdd5sr2VMJvEqn7xUZ6oMEHzlTTeKy+Ti1omeXYfIrajMYhDjGlIYIfMAjzc/uA9SZjJ9dXiG3mbjVozWzhJF87FOigZrCSQrknR4Oly0BTaV69ahjK6Bwwb+6XYhA8T/2VPKw22KhjeXIhgauTUCr5ZOw/tfGIrv4Vu/s4gFvboCpLS8QkVvb4NH5XZBFbiFCE+px+WyHRgaRhbrcfgoxDBKmgZK0GtMrgAwzoScnN0ZbUWxhoXTcVPAeRNkBZIcqyM2NCD2V+aWGGvuRNj6IgHp9HUwSyo4v5zbj0q78/3Rj6BSamU9FyPr6wRON64KLBKmFizpTbLgOguatobALYjx3QR59g=
+    on_success: change
+    on_failure: always

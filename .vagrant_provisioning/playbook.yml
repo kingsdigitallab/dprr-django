@@ -1,0 +1,458 @@
+---
+- hosts: all
+
+  vars_files:
+    - vars.yml
+  gather_facts: false
+  become: true
+
+  tasks:
+  - name: fix debian sudoers file
+    become: yes
+    lineinfile:
+      dest: /etc/sudoers
+      backup: yes
+      regexp: "^%sudo\\s+ALL=\\(ALL:ALL\\)\\s+ALL$"
+      line: "%sudo   ALL=(ALL) NOPASSWD: ALL"
+    tags:
+      - system
+
+  - name: apt | add wheezy backports
+    apt_repository:
+      repo: deb http://http.debian.net/debian wheezy-backports main
+      state: present
+    tags:
+      - system
+
+  - name: apt | install https transport for apt
+    apt:
+      pkg: apt-transport-https
+      state: installed
+      # update_cache: yes
+    tags:
+      -system
+
+  - name: apt | add node key
+    become: yes
+    apt_key:
+      url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+      state: present
+    tags:
+      - system
+
+  - name: apt | add nodejs sources
+    apt_repository:
+      repo: 'deb https://deb.nodesource.com/node wheezy main'
+      state: present
+    tags:
+      - system
+
+  - name: apt | add nodejs sourcecode sources
+    apt_repository:
+      repo: 'deb-src https://deb.nodesource.com/node wheezy main'
+      state: present
+    tags:
+      - system
+
+  - name: apt | add postgresql key
+    become: yes
+    apt_key:
+      url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+      state: present
+    tags:
+      - system
+
+  - name: apt | add postgresql sources
+    apt_repository:
+      repo: 'deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main'
+      state: present
+    tags:
+      - system
+
+  - name: apt | install required system packages
+    apt:
+      pkg: "{{item}}"
+      state: installed
+      update_cache: yes
+    with_items: system_packages
+    tags:
+      - system
+
+  - name: zsh | clone oh-my-zsh repo
+    git: repo={{ zsh.oh_my_zsh }} dest={{ user_home }}/.oh-my-zsh
+    tags:
+      - system
+
+  - name: zsh | deploy .zshrc
+    copy: src={{ zsh.zshrc }} dest={{ user_home }}/.zshrc owner=vagrant
+    tags:
+      - system
+
+  - name: zsh | as default shell
+    user: name=vagrant shell=/bin/zsh
+    tags:
+      - system
+
+- hosts: all
+  vars_files:
+    - vars.yml
+  gather_facts: false
+  tasks:
+  - name: pip | create virtualenv folder
+    command: mkdir -p {{ python.virtualenv_location }}}}
+    tags:
+      - python
+
+  - name: pip | setup virtualenv
+    command: virtualenv {{ python.virtualenv_location }}
+    tags:
+      - python
+
+  - name: pip | update setuptools
+    pip:
+      name: setuptools
+      virtualenv: "{{ python.virtualenv_location }}"
+      state: latest
+    tags:
+      - python
+
+  - name: pip | update pip
+    pip:
+      name: pip
+      virtualenv: "{{ python.virtualenv_location }}"
+      state: latest
+    tags:
+      - python
+
+  - name: pip | ensure python requirements are installed to latest version
+    pip:
+      requirements: "{{ project_root }}/{{ python.requirements }}"
+      virtualenv: "{{ python.virtualenv_location }}"
+    tags:
+      - python
+
+- hosts: all
+  vars_files:
+    - vars.yml
+  # gather_facts: false
+  tasks:
+  - name: locale | setup gb locale
+    locale_gen:
+      name: "{{ postgresql.locale }}"
+      state: present
+    become: yes
+    tags:
+      - db
+
+  - name: postgresql | ensure postgresql user can authenticate
+    become: yes
+    lineinfile:
+      dest: /etc/postgresql/{{ postgresql.version }}/main/pg_hba.conf
+      backup: yes
+      regexp: "^local\\s+all\\s+{{ postgresql.admin_user }}\\s+peer$"
+      line: "local    all    {{ postgresql.admin_user }}    {{ postgresql.default_auth_method }}"
+    tags:
+      - db
+
+  - name: postgresql | ensure all users can authenticate
+    become: yes
+    lineinfile:
+      dest: /etc/postgresql/{{ postgresql.version }}/main/pg_hba.conf
+      backup: yes
+      regexp: "^local\\s+all\\s+all\\s+peer$"
+      line: "local    all    all    {{ postgresql.default_auth_method }}"
+    notify:
+      - postgresql | restart postgres
+    tags:
+      - db
+
+  handlers:
+  - name: postgresql | restart postgres
+    become: yes
+    service:
+      name: postgresql
+      state: restarted
+    tags:
+      - db
+
+- hosts: all
+  vars_files:
+    - vars.yml
+  tasks:
+  - name: postgresql | create user
+    become_user: "{{ postgresql.admin_user }}"
+    postgresql_user:
+      user: "{{ postgresql.user }}"
+      password: "{{ postgresql.user_password }}"
+      role_attr_flags: CREATEDB # NOSUPERUSER NOCREATEROLE
+    tags:
+      - db
+
+  - name: postgresql | create db
+    become_user: "{{ postgresql.admin_user }}"
+    postgresql_db:
+      name: "app_dprr_local"
+      encoding: "{{postgresql.encoding}}"
+      lc_collate: "{{postgresql.locale}}"
+      lc_ctype: "{{postgresql.locale}}"
+      template: "template0"
+      state: present
+      owner: "{{ postgresql.user }}"
+    notify:
+      - postgresql | apply privileges
+    tags:
+      - db
+
+  - name: check if initial data file exists
+    stat:
+      path: "{{ project_root }}/.vagrant_provisioning/{{ postgresql.initial_data_file }}"
+    register: idf
+    tags:
+      - db
+      - data
+
+  - name: posgresql | load initial data file
+    command: psql -U {{ postgresql.user }} -d app_dprr_local -f {{ project_root }}/.vagrant_provisioning/{{ postgresql.initial_data_file }}
+    when: idf.stat.exists
+    notify:
+      - postgresql | apply privileges after data import
+    tags:
+      - db
+      - data
+
+  handlers:
+  - name: postgresql | apply privileges
+    become_user: "{{ postgresql.admin_user }}"
+    postgresql_privs:
+      db: "app_dprr_local"
+      privs: ALL
+      roles: "{{ postgresql.user }}"
+      state: present
+      type: database
+    tags:
+      - db
+      - data
+
+  - name: postgresql | apply privileges after data import
+    become_user: "{{ postgresql.admin_user }}"
+    postgresql_privs:
+      db: "app_dprr_local"
+      objs: ALL_IN_SCHEMA
+      privs: ALL
+      roles: "{{ postgresql.user }}"
+      state: present
+      type: table
+    tags:
+      - db
+      - data
+
+
+- hosts: all
+  vars_files:
+    - vars.yml
+  tasks:
+  - name: django | default local settings
+    copy: src=local_settings.py dest={{ project_root }}/{{ app.name }}/settings/local.py owner=vagrant
+    tags:
+      - django
+
+  - name: django | make migrations
+    command: "{{ user_home }}/venv/bin/python {{ project_root }}/manage.py makemigrations"
+    tags:
+      - django
+
+  - name: django | migrate
+    command: "{{ user_home }}/venv/bin/python {{ project_root }}/manage.py migrate --noinput"
+    tags:
+      - django
+
+  # SOLR installation
+  # based on https://github.com/geerlingguy/ansible-for-devops/blob/master/solr/
+- hosts: all
+  vars_files:
+    - vars.yml
+  tasks:
+  - name: Install Tomcat 7.
+    become: yes
+    apt: "name={{ item }} state=present"
+    with_items:
+      - tomcat7
+      - tomcat7-admin
+    tags:
+      - tomcat
+      - solr
+
+  - name: Ensure Tomcat 7 is started and enabled on boot.
+    become: yes
+    service: name=tomcat7 state=started enabled=yes
+    tags:
+      - tomcat
+      - solr
+
+  - name: Download Solr.
+    get_url:
+      url: "https://archive.apache.org/dist/lucene/solr/{{ solr.version }}/solr-{{ solr.version }}.tgz"
+      dest: "{{ solr.download_dir }}/solr-{{ solr.version }}.tgz"
+      sha256sum: "{{ solr.sha256sum }}"
+    tags:
+      - solr
+
+  - name: Expand Solr
+    command: >
+      tar -C /tmp -xvzf {{ solr.download_dir }}/solr-{{ solr.version }}.tgz
+      creates={{ solr.download_dir }}/solr-{{ solr.version }}/dist/solr-{{ solr.version }}.war
+    tags:
+      - solr
+
+  - name: Copy Solr into place.
+    become: yes
+    command: >
+      cp -r {{ solr.download_dir }}/solr-{{ solr.version }} {{ solr.dir }}
+      creates={{ solr.dir }}/dist/solr-{{ solr.version }}.war
+    tags:
+      - solr
+
+  # Use shell so commands are passed in correctly.
+  - name: Copy Solr components into place.
+    become: yes
+    shell: >
+      cp -r {{ item.src }} {{ item.dest }}
+      creates={{ item.creates }}
+    with_items:
+      # Solr example configuration and war file.
+      - src: "{{ solr.dir }}/example/webapps/solr.war"
+        dest: "{{ solr.dir }}/solr.war"
+        creates: "{{ solr.dir }}/solr.war"
+
+      - src: "{{ solr.dir }}/example/solr/*"
+        dest: "{{ solr.dir }}/"
+        creates: "{{ solr.dir }}/solr.xml"
+
+      # Solr log4j logging configuration.
+      - src: "{{ solr.dir }}/example/lib/ext/*"
+        dest: "/var/lib/tomcat7/shared/"
+        creates: "/var/lib/tomcat7/shared/log4j-1.2.16.jar"
+
+      - src: "{{ solr.dir }}/example/resources/log4j.properties"
+        dest: "/var/lib/tomcat7/shared/classes"
+        creates: "/var/lib/tomcat7/shared/classes/log4j.properties"
+
+    notify: restart tomcat
+    # TODO: needed because on the next task we delete the example folder
+    ignore_errors: yes
+    tags:
+      - solr
+
+  # TODO: folder needs to be deleted, but this means that
+  # previous task cannot run again...
+  - name: Ensure solr example directory is absent.
+    become: yes
+    file:
+      path: "{{ solr.dir }}/example"
+      state: absent
+    tags:
+      - solr
+
+  - name: Set up solr data directory.
+    become: yes
+    file:
+      path: "{{ solr.dir }}/data"
+      state: directory
+      owner: tomcat7
+      group: tomcat7
+    tags:
+      - solr
+
+  - name: Configure solrconfig.xml for new data directory.
+    become: yes
+    lineinfile:
+      dest: "{{ solr.dir }}/collection1/conf/solrconfig.xml"
+      regexp: "^.*<dataDir.+$"
+      line: "<dataDir>${solr.data.dir:{{ solr.dir }}/data}</dataDir>"
+      state: present
+    tags:
+      - solr
+
+  - name: Set permissions for Solr home.
+    become: yes
+    file:
+      path: "{{ solr.dir }}"
+      recurse: yes
+      owner: tomcat7
+      group: tomcat7
+    tags:
+      - solr
+
+  - name: Add Catalina configuration for solr.
+    become: yes
+    template:
+      src: solr.xml.j2
+      dest: /etc/tomcat7/Catalina/localhost/solr.xml
+      owner: root
+      group: tomcat7
+      mode: 0644
+    notify: restart tomcat
+    tags:
+      - solr
+
+  # haystack schema
+  # TODO: we should ensure Solr is running correctly
+  - name: haystack | build solr schema
+    shell: >
+      {{ user_home }}/venv/bin/python {{ project_root }}/manage.py build_solr_schema > {{ project_root }}/schema.xml
+    tags:
+      - django
+      - haystack
+      - solr
+
+  - name: haystack | move schema to solr dir
+    become: yes
+    command: mv {{ project_root }}/schema.xml {{ solr.dir }}/collection1/conf/
+    notify: restart tomcat
+    tags:
+      - django
+      - haystack
+      - solr
+
+  handlers:
+  - name: restart tomcat
+    become: yes
+    service: name=tomcat7 state=restarted
+
+# TODO: only created this new play to ensure tomcat is restarted before we rebuild the index...
+- hosts: all
+  vars_files:
+    - vars.yml
+  gather_facts: false
+  tasks:
+  - name: haystack | rebuild solr index
+    command: "{{ user_home }}/venv/bin/python {{ project_root }}/manage.py rebuild_index --noinput"
+    tags:
+      - django
+      - haystack
+      - solr
+
+- hosts: all
+  vars_files:
+      - vars.yml
+  tasks:
+  - name: git | init
+    command: "git init"
+    args:
+      chdir: "{{ project_root }}"
+    tags:
+      - git
+
+  - name: git | flake8 pre-commit hook
+    command: "{{ user_home }}/venv/bin/flake8 --install-hook"
+    args:
+      chdir: "{{ project_root }}"
+    tags:
+      - git
+
+  - name: git | flake8 pre-commit hook strict
+    command: "git config flake8.strict True"
+    args:
+      chdir: "{{ project_root }}"
+    tags:
+      - git

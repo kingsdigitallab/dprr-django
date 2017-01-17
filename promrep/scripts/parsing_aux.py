@@ -2,17 +2,17 @@
 # -*- coding: utf-8 -*-
 
 # data import auxiliary functions
-from promrep.models import Person, Praenomen, Sex, Tribe, Office
-from promrep.scripts.offices_ref import OFFICE_NAMES_DIC
+import logging
 
 import regex
-import logging
+from promrep.models import Office, Person, Praenomen, Sex, Tribe
+from promrep.scripts.offices_ref import OFFICE_NAMES_DIC
 
 # TODO: configure in settings
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 # add a file handler
-fh = logging.FileHandler( 'data_import.log')
+fh = logging.FileHandler('data_import.log')
 fh.setLevel(logging.DEBUG)
 # create a formatter and set the formatter for the handler.
 frmt = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
@@ -20,13 +20,12 @@ fh.setFormatter(frmt)
 # add the Handler to the logger
 logger.addHandler(fh)
 
-def parse_person(text):
+
+def parse_person(text):  # noqa
     """ Will return a dictionary with all the parsed attributes"""
 
     # returnable dictionary
     person_data = {}
-
-    print "ParsePersonName", text
 
     praenomen_list = [regex.escape(p.abbrev) for p in Praenomen.objects.all()]
     praenomen_abbrev = r'(?:%s)' % '|'.join(praenomen_list)
@@ -40,8 +39,9 @@ def parse_person(text):
         regex.compile(r"""^
         ([abc123]\.\s)?    # TODO: what to do with these???
         (?P<date_certainty>
-            \[?\?[\s\-]     | # question mark followed by a space or a dash in the start of line
-            .*?\:\s         | # or something followed by colon AND space
+            \[?\?[\s\-]     |   # question mark followed by a space or a dash
+                                # in the start of line
+            .*?\:\s         |   # or something followed by colon AND space
             \? | # or question mark...
             )?
         (?P<praenomen>
@@ -62,15 +62,19 @@ def parse_person(text):
         (?P<patrician>Pat\.{1,2}\s?\??\s)? # outliers: 1/2 dots, space?
          \((?P<real>
             \*?         # can have an asterisk followed by...
-                [\d\. \?]+?            | # either a number or cases like (*2.100)
+                [\d\. \?]+?            | # either a number or cases
+                                         # like (*2.100)
                 (RE\s)[\w\.]*?         | # or starts with RE
                 \?                     | # or question mark
                 (\*?\d+,?\s?){1,8}     | # or 2 or more numbers
-                [A-Z\d\.]+?            | # or uppercase letters with numbers and dots (no spaces)
+                [A-Z\d\.]+?            | # or uppercase letters with numbers
+                                         # and dots (no spaces)
                 [\d]+,\s(cf.\s)?\w+\.?\s\d+ | # or cases like (14, Supb. 6)
                 (\d+\s,\s)?cf.\s?\d+        | # or cases like (cf. 92)
-                [\d]+[a-z]*?,( RE)?\s[\d\w]*?\.\s?\d+?\.?\d*?\w*?\.? | # or cases like (46a, Supb. 5.356ff.)
-                [\d]+[a-z]*?,\scf\.\s\w+\.\s\d+\.\d+ | # or cases like (88, cf. Supb. 1.271)
+                # or cases like (46a, Supb. 5.356ff.)
+                [\d]+[a-z]*?,( RE)?\s[\d\w]*?\.\s?\d+?\.?\d*?\w*?\.? |
+                # or cases like (88, cf. Supb. 1.271)
+                [\d]+[a-z]*?,\scf\.\s\w+\.\s\d+\.\d+ |
                 \w+\.?\s\*?\d+ | # or cases like Veturius *18, or Cin. *1
                 \d+?\sand\s\d+? |
                 not\sin\s\*?RE  |         # or says "not in RE"
@@ -78,7 +82,8 @@ def parse_person(text):
          )\)
          .*                         # in parenthesis (can have an asterisk)
          """
-                       % (praenomen_abbrev, praenomen_abbrev, praenomen_full, praenomen_abbrev, tribe_abbrev),
+                      % (praenomen_abbrev, praenomen_abbrev,
+                         praenomen_full, praenomen_abbrev, tribe_abbrev),
                       regex.VERBOSE)
 
     captured = person_re.match(text)
@@ -106,7 +111,8 @@ def parse_person(text):
                 else:
                     praenomen = Praenomen.objects.get(name=praenomen_str)
             except:
-                logger.error('ERROR: Praenomen lookup error: %s', praenomen_str)
+                logger.error(
+                    'ERROR: Praenomen lookup error: %s', praenomen_str)
                 return None
 
             person_data['praenomen'] = praenomen
@@ -125,7 +131,7 @@ def parse_person(text):
 
         if len(captured.captures('tribe')):
             tribe_abbrev = captured.captures('tribe')[0].strip()
-            tribe = Tribe.objects.get(abbrev = tribe_abbrev)
+            tribe = Tribe.objects.get(abbrev=tribe_abbrev)
             person_data['tribe'] = tribe
 
         cog_list = captured.captures('cognomen')
@@ -139,26 +145,27 @@ def parse_person(text):
             person_data['other_names'] = other_names
 
         if 'cognomen' and 'other_names' in person_data:
-            if person_data['other_names'] == "?)" and person_data['cognomen'][0] == "(":
+            if person_data['other_names'] == "?)" and \
+                    person_data['cognomen'][0] == "(":
                 person_data['cognomen'] = person_data['cognomen'] + " ?)"
                 person_data.pop('other_names')
 
         if len(captured.captures('date_certainty')):
-            person_data['date_certainty'] = captured.captures('date_certainty')[0].strip()
+            person_data['date_certainty'] = \
+                captured.captures('date_certainty')[0].strip()
 
-        person_data['filiation'] = ''.join(captured.captures('filiation')).strip()
+        person_data['filiation'] = ''.join(
+            captured.captures('filiation')).strip()
 
         return person_data
 
-    except Exception as e:
+    except:
         print 'Unable to parse the name:', text
         return None
 
 
-def parse_brennan_person(text):
+def parse_brennan_person(text):  # noqa
     """Will return a person object or None if unable to parse the person"""
-
-    logger.info("ParseBrennanPerson: %s" %(text))
 
     praenomen_list = [regex.escape(p.abbrev) for p in Praenomen.objects.all()]
     praenomen_abbrev = r'(?:%s)' % '|'.join(praenomen_list)
@@ -175,31 +182,31 @@ def parse_brennan_person(text):
         (\((?P<real>
             \*?                       # can have an asterisk followed by...
                 \d*?,?/?\s?\d*?                           | # (14, 6), 148/149
-                [\d\.]+?                                | # either a number or cases like (*2.100)
-                (RE\s)[\w\.]*?                          | # or starts with RE
-                \?                                      | # or question mark
-                [A-Z\d\.]+?                             | # or uppercase letters with numbers and dots (no spaces)
-                [\d]+,\s\w+\.?\s\d+                     | # or cases like (14, Supb. 6)
-                [A-Z][a-z]+\.?\s\*?\d*                  | # or cases like Cin. *12
-                [A-Z][a-z]+\s\d*\s\=\s[A-Z][a-z]+\s\d*  | # or cases like Atilius 16 = Acilius 7
+                [\d\.]+?       | # either a number or cases like (*2.100)
+                (RE\s)[\w\.]*? | # or starts with RE
+                \?             | # or question mark
+                [A-Z\d\.]+?    | # or uppercase letters with numbers and dots
+                                 # (no spaces)
+                [\d]+,\s\w+\.?\s\d+                     | # or (14, Supb. 6)
+                [A-Z][a-z]+\.?\s\*?\d*                  | # or  Cin. *12
+                [A-Z][a-z]+\s\d*\s\=\s[A-Z][a-z]+\s\d*  | # or cases like
+                                                    # or Atilius 16 = Acilius 7
                 not\sin\sRE           # or says "not in RE"
         )\)\s*)?
         (?P<filiation>%s\s[fn-]?\.?\s){0,6}
         (?P<tribe>%s\s)?
         (?P<cognomen>.*)?
          """
-                       % (praenomen_abbrev, praenomen_abbrev, tribe_abbrev),
+                      % (praenomen_abbrev, praenomen_abbrev, tribe_abbrev),
                       regex.VERBOSE)
-
-
 
     captured = person_re.match(text)
 
-    ## print text
-    ## print captured.groups()
+    # print text
+    # print captured.groups()
 
     if captured is None:
-        logger.error('Unable to parse the person: %s' %(text))
+        logger.error('Unable to parse the person: %s' % (text))
         return None
 
     if len(captured.captures('real')):
@@ -208,12 +215,12 @@ def parse_brennan_person(text):
         real = ""
     sex = Sex.objects.get(name='Male')
 
-    praen_cert = True
+    praen_cert = False
     if len(captured.captures('praenomen')):
         praenomen_str = captured.captures('praenomen')[0].strip()
 
         if "?" in praenomen_str:
-            praen_cert = False
+            praen_cert = True
             praenomen_str = praenomen_str.replace("?", "")
 
         try:
@@ -238,10 +245,10 @@ def parse_brennan_person(text):
             pat_uncertain = True
         is_pat = True
 
-    tribe = None
-    if len(captured.captures('tribe')):
-        tribe_abbrev = captured.captures('tribe')[0].strip()
-        tribe = Tribe.objects.get(abbrev = tribe_abbrev)
+    # tribe = None
+    # if len(captured.captures('tribe')):
+    #     tribe_abbrev = captured.captures('tribe')[0].strip()
+    #     tribe = Tribe.objects.get(abbrev=tribe_abbrev)
 
     cog_list = captured.captures('cognomen')[0].strip().split(' ')
 
@@ -264,26 +271,25 @@ def parse_brennan_person(text):
     # these chars indicate uncertainty, etc...
 
     try:
+        # TODO: add tribe object separately
         person = Person(
             sex=sex,
             praenomen=praenomen,
-            nomen= nomen.strip("?()[]"),
-            praenomen_certainty = praen_cert,
+            nomen=nomen.strip("?()[]"),
+            praenomen_uncertain=praen_cert,
             filiation=filiation,
-            tribe = tribe,
             cognomen=cognomen_first,
             re_number=real,
             other_names=other_names,
             patrician=is_pat,
             patrician_uncertain=pat_uncertain,
-            )
+        )
 
     except Exception as e:
         print 'Failed to create person %s (%s)' % (e.message, type(e))
         return None
 
     return person
-
 
 
 def get_office_obj(office_name):
@@ -305,7 +311,7 @@ def get_office_obj(office_name):
         # Adding new office
         #    in MRR all the offices are "civic" except for Vestal Virgin
         parent = Office.objects.get(name='Civic Offices')
-        office = Office(name=oname, parent = parent)
+        office = Office(name=oname, parent=parent)
         office.save()
 
         print 'Added Office: %s (id=%i)' % (office.name, office.id)

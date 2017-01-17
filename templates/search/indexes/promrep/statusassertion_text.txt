@@ -1,0 +1,9 @@
+{% for note in object.notes.all %}
+<p>
+    {{ note }}
+</p>
+{% endfor %}
+
+<p>
+    {{ object.status.name }} {{ object.person }}
+</p>

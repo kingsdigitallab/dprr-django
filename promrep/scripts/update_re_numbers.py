@@ -2,6 +2,7 @@ import csv
 
 from promrep.models import Praenomen, Person
 
+
 def run():
     # U flag: universal new-line mode
     ifile = open('promrep/scripts/data/OldRENumbersv6.csv', 'rU')
@@ -11,7 +12,8 @@ def run():
     found = 0
 
     with open('re_update_log.csv', 'wb') as csvfile:
-        spamwriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        spamwriter = csv.writer(csvfile, delimiter=',',
+                                quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
         for original_row in reader:
             total = total + 1
@@ -26,7 +28,8 @@ def run():
                 else:
                     praenomen = Praenomen.objects.get(name=praenomen_str)
 
-                p = Person.objects.filter(praenomen=praenomen, nomen=nomen, re_number=re)
+                p = Person.objects.filter(
+                    praenomen=praenomen, nomen=nomen, re_number=re)
 
                 if len(p) == 0:
                     raise ValueError('No person found!')
@@ -40,10 +43,12 @@ def run():
                 person.re_number = new_re
 
                 person.save()
-                spamwriter.writerow((praenomen_str, nomen, re, new_re, person.id))
+                spamwriter.writerow(
+                    (praenomen_str, nomen, re, new_re, person.id))
 
             except Exception as e:
-                spamwriter.writerow((praenomen_str, nomen, re, new_re, "ERROR: " + e.message))
+                spamwriter.writerow(
+                    (praenomen_str, nomen, re, new_re, "ERROR: " + e.message))
                 print 'ERROR:', e, praenomen_str, nomen, re
 
         print total, found

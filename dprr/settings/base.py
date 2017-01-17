@@ -11,19 +11,21 @@ For production settings see
 https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 """
 
+import os
+
+from ddhldap.settings import *  # noqa
+from django.conf import global_settings
 from wagtailbase import settings as ws
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
 BASE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..')
 
 PROJECT_NAME = 'dprr'
 PROJECT_TITLE = 'Digitising the Prosopography of the Roman Republic'
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Core Settings
 # https://docs.djangoproject.com/en/1.6/ref/settings/#id6
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 ADMINS = (
     ('Luis Figueira', 'luis.figueira@kcl.ac.uk'),
@@ -59,6 +61,7 @@ DEBUG = False
 TEMPLATE_DEBUG = False
 
 INSTALLED_APPS = (
+    'grappelli.dashboard',
     'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -67,6 +70,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'ddhldap',
+    'haystack',
     'mptt',
     'django_mptt_admin',
     'author',
@@ -75,6 +79,7 @@ INSTALLED_APPS = (
 INSTALLED_APPS += ws.INSTALLED_APPS
 
 INSTALLED_APPS += (
+    'ddh_utils',
     'dprr',
     'promrep',
     'wagtailbase',
@@ -83,7 +88,7 @@ INSTALLED_APPS += (
 INTERNAL_IPS = ('127.0.0.1',)
 
 # https://docs.djangoproject.com/en/1.6/topics/logging/
-import logging
+import logging  # noqa
 
 LOGGING_ROOT = os.path.join(BASE_DIR, 'logs')
 LOGGING_LEVEL = 'WARN'
@@ -151,7 +156,6 @@ ROOT_URLCONF = PROJECT_NAME + '.urls'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ''
 
-from django.conf import global_settings
 TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
 )
@@ -173,27 +177,26 @@ USE_TZ = True
 WSGI_APPLICATION = PROJECT_NAME + '.wsgi.application'
 
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Authentication
 # https://docs.djangoproject.com/en/1.6/ref/settings/#auth
 # https://scm.cch.kcl.ac.uk/hg/ddhldap-django
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-from ddhldap.settings import *
 
-AUTH_LDAP_REQUIRE_GROUP = 'cn=dprr,' + LDAP_BASE_OU
-AUTH_LDAP_USER_FLAGS_BY_GROUP['is_staff'] = 'cn=dprr,' + LDAP_BASE_OU
-AUTH_LDAP_USER_FLAGS_BY_GROUP['is_superuser'] = 'cn=dprr,' + LDAP_BASE_OU
+AUTH_LDAP_REQUIRE_GROUP = 'cn=dprr,' + LDAP_BASE_OU  # noqa
+AUTH_LDAP_USER_FLAGS_BY_GROUP['is_staff'] = 'cn=dprr,' + LDAP_BASE_OU  # noqa
+AUTH_LDAP_USER_FLAGS_BY_GROUP['is_superuser'] = 'cn=dprr,' + LDAP_BASE_OU  # noqa
 
 LOGIN_URL = 'django.contrib.auth.views.login'
 LOGIN_REDIRECT_URL = 'wagtailadmin_home'
 
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 # https://docs.djangoproject.com/en/1.6/ref/settings/#static-files
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, STATIC_URL.strip('/'))
@@ -217,43 +220,50 @@ if not os.path.exists(MEDIA_ROOT):
     os.makedirs(MEDIA_ROOT)
 
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Installed Applications Settings
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # CMS
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 ITEMS_PER_PAGE = ws.ITEMS_PER_PAGE
 
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Django Compressor
 # http://django-compressor.readthedocs.org/en/latest/
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 COMPRESS_PRECOMPILERS = ws.COMPRESS_PRECOMPILERS
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Wagtail
 # http://wagtail.readthedocs.org/en/latest/
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 WAGTAIL_SITE_NAME = PROJECT_TITLE
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Django Grappelli
 # http://django-grappelli.readthedocs.org/en/latest/index.html
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 GRAPPELLI_ADMIN_TITLE = PROJECT_TITLE
+GRAPPELLI_INDEX_DASHBOARD = 'dprr.dashboard.CustomIndexDashboard'
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Django Author
 # https://github.com/lambdalisue/django-author/
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 MIDDLEWARE_CLASSES += ('author.middlewares.AuthorDefaultBackendMiddleware', )
 
 AUTHOR_CREATED_BY_FIELD_NAME = 'created_by'
+
+# -----------------------------------------------------------------------------
+# FABRIC
+# -----------------------------------------------------------------------------
+
+FABRIC_USER = ''

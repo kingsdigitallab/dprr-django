@@ -3,7 +3,7 @@ from ddhldap.signal_handlers import \
 from django.conf import settings
 from django.conf.urls import include, patterns, url
 from django.contrib import admin
-from promrep import urls as promrep_urls
+# from promrep import urls as promrep_urls
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtailcore import urls as wagtail_urls
 from wagtail.wagtailsearch.signal_handlers import \
@@ -17,7 +17,7 @@ ddhldap_register_signal_handlers()
 admin.autodiscover()
 
 urlpatterns = patterns('',
-                       url(r'^browse/', include(promrep_urls)),
+                       # url(r'^browse/', include(promrep_urls)),
                        url(r'^grappelli/', include('grappelli.urls')),
                        url(r'^admin/', include(admin.site.urls)),
                        )

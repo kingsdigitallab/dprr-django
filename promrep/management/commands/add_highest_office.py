@@ -68,7 +68,7 @@ class Command(BaseCommand):
                 # q. if achieved,(first one), otherwise
                 # sen. if achieved/eq. R.
                 pas = p.post_assertions.filter(
-                    cos_Q or pra_Q or aed_Q or tri_Q or qua_Q).order_by(
+                    cos_Q | pra_Q | aed_Q | tri_Q | qua_Q).order_by(
                     'date_start')
 
                 sas = p.statusassertion_set.all().order_by('date_start')
@@ -144,13 +144,13 @@ class Command(BaseCommand):
 
                     # son of (male) display as (s.), otherwise
                     if ra_son.exists():
-                        rel_str = "s. of"
+                        rel_str = ra_son.first().relationship.name
                         rel_per = ra_son.first().related_person
                         rel_unc = ra_son.first().uncertain
 
                     # daughter of (male) display as (d.), otherwise
                     elif ra_dau.exists():
-                        rel_str = "d. of"
+                        rel_str = ra_dau.first().relationship.name
                         rel_per = ra_dau.first().related_person
                         rel_unc = ra_dau.first().uncertain
 
@@ -158,15 +158,6 @@ class Command(BaseCommand):
                     elif ra_any.exists():
                         rel_str = ra_any.first().relationship.name
                         rel_unc = ra_any.first().uncertain
-
-                        if rel_str == "son of":
-                            rel_str = "s. of"
-                        elif rel_str == "daughter of":
-                            rel_str = "d. of"
-                        elif rel_str == "married to":
-                            if p.sex.name == "Female":
-                                rel_str = "w. of"
-
                         rel_per = ra_any.first().related_person
 
                     if rel_unc:
@@ -187,6 +178,9 @@ class Command(BaseCommand):
 
                         if off and date:
                             hoffice = "{} {}".format(off, date)
+
+                p.highest_office = hoffice
+                p.save()
 
                 csv_log.writerow({
                                  "id": p.id,

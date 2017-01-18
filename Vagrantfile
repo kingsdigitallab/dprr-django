@@ -14,9 +14,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #    ansible.verbose = "vvv"
   end
 
-  config.vm.network "forwarded_port", guest: 8000, host: 8001
-  #config.vm.network "forwarded_port", guest: 5432, host: 5432
-  config.vm.network "forwarded_port", guest: 9200, host: 9200
+  config.vm.network "forwarded_port", guest: 8000, host: 8000
+  config.vm.network "forwarded_port", guest: 5432, host: 5432
+  #config.vm.network "forwarded_port", guest: 9200, host: 9200
 
   config.vm.provider "virtualbox" do |provider|
     provider.customize ["modifyvm", :id, "--memory", "1024"]

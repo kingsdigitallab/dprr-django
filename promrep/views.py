@@ -139,6 +139,7 @@ class PersonDetailView(DetailView):
         context = super(
             PersonDetailView, self).get_context_data(**kwargs)
         context['relationships'] = RelationshipAssertion.objects.filter(person=self.get_object)
+        return context
 
 
 def get_relationships_network(request, pk):

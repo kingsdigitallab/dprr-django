@@ -53,7 +53,7 @@
       <dl>
           {% for rel in relationships %}
           <dt>{{ rel.relationship }}</dt>
-              <dd>{{ rel.related_person }}</dd>
+              <dd><a href="{% url 'person-detail' rel.related_person.id %}">{{ rel.related_person }}</a></dd>
           {% endfor %}
       </dl>
 

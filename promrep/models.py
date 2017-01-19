@@ -14,7 +14,6 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 
 def date_to_string(date_int, date_uncertain, date_suffix=True):
-
     date_str = ""
     suffix = " B.C."
 
@@ -38,7 +37,6 @@ def date_to_string(date_int, date_uncertain, date_suffix=True):
 
 @with_author
 class SecondarySource(TimeStampedModel):
-
     name = models.CharField(max_length=256, unique=True)
     abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
     biblio = models.CharField(max_length=512, unique=True, blank=True)
@@ -52,7 +50,6 @@ class SecondarySource(TimeStampedModel):
 
 
 class PrimarySource(models.Model):
-
     name = models.CharField(max_length=256, unique=True)
     abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
     biblio = models.CharField(max_length=512, unique=True, blank=True)
@@ -63,7 +60,6 @@ class PrimarySource(models.Model):
 
 @with_author
 class Praenomen(models.Model):
-
     abbrev = models.CharField(max_length=32, unique=True)
     name = models.CharField(max_length=128, unique=True)
 
@@ -76,7 +72,6 @@ class Praenomen(models.Model):
 
 
 class Sex(models.Model):
-
     name = models.CharField(max_length=32, unique=True)
 
     def __unicode__(self):
@@ -85,7 +80,6 @@ class Sex(models.Model):
 
 @with_author
 class Gens(models.Model):
-
     class Meta:
         verbose_name_plural = "Gens"
 
@@ -110,7 +104,6 @@ class Tribe(models.Model):
 
 
 class RoleType(TimeStampedModel):
-
     name = models.CharField(max_length=128, unique=True)
     description = models.CharField(max_length=1024, blank=True)
 
@@ -132,8 +125,8 @@ class PrimarySourceReference(TimeStampedModel):
     #   Note and PrimarySource
 
     limit = models.Q(app_label='promrep', model='PersonNote') | \
-        models.Q(app_label='promrep', model='PostAssertionNote') | \
-        models.Q(app_label='promrep', model='RelationshipAssertionReference')
+            models.Q(app_label='promrep', model='PostAssertionNote') | \
+            models.Q(app_label='promrep', model='RelationshipAssertionReference')
 
     content_type = models.ForeignKey(
         ContentType,
@@ -206,7 +199,6 @@ class RelationshipAssertionReference(Note):
 
 @with_author
 class PostAssertionNote(Note):
-
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
@@ -220,7 +212,6 @@ class PostAssertionNote(Note):
 
 @with_author
 class PersonNote(Note):
-
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
@@ -235,7 +226,6 @@ class PersonNote(Note):
 
 @with_author
 class StatusAssertionNote(Note):
-
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
@@ -510,7 +500,6 @@ class DateInformation(TimeStampedModel):
 
 @with_author
 class Office(MPTTModel, TimeStampedModel):
-
     name = models.CharField(max_length=256, unique=True)
     abbrev_name = models.CharField(max_length=128, blank=True)
     description = models.CharField(max_length=1024, blank=True)
@@ -536,10 +525,8 @@ class Office(MPTTModel, TimeStampedModel):
 
 @with_author
 class RelationshipType(TimeStampedModel):
-
     name = models.CharField(max_length=256, unique=True)
     description = models.CharField(max_length=1024, blank=True)
-
 
     def __unicode__(self):
         return self.name
@@ -612,7 +599,7 @@ class Group(TimeStampedModel):
     def related_label(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
-        return u'<a href="%s">%s</a>' % (url, self.__unicode__(), )
+        return u'<a href="%s">%s</a>' % (url, self.__unicode__(),)
 
 
 @with_author
@@ -686,7 +673,7 @@ class PostAssertion(TimeStampedModel):
             off = self.office.__unicode__()
 
         name = str(self.person.__unicode__()) + \
-            ": " + off + " " + self.print_date()
+               ": " + off + " " + self.print_date()
 
         name = name + " (" + self.secondary_source.abbrev_name + ")"
         return name
@@ -823,8 +810,8 @@ class RelationshipAssertion(TimeStampedModel):
         return "{} is {} {}".format(
             self.person, self.relationship, self.related_person)
 
-    #Return the inverse of the objects
-    #relationship type based on gender of people
+    # Return the inverse of the objects
+    # relationship type based on gender of people
     def get_inverse_relationship(self):
         try:
             if self.relationship.name == "father of":
@@ -1049,7 +1036,7 @@ class StatusAssertion(TimeStampedModel):
         if self.date_display_text:
             date_str = self.date_display_text
         elif self.date_start == self.date_end and \
-                self.date_start_uncertain == self.date_end_uncertain:
+                        self.date_start_uncertain == self.date_end_uncertain:
             date_str = date_to_string(
                 self.date_start, self.date_start_uncertain)
         else:
@@ -1063,7 +1050,7 @@ class StatusAssertion(TimeStampedModel):
 
             if self.date_end:
                 date_str = date_str + \
-                    date_to_string(self.date_end, self.date_end_uncertain)
+                           date_to_string(self.date_end, self.date_end_uncertain)
             else:
                 date_str = date_str + "?"
 

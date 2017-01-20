@@ -1,8 +1,7 @@
 from django.core.management.base import BaseCommand
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import logging
 from promrep.models import Person, RelationshipAssertion, RelationshipType
-from django.db.models import Q
 import csv
 import datetime
 
@@ -14,6 +13,7 @@ class Command(BaseCommand):
     help = 'Adds inverse relationships if they do no exist'
 
     logger = logging.getLogger(__name__)
+    csv_log = None
 
     def findfromsiblings(self, person, sibs, relationship, single):
         relationships = []
@@ -22,14 +22,33 @@ class Command(BaseCommand):
                 found = RelationshipAssertion.objects.get(related_person=sib.related_person,
                                                           relationship=relationship)
             except ObjectDoesNotExist:
-                pass
+                found = None
+            except MultipleObjectsReturned:
+                found = None
+                print "Multiple found for " + sib.related_person.__unicode__() + ":" + relationship.name
             if found is not None:
-                relationships.append(
-                    RelationshipAssertion(extra_info="Inferred", person=person, related_person=found.person,
-                                          relationship=relationship))
+                new_assert = RelationshipAssertion(extra_info="Inferred", person=person, related_person=found.person,
+                                                   relationship=relationship)
+                relationships.append(new_assert)
+                self.writeassetion(new_assert, found)
                 if single:
                     break
         return relationships
+
+    def writeassetion(self, new_assert, source_assert):
+        self.csv_log.writerow({
+            "inferred_person_id": new_assert.person.id,
+            "inferred_person": new_assert.person,
+            "inferred_related_person_id": new_assert.related_person.id,
+            "inferred_related_person": new_assert.related_person,
+            "inferred_relationship_type": new_assert.relationship,
+            "assertion_id": source_assert.id,
+            "source_person_id": source_assert.person.id,
+            "source_person": source_assert.person,
+            "source_related_person_id": source_assert.related_person.id,
+            "source_related_person": source_assert.related_person,
+            "source_relationship_type": source_assert.relationship,
+        })
 
     # Populate inferred family relationships based on rules in DPRR-257
     # IMPORTANT NOTE: Assumes inverse relationships already populated
@@ -47,7 +66,7 @@ class Command(BaseCommand):
             father = None
             spouse = None
             # Sort relationships into family members
-            for relassert in RelationshipAssertion.objects.all(person=person):
+            for relassert in RelationshipAssertion.objects.filter(person=person).distinct():
                 # Mother/Father
                 if relassert.relationship.name == "father of" or relassert.relationship.name == "mother of":
                     children.append(relassert)
@@ -61,16 +80,20 @@ class Command(BaseCommand):
                     sibs.append(relassert)
                 elif relassert.relationship.name == "married to":
                     spouse = relassert
+            print u"Father: " + unicode(father)
+            print u"Mother: " + unicode(mother)
+            for sib in sibs:
+                print u"Sib " + unicode(sib)
 
             # Check for father and mother
-            if father == None and len(sibs) > 0:
-                finds = self.findfromsiblings(person, sibs, RelationshipType.objects.get("father of"), True)
+            if father is None and len(sibs) > 0:
+                finds = self.findfromsiblings(person, sibs, type_father, True)
                 if len(finds) > 0:
                     # TODO save father
                     father = finds[0]
                     new_rels.append(father)
-            if mother == None and len(sibs) > 0:
-                finds = self.findfromsiblings(person, sibs, RelationshipType.objects.get("mother of"), True)
+            if mother is None and len(sibs) > 0:
+                finds = self.findfromsiblings(person, sibs, type_mother, True)
                 if len(finds) > 0:
                     # TODO save
                     mother = finds[0]
@@ -78,62 +101,65 @@ class Command(BaseCommand):
 
             # Go through siblings and make sure their parent records are complete
             for sib in sibs:
-                if mother != None and RelationshipAssertion.objects.filter(related_person=sib.related_person,
-                                                                           relationship__name="mother of").count() == 0:
-                    new_rels.append(
-                        RelationshipAssertion(extra_info="Inferred", related_person=sib.related_person,
-                                              person=mother.related_person,
-                                              relationship=mother.relationship))
-                    new_rels.append(
-                        RelationshipAssertion(extra_info="Inferred", person=sib.related_person,
-                                              related_person=mother.related_person,
-                                              relationship=mother.get_inverse_relationship()))
-                if father != None and RelationshipAssertion.objects.filter(related_person=sib.related_person,
-                                                                           relationship__name="father of").count() == 0:
-                    new_rels.append(
-                        RelationshipAssertion(extra_info="Inferred", related_person=sib.related_person,
-                                              person=father.related_person,
-                                              relationship=father.relationship))
+                if mother is not None and \
+                                RelationshipAssertion.objects.filter(related_person=sib.related_person,
+                                                                     relationship=type_mother).count() == 0:
+                    new_assert = RelationshipAssertion(extra_info="Inferred", related_person=sib.related_person,
+                                                       person=mother.related_person,
+                                                       relationship=type_mother)
+                    print u"New Mother " + unicode(new_assert)
+                    new_rels.append(new_assert)
+                    self.writeassetion(new_assert, sib)
+                    new_inv = RelationshipAssertion(extra_info="Inferred", person=sib.related_person,
+                                                    related_person=mother.related_person,
+                                                    relationship=mother.relationship)
+                    new_rels.append(new_inv)
+                    # self.writeassetion(new_inv, sib)
+                if father is not None \
+                        and RelationshipAssertion.objects.filter(related_person=sib.related_person,
+                                                                 relationship=type_father).count() == 0:
+                    new_assert = RelationshipAssertion(extra_info="Inferred", related_person=sib.related_person,
+                                                       person=father.related_person,
+                                                       relationship=type_father)
+                    new_rels.append(new_assert)
+                    print u"New Father " + unicode(new_assert) + " based on" + unicode(sib)
+                    self.writeassetion(new_assert, sib)
                     new_rels.append(
                         RelationshipAssertion(extra_info="Inferred", person=sib.related_person,
                                               related_person=father.related_person,
-                                              relationship=father.get_inverse_relationship()))
+                                              relationship=father.relationship))
             # Verify children
-            if spouse != None:
+            if spouse is not None:
                 for kid in children:
                     if spouse.related_person.sex.name == "Male" and RelationshipAssertion.objects.filter(
                             related_person=sib.related_person,
                             relationship__name="father of").count() == 0:
-                        new_rels.append(
-                            RelationshipAssertion(extra_info="Inferred", related_person=spouse.related_person,
-                                                  person=kid.related_person,
-                                                  relationship=type_son))
-                        new_rels.append(
-                            RelationshipAssertion(extra_info="Inferred", person=spouse.related_person,
-                                                  related_person=kid.related_person,
-                                                  relationship=type_father))
+                        new_assert = RelationshipAssertion(extra_info="Inferred", related_person=spouse.related_person,
+                                                           person=kid.related_person,
+                                                           relationship=type_son)
+                        new_rels.append(new_assert)
+                        self.writeassetion(new_assert, spouse)
+                        new_inv = RelationshipAssertion(extra_info="Inferred", person=spouse.related_person,
+                                                        related_person=kid.related_person,
+                                                        relationship=type_father)
+                        new_rels.append(new_inv)
+                        # self.writeassetion(new_inv, spouse)
 
                     if spouse.related_person.sex.name == "Female" and RelationshipAssertion.objects.filter(
                             related_person=sib.related_person,
                             relationship__name="mother of").count() == 0:
-                        new_rels.append(
-                            RelationshipAssertion(extra_info="Inferred", related_person=spouse.related_person,
-                                                  person=kid.related_person,
-                                                  relationship=type_daughter))
-                        new_rels.append(
-                            RelationshipAssertion(extra_info="Inferred", person=spouse.related_person,
-                                                  related_person=kid.related_person,
-                                                  relationship=type_mother))
-            return new_rels
+                        new_assert = RelationshipAssertion(extra_info="Inferred", related_person=spouse.related_person,
+                                                           person=kid.related_person,
+                                                           relationship=type_daughter)
+                        new_rels.append(new_assert)
+                        self.writeassetion(new_assert, spouse)
+                        new_inv = RelationshipAssertion(extra_info="Inferred", person=spouse.related_person,
+                                                        related_person=kid.related_person,
+                                                        relationship=type_mother)
+                        new_rels.append(new_inv)
+                        # self.writeassetion(new_inv, spouse)
 
-        # Check they are also have parents listed
-        # Add if not
-
-
-        # Siblings
         return new_rels
-
-    # When none left exit
 
     def add_inverse_relationships(self):
         new_invs = []
@@ -153,34 +179,39 @@ class Command(BaseCommand):
                     new_invs.append(inv)
                 else:
                     inv = invs[0]
-                    # todo Link to original
+                # todo Link to original
+                relassert.inverse_relationship = inv
         return new_invs
 
     def handle(self, *args, **options):  # noqa
 
         now = datetime.datetime.now()
         date = now.strftime("%d_%B_%Y")
-        log_fname = "inverse_relationship-log_{}.csv".format(date)
+        log_fname = "inferred_relationship-log_{}.csv".format(date)
 
         with open(log_fname, 'wb') as ofile:
             csv_log = csv.DictWriter(
                 ofile,
                 [
-                    "person",
-                    "related_person",
-                    "inverse_relationship_type",
-                    "id",
+                    "inferred_person_id",
                     "inferred_person",
-                    "inferred_related_person",
                     "inferred_relationship_type",
-
+                    "inferred_related_person_id",
+                    "inferred_related_person",
+                    "assertion_id",
+                    "source_person_id",
+                    "source_person",
+                    "source_relationship_type",
+                    "source_related_person",
                 ],
                 dialect='excel',
                 delimiter=",",
                 extrasaction='ignore')
+            self.csv_log = csv_log
             csv_log.writeheader()
-            new_invs = self.add_inverse_relationships()
+            # todo run inverse first when saving
+            # self.add_inverse_relationships()
             # todo When saving Iterate this until no new relationships created
-            new_rels=self.add_inferred_relationships()
+            self.add_inferred_relationships()
 
         print("Wrote {}".format(log_fname))

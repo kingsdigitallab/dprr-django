@@ -159,7 +159,7 @@ def quick_deploy(branch=None):
 @task
 def deploy(branch=None):
     update(branch)
-    install_requirements()
+#    install_requirements()
     migrate()
     own_django_log()
     collect_static()

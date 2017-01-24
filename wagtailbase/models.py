@@ -36,6 +36,7 @@ class IndexPageAttachment(Orderable, AbstractAttachment):
     page = ParentalKey('wagtailbase.IndexPage',
                        related_name='attachments')
 
+
 IndexPage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('introduction', classname='full'),

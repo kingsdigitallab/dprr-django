@@ -146,9 +146,6 @@ OFFICE_NAMES_DIC = {
     'legates, ambassadors (or lieutenants?)':
     'legatus (ambassador or lieutenant?)',
     'legates': 'legatus (lieutenant)',
-    'flaminica martialis': 'flaminica Martialis',
-    'flamen quirinalis': 'flamen Quirinalis',
-    'flamen martialis': 'flamen Martialis',
     'duumviri aquae perducendae': 'duumvir aquae perducendae',
     'duumviri navales': 'duumvir navalis',
     'duumviri aedi locandae': 'duumvir aedi locandae',

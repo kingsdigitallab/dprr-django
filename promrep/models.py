@@ -540,7 +540,6 @@ class RelationshipType(TimeStampedModel):
     name = models.CharField(max_length=256, unique=True)
     description = models.CharField(max_length=1024, blank=True)
 
-
     def __unicode__(self):
         return self.name
 
@@ -823,8 +822,9 @@ class RelationshipAssertion(TimeStampedModel):
         return "{} is {} {}".format(
             self.person, self.relationship, self.related_person)
 
-    #Return the inverse of the objects
-    #relationship type based on gender of people
+    # Return the inverse of the objects
+    # relationship type based on gender of people
+    # TODO: This needs to be rewritten, either with a lookup table or an AL
     def get_inverse_relationship(self):
         try:
             if self.relationship.name == "father of":
@@ -846,9 +846,11 @@ class RelationshipAssertion(TimeStampedModel):
                     return RelationshipType.objects.get(name="sister of")
             elif self.relationship.name == "adopted son of":
                 if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="adoptive father of")
+                    return RelationshipType.objects.get(
+                        name="adoptive father of")
                 else:
-                    return RelationshipType.objects.get(name="adoptive mother of")
+                    return RelationshipType.objects.get(
+                        name="adoptive mother of")
             elif self.relationship.name == "daughter of":
                 if self.related_person.sex.name == "Male":
                     return RelationshipType.objects.get(name="father of")
@@ -877,7 +879,8 @@ class RelationshipAssertion(TimeStampedModel):
                 if self.related_person.sex.name == "Male":
                     return self.relationship
                 else:
-                    return RelationshipType.objects.get(name="adoptive sister of")
+                    return RelationshipType.objects.get(
+                        name="adoptive sister of")
             elif self.relationship.name == "uncle of":
                 if self.related_person.sex.name == "Male":
                     return RelationshipType.objects.get(name="nephew of")
@@ -892,9 +895,11 @@ class RelationshipAssertion(TimeStampedModel):
                     return RelationshipType.objects.get(name="halfsister of")
             elif self.relationship.name == "great grandfather of":
                 if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="great grandson of")
+                    return RelationshipType.objects.get(
+                        name="great grandson of")
                 else:
-                    return RelationshipType.objects.get(name="great granddaughter of")
+                    return RelationshipType.objects.get(
+                        name="great granddaughter of")
             elif self.relationship.name == "grandson of":
                 if self.related_person.sex.name == "Male":
                     return RelationshipType.objects.get(name="grandfather of")
@@ -911,7 +916,8 @@ class RelationshipAssertion(TimeStampedModel):
                 if self.related_person.sex.name == "Male":
                     return RelationshipType.objects.get(name="adopted son of")
                 else:
-                    return RelationshipType.objects.get(name="adopted daughter of")
+                    return RelationshipType.objects.get(
+                        name="adopted daughter of")
             elif self.relationship.name == "stepson of":
                 if self.related_person.sex.name == "Male":
                     return RelationshipType.objects.get(name="stepfather of")
@@ -926,17 +932,21 @@ class RelationshipAssertion(TimeStampedModel):
                 if self.related_person.sex.name == "Male":
                     return RelationshipType.objects.get(name="grandson of")
                 else:
-                    return RelationshipType.objects.get(name="granddaughter of")
+                    return RelationshipType.objects.get(
+                        name="granddaughter of")
             elif self.relationship.name == "great grandson of":
                 if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="great grandfather of")
+                    return RelationshipType.objects.get(
+                        name="great grandfather of")
                 else:
-                    return RelationshipType.objects.get(name="great granddaughter of")
+                    return RelationshipType.objects.get(
+                        name="great granddaughter of")
             elif self.relationship.name == "grandmother of":
                 if self.related_person.sex.name == "Male":
                     return RelationshipType.objects.get(name="grandson of")
                 else:
-                    return RelationshipType.objects.get(name="granddaughter of")
+                    return RelationshipType.objects.get(
+                        name="granddaughter of")
             elif self.relationship.name == "great uncle of":
                 if self.related_person.sex.name == "Male":
                     return RelationshipType.objects.get(name="great nephew of")
@@ -954,9 +964,11 @@ class RelationshipAssertion(TimeStampedModel):
                     return RelationshipType.objects.get(name="grandmother of")
             elif self.relationship.name == "adopted grandson of":
                 if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="adopted grandfather of")
+                    return RelationshipType.objects.get(
+                        name="adopted grandfather of")
                 else:
-                    return RelationshipType.objects.get(name="adopted grandmother of")
+                    return RelationshipType.objects.get(
+                        name="adopted grandmother of")
             elif self.relationship.name == "mother of":
                 if self.related_person.sex.name == "Male":
                     return RelationshipType.objects.get(name="son of")
@@ -964,22 +976,11 @@ class RelationshipAssertion(TimeStampedModel):
                     return RelationshipType.objects.get(name="daughter of")
             elif self.relationship.name == "great granddaughter of":
                 if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="great grandfather of")
+                    return RelationshipType.objects.get(
+                        name="great grandfather of")
                 else:
-                    return RelationshipType.objects.get(name="great grandmother of")
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    return RelationshipType.objects.get(
+                        name="great grandmother of")
 
         except Exception:
             return None

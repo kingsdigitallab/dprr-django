@@ -138,7 +138,8 @@ class PersonDetailView(DetailView):
     def get_context_data(self, **kwargs):  # noqa
         context = super(
             PersonDetailView, self).get_context_data(**kwargs)
-        context['relationships'] = RelationshipAssertion.objects.filter(person=self.get_object)
+        context['relationships'] = RelationshipAssertion.objects.filter(
+            person=self.get_object)
         return context
 
 

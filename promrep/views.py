@@ -135,6 +135,12 @@ class PersonDetailView(DetailView):
     model = Person
     template_name = 'promrep/persons/detail.html'
 
+    def get_context_data(self, **kwargs):  # noqa
+        context = super(
+            PersonDetailView, self).get_context_data(**kwargs)
+        context['relationships'] = RelationshipAssertion.objects.filter(person=self.get_object)
+        return context
+
 
 def get_relationships_network(request, pk):
     network = {}

@@ -50,6 +50,13 @@
         <div id="network"></div>
       </div>
 
+      <dl>
+          {% for rel in relationships %}
+          <dt>{{ rel.relationship }}</dt>
+              <dd><a href="{% url 'person-detail' rel.related_person.id %}">{{ rel.related_person }}</a></dd>
+          {% endfor %}
+      </dl>
+
       <h2>Offices</h2>
       <ul class="timeline no-bullet bottom-margin">
         {% for pa in person.post_assertions.all %}

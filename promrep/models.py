@@ -824,169 +824,22 @@ class RelationshipAssertion(TimeStampedModel):
 
     # Return the inverse of the objects
     # relationship type based on gender of people
-    # TODO: This needs to be rewritten, either with a lookup table or an AL
     def get_inverse_relationship(self):
         try:
-            if self.relationship.name == "father of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="son of")
-                else:
-                    return RelationshipType.objects.get(name="daughter of")
-            elif self.relationship.name == "married to":
-                return self.relationship
-            elif self.relationship.name == "son of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="father of")
-                else:
-                    return RelationshipType.objects.get(name="mother of")
-            elif self.relationship.name == "brother of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="brother of")
-                else:
-                    return RelationshipType.objects.get(name="sister of")
-            elif self.relationship.name == "adopted son of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(
-                        name="adoptive father of")
-                else:
-                    return RelationshipType.objects.get(
-                        name="adoptive mother of")
-            elif self.relationship.name == "daughter of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="father of")
-                else:
-                    return RelationshipType.objects.get(name="mother of")
-            elif self.relationship.name == "sister of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="brother of")
-                else:
-                    return RelationshipType.objects.get(name="sister of")
-            elif self.relationship.name == "betrothed to":
-                return self.relationship
-            elif self.relationship.name == "divorced from":
-                return self.relationship
-            elif self.relationship.name == "mother of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="son of")
-                else:
-                    return RelationshipType.objects.get(name="daughter of")
-            elif self.relationship.name == "nephew of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="uncle of")
-                else:
-                    return RelationshipType.objects.get(name="aunt of")
-            elif self.relationship.name == "adoptive brother of":
-                if self.related_person.sex.name == "Male":
-                    return self.relationship
-                else:
-                    return RelationshipType.objects.get(
-                        name="adoptive sister of")
-            elif self.relationship.name == "uncle of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="nephew of")
-                else:
-                    return RelationshipType.objects.get(name="niece of")
-            elif self.relationship.name == "related to":
-                return self.relationship
-            elif self.relationship.name == "halfsister of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="halfbrother of")
-                else:
-                    return RelationshipType.objects.get(name="halfsister of")
-            elif self.relationship.name == "great grandfather of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(
-                        name="great grandson of")
-                else:
-                    return RelationshipType.objects.get(
-                        name="great granddaughter of")
-            elif self.relationship.name == "grandson of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="grandfather of")
-                else:
-                    return RelationshipType.objects.get(name="grandmother of")
-            elif self.relationship.name == "stepfather of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="stepson of")
-                else:
-                    return RelationshipType.objects.get(name="stepdaughter of")
-            elif self.relationship.name == "cousin of":
-                return self.relationship
-            elif self.relationship.name == "adoptive father of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="adopted son of")
-                else:
-                    return RelationshipType.objects.get(
-                        name="adopted daughter of")
-            elif self.relationship.name == "stepson of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="stepfather of")
-                else:
-                    return RelationshipType.objects.get(name="stepmother of")
-            elif self.relationship.name == "stepbrother of":
-                if self.related_person.sex.name == "Male":
-                    return self.relationship
-                else:
-                    return RelationshipType.objects.get(name="stepsister of")
-            elif self.relationship.name == "grandfather of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="grandson of")
-                else:
-                    return RelationshipType.objects.get(
-                        name="granddaughter of")
-            elif self.relationship.name == "great grandson of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(
-                        name="great grandfather of")
-                else:
-                    return RelationshipType.objects.get(
-                        name="great granddaughter of")
-            elif self.relationship.name == "grandmother of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="grandson of")
-                else:
-                    return RelationshipType.objects.get(
-                        name="granddaughter of")
-            elif self.relationship.name == "great uncle of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="great nephew of")
-                else:
-                    return RelationshipType.objects.get(name="great niece of")
-            elif self.relationship.name == "halfbrother of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="halfbrother of")
-                else:
-                    return RelationshipType.objects.get(name="halfsister of")
-            elif self.relationship.name == "granddaughter of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="grandfather of")
-                else:
-                    return RelationshipType.objects.get(name="grandmother of")
-            elif self.relationship.name == "adopted grandson of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(
-                        name="adopted grandfather of")
-                else:
-                    return RelationshipType.objects.get(
-                        name="adopted grandmother of")
-            elif self.relationship.name == "mother of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="son of")
-                else:
-                    return RelationshipType.objects.get(name="daughter of")
-            elif self.relationship.name == "great granddaughter of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(
-                        name="great grandfather of")
-                else:
-                    return RelationshipType.objects.get(
-                        name="great grandmother of")
-
+            return RelationshipInverse.objects.get(
+                relationship=self.relationship, sex=self.related_person.sex)
         except Exception:
             return None
 
     class Meta:
         ordering = ['relationship_number', 'id']
+
+
+class RelationshipInverse(models.Model):
+    relationship = models.ForeignKey(RelationshipType)
+    sex = models.ForeignKey(Sex)
+    inverse_relationship = models.ForeignKey(
+        RelationshipType, related_name='inverse')
 
 
 @with_author

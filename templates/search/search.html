@@ -178,7 +178,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 {{ form.date_from.errors }} {{ form.date_to.errors }}
                                 <div class="row range">
                                     <div class="small-1 columns">
-                                        <h4><br>Date:</h4>
+                                        <h4><br>Life Dates:</h4>
                                     </div>
                                     <div class="small-5 columns">
                                         <label>After</label>
@@ -213,7 +213,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     {% endwith %} {% endfor %}
                                 </ul>
 
-                                <h4>Class</h4>
+                                <h4>Status</h4>
                                 <ul class="button-group">
                                     {% for term in facets.fields|get_item:"nobilis" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
                                     <li>
@@ -280,7 +280,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 {{ form.date_from.errors }} {{ form.date_to.errors }}
                                 <div class="row range">
                                     <div class="small-1 columns">
-                                        <h4><br>Date:</h4>
+                                        <h4>Career Dates:</h4>
                                     </div>
                                     <div class="small-5 columns">
                                         <label>After</label>

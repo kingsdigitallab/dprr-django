@@ -120,12 +120,22 @@ li.greyed-out a {
     color: gray;
 }
 
+a span.gray {
+    color: gray !important;
+    font-weight: 700;
+}
+
 .gray-bg {
     background: gray;
 }
 
 .green {
+    color: green !important;
+}
+
+a span.green {
     color: green;
+    font-weight: 700;
 }
 
 .green-bg {

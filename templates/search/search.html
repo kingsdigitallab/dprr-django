@@ -425,7 +425,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
             <li>
                 {% with doc=result.documents.0 %}
                 <h3>
-                    <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }} <span class="label radius secondary{% comment %}{% if doc.uncertain == True %} gray-bg{% else %} green-bg{% endif %}{% endcomment %}">{{ doc.highest_office }}{% if doc.uncertain == True %} <i class="fa fa-question-circle gray"></i>{% else %} <i class="fa fa-check-circle green"></i>{% endif %}</span></a>
+                    <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }} <span class="{% if doc.uncertain == True %}gray{% else %}green{% endif %}">{{ doc.highest_office }}</span></a>
                 </h3>
                 {% for dd in result.documents %}
                 <p>

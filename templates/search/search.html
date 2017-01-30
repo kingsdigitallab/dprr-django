@@ -29,9 +29,11 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                     <div class="row">
                         <div class="large-12 columns">
                             <div class="panel results-preview" data-magellan-expedition="fixed">
-                                <h4>Results preview
+                                <h4>Search results
                                 <a href="#search-results-box" class="less-padding button right do-not-print">Show <strong>{{ paginator.count }}</strong> results</a></h4>
+                                {% comment %}
                                 <p class="info"><i class="fa fa-info-circle"></i> Some info on this section.</p>
+                                {% endcomment %}
                                 <h3>
                                     <strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search" class="do-not-print"><i class="fa fa-trash"></i> Clear all</a>
                                 </h3>
@@ -154,11 +156,11 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     </div>
                                     <div class="medium-1 columns">
                                         {{ form.f }}
-                                        <label>Father initial</label>
+                                        <label>Father</label>
                                     </div>
                                     <div class="medium-1 columns">
                                         {{ form.n }}
-                                        <label>Grandfather initial</label>
+                                        <label>Grandfather</label>
                                     </div>
                                     <div class="medium-2 columns">
                                         {{ form.cognomen }}
@@ -166,7 +168,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     </div>
                                     <div class="medium-2 columns">
                                         {{ form.other_names }}
-                                        <label>Other names</label>
+                                        <label>Additional Cognomina</label>
                                     </div>
                                 </div>
                             </div>
@@ -399,27 +401,24 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
         </form>
     </div>
 </div>
-<div class="row extra-margin" id="search-results-box">
+<div class="row" id="search-results-box">
     <div class="large-12 columns">
         <hr>
-        <h2>Search Results <span class="label radius">{{ paginator.count }}</span> <a href="#search" class="less-padding button right edit-search do-not-print"><i class="fa fa-edit"></i> Edit search</a></h2>
-        <ul class="inline-list right export do-not-print">
-            <li>
-                <a class="right" aria-lablledby="#print" id="printme"><i class="fa fa-print"></i><label id="print">Print</label></a>
-            </li>
-            <li>
-                <a class="right" aria-lablledby="#pdf"><i class="fa fa-file-pdf-o"></i><label id="pdf">PDF</label></a>
-            </li>
-            <li>
-                <a class="right" aria-lablledby="#csv"><i class="fa fa-save"></i><label id="cvs">CSV</label></a>
-            </li>
-        </ul>
-        <ul class="inline-list left key">
-            <li>Dates can be: </li>
-            <li>Certain <i class="fa fa-check-circle fa-lg green"></i></li>
-            <li>or</li>
-            <li>Uncertain <i class="fa fa-question-circle fa-lg gray"></i></li>
-        </ul>
+        <h2>
+            Search Results <span class="label radius">{{ paginator.count }}</span> 
+            <a href="#search" class="less-padding button right edit-search do-not-print"><i class="fa fa-edit"></i> Edit search</a>
+            <ul class="inline-list right export do-not-print">
+                <li>
+                    <a class="right" aria-lablledby="#print" id="printme"><i class="fa fa-print"></i><label id="print">Print</label></a>
+                </li>
+                <li>
+                    <a class="right" aria-lablledby="#pdf"><i class="fa fa-file-pdf-o"></i><label id="pdf">PDF</label></a>
+                </li>
+                <li>
+                    <a class="right" aria-lablledby="#csv"><i class="fa fa-save"></i><label id="cvs">CSV</label></a>
+                </li>
+            </ul>
+        </h2>
         <hr>
         <ol start="{{ page_obj.start_index }}" class="search-results">
             {% for result in object_list %}

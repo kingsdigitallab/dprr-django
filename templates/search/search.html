@@ -167,9 +167,13 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         <button data-dropdown="tribes" aria-controls="tribes" aria-expanded="false" class="secondary less-padding button expand dropdown">Tribe</button>
                                         <br>
                                         <ul id="tribes" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-                                            {% for term in facets.fields|get_item:"tribe" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
+                                            {% for term in facets.fields|get_item:"tribe" %}
+                                            {% with value=term.0 count=term.1 %}
+                                            {% if count > 0 %}
                                             <li><a href="{% add_facet_link querydict "tribe" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-                                            {% endif %} {% endwith %} {% endfor %}
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endfor %}
                                         </ul>
 
                                         <label>Tribe</label>
@@ -205,61 +209,119 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         <button type="submit" class="less-padding expand secondary">Apply</button>
                                     </div>
                                 </div>
-                                <ul class="button-group">
-                                    {% for term in facets.fields|get_item:"gender" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
-                                    <li>
-                                        <a href="{% add_facet_link querydict "gender" value %}#search" class="button secondary less-padding smaller-fontsize">
-                                            {{ value }}&nbsp;<span class="label radius">{{ count }}</span>
-                                        </a>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %}
-                                </ul>
 
-                                <ul>
-                                    {% for term in facets.fields|get_item:"life_date_types" %} {% with value=term.0 count=term.1 %}
-                                    <li>
-                                        <a href="{% add_facet_link querydict "life_date_types" value %}#search" class="button secondary less-padding smaller-fontsize">
-                                            {{ value|title }}&nbsp;<span class="label radius right">{{ count }}</span>
-                                        </a>
-                                    </li>
-                                    {% endwith %} {% endfor %}
-                                </ul>
+                                <div class="row">
+                                    <div class="medium-3 columns">
+                                        <ul class="stack button-group">
+                                            {% for term in facets.fields|get_item:"gender" %}
+                                            {% with value=term.0 count=term.1 %}
+                                            {% if count > 0 %}
+                                            <li>
+                                                <a href="{% add_facet_link querydict "gender" value %}#search" class="button secondary less-padding smaller-fontsize text-left">
+                                                    {{ value }}&nbsp;<span class="label radius right">{{ count }}</span>
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <div class="medium-4 medium-offset-1 columns">
+                                        <ul class="stack button-group">
+                                            {% for term in facets.fields|get_item:"life_date_types" %}
+                                            {% with value=term.0 count=term.1 %}
+                                            <li>
+                                                <a href="{% add_facet_link querydict "life_date_types" value %}#search" class="button secondary less-padding smaller-fontsize text-left">
+                                                    {{ value|title }}&nbsp;<span class="label radius right">{{ count }}</span>
+                                                </a>
+                                            </li>
+                                            {% endwith %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <div class="medium-3 medium-offset-1 columns">
+                                        <ul class="stack button-group">
+                                            {% for term in facets.fields|get_item:"life_date_types" %}
+                                            {% with value=term.0 count=term.1 %}
+                                            <li>
+                                                <a href="{% add_facet_link querydict "life_date_types" value %}#search" class="button secondary less-padding smaller-fontsize text-left">
+                                                    {{ value|title }}&nbsp;<span class="label radius right">{{ count }}</span>
+                                                </a>
+                                            </li>
+                                            {% endwith %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
 
-                                <h4>Status</h4>
-                                <ul class="button-group">
-                                    {% for term in facets.fields|get_item:"nobilis" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
-                                    <li>
-                                        <a href="{% add_facet_link querydict "nobilis" value %}#search" class="button secondary less-padding">Nobilis <span class="label radius">{{ count }}</span></a>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %}
+                                <div class="row top-padding">
+                                    <div class="medium-4 columns">
+                                        <h4>Rank</h4>
 
-                                    {% for term in facets.fields|get_item:"novus" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
-                                    <li>
-                                        <a href="{% add_facet_link querydict "novus" value %}#search" class="button secondary less-padding">Novus <span class="label radius">{{ count }}</span></a>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %}
+                                        <ul class="button-group">
+                                            {% for term in facets.fields|get_item:"eques" %}
+                                            {% with value=term.0 count=term.1 %}
+                                            {% if value == "true" and count > 0 %}
+                                            <li>
+                                                <a href="{% add_facet_link querydict "eques" value %}#search" class="button secondary less-padding">Eques R. <span class="label radius">{{ count }}</span></a>
+                                            </li>
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endfor %}
 
-                                    {% for term in facets.fields|get_item:"patrician" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
-                                    <li>
-                                        <a href="{% add_facet_link querydict "patrician" value %}#search" class="button secondary less-padding">Patrician <span class="label radius">{{ count }}</span></a>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %}
-                                </ul>
+                                            {% for term in facets.fields|get_item:"senator" %}
+                                            {% with value=term.0 count=term.1 %}
+                                            {% if value == "true" and count > 0 %}
+                                            <li>
+                                                <a href="{% add_facet_link querydict "senator" value %}#search" class="button secondary less-padding">Senator <span class="label radius">{{ count }}</span></a>
+                                            </li>
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
 
-                                <ul class="button-group">
-                                    {% for term in facets.fields|get_item:"eques" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
-                                    <li>
-                                        <a href="{% add_facet_link querydict "eques" value %}#search" class="button secondary less-padding">Eques R. <span class="label radius">{{ count }}</span></a>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %}
+                                    <div class="medium-8 columns">
+                                        <h4>Status</h4>
+                                        <ul class="button-group">
+                                            {% for term in facets.fields|get_item:"nobilis" %}
+                                            {% with value=term.0 count=term.1 %}
+                                            {% if value == "true" and count > 0 %}
+                                            <li>
+                                                <a href="{% add_facet_link querydict "nobilis" value %}#search" class="button secondary less-padding">Nobilis <span class="label radius">{{ count }}</span></a>
+                                            </li>
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endfor %}
 
-                                    {% for term in facets.fields|get_item:"senator" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
-                                    <li>
-                                        <a href="{% add_facet_link querydict "senator" value %}#search" class="button secondary less-padding">Senator <span class="label radius">{{ count }}</span></a>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %}
-                                </ul>
+                                            {% for term in facets.fields|get_item:"novus" %}
+                                            {% with value=term.0 count=term.1 %}
+                                            {% if value == "true" and count > 0 %}
+                                            <li>
+                                                <a href="{% add_facet_link querydict "novus" value %}#search" class="button secondary less-padding">Novus <span class="label radius">{{ count }}</span></a>
+                                            </li>
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endfor %}
 
+                                            {% for term in facets.fields|get_item:"patrician" %}
+                                            {% with value=term.0 count=term.1 %}
+                                            {% if value == "true" and count > 0 %}
+                                            <li>
+                                                <a href="{% add_facet_link querydict "patrician" value %}#search" class="button secondary less-padding">Patrician <span class="label radius">{{ count }}</span></a>
+                                            </li>
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                {% comment %}
+                                {# 
+                                    This form was attached to the Tribe filter
+                                    but it's not used anymore.
+                                #}
                                 <div class="row">
                                     <div class="large-6 columns">
                                         <div class="row collapse">
@@ -272,6 +334,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         </div>
                                     </div>
                                 </div>
+                                {% endcomment %}
                             </div>
                         </div>
                     </div>
@@ -283,7 +346,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 {{ form.date_from.errors }} {{ form.date_to.errors }}
                                 <div class="row range">
                                     <div class="medium-2 columns">
-                                        <h4>Career Dates:</h4>
+                                        <h4><br>Career Dates:</h4>
                                     </div>
                                     <div class="medium-4 columns">
                                         <label>After</label>
@@ -299,9 +362,9 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="large-6 columns">
+                                    <div class="medium-6 large-3 columns">
                                         <div class="panel radius fixed-height">
-                                            <h4>Office type</h4>
+                                            <h4>Magistracies Offices</h4>
                                             <ul class="no-bullet hierarchical-facets">
 
                                             {% comment %}
@@ -320,7 +383,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                                 {% if not node.is_leaf_node %}
                                                 <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
 
-                                                    <a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</a>
+                                                    <a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</span></a>
                                                     <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
                                                     <ul class="hide collapsible">
                                                         {{ children }}
@@ -335,11 +398,129 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                             {% endrecursetree %}
                                             {% endwith %}
                                             {% comment %} closes the with treenodes {% endcomment %}
-
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="large-6 columns">
+                                    <div class="medium-6 large-3 columns">
+                                        <div class="panel radius fixed-height">
+                                            <h4>Priesthoods Offices</h4>
+                                            <ul class="no-bullet hierarchical-facets">
+
+                                            {% comment %}
+                                              Add options for the hierarchical facets:
+                                              using the MPTT template tags to rebuild the tree:
+                                                    https://django-mptt.github.io/django-mptt/templates.html
+                                            {% endcomment %}
+
+                                            {% with treenodes=office_list %}
+                                            {% recursetree treenodes %}
+
+                                            {% with num=office_fdict|lookup:node.name %}
+
+                                            {% if num %}
+                                                {% comment %} parent node {% endcomment %}
+                                                {% if not node.is_leaf_node %}
+                                                <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
+
+                                                    <a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</span></a>
+                                                    <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
+                                                    <ul class="hide collapsible">
+                                                        {{ children }}
+                                                    </ul>
+                                                </li>
+                                                {% else %}
+                                                {% comment %} no children {% endcomment %}
+                                                <li><a href="{% select_facet_link 'offices' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endrecursetree %}
+                                            {% endwith %}
+                                            {% comment %} closes the with treenodes {% endcomment %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="medium-6 large-3 columns">
+                                        <div class="panel radius fixed-height">
+                                            <h4>Promagistracies Offices</h4>
+                                            <ul class="no-bullet hierarchical-facets">
+
+                                            {% comment %}
+                                              Add options for the hierarchical facets:
+                                              using the MPTT template tags to rebuild the tree:
+                                                    https://django-mptt.github.io/django-mptt/templates.html
+                                            {% endcomment %}
+
+                                            {% with treenodes=office_list %}
+                                            {% recursetree treenodes %}
+
+                                            {% with num=office_fdict|lookup:node.name %}
+
+                                            {% if num %}
+                                                {% comment %} parent node {% endcomment %}
+                                                {% if not node.is_leaf_node %}
+                                                <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
+
+                                                    <a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</span></a>
+                                                    <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
+                                                    <ul class="hide collapsible">
+                                                        {{ children }}
+                                                    </ul>
+                                                </li>
+                                                {% else %}
+                                                {% comment %} no children {% endcomment %}
+                                                <li><a href="{% select_facet_link 'offices' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endrecursetree %}
+                                            {% endwith %}
+                                            {% comment %} closes the with treenodes {% endcomment %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="medium-6 large-3 columns">
+                                        <div class="panel radius fixed-height">
+                                            <h4>Lower Offices</h4>
+                                            <ul class="no-bullet hierarchical-facets">
+
+                                            {% comment %}
+                                              Add options for the hierarchical facets:
+                                              using the MPTT template tags to rebuild the tree:
+                                                    https://django-mptt.github.io/django-mptt/templates.html
+                                            {% endcomment %}
+
+                                            {% with treenodes=office_list %}
+                                            {% recursetree treenodes %}
+
+                                            {% with num=office_fdict|lookup:node.name %}
+
+                                            {% if num %}
+                                                {% comment %} parent node {% endcomment %}
+                                                {% if not node.is_leaf_node %}
+                                                <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
+
+                                                    <a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</span></a>
+                                                    <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
+                                                    <ul class="hide collapsible">
+                                                        {{ children }}
+                                                    </ul>
+                                                </li>
+                                                {% else %}
+                                                {% comment %} no children {% endcomment %}
+                                                <li><a href="{% select_facet_link 'offices' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endrecursetree %}
+                                            {% endwith %}
+                                            {% comment %} closes the with treenodes {% endcomment %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="large-12 columns">
                                         <div class="panel radius fixed-height">
                                             <h4>Province</h4>
                                             <ul class="no-bullet hierarchical-facets">
@@ -430,11 +611,13 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                 <h3>
                     <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }} <span class="{% if doc.uncertain == True %}gray{% else %}green{% endif %}">{{ doc.highest_office }}</span></a>
                 </h3>
+                {% comment %}
                 {% for dd in result.documents %}
                 <p>
                     {% highlight dd.text with query html_tag 'strong' max_length 120 %}
                 </p>
                 {% endfor %}
+                {% endcomment %}
                 {% endwith %}
             </li>
             {% empty %}

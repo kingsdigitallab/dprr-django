@@ -97,7 +97,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     {% if other_names %}
                                     <li>
                                         <span class="label radius">
-                                            <a href="{{ other_names.0 }}#search" title="Remove filter">Other names: {{ other_names.1 }}
+                                            <a href="{{ other_names.0 }}#search" title="Remove filter">Additional Cognomina: {{ other_names.1 }}
                                                 <i class="fa fa-times-circle"></i>
                                             </a>
                                         </span>
@@ -140,13 +140,13 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                         <div class="large-12 columns">
                             <div class="panel callout">
                                 <h3 class="panel-heading">Name</h3>
-                                <p class="info"><i class="fa fa-info-circle"></i> Start typing</p>
+                                <p class="info"><i class="fa fa-info-circle"></i> Autocomplete suggestions will appear once you start typing</p>
                                 <div class="row name-row hyphen">
-                                    <div class="medium-2 columns">
+                                    <div class="medium-1 columns">
                                         {{ form.praenomen }}
                                         <label>Praenomen</label>
                                     </div>
-                                    <div class="medium-3 columns">
+                                    <div class="medium-2 columns">
                                         {{ form.nomen }}
                                         <label>Nomen</label>
                                     </div>
@@ -161,6 +161,18 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     <div class="medium-1 columns">
                                         {{ form.n }}
                                         <label>Grandfather</label>
+                                    </div>
+                                    <div class="medium-2 columns">
+                                        
+                                        <button data-dropdown="tribes" aria-controls="tribes" aria-expanded="false" class="secondary less-padding button expand dropdown">Tribe</button>
+                                        <br>
+                                        <ul id="tribes" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
+                                            {% for term in facets.fields|get_item:"tribe" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
+                                            <li><a href="{% add_facet_link querydict "tribe" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
+                                            {% endif %} {% endwith %} {% endfor %}
+                                        </ul>
+
+                                        <label>Tribe</label>
                                     </div>
                                     <div class="medium-2 columns">
                                         {{ form.cognomen }}
@@ -249,15 +261,6 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 </ul>
 
                                 <div class="row">
-                                    <div class="large-6 columns">
-                                        <button data-dropdown="tribes" aria-controls="tribes" aria-expanded="false" class="secondary less-padding button expand dropdown">Tribes</button>
-                                        <br>
-                                        <ul id="tribes" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-                                            {% for term in facets.fields|get_item:"tribe" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
-                                            <li><a href="{% add_facet_link querydict "tribe" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-                                            {% endif %} {% endwith %} {% endfor %}
-                                        </ul>
-                                    </div>
                                     <div class="large-6 columns">
                                         <div class="row collapse">
                                             <div class="small-9 columns">

@@ -9,8 +9,8 @@ from django.utils.html import format_html
 from django_mptt_admin.admin import DjangoMpttAdmin
 from models import (DateInformation, DateType, Gens, GensAssertion, Group,
                     Office, Person, PersonNote, PostAssertion,
-                    PostAssertionNote, Praenomen, PrimarySource,
-                    PrimarySourceReference, Province, RelationshipAssertion,
+                    PostAssertionNote, Praenomen, PrimarySourceReference,
+                    Province, RelationshipAssertion,
                     RelationshipAssertionReference, RelationshipType, RoleType,
                     SecondarySource, StatusAssertion, StatusAssertionNote,
                     StatusType, Tribe, TribeAssertion)
@@ -88,6 +88,7 @@ class RelationshipTypeAdmin(admin.ModelAdmin):
 
     show_change_link = True
 
+
 admin.site.register(RelationshipType, RelationshipTypeAdmin)
 
 
@@ -112,6 +113,7 @@ class RelationshipAssertionReferenceAdmin(admin.ModelAdmin):
                     'print_primary_source_refs', 'created', 'modified')
 
     inlines = (PrimarySourceReferenceInline, RelationshipAssertionListInline, )
+
 
 admin.site.register(RelationshipAssertionReference,
                     RelationshipAssertionReferenceAdmin)
@@ -174,6 +176,7 @@ class RelationshipAssertionAdmin(admin.ModelAdmin):
     # exclude = ('relationshipassertionreference',)
 
     show_change_link = True
+
 
 admin.site.register(RelationshipAssertion, RelationshipAssertionAdmin)
 
@@ -365,6 +368,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
 
     inlines = (PostAssertionNoteInline, PostAssertionProvinceInline)
 
+
 admin.site.register(PostAssertion, PostAssertionAdmin)
 
 
@@ -379,6 +383,7 @@ class NoteAdmin(admin.ModelAdmin):
     fields = ('id', ('secondary_source', 'note_type'), 'text', 'extra_info', )
 
     show_change_link = True
+
 
 admin.site.register(PostAssertionNote, NoteAdmin)
 admin.site.register(PersonNote, NoteAdmin)
@@ -395,6 +400,7 @@ class ProvinceAdmin(DjangoMpttAdmin):
     fields = ('id', 'name', 'description')
 
     show_change_link = True
+
 
 admin.site.register(Province, ProvinceAdmin)
 
@@ -610,6 +616,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     exclude = ('assertions', )
 
+
 admin.site.register(Person, PersonAdmin)
 
 
@@ -632,6 +639,7 @@ class OfficeAdmin(DjangoMpttAdmin):
         'abbrev_name',
         'description',
     )
+
 
 admin.site.register(Office, OfficeAdmin)
 
@@ -669,6 +677,7 @@ class GroupAdmin(admin.ModelAdmin):
     inlines = [PostAssertionInline, ]
     exclude = ('persons',)
 
+
 admin.site.register(Group, GroupAdmin)
 
 
@@ -697,6 +706,7 @@ class StatusAssertionAdmin(admin.ModelAdmin):
 
     inlines = (StatusAssertionProvinceInline, StatusAssertionNoteInline, )
 
+
 admin.site.register(StatusAssertion, StatusAssertionAdmin)
 
 
@@ -705,6 +715,7 @@ class StatusTypeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', )
     list_display_links = ('id', 'name', )
     readonly_fields = ('id', )
+
 
 admin.site.register(StatusType, StatusTypeAdmin)
 
@@ -715,6 +726,7 @@ class GensAdmin(admin.ModelAdmin):
     readonly_fields = ('id', )
     list_display_links = ('id', 'name', )
 
+
 admin.site.register(Gens, GensAdmin)
 
 
@@ -723,6 +735,7 @@ class TribeAdmin(admin.ModelAdmin):
     list_display = ('id', 'abbrev', 'name', )
     readonly_fields = ('id', )
     list_display_links = ('id', 'abbrev', 'name', )
+
 
 admin.site.register(Tribe, TribeAdmin)
 
@@ -751,5 +764,3 @@ class PrimarySourceAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'abbrev_name', 'biblio')
     readonly_fields = ('id', )
     list_display_links = ('id', 'abbrev_name', 'name', 'biblio')
-
-admin.site.register(PrimarySource, PrimarySourceAdmin)

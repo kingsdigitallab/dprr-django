@@ -41,6 +41,7 @@ li.greyed-out a {
 }
 
 .export {
+    padding-right: 1rem;
     text-align: center;
     label {
         font-size: .75em;
@@ -119,12 +120,22 @@ li.greyed-out a {
     color: gray;
 }
 
+a span.gray {
+    color: gray !important;
+    font-weight: 700;
+}
+
 .gray-bg {
     background: gray;
 }
 
 .green {
+    color: green !important;
+}
+
+a span.green {
     color: green;
+    font-weight: 700;
 }
 
 .green-bg {
@@ -250,6 +261,12 @@ h3.quick-home {
     padding-bottom: .5rem;
 }
 
+.main {
+    img {
+        width: 100%;
+    }
+}
+
 .timeline {
     .label {
         font-size: 1rem;
@@ -345,6 +362,8 @@ h3.quick-home {
     ul {
         margin-left: 0;
     }
+
+    width: 280px !important;
 }
 
 .offices {

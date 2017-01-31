@@ -31,12 +31,13 @@
       {% endif %}
 
       {% if person.dateinformation_set.all %}
-      <a href="#" class="expander life-dates"><h2>Life Dates <i class="fa fa-caret-right"></i></h2></a>
-      <ul class="hide collapsible">
+      <h2>Life Dates</h2>
+      <ul>
           {% for di in person.dateinformation_set.all %}
           <li>{{ di }}
               {% if di.notes %}
-                  <p>{{ di.notes|capfirst }}</p>
+                <a href="#" class="small button round less-padding expander life-dates right">Info <i class="fa fa-caret-right"></i></a>
+                <p class="hide collapsible">{{ di.notes|capfirst }}</p>
               {% endif %}
           </li>
           {% endfor %}
@@ -49,7 +50,14 @@
         <div id="network"></div>
       </div>
 
-      <h2>Offices</h2>
+      <dl>
+          {% for rel in relationships %}
+          <dt>{{ rel.relationship }}</dt>
+              <dd><a href="{% url 'person-detail' rel.related_person.id %}">{{ rel.related_person }}</a></dd>
+          {% endfor %}
+      </dl>
+
+      <h2>Career</h2>
       <ul class="timeline no-bullet bottom-margin">
         {% for pa in person.post_assertions.all %}
         <li><span class="label radius{% if pa.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ pa.print_date | safe }}</span> <strong>{{ pa.office | title }} {% if pa.provinces %} <a href="#">{{ pa.print_provinces }}</a> {% endif %}</strong>

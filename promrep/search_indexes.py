@@ -52,6 +52,9 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
     tribe = indexes.MultiValueField(faceted=True)
 
+    # used to display the highest office achieved in the search page
+    highest_office = indexes.CharField(faceted=False)
+
     def get_model(self):
         # implemented in the specific facets
         pass
@@ -73,6 +76,12 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare_tribe(self, object):
         return list(set(object.person.tribes.values_list('name', flat=True)))
 
+    def prepare_highest_office(self, object):
+        """returns a string with the highest office/date a specific person
+        archived"""
+
+        return object.person.highest_office
+
 
 class PostAssertionIndex(AssertionIndex):
     # TODO: is this needed?
@@ -86,9 +95,6 @@ class PostAssertionIndex(AssertionIndex):
 
     province = indexes.MultiValueField(faceted=True)
     date = MultiValueIntegerField(faceted=True)
-
-    # used to display the highest office achieved in the search page
-    highest_office = indexes.CharField(faceted=False)
 
     life_date_types = indexes.MultiValueField(faceted=True)
 
@@ -124,15 +130,6 @@ class PostAssertionIndex(AssertionIndex):
         res = range(start, end + 1, 1)
 
         return res
-
-    def prepare_highest_office(self, object):
-        """returns a string with the highest office/date a specific person
-        archived"""
-
-        pa = object.person.post_assertions.all().order_by(
-            '-date_end', '-date_end')[0]
-
-        return pa.office.abbrev_name.title() + " " + pa.print_date()
 
     def prepare_office(self, object):
 

@@ -63,6 +63,9 @@ logs/
 node_modules/
 static/
 
+# Images
+*.png
+
 # Vagrant
 .vagrant/
 playbook.retry

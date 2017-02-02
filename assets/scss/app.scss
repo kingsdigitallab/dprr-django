@@ -320,14 +320,18 @@ h3.quick-home {
 }
 
 .search-box {
-    padding: 1rem;
     background: $secondary-color;
     border: 1px solid scale-color($primary-color, $lightness: 70%);
+    padding: 1rem;
 
     .label.secondary,
     button.secondary,
     .button.secondary {
         background: scale-color($secondary-color, $lightness: -10%);
+    }
+
+    h4 {
+        font-size: 1.25rem;
     }
 }
 

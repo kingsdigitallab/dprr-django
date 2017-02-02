@@ -126,7 +126,6 @@ li.greyed-out a {
 
 a span.gray {
     color: gray !important;
-    font-weight: 700;
 }
 
 .gray-bg {
@@ -134,16 +133,15 @@ a span.gray {
 }
 
 .green {
-    color: green !important;
+    color: $success-color !important;
 }
 
 a span.green {
-    color: green;
-    font-weight: 700;
+    color: $success-color;
 }
 
 .green-bg {
-    background: green;
+    background: $success-color;
 }
 
 .red {

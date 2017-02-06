@@ -25,11 +25,13 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
     person_id = indexes.IntegerField(model_attr='person__id')
 
     praenomen = indexes.CharField(
-        model_attr='person__praenomen__abbrev', faceted=True, null=True)
+        model_attr='person__praenomen__name', faceted=True, null=True)
     nomen = indexes.CharField(faceted=True, null=True)
 
-    f = indexes.CharField(model_attr='person__f', faceted=True, null=True)
-    n = indexes.CharField(model_attr='person__n', faceted=True, null=True)
+    f = indexes.CharField(model_attr='person__praenomen__abbrev',
+                          faceted=True, null=True)
+    n = indexes.CharField(model_attr='person__praenomen__abbrev',
+                          faceted=True, null=True)
 
     re_number = indexes.CharField(model_attr='person__re_number',
                                   faceted=True, null=True)

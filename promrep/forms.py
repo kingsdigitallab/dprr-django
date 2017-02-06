@@ -184,6 +184,8 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
             attrs={'class': 'autocomplete',
                    'title': 'Additional Cognomina'})
     )
+    tribe = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Tribe'}))
 
     def no_query_found(self):
         """Determines the behaviour when no query was found; returns all the
@@ -217,7 +219,7 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
                         'praenomen:{}'.format(data.get('praenomen')))
 
             for field in ('nomen', 'cognomen', 're_number',
-                          'n', 'f', 'other_names'):
+                          'n', 'f', 'other_names', 'tribe'):
                 if field in data:
                     if data.get(field):
                         sqs = sqs.narrow('{}:{}'.format(

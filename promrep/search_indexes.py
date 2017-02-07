@@ -37,7 +37,7 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
                                   faceted=True, null=True)
 
     other_names = indexes.CharField(
-        model_attr='person__other_names', faceted=True, null=True)
+        model_attr='person__other_names_plain', faceted=True, null=True)
 
     cognomen = indexes.CharField(faceted=True, null=True)
 

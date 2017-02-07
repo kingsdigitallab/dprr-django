@@ -265,21 +265,11 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         </div>
 
                                         <ul class="button-group">
-                                            {% for term in facets.fields|get_item:"eques" %}
+                                            {% for term in facets.fields|get_item:"rank" %}
                                             {% with value=term.0 count=term.1 %}
-                                            {% if value == "true" and count > 0 %}
+                                            {% if count > 0 %}
                                             <li>
-                                                <a href="{% add_facet_link querydict "eques" value %}#search" class="button secondary less-padding">Eques R. <span class="label radius">{{ count }}</span></a>
-                                            </li>
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endfor %}
-
-                                            {% for term in facets.fields|get_item:"senator" %}
-                                            {% with value=term.0 count=term.1 %}
-                                            {% if value == "true" and count > 0 %}
-                                            <li>
-                                                <a href="{% add_facet_link querydict "senator" value %}#search" class="button secondary less-padding">Senator <span class="label radius">{{ count }}</span></a>
+                                                <a href="{% add_facet_link querydict "rank" value %}#search" class="button secondary less-padding">{{ value }} <span class="label radius">{{ count }}</span></a>
                                             </li>
                                             {% endif %}
                                             {% endwith %}

@@ -323,25 +323,6 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         </ul>
                                     </div>
                                 </div>
-
-                                {% comment %}
-                                {# 
-                                    This form was attached to the Tribe filter
-                                    but it's not used anymore.
-                                #}
-                                <div class="row">
-                                    <div class="large-6 columns">
-                                        <div class="row collapse">
-                                            <div class="small-9 columns">
-                                                <input type="text" name="origin" placeholder="Search for origin">
-                                            </div>
-                                            <div class="small-3 columns">
-                                                <button type="submit" class="postfix secondary button"><i class="fa fa-search"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endcomment %}
                             </div>
                         </div>
                     </div>
@@ -388,7 +369,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                                     https://django-mptt.github.io/django-mptt/templates.html
                                             {% endcomment %}
 
-                                            {% with treenodes=office_list %}
+                                            {% with treenodes=magisterial_office_list %}
                                             {% recursetree treenodes %}
 
                                             {% with num=office_fdict|lookup:node.name %}
@@ -396,7 +377,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                             {% if num %}
                                                 {% comment %} parent node {% endcomment %}
                                                 {% if not node.is_leaf_node %}
-                                                <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
+                                                <li><span class="label radius pull-right">{{ office_fdict|lookup:node.name }}</span>
 
                                                     <a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</span></a>
                                                     <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
@@ -431,7 +412,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                                     https://django-mptt.github.io/django-mptt/templates.html
                                             {% endcomment %}
 
-                                            {% with treenodes=office_list %}
+                                            {% with treenodes=promagistracies_office_list %}
                                             {% recursetree treenodes %}
 
                                             {% with num=office_fdict|lookup:node.name %}
@@ -474,7 +455,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                                     https://django-mptt.github.io/django-mptt/templates.html
                                             {% endcomment %}
 
-                                            {% with treenodes=office_list %}
+                                            {% with treenodes=priesthoods_office_list %}
                                             {% recursetree treenodes %}
 
                                             {% with num=office_fdict|lookup:node.name %}
@@ -517,7 +498,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                                     https://django-mptt.github.io/django-mptt/templates.html
                                             {% endcomment %}
 
-                                            {% with treenodes=office_list %}
+                                            {% with treenodes=non_magisterial_office_list %}
                                             {% recursetree treenodes %}
 
                                             {% with num=office_fdict|lookup:node.name %}

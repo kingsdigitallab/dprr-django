@@ -47,8 +47,6 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
         model_attr='person__patrician', default=False, faceted=True)
     novus = indexes.BooleanField(
         model_attr='person__novus', default=False, faceted=True)
-    eques = indexes.BooleanField(
-        model_attr='person__eques', default=False, faceted=True)
     nobilis = indexes.BooleanField(
         model_attr='person__nobilis', default=False, faceted=True)
 
@@ -164,7 +162,7 @@ class PostAssertionIndex(AssertionIndex):
 
 
 class StatusAssertionIndex(AssertionIndex):
-    status = indexes.CharField(model_attr='status__name', faceted=True)
+    rank = indexes.CharField(model_attr='status__name', faceted=True)
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
     date = MultiValueIntegerField(faceted=True)
 

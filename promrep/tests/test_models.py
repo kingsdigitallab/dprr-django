@@ -23,6 +23,16 @@ class PersonTest(TestCase):
             {'text': 'A. or C. f. - n.', 'f': 'A. or C.', 'n': None},
             {'text': '- f. - n.', 'f': None, 'n': None},
         ]
+        self.other_names = [
+            {'other_names': 'Name', 'other_names_plain': 'Name'},
+            {'other_names': '(Name)', 'other_names_plain': 'Name'},
+            {'other_names': '(\'Name\')', 'other_names_plain': 'Name'},
+            {'other_names': '(=? I.? Name Surname)',
+             'other_names_plain': 'I. Name Surname'},
+            {'other_names': '(= Name Surname)',
+             'other_names_plain': 'Name Surname'},
+            {'other_names': '(12) Name', 'other_names_plain': 'Name'},
+        ]
         self.person = Person()
 
     def test__f(self):
@@ -39,3 +49,9 @@ class PersonTest(TestCase):
         for filiation in self.filiations:
             self.person.filiation = filiation['text']
             self.assertEqual(filiation['n'], self.person.n)
+
+    def test__other_names_plain(self):
+        for on in self.other_names:
+            self.person.other_names = on['other_names']
+            self.assertEqual(on['other_names_plain'],
+                             self.person.other_names_plain)

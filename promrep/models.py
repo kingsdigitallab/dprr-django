@@ -400,6 +400,16 @@ class Person(TimeStampedModel):
 
         return found.groups()[0]
 
+    @property
+    def other_names_plain(self):
+        """Returns a plain version of the other names, without special
+        characters or numbers."""
+        if not self.other_names:
+            return None
+
+        other_names = self.other_names.strip()
+        return re.sub(r'([^\w\.\s])|(\d+)', '', other_names).strip()
+
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])

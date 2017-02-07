@@ -168,19 +168,24 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     # the name of the fields has to match the facet names defined in
     #  views.py
     praenomen = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'autocomplete'}))
+        attrs={'class': 'autocomplete', 'title': 'Praenomen'}))
     nomen = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'autocomplete'}))
+        attrs={'class': 'autocomplete', 'title': 'Nomen'}))
     cognomen = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'autocomplete'}))
+        attrs={'class': 'autocomplete', 'title': 'Cognomen'}))
     re_number = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'autocomplete'}))
+        attrs={'placeholder': 'RE', 'title': 'RE'}))
     n = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'autocomplete'}))
+        attrs={'class': 'autocomplete', 'title': 'Grandfather'}))
     f = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'autocomplete'}))
-    other_names = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'autocomplete'}))
+        attrs={'class': 'autocomplete', 'title': 'Father'}))
+    other_names = forms.CharField(
+        required=False, widget=forms.TextInput(
+            attrs={'class': 'autocomplete',
+                   'title': 'Additional Cognomina'})
+    )
+    tribe = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Tribe'}))
 
     def no_query_found(self):
         """Determines the behaviour when no query was found; returns all the
@@ -214,7 +219,7 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
                         'praenomen:{}'.format(data.get('praenomen')))
 
             for field in ('nomen', 'cognomen', 're_number',
-                          'n', 'f', 'other_names'):
+                          'n', 'f', 'other_names', 'tribe'):
                 if field in data:
                     if data.get(field):
                         sqs = sqs.narrow('{}:{}'.format(

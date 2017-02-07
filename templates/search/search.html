@@ -38,7 +38,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     <strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search" class="do-not-print"><i class="fa fa-trash"></i> Clear all</a>
                                 </h3>
 
-                                {% if query or selected_facets or date_filter or praenomen or nomen or cognomen or other_names or re_number or n or f or other_names %}
+                                {% if query or selected_facets or date_filter or praenomen or nomen or cognomen or other_names or re_number or n or f or other_names or tribe %}
                                 <ul class="inline-list no-bullet free-filters">
                                     {% if praenomen %}
                                     <li>
@@ -98,6 +98,15 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     <li>
                                         <span class="label radius">
                                             <a href="{{ other_names.0 }}#search" title="Remove filter">Additional Cognomina: {{ other_names.1 }}
+                                                <i class="fa fa-times-circle"></i>
+                                            </a>
+                                        </span>
+                                    </li>
+                                    {% endif %}
+                                    {% if tribe %}
+                                    <li>
+                                        <span class="label radius">
+                                            <a href="{{ tribe.0 }}#search" title="Remove filter">Tribe: {{ tribe.1 }}
                                                 <i class="fa fa-times-circle"></i>
                                             </a>
                                         </span>
@@ -163,19 +172,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         <label>Grandfather</label>
                                     </div>
                                     <div class="medium-2 columns">
-                                        
-                                        <button data-dropdown="tribes" aria-controls="tribes" aria-expanded="false" class="secondary less-padding button expand dropdown">Tribe</button>
-                                        <br>
-                                        <ul id="tribes" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-                                            {% for term in facets.fields|get_item:"tribe" %}
-                                            {% with value=term.0 count=term.1 %}
-                                            {% if count > 0 %}
-                                            <li><a href="{% add_facet_link querydict "tribe" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endfor %}
-                                        </ul>
-
+                                        {{ form.tribe }}
                                         <label>Tribe</label>
                                     </div>
                                     <div class="medium-2 columns">
@@ -646,7 +643,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
             <li>
                 {% with doc=result.documents.0 %}
                 <h3>
-                    <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }} <span class="{% if doc.uncertain == True %}gray{% else %}green{% endif %}">{{ doc.highest_office }}</span></a>
+                    <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }} <span class="{% if doc.uncertain == True %}gray{% else %}green{% endif %}">({{ doc.highest_office }})</span></a>
                 </h3>
                 {% comment %}
                 {% for dd in result.documents %}

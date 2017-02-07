@@ -330,6 +330,11 @@ h3.quick-home {
 
     h4 {
         font-size: 1.25rem;
+
+        a i {
+            color: scale-color($primary-color, $lightness: 50%);
+            font-size: .875rem;
+        }
     }
 }
 
@@ -341,6 +346,12 @@ h3.quick-home {
     }
     li:last-child {
         border: none;
+    }
+}
+
+.f-dropdown {
+    &.content {
+        max-width: 350px;
     }
 }
 

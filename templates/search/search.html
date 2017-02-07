@@ -191,7 +191,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 {{ form.date_from.errors }} {{ form.date_to.errors }}
                                 <div class="row range">
                                     <div class="medium-2 columns">
-                                        <h4><br><a data-dropdown="life-dates" aria-controls="life-dates" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a> Life Dates</h4>
+                                        <h4><br>Life Dates <a data-dropdown="life-dates" aria-controls="life-dates" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
 
                                         <div id="life-dates" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Life Dates</strong></p>
@@ -258,7 +258,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
 
                                 <div class="row top-padding">
                                     <div class="medium-4 columns">
-                                        <h4><a data-dropdown="rank" aria-controls="rank" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a> Rank</h4>
+                                        <h4>Rank <a data-dropdown="rank" aria-controls="rank" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
 
                                         <div id="rank" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Rank</strong></p>
@@ -288,10 +288,17 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     </div>
 
                                     <div class="medium-8 columns">
-                                        <h4><a data-dropdown="status" aria-controls="status" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a> Status</h4>
+                                        <h4>Status <a data-dropdown="status" aria-controls="status" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
 
                                         <div id="status" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-                                            <p>Info about the <strong>Status</strong></p>
+                                            <p>
+                                                Info about <strong>Status</strong><br>
+                                                Some generic text here.
+                                            </p>
+                                            <p><strong>Nobilis:</strong> description here.</p>
+                                            <p><strong>Novus:</strong> description here.</p>
+                                            <p><strong>Patrician:</strong> description here.</p>
+
                                         </div>
                                         <ul class="button-group">
                                             {% for term in facets.fields|get_item:"nobilis" %}
@@ -356,7 +363,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 {{ form.date_from.errors }} {{ form.date_to.errors }}
                                 <div class="row range">
                                     <div class="medium-2 columns">
-                                        <h4><br><a data-dropdown="career-dates" aria-controls="career-dates" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a> Career Dates</h4>
+                                        <h4><br>Career Dates <a data-dropdown="career-dates" aria-controls="career-dates" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
 
                                         <div id="career-dates" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Career Dates</strong></p>
@@ -377,7 +384,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 </div>
                                 <div class="row">
                                     <div class="medium-6 large-3 columns">
-                                        <h4><a data-dropdown="magistracies-info" aria-controls="magistracies-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a> Magistracies</h4>
+                                        <h4>Magistracies <a data-dropdown="magistracies-info" aria-controls="magistracies-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
 
                                         <div id="magistracies-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Magistracies Offices</strong></p>
@@ -420,7 +427,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         </div>
                                     </div>
                                     <div class="medium-6 large-3 columns">
-                                        <h4><a data-dropdown="promagistracies-info" aria-controls="promagistracies-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a> Promagistracies</h4>
+                                        <h4>Promagistracies <a data-dropdown="promagistracies-info" aria-controls="promagistracies-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
 
                                         <div id="promagistracies-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Promagistracies Offices</strong></p>
@@ -463,7 +470,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         </div>
                                     </div>
                                     <div class="medium-6 large-3 columns">
-                                        <h4><a data-dropdown="priesthoods-info" aria-controls="priesthoods-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a> Priesthoods</h4>
+                                        <h4>Priesthoods <a data-dropdown="priesthoods-info" aria-controls="priesthoods-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
 
                                         <div id="priesthoods-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Priesthoods Offices</strong></p>
@@ -506,7 +513,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         </div>
                                     </div>
                                     <div class="medium-6 large-3 columns">
-                                        <h4><a data-dropdown="lower-info" aria-controls="lower-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a> Lower Offices</h4>
+                                        <h4>Lower Offices <a data-dropdown="lower-info" aria-controls="lower-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
 
                                         <div id="lower-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Lower Offices</strong></p>
@@ -551,10 +558,10 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 </div>
                                 <div class="row">
                                     <div class="large-12 columns">
-                                        <h4><a data-dropdown="province" aria-controls="province" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a> Province</h4>
+                                        <h4>Location <a data-dropdown="location" aria-controls="location" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
                                         
-                                        <div id="province" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-                                            <p>Info about the <strong>Province</strong></p>
+                                        <div id="location" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about <strong>Location</strong></p>
                                         </div>
                                         <div class="panel radius fixed-height">
                                             <ul class="no-bullet hierarchical-facets">

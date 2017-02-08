@@ -156,9 +156,15 @@ class PostAssertionIndex(AssertionIndex):
                 for o in off.get_ancestors(include_self=True)]
 
     def prepare_life_date_types(self, object):
+        date_types = ['death', 'death - violent', 'adopted', 'birth',
+                      'exile', 'restored', 'proscribed',
+                      'expelled from Senate']
+
         return list(set(
-            object.person.dateinformation_set.all().values_list(
-                    'date_type__name', flat=True)))
+            object.person.dateinformation_set.filter(
+                date_type__name__in=date_types).values_list(
+                    'date_type__name', flat=True)
+        ))
 
 
 class StatusAssertionIndex(AssertionIndex):

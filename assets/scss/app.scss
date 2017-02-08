@@ -8,6 +8,11 @@
 
 /*** Global ***/
 
+button,
+.button {
+    line-height: 1.25rem;
+}
+
 hr {
     height: 1px;
     color: scale-color($primary-color, $lightness: 60%);
@@ -29,9 +34,25 @@ li.greyed-out a {
     }
 }
 
+.capitalize::first-letter {
+    text-transform: capitalize; 
+}
+
 .content-area {
     background: $white;
     padding-top: 1rem;
+}
+
+.datetypes {
+    border: 1px solid $secondary-color;
+
+    ul {
+        padding-bottom: 5px;
+    }
+}
+
+.edit-search {
+    margin-top: 5px;
 }
 
 .expander {
@@ -118,8 +139,10 @@ li.greyed-out a {
     padding-top: 1rem;
 }
 
-.capitalize::first-letter {
-    text-transform: capitalize; 
+.two-columns {
+    -moz-column-count: 2;
+    -webkit-column-count: 2;
+    column-count: 2;
 }
 
 /* Colours */

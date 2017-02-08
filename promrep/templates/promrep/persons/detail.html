@@ -44,6 +44,7 @@
       </ul>
       {% endif %}
 
+      {% if relationships %}
       <div id="network-container">
         <h3>Relationships recorded in the sources</h3>
         {% comment %}
@@ -57,6 +58,7 @@
               <dd><a href="{% url 'person-detail' rel.related_person.id %}">{{ rel.related_person }}</a></dd>
           {% endfor %}
       </dl>
+      {% endif %}
 
       <h3>Career</h3>
       <ul class="timeline no-bullet">

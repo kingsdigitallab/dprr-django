@@ -521,12 +521,11 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 </div>
                                 <div class="row">
                                     <div class="large-12 columns">
-                                        <h4>Location <a data-dropdown="location" aria-controls="location" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
-                                        
-                                        <div id="location" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-                                            <p>Info about <strong>Location</strong></p>
-                                        </div>
-                                        <div class="panel radius fixed-height">
+                                        <h4 class="panel-heading">Location <a data-dropdown="location" aria-controls="location" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
+
+                                        <a href="#" class="expander">Expand list of available locations <i class="fa fa-caret-right"></i></a>
+
+                                        <div class="panel radius fixed-height collapsible hide">
                                             <ul class="no-bullet hierarchical-facets">
 
                                                 {% comment %}
@@ -561,6 +560,11 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                                 {% endwith %}
                                                 {% comment %} closes the with treenodes {% endcomment %}
                                             </ul>
+                                        </div>
+
+                                        
+                                        <div id="location" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about <strong>Location</strong></p>
                                         </div>
                                     </div>
                                 </div>

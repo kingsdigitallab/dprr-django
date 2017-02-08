@@ -44,9 +44,11 @@
       </ul>
       {% endif %}
 
+      {% if relationships %}
       <div id="network-container">
         <h3>Relationships recorded in the sources</h3>
         {% comment %}
+        {# Disabling javascript for the graph #}
         <div id="network"></div>
         {% endcomment %}
       </div>
@@ -57,6 +59,7 @@
               <dd><a href="{% url 'person-detail' rel.related_person.id %}">{{ rel.related_person }}</a></dd>
           {% endfor %}
       </dl>
+      {% endif %}
 
       <h3>Career</h3>
       <ul class="timeline no-bullet">
@@ -80,6 +83,8 @@
 {% endblock %}
 
 {% block footerscripts %}
+{% comment %}
+{# Disabling javascript for the graph #}
 <script src="{% static 'vendor/linkurious.js/dist/sigma.min.js' %}"></script>
 <script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.layouts.forceLink.min.js' %}"></script>
 <script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.parsers.json.min.js' %}"></script>
@@ -96,4 +101,5 @@
         networkGraph.load({{ person.id }}, "{% url 'person-network' person.id %}");
     });
 </script>
+{% endcomment %}
 {% endblock %}

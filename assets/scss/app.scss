@@ -118,6 +118,10 @@ li.greyed-out a {
     padding-top: 1rem;
 }
 
+.capitalize::first-letter {
+    text-transform: capitalize; 
+}
+
 /* Colours */
 
 .gray {
@@ -173,11 +177,18 @@ header.main-header {
 
 /*** Headings ***/
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     color: $dark-gold;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     font-family: 'Julius Sans', sans-serif;
 }
 
@@ -190,10 +201,12 @@ h2.site-title {
 }
 
 h3 {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
 }
 
-h4, h5, h6 {
+h4,
+h5,
+h6 {
     font-family: 'Open Sans Condensed Light', sans-serif;
 }
 
@@ -270,31 +283,48 @@ h3.quick-home {
 }
 
 .timeline {
-    .label {
-        font-size: 1rem;
-    }
+    // .label {
+    //     font-size: 1rem;
+    // }
 
     li {
+        border-bottom: 1px dotted scale-color($secondary-color, $lightness: -15%);
+        margin-bottom: .5rem;
+
         &:before {
-            font-family: "FontAwesome";
-            content: "\f111 \A \f106";
-            white-space: pre; /* or pre-wrap */
             color: $primary-color;
-            padding-right: 10px;
+            // content: "\f111 \A \f106";
+            content: "\f106";
             display: inline-block;
+            font-family: "FontAwesome";
+            padding-right: 10px;
             vertical-align: text-top;
+            white-space: pre; /* or pre-wrap */
+        }
+
+        a {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        p {
+            padding-left: 20px;
         }
     }
 
-    li li:before {
-        content: none;
+    li li {
+        border-bottom: none;
+        &:before {
+            content: none;
+        }
     }
 
     ul {
         border-left: 1px dotted $primary-color;
-        padding-left: 1.25rem;
         margin-left: .28125rem !important;
         margin-top: -.5rem;
+        padding-left: 1.25rem;
+        padding-top: .5rem;
     }
 }
 
@@ -308,13 +338,13 @@ h3.quick-home {
 }
 
 .options {
-    margin-bottom: 0 !important;
-    border: 1px solid scale-color($primary-color, $lightness: 70%) !important;
-    border-bottom: none !important;
     span,
     a {
         margin-bottom: 0 !important;
     }
+    border: 1px solid scale-color($primary-color, $lightness: 70%) !important;
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
 }
 
 .search-box {

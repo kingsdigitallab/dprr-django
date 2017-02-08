@@ -34,7 +34,7 @@ var autocomplete = {
                     }
                 }
             },
-            placeholder: $input.attr("name")
+            placeholder: $input.attr("title")
         };
 
         $input.easyAutocomplete(options);

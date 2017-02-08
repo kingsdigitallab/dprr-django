@@ -12,12 +12,12 @@ from promrep.solr_backends.solr_backend_field_collapsing import \
 
 
 class PromrepFacetedSearchView(FacetedSearchView):
-    facet_fields = ['eques', 'gender', 'nobilis', 'novus', 'tribe',
+    facet_fields = ['gender', 'nobilis', 'novus', 'tribe',
                     'patrician', 'province', 'offices', 'life_date_types',
-                    'senator']
+                    'senator', 'rank']
 
     autocomplete_facets = ['praenomen', 'nomen', 'cognomen', 're_number',
-                           'province', 'n', 'f', 'other_names']
+                           'province', 'n', 'f', 'other_names', 'tribe']
 
     form_class = PromrepFacetedSearchForm
     load_all = True
@@ -119,8 +119,28 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 context[afacet] = (url, self.request.GET.get(afacet))
 
         # hierarchical facets data
-        # TODO: simplify?
-        context['office_list'] = Office.objects.all()
+        magisterial = Office.objects.get(id=2)
+        if magisterial:
+            context['magisterial_office_list'] = magisterial.get_descendants()
+
+        promagistracies = Office.objects.get(id=214)
+        if promagistracies:
+            context[
+                'promagistracies_office_list'
+            ] = promagistracies.get_descendants()
+
+        priesthoods = Office.objects.get(id=1)
+        if priesthoods:
+            context[
+                'priesthoods_office_list'
+            ] = priesthoods.get_descendants()
+
+        non_magisterial = Office.objects.get(id=210)
+        if non_magisterial:
+            context[
+                'non_magisterial_office_list'
+            ] = non_magisterial.get_descendants()
+
         context['office_fdict'] = dict(
             context['facets']['fields']['offices'])
 

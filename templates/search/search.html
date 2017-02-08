@@ -34,11 +34,11 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 {% comment %}
                                 <p class="info"><i class="fa fa-info-circle"></i> Some info on this section.</p>
                                 {% endcomment %}
-                                <h3>
+                                <h4>
                                     <strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search" class="do-not-print"><i class="fa fa-trash"></i> Clear all</a>
-                                </h3>
+                                </h4>
 
-                                {% if query or selected_facets or date_filter or praenomen or nomen or cognomen or other_names or re_number or n or f or other_names %}
+                                {% if query or selected_facets or date_filter or praenomen or nomen or cognomen or other_names or re_number or n or f or other_names or tribe %}
                                 <ul class="inline-list no-bullet free-filters">
                                     {% if praenomen %}
                                     <li>
@@ -98,6 +98,15 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     <li>
                                         <span class="label radius">
                                             <a href="{{ other_names.0 }}#search" title="Remove filter">Additional Cognomina: {{ other_names.1 }}
+                                                <i class="fa fa-times-circle"></i>
+                                            </a>
+                                        </span>
+                                    </li>
+                                    {% endif %}
+                                    {% if tribe %}
+                                    <li>
+                                        <span class="label radius">
+                                            <a href="{{ tribe.0 }}#search" title="Remove filter">Tribe: {{ tribe.1 }}
                                                 <i class="fa fa-times-circle"></i>
                                             </a>
                                         </span>
@@ -163,19 +172,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         <label>Grandfather</label>
                                     </div>
                                     <div class="medium-2 columns">
-                                        
-                                        <button data-dropdown="tribes" aria-controls="tribes" aria-expanded="false" class="secondary less-padding button expand dropdown">Tribe</button>
-                                        <br>
-                                        <ul id="tribes" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-                                            {% for term in facets.fields|get_item:"tribe" %}
-                                            {% with value=term.0 count=term.1 %}
-                                            {% if count > 0 %}
-                                            <li><a href="{% add_facet_link querydict "tribe" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endfor %}
-                                        </ul>
-
+                                        {{ form.tribe }}
                                         <label>Tribe</label>
                                     </div>
                                     <div class="medium-2 columns">
@@ -194,7 +191,12 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 {{ form.date_from.errors }} {{ form.date_to.errors }}
                                 <div class="row range">
                                     <div class="medium-2 columns">
-                                        <h4><br>Life Dates:</h4>
+                                        <h4><br>Life Dates <a data-dropdown="life-dates" aria-controls="life-dates" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
+
+                                        <div id="life-dates" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about the <strong>Life Dates</strong></p>
+                                        </div>
+
                                     </div>
                                     <div class="medium-4 columns">
                                         <label>After</label>
@@ -256,24 +258,18 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
 
                                 <div class="row top-padding">
                                     <div class="medium-4 columns">
-                                        <h4>Rank</h4>
+                                        <h4>Rank <a data-dropdown="rank" aria-controls="rank" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
+
+                                        <div id="rank" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about the <strong>Rank</strong></p>
+                                        </div>
 
                                         <ul class="button-group">
-                                            {% for term in facets.fields|get_item:"eques" %}
+                                            {% for term in facets.fields|get_item:"rank" %}
                                             {% with value=term.0 count=term.1 %}
-                                            {% if value == "true" and count > 0 %}
+                                            {% if count > 0 %}
                                             <li>
-                                                <a href="{% add_facet_link querydict "eques" value %}#search" class="button secondary less-padding">Eques R. <span class="label radius">{{ count }}</span></a>
-                                            </li>
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endfor %}
-
-                                            {% for term in facets.fields|get_item:"senator" %}
-                                            {% with value=term.0 count=term.1 %}
-                                            {% if value == "true" and count > 0 %}
-                                            <li>
-                                                <a href="{% add_facet_link querydict "senator" value %}#search" class="button secondary less-padding">Senator <span class="label radius">{{ count }}</span></a>
+                                                <a href="{% add_facet_link querydict "rank" value %}#search" class="button secondary less-padding">{{ value }} <span class="label radius">{{ count }}</span></a>
                                             </li>
                                             {% endif %}
                                             {% endwith %}
@@ -282,7 +278,18 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     </div>
 
                                     <div class="medium-8 columns">
-                                        <h4>Status</h4>
+                                        <h4>Status <a data-dropdown="status" aria-controls="status" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
+
+                                        <div id="status" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>
+                                                Info about <strong>Status</strong><br>
+                                                Some generic text here.
+                                            </p>
+                                            <p><strong>Nobilis:</strong> description here.</p>
+                                            <p><strong>Novus:</strong> description here.</p>
+                                            <p><strong>Patrician:</strong> description here.</p>
+
+                                        </div>
                                         <ul class="button-group">
                                             {% for term in facets.fields|get_item:"nobilis" %}
                                             {% with value=term.0 count=term.1 %}
@@ -316,25 +323,6 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         </ul>
                                     </div>
                                 </div>
-
-                                {% comment %}
-                                {# 
-                                    This form was attached to the Tribe filter
-                                    but it's not used anymore.
-                                #}
-                                <div class="row">
-                                    <div class="large-6 columns">
-                                        <div class="row collapse">
-                                            <div class="small-9 columns">
-                                                <input type="text" name="origin" placeholder="Search for origin">
-                                            </div>
-                                            <div class="small-3 columns">
-                                                <button type="submit" class="postfix secondary button"><i class="fa fa-search"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endcomment %}
                             </div>
                         </div>
                     </div>
@@ -346,7 +334,11 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 {{ form.date_from.errors }} {{ form.date_to.errors }}
                                 <div class="row range">
                                     <div class="medium-2 columns">
-                                        <h4><br>Career Dates:</h4>
+                                        <h4><br>Career Dates <a data-dropdown="career-dates" aria-controls="career-dates" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
+
+                                        <div id="career-dates" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about the <strong>Career Dates</strong></p>
+                                        </div>
                                     </div>
                                     <div class="medium-4 columns">
                                         <label>After</label>
@@ -363,7 +355,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 </div>
                                 <div class="row">
                                     <div class="medium-6 large-3 columns">
-                                        <h4>Magistracies <a data-dropdown="magistracies-info" aria-controls="magistracies-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle right"></i></a></h4>
+                                        <h4>Magistracies <a data-dropdown="magistracies-info" aria-controls="magistracies-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
 
                                         <div id="magistracies-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Magistracies Offices</strong></p>
@@ -377,7 +369,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                                     https://django-mptt.github.io/django-mptt/templates.html
                                             {% endcomment %}
 
-                                            {% with treenodes=office_list %}
+                                            {% with treenodes=magisterial_office_list %}
                                             {% recursetree treenodes %}
 
                                             {% with num=office_fdict|lookup:node.name %}
@@ -385,7 +377,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                             {% if num %}
                                                 {% comment %} parent node {% endcomment %}
                                                 {% if not node.is_leaf_node %}
-                                                <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
+                                                <li><span class="label radius pull-right">{{ office_fdict|lookup:node.name }}</span>
 
                                                     <a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</span></a>
                                                     <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
@@ -406,7 +398,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         </div>
                                     </div>
                                     <div class="medium-6 large-3 columns">
-                                        <h4>Promagistracies <a data-dropdown="promagistracies-info" aria-controls="promagistracies-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle right"></i></a></h4>
+                                        <h4>Promagistracies <a data-dropdown="promagistracies-info" aria-controls="promagistracies-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
 
                                         <div id="promagistracies-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Promagistracies Offices</strong></p>
@@ -420,7 +412,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                                     https://django-mptt.github.io/django-mptt/templates.html
                                             {% endcomment %}
 
-                                            {% with treenodes=office_list %}
+                                            {% with treenodes=promagistracies_office_list %}
                                             {% recursetree treenodes %}
 
                                             {% with num=office_fdict|lookup:node.name %}
@@ -449,7 +441,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         </div>
                                     </div>
                                     <div class="medium-6 large-3 columns">
-                                        <h4>Priesthoods <a data-dropdown="priesthoods-info" aria-controls="priesthoods-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle right"></i></a></h4>
+                                        <h4>Priesthoods <a data-dropdown="priesthoods-info" aria-controls="priesthoods-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
 
                                         <div id="priesthoods-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Priesthoods Offices</strong></p>
@@ -463,7 +455,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                                     https://django-mptt.github.io/django-mptt/templates.html
                                             {% endcomment %}
 
-                                            {% with treenodes=office_list %}
+                                            {% with treenodes=priesthoods_office_list %}
                                             {% recursetree treenodes %}
 
                                             {% with num=office_fdict|lookup:node.name %}
@@ -492,7 +484,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         </div>
                                     </div>
                                     <div class="medium-6 large-3 columns">
-                                        <h4>Lower Offices <a data-dropdown="lower-info" aria-controls="lower-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle right"></i></a></h4>
+                                        <h4>Lower Offices <a data-dropdown="lower-info" aria-controls="lower-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
 
                                         <div id="lower-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Lower Offices</strong></p>
@@ -506,7 +498,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                                     https://django-mptt.github.io/django-mptt/templates.html
                                             {% endcomment %}
 
-                                            {% with treenodes=office_list %}
+                                            {% with treenodes=non_magisterial_office_list %}
                                             {% recursetree treenodes %}
 
                                             {% with num=office_fdict|lookup:node.name %}
@@ -537,8 +529,12 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 </div>
                                 <div class="row">
                                     <div class="large-12 columns">
+                                        <h4>Location <a data-dropdown="location" aria-controls="location" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
+                                        
+                                        <div id="location" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about <strong>Location</strong></p>
+                                        </div>
                                         <div class="panel radius fixed-height">
-                                            <h4>Province</h4>
                                             <ul class="no-bullet hierarchical-facets">
 
                                                 {% comment %}
@@ -624,9 +620,9 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
             {% for result in object_list %}
             <li>
                 {% with doc=result.documents.0 %}
-                <h3>
-                    <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }} <span class="{% if doc.uncertain == True %}gray{% else %}green{% endif %}">{{ doc.highest_office }}</span></a>
-                </h3>
+                <h4>
+                    <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }} {% comment %}<span class="{% if doc.uncertain == True %}gray{% else %}green{% endif %}">{% endcomment %}({{ doc.highest_office }}){% comment %}</span>{% endcomment %}</a>
+                </h4>
                 {% comment %}
                 {% for dd in result.documents %}
                 <p>

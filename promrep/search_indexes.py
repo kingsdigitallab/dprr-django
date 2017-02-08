@@ -25,17 +25,19 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
     person_id = indexes.IntegerField(model_attr='person__id')
 
     praenomen = indexes.CharField(
-        model_attr='person__praenomen__abbrev', faceted=True, null=True)
+        model_attr='person__praenomen__name', faceted=True, null=True)
     nomen = indexes.CharField(faceted=True, null=True)
 
-    f = indexes.CharField(model_attr='person__f', faceted=True, null=True)
-    n = indexes.CharField(model_attr='person__n', faceted=True, null=True)
+    f = indexes.CharField(model_attr='person__praenomen__abbrev',
+                          faceted=True, null=True)
+    n = indexes.CharField(model_attr='person__praenomen__abbrev',
+                          faceted=True, null=True)
 
     re_number = indexes.CharField(model_attr='person__re_number',
                                   faceted=True, null=True)
 
     other_names = indexes.CharField(
-        model_attr='person__other_names', faceted=True, null=True)
+        model_attr='person__other_names_plain', faceted=True, null=True)
 
     cognomen = indexes.CharField(faceted=True, null=True)
 
@@ -45,8 +47,6 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
         model_attr='person__patrician', default=False, faceted=True)
     novus = indexes.BooleanField(
         model_attr='person__novus', default=False, faceted=True)
-    eques = indexes.BooleanField(
-        model_attr='person__eques', default=False, faceted=True)
     nobilis = indexes.BooleanField(
         model_attr='person__nobilis', default=False, faceted=True)
 
@@ -156,13 +156,19 @@ class PostAssertionIndex(AssertionIndex):
                 for o in off.get_ancestors(include_self=True)]
 
     def prepare_life_date_types(self, object):
+        date_types = ['death', 'death - violent', 'adopted', 'birth',
+                      'exile', 'restored', 'proscribed',
+                      'expelled from Senate']
+
         return list(set(
-            object.person.dateinformation_set.all().values_list(
-                    'date_type__name', flat=True)))
+            object.person.dateinformation_set.filter(
+                date_type__name__in=date_types).values_list(
+                    'date_type__name', flat=True)
+        ))
 
 
 class StatusAssertionIndex(AssertionIndex):
-    status = indexes.CharField(model_attr='status__name', faceted=True)
+    rank = indexes.CharField(model_attr='status__name', faceted=True)
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
     date = MultiValueIntegerField(faceted=True)
 

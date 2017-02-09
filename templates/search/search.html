@@ -352,42 +352,8 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         <div id="magistracies-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Magistracies Offices</strong></p>
                                         </div>
-                                        <div class="panel radius fixed-height">
-                                            <ul class="no-bullet hierarchical-facets">
 
-                                            {% comment %}
-                                              Add options for the hierarchical facets:
-                                              using the MPTT template tags to rebuild the tree:
-                                                    https://django-mptt.github.io/django-mptt/templates.html
-                                            {% endcomment %}
-
-                                            {% with treenodes=magisterial_office_list %}
-                                            {% recursetree treenodes %}
-
-                                            {% with num=office_fdict|lookup:node.name %}
-
-                                            {% if num %}
-                                                {% comment %} parent node {% endcomment %}
-                                                {% if not node.is_leaf_node %}
-                                                <li><span class="label radius pull-right">{{ office_fdict|lookup:node.name }}</span>
-
-                                                    <a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</span></a>
-                                                    <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
-                                                    <ul class="hide collapsible">
-                                                        {{ children }}
-                                                    </ul>
-                                                </li>
-                                                {% else %}
-                                                {% comment %} no children {% endcomment %}
-                                                <li><a href="{% select_facet_link 'offices' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
-                                                {% endif %}
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endrecursetree %}
-                                            {% endwith %}
-                                            {% comment %} closes the with treenodes {% endcomment %}
-                                            </ul>
-                                        </div>
+                                        {% include "search/offices.html" with office_list=magisterial_office_list %}
                                     </div>
                                     <div class="medium-6 large-3 columns">
                                         <h4>Promagistracies <a data-dropdown="promagistracies-info" aria-controls="promagistracies-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
@@ -395,42 +361,8 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         <div id="promagistracies-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Promagistracies Offices</strong></p>
                                         </div>
-                                        <div class="panel radius fixed-height">
-                                            <ul class="no-bullet hierarchical-facets">
 
-                                            {% comment %}
-                                              Add options for the hierarchical facets:
-                                              using the MPTT template tags to rebuild the tree:
-                                                    https://django-mptt.github.io/django-mptt/templates.html
-                                            {% endcomment %}
-
-                                            {% with treenodes=promagistracies_office_list %}
-                                            {% recursetree treenodes %}
-
-                                            {% with num=office_fdict|lookup:node.name %}
-
-                                            {% if num %}
-                                                {% comment %} parent node {% endcomment %}
-                                                {% if not node.is_leaf_node %}
-                                                <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
-
-                                                    <a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</span></a>
-                                                    <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
-                                                    <ul class="hide collapsible">
-                                                        {{ children }}
-                                                    </ul>
-                                                </li>
-                                                {% else %}
-                                                {% comment %} no children {% endcomment %}
-                                                <li><a href="{% select_facet_link 'offices' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
-                                                {% endif %}
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endrecursetree %}
-                                            {% endwith %}
-                                            {% comment %} closes the with treenodes {% endcomment %}
-                                            </ul>
-                                        </div>
+                                        {% include "search/offices.html" with office_list=promagistracies_office_list %}
                                     </div>
                                     <div class="medium-6 large-3 columns">
                                         <h4>Priesthoods <a data-dropdown="priesthoods-info" aria-controls="priesthoods-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
@@ -438,42 +370,8 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         <div id="priesthoods-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Priesthoods Offices</strong></p>
                                         </div>
-                                        <div class="panel radius fixed-height">
-                                            <ul class="no-bullet hierarchical-facets">
 
-                                            {% comment %}
-                                              Add options for the hierarchical facets:
-                                              using the MPTT template tags to rebuild the tree:
-                                                    https://django-mptt.github.io/django-mptt/templates.html
-                                            {% endcomment %}
-
-                                            {% with treenodes=priesthoods_office_list %}
-                                            {% recursetree treenodes %}
-
-                                            {% with num=office_fdict|lookup:node.name %}
-
-                                            {% if num %}
-                                                {% comment %} parent node {% endcomment %}
-                                                {% if not node.is_leaf_node %}
-                                                <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
-
-                                                    <a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</span></a>
-                                                    <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
-                                                    <ul class="hide collapsible">
-                                                        {{ children }}
-                                                    </ul>
-                                                </li>
-                                                {% else %}
-                                                {% comment %} no children {% endcomment %}
-                                                <li><a href="{% select_facet_link 'offices' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
-                                                {% endif %}
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endrecursetree %}
-                                            {% endwith %}
-                                            {% comment %} closes the with treenodes {% endcomment %}
-                                            </ul>
-                                        </div>
+                                        {% include "search/offices.html" with office_list=priesthoods_office_list %}
                                     </div>
                                     <div class="medium-6 large-3 columns">
                                         <h4>Lower Offices <a data-dropdown="lower-info" aria-controls="lower-info" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
@@ -481,42 +379,8 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         <div id="lower-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about the <strong>Lower Offices</strong></p>
                                         </div>
-                                        <div class="panel radius fixed-height">
-                                            <ul class="no-bullet hierarchical-facets">
 
-                                            {% comment %}
-                                              Add options for the hierarchical facets:
-                                              using the MPTT template tags to rebuild the tree:
-                                                    https://django-mptt.github.io/django-mptt/templates.html
-                                            {% endcomment %}
-
-                                            {% with treenodes=non_magisterial_office_list %}
-                                            {% recursetree treenodes %}
-
-                                            {% with num=office_fdict|lookup:node.name %}
-
-                                            {% if num %}
-                                                {% comment %} parent node {% endcomment %}
-                                                {% if not node.is_leaf_node %}
-                                                <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
-
-                                                    <a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</span></a>
-                                                    <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
-                                                    <ul class="hide collapsible">
-                                                        {{ children }}
-                                                    </ul>
-                                                </li>
-                                                {% else %}
-                                                {% comment %} no children {% endcomment %}
-                                                <li><a href="{% select_facet_link 'offices' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
-                                                {% endif %}
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endrecursetree %}
-                                            {% endwith %}
-                                            {% comment %} closes the with treenodes {% endcomment %}
-                                            </ul>
-                                        </div>
+                                        {% include "search/offices.html" with office_list=non_magisterial_office_list %}
                                     </div>
                                 </div>
                                 <div class="row">

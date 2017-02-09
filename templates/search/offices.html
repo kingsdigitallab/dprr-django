@@ -1,0 +1,38 @@
+{% load ddh_utils_tags mptt_tags wagtailbase_tags %}
+
+<div class="panel radius fixed-height">
+    <ul class="no-bullet hierarchical-facets">
+
+        {% comment %}
+        Add options for the hierarchical facets:
+        using the MPTT template tags to rebuild the tree:
+        https://django-mptt.github.io/django-mptt/templates.html
+        {% endcomment %}
+
+        {% with treenodes=office_list %}
+        {% recursetree treenodes %}
+
+        {% with num=office_fdict|lookup:node.name %}
+
+        {% if num %}
+        {% comment %} parent node {% endcomment %}
+        {% if not node.is_leaf_node %}
+        <li><span class="label radius pull-right">{{ office_fdict|lookup:node.name }}</span>
+
+            <a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</span></a>
+            <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
+            <ul class="hide collapsible">
+                {{ children }}
+            </ul>
+        </li>
+        {% else %}
+        {% comment %} no children {% endcomment %}
+        <li><a href="{% select_facet_link 'offices' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
+        {% endif %}
+        {% endif %}
+        {% endwith %}
+        {% endrecursetree %}
+        {% endwith %}
+        {% comment %} closes the with treenodes {% endcomment %}
+    </ul>
+</div>

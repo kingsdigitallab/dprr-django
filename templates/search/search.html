@@ -164,7 +164,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                             {% with value=term.0 count=term.1 %}
                                             <li>
                                                 <a href="{% add_facet_link querydict "life_date_types" value %}#search"
-                                                    class="button secondary less-padding smaller-fontsize text-left">
+                                                   class="button secondary less-padding smaller-fontsize text-left">
                                                     <span class="label radius right">{{ count }}</span>{{ value|title }}
                                                 </a>
                                             </li>

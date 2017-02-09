@@ -24,8 +24,7 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
     person = indexes.CharField(model_attr='person', faceted=True)
     person_id = indexes.IntegerField(model_attr='person__id')
 
-    praenomen = indexes.CharField(
-        model_attr='person__praenomen__name', faceted=True, null=True)
+    praenomen = indexes.MultiValueField(faceted=True, null=True)
     nomen = indexes.CharField(faceted=True, null=True)
 
     f = indexes.CharField(model_attr='person__praenomen__abbrev',
@@ -58,6 +57,18 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
     def get_model(self):
         # implemented in the specific facets
         pass
+
+    def prepare_praenomen(self, object):
+        if not object.person.praenomen:
+            return None
+
+        praenomen = object.person.praenomen.name
+
+        if praenomen[0].upper() == 'G':
+            alternate_spelling = 'C' + praenomen[1:]
+            return [praenomen, alternate_spelling]
+
+        return praenomen
 
     def prepare_nomen(self, object):
         """The list of nomens to filter on should not show parentheses or

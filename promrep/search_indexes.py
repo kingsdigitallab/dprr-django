@@ -219,12 +219,10 @@ class StatusAssertionIndex(AssertionIndex):
         return res
 
     def prepare_senator(self, object):
-        if object.status.name == "senator":
-            return True
+        return object.status.name.lower() == "senator"
 
     def prepare_eques(self, object):
-        if object.status.name == "eques":
-            return True
+        return object.status.name.lower() == "eques"
 
 
 class RelationshipAssertionIndex(AssertionIndex):

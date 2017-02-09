@@ -8,10 +8,10 @@
 
 /*** Global ***/
 
-button,
-.button {
-    line-height: 1.25rem;
-}
+// button,
+// .button {
+//     line-height: 1.25rem;
+// }
 
 hr {
     height: 1px;
@@ -22,6 +22,16 @@ hr {
 
 li.greyed-out a {
     color: rgba(0, 0, 0, 0.3) !important;
+}
+
+ul {
+    &.button-group {
+        a {
+            &.button {
+                margin: 0 0 .125rem;
+            }
+        }
+    }
 }
 
 .active {
@@ -45,6 +55,10 @@ li.greyed-out a {
 
 .datetypes {
     border: 1px solid $secondary-color;
+
+    h4 {
+        padding-top: 5px;
+    }
 
     ul {
         padding-bottom: 5px;

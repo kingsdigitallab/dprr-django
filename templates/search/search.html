@@ -227,6 +227,61 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                             {% endwith %}
                                             {% endfor %}
                                         </ul>
+
+                                        <h4><br>Status <a data-dropdown="status" aria-controls="status" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
+
+                                        <div id="status" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>
+                                                Info about <strong>Status</strong><br>
+                                                Some generic text here.
+                                            </p>
+                                            <p><strong>Eques R:</strong> description here.</p>
+                                            <p><strong>Nobilis:</strong> description here.</p>
+                                            <p><strong>Novus:</strong> description here.</p>
+                                            <p><strong>Patrician:</strong> description here.</p>
+                                        </div>
+
+                                        <ul class="button-group">
+                                            {% for term in facets.fields|get_item:"rank" %}
+                                            {% with value=term.0 count=term.1 %}
+                                            {% if count > 0 %}
+                                            <li>
+                                                <a href="{% add_facet_link querydict "rank" value %}#search" class="button secondary less-padding smaller-fontsize">{{ value }} <span class="label radius">{{ count }}</span></a>
+                                            </li>
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endfor %}
+
+                                            {% for term in facets.fields|get_item:"nobilis" %}
+                                            {% with value=term.0 count=term.1 %}
+                                            {% if value == "true" and count > 0 %}
+                                            <li>
+                                                <a href="{% add_facet_link querydict "nobilis" value %}#search" class="button secondary less-padding smaller-fontsize">Nobilis <span class="label radius">{{ count }}</span></a>
+                                            </li>
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endfor %}
+
+                                            {% for term in facets.fields|get_item:"novus" %}
+                                            {% with value=term.0 count=term.1 %}
+                                            {% if value == "true" and count > 0 %}
+                                            <li>
+                                                <a href="{% add_facet_link querydict "novus" value %}#search" class="button secondary less-padding smaller-fontsize">Novus <span class="label radius">{{ count }}</span></a>
+                                            </li>
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endfor %}
+
+                                            {% for term in facets.fields|get_item:"patrician" %}
+                                            {% with value=term.0 count=term.1 %}
+                                            {% if value == "true" and count > 0 %}
+                                            <li>
+                                                <a href="{% add_facet_link querydict "patrician" value %}#search" class="button secondary less-padding smaller-fontsize">Patrician <span class="label radius">{{ count }}</span></a>
+                                            </li>
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endfor %}
+                                        </ul>
                                     </div>
                                     <div class="medium-8 medium-offset-1 columns datetypes">
                                         <h4>Date Types <a data-dropdown="date-types" aria-controls="date-types" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
@@ -242,74 +297,6 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                                     <span class="label radius right">{{ count }}</span>{{ value|title }}
                                                 </a>
                                             </li>
-                                            {% endwith %}
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                </div>
-
-                                <div class="row top-padding">
-                                    <div class="medium-4 columns">
-                                        <h4>Rank <a data-dropdown="rank" aria-controls="rank" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
-
-                                        <div id="rank" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-                                            <p>Info about the <strong>Rank</strong></p>
-                                        </div>
-
-                                        <ul class="button-group">
-                                            {% for term in facets.fields|get_item:"rank" %}
-                                            {% with value=term.0 count=term.1 %}
-                                            {% if count > 0 %}
-                                            <li>
-                                                <a href="{% add_facet_link querydict "rank" value %}#search" class="button secondary less-padding">{{ value }} <span class="label radius">{{ count }}</span></a>
-                                            </li>
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-
-                                    <div class="medium-8 columns">
-                                        <h4>Status <a data-dropdown="status" aria-controls="status" aria-expanded="false" class="smaller-fontsize"><i class="fa fa-info-circle"></i></a></h4>
-
-                                        <div id="status" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-                                            <p>
-                                                Info about <strong>Status</strong><br>
-                                                Some generic text here.
-                                            </p>
-                                            <p><strong>Nobilis:</strong> description here.</p>
-                                            <p><strong>Novus:</strong> description here.</p>
-                                            <p><strong>Patrician:</strong> description here.</p>
-
-                                        </div>
-                                        <ul class="button-group">
-                                            {% for term in facets.fields|get_item:"nobilis" %}
-                                            {% with value=term.0 count=term.1 %}
-                                            {% if value == "true" and count > 0 %}
-                                            <li>
-                                                <a href="{% add_facet_link querydict "nobilis" value %}#search" class="button secondary less-padding">Nobilis <span class="label radius">{{ count }}</span></a>
-                                            </li>
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endfor %}
-
-                                            {% for term in facets.fields|get_item:"novus" %}
-                                            {% with value=term.0 count=term.1 %}
-                                            {% if value == "true" and count > 0 %}
-                                            <li>
-                                                <a href="{% add_facet_link querydict "novus" value %}#search" class="button secondary less-padding">Novus <span class="label radius">{{ count }}</span></a>
-                                            </li>
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endfor %}
-
-                                            {% for term in facets.fields|get_item:"patrician" %}
-                                            {% with value=term.0 count=term.1 %}
-                                            {% if value == "true" and count > 0 %}
-                                            <li>
-                                                <a href="{% add_facet_link querydict "patrician" value %}#search" class="button secondary less-padding">Patrician <span class="label radius">{{ count }}</span></a>
-                                            </li>
-                                            {% endif %}
                                             {% endwith %}
                                             {% endfor %}
                                         </ul>

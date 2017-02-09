@@ -562,7 +562,6 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                             </ul>
                                         </div>
 
-                                        
                                         <div id="location" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                             <p>Info about <strong>Location</strong></p>
                                         </div>
@@ -615,23 +614,13 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
         <ol start="{{ page_obj.start_index }}" class="search-results">
             {% for result in object_list %}
             <li>
-                {% with doc=result.documents.0 %}
-                <h4>
-                    <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }} {% comment %}<span class="{% if doc.uncertain == True %}gray{% else %}green{% endif %}">{% endcomment %}({{ doc.highest_office }}){% comment %}</span>{% endcomment %}</a>
-                </h4>
-                {% comment %}
-                {% for dd in result.documents %}
-                <p>
-                    {% highlight dd.text with query html_tag 'strong' max_length 120 %}
-                </p>
-                {% endfor %}
-                {% endcomment %}
-                {% endwith %}
+                {% include "search/person.html" with doc=result.documents.0 %}
             </li>
             {% empty %}
             <li>No results found!</li>
             {% endfor %}
         </ol>
+
         {% display_pagination querydict page_obj %}
     </div>
 </div>

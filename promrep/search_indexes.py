@@ -24,8 +24,7 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
     person = indexes.CharField(model_attr='person', faceted=True)
     person_id = indexes.IntegerField(model_attr='person__id')
 
-    praenomen = indexes.CharField(
-        model_attr='person__praenomen__name', faceted=True, null=True)
+    praenomen = indexes.MultiValueField(faceted=True, null=True)
     nomen = indexes.CharField(faceted=True, null=True)
 
     f = indexes.CharField(model_attr='person__praenomen__abbrev',
@@ -58,6 +57,18 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
     def get_model(self):
         # implemented in the specific facets
         pass
+
+    def prepare_praenomen(self, object):
+        if not object.person.praenomen:
+            return None
+
+        praenomen = object.person.praenomen.name
+
+        if praenomen[0].upper() == 'G':
+            alternate_spelling = 'C' + praenomen[1:]
+            return [praenomen, alternate_spelling]
+
+        return praenomen
 
     def prepare_nomen(self, object):
         """The list of nomens to filter on should not show parentheses or
@@ -156,8 +167,8 @@ class PostAssertionIndex(AssertionIndex):
                 for o in off.get_ancestors(include_self=True)]
 
     def prepare_life_date_types(self, object):
-        date_types = ['death', 'death - violent', 'birth', 'exile',
-                      'restored', 'proscribed', 'expelled from Senate']
+        date_types = ['birth', 'exile', 'restored', 'proscribed',
+                      'expelled from Senate']
         relationship_types = {'adopted son of': 'adopted'}
 
         life_dates = list(set(
@@ -165,6 +176,17 @@ class PostAssertionIndex(AssertionIndex):
                 date_type__name__in=date_types).values_list(
                     'date_type__name', flat=True)
         ))
+
+        if object.person.dateinformation_set.filter(
+                date_type__name='death').exclude(
+                    date_type__name='death - violent').count() > 0:
+            life_dates.append('death')
+            life_dates.append('death - other')
+
+        if object.person.dateinformation_set.filter(
+                date_type__name='death - violent').count() > 0:
+            life_dates.append('death')
+            life_dates.append('death - violent')
 
         for relationship in relationship_types.keys():
             relationships = object.person.relationships_as_subject.filter(
@@ -208,12 +230,10 @@ class StatusAssertionIndex(AssertionIndex):
         return res
 
     def prepare_senator(self, object):
-        if object.status.name == "senator":
-            return True
+        return object.status.name.lower() == "senator"
 
     def prepare_eques(self, object):
-        if object.status.name == "eques":
-            return True
+        return object.status.name.lower() == "eques"
 
 
 class RelationshipAssertionIndex(AssertionIndex):

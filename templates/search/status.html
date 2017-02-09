@@ -1,0 +1,15 @@
+{% load ddh_utils_tags wagtailbase_tags %}
+
+{% for term in facets.fields|get_item:item %}
+{% with value=term.0 count=term.1 %}
+{% if value == "true" and count > 0 %}
+<li>
+    <a href="{% add_facet_link querydict item value %}#search"
+        class="button secondary less-padding smaller-fontsize">
+        {{ title }}
+        <span class="label radius">{{ count }}</span>
+    </a>
+</li>
+{% endif %}
+{% endwith %}
+{% endfor %}

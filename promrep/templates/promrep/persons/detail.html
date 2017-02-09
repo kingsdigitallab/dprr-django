@@ -36,7 +36,7 @@
           {% for di in person.dateinformation_set.all %}
           <li>{{ di }}
               {% if di.notes %}
-                <a href="#" class="expander life-dates right">Info <i class="fa fa-caret-right"></i></a>
+                <a href="#" class="expander life-dates right">Expand <i class="fa fa-caret-right"></i></a>
                 <p class="hide collapsible">{{ di.notes|capfirst }}</p>
               {% endif %}
           </li>
@@ -66,7 +66,7 @@
         {% for pa in person.post_assertions.all %}
         <li><span class="{% if pa.uncertain == True %}gray{% else %}green{% endif %}">{{ pa.print_date | safe }}</span> <strong>{{ pa.office | title }}</strong> {% if pa.provinces %}{{ pa.print_provinces }}{% endif %}
           {% if pa.notes.count %}
-          <a href="#" class="expander right">Description <i class="fa fa-caret-right"></i></a>
+          <a href="#" class="expander right">Expand <i class="fa fa-caret-right"></i></a>
           <ul class="no-bullet hide collapsible">
               {% for note in pa.notes.all %}
               <li>{{ note.text }} (in <em>{{ note.secondary_source.abbrev_name }}</em>)</li>

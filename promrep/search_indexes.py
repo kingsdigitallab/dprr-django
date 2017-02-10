@@ -28,10 +28,10 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
     praenomen = indexes.MultiValueField(faceted=True, null=True)
     nomen = indexes.CharField(faceted=True, null=True)
 
-    f = indexes.CharField(model_attr='person__praenomen__abbrev',
-                          faceted=True, null=True)
-    n = indexes.CharField(model_attr='person__praenomen__abbrev',
-                          faceted=True, null=True)
+    f = indexes.MultiValueField(model_attr='person__f',
+                                faceted=True, null=True)
+    n = indexes.MultiValueField(model_attr='person__n',
+                                faceted=True, null=True)
 
     re_number = indexes.CharField(model_attr='person__re_number',
                                   faceted=True, null=True)

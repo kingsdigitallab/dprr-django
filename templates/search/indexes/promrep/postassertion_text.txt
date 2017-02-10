@@ -3,7 +3,3 @@
     {{ note }}
 </p>
 {% endfor %}
-
-<p>
-    {{ object.office.name }} {{ object.person }}
-</p>

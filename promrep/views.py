@@ -119,27 +119,50 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 context[afacet] = (url, self.request.GET.get(afacet))
 
         # hierarchical facets data
-        magisterial = Office.objects.get(id=2)
-        if magisterial:
-            context['magisterial_office_list'] = magisterial.get_descendants()
+        try:
+            magisterial = Office.objects.get(id=2)
+            if magisterial:
+                context[
+                    'magisterial_office_list'
+                ] = magisterial.get_descendants()
+        except:
+            pass
 
-        promagistracies = Office.objects.get(id=214)
-        if promagistracies:
-            context[
-                'promagistracies_office_list'
-            ] = promagistracies.get_descendants()
+        try:
+            promagistracies = Office.objects.get(id=214)
+            if promagistracies:
+                context[
+                    'promagistracies_office_list'
+                ] = promagistracies.get_descendants()
+        except:
+            pass
 
-        priesthoods = Office.objects.get(id=1)
-        if priesthoods:
-            context[
-                'priesthoods_office_list'
-            ] = priesthoods.get_descendants()
+        try:
+            priesthoods = Office.objects.get(id=1)
+            if priesthoods:
+                context[
+                    'priesthoods_office_list'
+                ] = priesthoods.get_descendants()
+        except:
+            pass
 
-        non_magisterial = Office.objects.get(id=210)
-        if non_magisterial:
-            context[
-                'non_magisterial_office_list'
-            ] = non_magisterial.get_descendants()
+        try:
+            non_magisterial = Office.objects.get(id=210)
+            if non_magisterial:
+                context[
+                    'non_magisterial_office_list'
+                ] = non_magisterial.get_descendants()
+        except:
+            pass
+
+        try:
+            distinctions = Office.objects.get(id=270)
+            if distinctions:
+                context[
+                    'distinctions_office_list'
+                ] = distinctions.get_descendants()
+        except:
+            pass
 
         context['office_fdict'] = dict(
             context['facets']['fields']['offices'])

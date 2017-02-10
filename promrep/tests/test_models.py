@@ -5,6 +5,12 @@ from promrep.models import Person
 class PersonTest(TestCase):
 
     def setUp(self):
+        self.dprr_ids = [
+            {'nomen': None, 'id': 1, 'dprr_id': None},
+            {'nomen': 'Iulius', 'id': 1957, 'dprr_id': 'IULI1957'},
+            {'nomen': 'Tullius', 'id': 2072, 'dprr_id': 'TULL2072'},
+            {'nomen': 'Yo', 'id': 1, 'dprr_id': 'YO1'},
+        ]
         self.filiations = [
             {'text': None, 'f': None, 'n': None},
             {'text': '', 'f': None, 'n': None},
@@ -34,6 +40,12 @@ class PersonTest(TestCase):
             {'other_names': '(12) Name', 'other_names_plain': 'Name'},
         ]
         self.person = Person()
+
+    def test__dprr_id(self):
+        for item in self.dprr_ids:
+            self.person.id = item['id']
+            self.person.nomen = item['nomen']
+            self.assertEqual(item['dprr_id'], self.person.dprr_id)
 
     def test__f(self):
         # 1. fail the test

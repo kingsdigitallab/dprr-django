@@ -1,1 +1,5 @@
-<p>{{ object.person }}&nbsp;{{object.relationship}}&nbsp;{{object.related_person}}</p>
+{% for note in object.references.all %}
+<p>
+    {{ note }}
+</p>
+{% endfor %}

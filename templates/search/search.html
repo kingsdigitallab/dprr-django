@@ -105,7 +105,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 <div class="row">
                                     <div class="medium-3 columns">
                                         <ul class="stack button-group">
-                                            {% for term in facets.fields|get_item:"gender" %}
+                                            {% for term in facets.fields|get_item:"gender" reversed %}
                                             {% with value=term.0 count=term.1 %}
                                             {% if count > 0 %}
                                             <li>
@@ -140,13 +140,13 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         </div>
 
                                         <ul class="button-group">
-                                            {% include "search/status.html" with item="eques" title="Eques R" %}
-
                                             {% include "search/status.html" with item="nobilis" title="Nobilis" %}
 
                                             {% include "search/status.html" with item="novus" title="Novus" %}
 
                                             {% include "search/status.html" with item="patrician" title="Patrician" %}
+
+                                            {% include "search/status.html" with item="eques" title="Eques R" %}
                                         </ul>
                                     </div>
                                     <div class="medium-8 medium-offset-1 columns datetypes">

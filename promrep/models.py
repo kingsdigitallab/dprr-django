@@ -391,7 +391,12 @@ class Person(TimeStampedModel):
         if not found:
             return None
 
-        return found.groups()[0]
+        text = found.groups()[0]
+
+        if ' or ' in text:
+            return text.split(' or ')
+
+        return [text]
 
     @property
     def n(self):
@@ -405,7 +410,12 @@ class Person(TimeStampedModel):
         if not found:
             return None
 
-        return found.groups()[0]
+        text = found.groups()[0]
+
+        if ' or ' in text:
+            return text.split(' or ')
+
+        return [text]
 
     @property
     def other_names_plain(self):

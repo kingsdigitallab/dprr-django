@@ -1,6 +1,6 @@
 <h4>
     <a href="{% url 'person-detail' doc.person_id %}">
-        DPRR {{ doc.person_id }}
+        {{ doc.dprr_id }}
         {{ doc.person }}
 
         {% if doc.highest_office %}

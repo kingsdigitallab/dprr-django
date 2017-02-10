@@ -373,6 +373,13 @@ class Person(TimeStampedModel):
         return " ".join(name_l)
 
     @property
+    def dprr_id(self):
+        if not self.nomen:
+            return None
+
+        return '{}{}'.format(self.nomen.upper()[:4], self.id)
+
+    @property
     def f(self):
         if not self.filiation:
             return None

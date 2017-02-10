@@ -23,6 +23,7 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
     person = indexes.CharField(model_attr='person', faceted=True)
     person_id = indexes.IntegerField(model_attr='person__id')
+    dprr_id = indexes.CharField(model_attr='person__dprr_id', null=True)
 
     praenomen = indexes.MultiValueField(faceted=True, null=True)
     nomen = indexes.CharField(faceted=True, null=True)
@@ -178,8 +179,8 @@ class PostAssertionIndex(AssertionIndex):
         ))
 
         if object.person.dateinformation_set.filter(
-                date_type__name='death').exclude(
-                    date_type__name='death - violent').count() > 0:
+            date_type__name='death').exclude(
+                date_type__name='death - violent').count() > 0:
             life_dates.append('death')
             life_dates.append('death - other')
 

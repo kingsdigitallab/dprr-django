@@ -22,6 +22,7 @@ from django.conf import settings  # noqa
 REPOSITORY = 'git@github.com:kingsdigitallab/dprr-django.git'
 
 env.user = settings.FABRIC_USER
+env.gateway = 'ssh.cch.kcl.ac.uk'
 env.hosts = ['dprr.dighum.kcl.ac.uk']
 env.root_path = '/vol/dprr/webroot/'
 env.envs_path = os.path.join(env.root_path, 'envs')

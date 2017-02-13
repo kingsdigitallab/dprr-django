@@ -8,8 +8,8 @@ class PersonTest(TestCase):
         self.dprr_ids = [
             {'nomen': None, 'id': 1, 'dprr_id': None},
             {'nomen': 'Iulius', 'id': 1957, 'dprr_id': 'IULI1957'},
-            {'nomen': 'Tullius', 'id': 2072, 'dprr_id': 'TULL2072'},
-            {'nomen': 'Yo', 'id': 1, 'dprr_id': 'YO1'},
+            {'nomen': 'Tullius', 'id': 72, 'dprr_id': 'TULL0072'},
+            {'nomen': 'Yo', 'id': 1, 'dprr_id': 'YO0001'},
         ]
         self.filiations = [
             {'text': None, 'f': None, 'n': None},

@@ -381,41 +381,40 @@ class Person(TimeStampedModel):
 
     @property
     def f(self):
+        return self._get_ancestor_praenomens(r'([^-].*?) f\..*')
+
+    def _get_ancestor_praenomens(self, pattern):
         if not self.filiation:
             return None
 
         filiation = self.filiation.strip()
 
-        found = re.search(r'([^-].*?) f\..*', filiation)
+        found = re.search(pattern, filiation)
 
         if not found:
             return None
 
+        praenomens = []
         text = found.groups()[0]
 
         if ' or ' in text:
-            return text.split(' or ')
+            text = text.split(' or ')
+        else:
+            text = [text]
 
-        return [text]
+        for abbrev in text:
+            # only need the content up to the first space
+            abbrev = abbrev.split()[0]
+            p = Praenomen.objects.filter(abbrev=abbrev)
+            if p:
+                praenomens.append(p[0].name)
+
+        return praenomens
 
     @property
     def n(self):
-        if not self.filiation:
-            return None
-
-        filiation = self.filiation.strip()
-
-        found = re.search(r'(?:.*\s+f\.\s+)?(.*[^-])\s+n\.', filiation)
-
-        if not found:
-            return None
-
-        text = found.groups()[0]
-
-        if ' or ' in text:
-            return text.split(' or ')
-
-        return [text]
+        return self._get_ancestor_praenomens(
+            r'(?:.*\s+f\.\s+)?(.*[^-])\s+n\.')
 
     @property
     def other_names_plain(self):

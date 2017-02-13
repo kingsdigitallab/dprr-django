@@ -15,15 +15,15 @@ $(document).ready(function() {
 		return false;
 	});
 
-	// $('button.options').bind("click", function() {
-	// 	var txt = $(".search-box").is(':visible') ? 'Show' : 'Hide';
-	// 	$('.search-box').slideToggle(400);
-	// 	$('#showhide').text(txt);
-	// 	// toggle extra-margin class to remove blank space when collapsing
-	// 	// the search box
-	// 	$('#search-results-box').toggleClass("extra-margin");
-	// 	return false;
-	// });
+	$('button.options').bind("click", function() {
+		var txt = $(".search-box").is(':visible') ? 'Show' : 'Hide';
+		$('.search-box').slideToggle(400);
+		$('#showhide').text(txt);
+		// toggle extra-margin class to remove blank space when collapsing
+		// the search box
+		// $('#search-results-box').toggleClass("extra-margin");
+		return false;
+	});
 
 	// Printing search results
 	$('#printme').bind("click", function() {

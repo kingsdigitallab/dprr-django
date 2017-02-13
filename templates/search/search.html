@@ -265,14 +265,31 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="large-12 columns">
+                                    <div class="large-6 columns">
+                                        <h4 class="panel-heading">Distinctions
+                                            <a data-dropdown="distinctions" aria-controls="distinctions" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <a href="#" class="expander smaller-fontsize">Expand list of available distinctions <i class="fa fa-caret-right"></i></a>
+
+                                        <div class="collapsible hide">
+                                            {% include "search/offices.html" with office_list=distinctions_office_list %}
+                                        </div>
+
+                                        <div id="distinctions" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about <strong>Distinctions</strong></p>
+                                        </div>
+                                    </div>
+                                    <div class="large-6 columns">
                                         <h4 class="panel-heading">Location
                                             <a data-dropdown="location" aria-controls="location" aria-expanded="false" class="smaller-fontsize">
                                                 <i class="fa fa-info-circle"></i>
                                             </a>
                                         </h4>
 
-                                        <a href="#" class="expander">Expand list of available locations <i class="fa fa-caret-right"></i></a>
+                                        <a href="#" class="expander smaller-fontsize">Expand list of available locations <i class="fa fa-caret-right"></i></a>
 
                                         <div class="panel radius fixed-height collapsible hide">
                                             <ul class="no-bullet hierarchical-facets">

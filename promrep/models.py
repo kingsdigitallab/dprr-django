@@ -377,7 +377,7 @@ class Person(TimeStampedModel):
         if not self.nomen:
             return None
 
-        return '{}{}'.format(self.nomen.upper()[:4], self.id)
+        return '{}{:0>4}'.format(self.nomen.upper()[:4], self.id)
 
     @property
     def f(self):

@@ -1,5 +1,5 @@
 from django.test import TestCase
-from promrep.models import Person
+from promrep.models import Person, Praenomen
 
 
 class PersonTest(TestCase):
@@ -15,18 +15,19 @@ class PersonTest(TestCase):
             {'text': None, 'f': None, 'n': None},
             {'text': '', 'f': None, 'n': None},
             {'text': 'ABC', 'f': None, 'n': None},
-            {'text': 'A. f.', 'f': ['A.'], 'n': None},
-            {'text': 'A. n.', 'f': None, 'n': ['A.']},
-            {'text': 'A. or B. f.', 'f': ['A.', 'B.'], 'n': None},
-            {'text': 'A. or B. n.', 'f': None, 'n': ['A.', 'B.']},
+            {'text': 'T. f.', 'f': ['Titus'], 'n': None},
+            {'text': 'A. n.', 'f': None, 'n': ['Aulus']},
+            {'text': 'A. or K. f.', 'f': ['Aulus', 'Caeso'], 'n': None},
+            {'text': 'A. or K. n.', 'f': None, 'n': ['Aulus', 'Caeso']},
             {'text': '- f.', 'f': None, 'n': None},
             {'text': '- n.', 'f': None, 'n': None},
-            {'text': 'A. f. B. n.', 'f': ['A.'], 'n': ['B.']},
-            {'text': 'A. or C. f. B. n.', 'f': ['A.', 'C.'], 'n': ['B.']},
-            {'text': '- f. B. n.', 'f': None, 'n': ['B.']},
-            {'text': 'A. or C. f. B. or D. n.', 'f': ['A.', 'C.'],
-             'n': ['B.', 'D.']},
-            {'text': 'A. or C. f. - n.', 'f': ['A.', 'C.'], 'n': None},
+            {'text': 'A. f. T. n.', 'f': ['Aulus'], 'n': ['Titus']},
+            {'text': 'A. or C. ? f. K. n.', 'f': ['Aulus', 'Gaius'],
+             'n': ['Caeso']},
+            {'text': '- f. K. n.', 'f': None, 'n': ['Caeso']},
+            {'text': 'A. or C. f. Cn. or Her. n.', 'f': ['Aulus', 'Gaius'],
+             'n': ['Gnaeus', 'Herius']},
+            {'text': 'A. or C. f. - n.', 'f': ['Aulus', 'Gaius'], 'n': None},
             {'text': '- f. - n.', 'f': None, 'n': None},
         ]
         self.other_names = [
@@ -39,7 +40,19 @@ class PersonTest(TestCase):
              'other_names_plain': 'Name Surname'},
             {'other_names': '(12) Name', 'other_names_plain': 'Name'},
         ]
+        self.praenomens = [
+            {'name': 'Aulus', 'abbrev': 'A.'},
+            {'name': 'Caeso', 'abbrev': 'K.'},
+            {'name': 'Gaius', 'abbrev': 'C.'},
+            {'name': 'Gnaeus', 'abbrev': 'Cn.'},
+            {'name': 'Herius', 'abbrev': 'Her.'},
+            {'name': 'Titus', 'abbrev': 'T.'},
+        ]
+
         self.person = Person()
+
+        for p in self.praenomens:
+            Praenomen(name=p['name'], abbrev=p['abbrev']).save()
 
     def test__dprr_id(self):
         for item in self.dprr_ids:

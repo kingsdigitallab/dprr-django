@@ -8,11 +8,6 @@
 
 /*** Global ***/
 
-// button,
-// .button {
-//     line-height: 1.25rem;
-// }
-
 hr {
     height: 1px;
     color: scale-color($primary-color, $lightness: 60%);
@@ -371,63 +366,6 @@ h3.quick-home {
 
 /*** Search / Facets / Filters ***/
 
-#search form {
-    display: block;
-    height: 100%;
-    overflow: hidden; /* Stops the page from overflowing due to long list of
-                         filters */
-}
-
-.options {
-    a,
-    span {
-        margin-bottom: 0 !important;
-    }
-    border: 1px solid scale-color($primary-color, $lightness: 70%) !important;
-    border-bottom: none !important;
-    margin-bottom: 0 !important;
-}
-
-.search-box {
-    background: $secondary-color;
-    border: 1px solid scale-color($primary-color, $lightness: 70%);
-    padding: 1rem;
-
-    button.secondary,
-    .button.secondary,
-    .label.secondary {
-        background: scale-color($secondary-color, $lightness: -10%);
-    }
-
-    h4 {
-        font-size: 1.25rem;
-
-        a i {
-            color: scale-color($primary-color, $lightness: 50%);
-            font-size: .875rem;
-        }
-    }
-}
-
-.drop-list {
-    max-height: 550px; /* To overcome the overflow: hidden that cuts the list off */
-    overflow: scroll;
-
-    li {
-        border-bottom: 1px solid #ccc;
-    }
-
-    li:last-child {
-        border: none;
-    }
-}
-
-.f-dropdown {
-    &.content {
-        max-width: 350px;
-    }
-}
-
 .applied-filter-list {
     clear: both;
     margin-left: 0;
@@ -454,6 +392,19 @@ h3.quick-home {
     }
 }
 
+.drop-list {
+    max-height: 550px; /* To overcome the overflow: hidden that cuts the list off */
+    overflow: scroll;
+
+    li {
+        border-bottom: 1px solid #ccc;
+    }
+
+    li:last-child {
+        border: none;
+    }
+}
+
 .enlarge {
     background: $secondary-color;
     bottom: 0;
@@ -462,6 +413,55 @@ h3.quick-home {
     position: absolute;
     right: 0;
     text-align: center;
+}
+
+.f-dropdown {
+    &.content {
+        max-width: 350px;
+    }
+}
+
+.options {
+    a,
+    span {
+        margin-bottom: 0 !important;
+    }
+
+    border: 1px solid scale-color($primary-color, $lightness: 70%) !important;
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
+}
+
+.search-box {
+    background: $secondary-color;
+    border: 1px solid scale-color($primary-color, $lightness: 70%);
+    padding: 1rem;
+
+    button.secondary,
+    .button.secondary,
+    .label.secondary {
+        background: scale-color($secondary-color, $lightness: -10%);
+
+        &:hover {
+            background: scale-color($secondary-color, $lightness: -25%);
+        }
+    }
+
+    h4 {
+        font-size: 1.25rem;
+
+        a i {
+            color: scale-color($primary-color, $lightness: 50%);
+            font-size: .875rem;
+        }
+    }
+}
+
+#search form {
+    display: block;
+    height: 100%;
+    overflow: hidden; /* Stops the page from overflowing due to long list of
+                         filters */
 }
 
 /* Auto-complete */
@@ -899,6 +899,21 @@ svg {
     h2.site-title {
         font-size: 1.75rem;
         padding-top: 1em;
+    }
+
+    .top-search {
+        display: block;
+
+        button,
+        .options {
+            border: none !important;
+            float: none !important;
+            width: 100%;
+
+            .button {
+                width: 100%;
+            }
+        }
     }
 }
 

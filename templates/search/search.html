@@ -103,22 +103,37 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                 </div>
 
                                 <div class="row">
-                                    <div class="medium-3 columns">
-                                        <ul class="stack button-group">
-                                            {% for term in facets.fields|get_item:"gender" %}
-                                            {% with value=term.0 count=term.1 %}
-                                            {% if count > 0 %}
-                                            <li>
-                                                <a href="{% add_facet_link querydict "gender" value %}#search"
-                                                   class="button secondary less-padding smaller-fontsize text-left">
-                                                    {{ value }}&nbsp;
-                                                    <span class="label radius right">{{ count }}</span>
-                                                </a>
-                                            </li>
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endfor %}
-                                        </ul>
+                                    <div class="medium-4 columns">
+                                        <div class="row">
+                                            <div class="large-9 columns">
+                                                <h4>
+                                                    Gender
+                                                    <a data-dropdown="gender" aria-controls="gender" aria-expanded="false" class="smaller-fontsize">
+                                                        <i class="fa fa-info-circle"></i>
+                                                    </a>
+                                                </h4>
+
+                                                <div id="gender" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                                    <p>Info about <strong>gender</strong></p>
+                                                </div>
+
+                                                <ul class="stack button-group">
+                                                    {% for term in facets.fields|get_item:"gender" reversed %}
+                                                    {% with value=term.0 count=term.1 %}
+                                                    {% if count > 0 %}
+                                                    <li>
+                                                        <a href="{% add_facet_link querydict "gender" value %}#search"
+                                                           class="button secondary less-padding smaller-fontsize text-left">
+                                                            {{ value }}&nbsp;
+                                                            <span class="label radius right">{{ count }}</span>
+                                                        </a>
+                                                    </li>
+                                                    {% endif %}
+                                                    {% endwith %}
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div>
 
                                         <h4>
                                             <br>
@@ -140,16 +155,16 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                         </div>
 
                                         <ul class="button-group">
-                                            {% include "search/status.html" with item="eques" title="Eques R" %}
-
                                             {% include "search/status.html" with item="nobilis" title="Nobilis" %}
 
                                             {% include "search/status.html" with item="novus" title="Novus" %}
 
                                             {% include "search/status.html" with item="patrician" title="Patrician" %}
+
+                                            {% include "search/status.html" with item="eques" title="Eques R" %}
                                         </ul>
                                     </div>
-                                    <div class="medium-8 medium-offset-1 columns datetypes">
+                                    <div class="medium-8 columns datetypes">
                                         <h4>Date Types
                                             <a data-dropdown="date-types" aria-controls="date-types" aria-expanded="false" class="smaller-fontsize">
                                                 <i class="fa fa-info-circle"></i>
@@ -265,14 +280,31 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="large-12 columns">
+                                    <div class="large-6 columns">
+                                        <h4 class="panel-heading">Distinctions
+                                            <a data-dropdown="distinctions" aria-controls="distinctions" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <a href="#" class="expander smaller-fontsize">Expand list of available distinctions <i class="fa fa-caret-right"></i></a>
+
+                                        <div class="collapsible hide">
+                                            {% include "search/offices.html" with office_list=distinctions_office_list %}
+                                        </div>
+
+                                        <div id="distinctions" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about <strong>Distinctions</strong></p>
+                                        </div>
+                                    </div>
+                                    <div class="large-6 columns">
                                         <h4 class="panel-heading">Location
                                             <a data-dropdown="location" aria-controls="location" aria-expanded="false" class="smaller-fontsize">
                                                 <i class="fa fa-info-circle"></i>
                                             </a>
                                         </h4>
 
-                                        <a href="#" class="expander">Expand list of available locations <i class="fa fa-caret-right"></i></a>
+                                        <a href="#" class="expander smaller-fontsize">Expand list of available locations <i class="fa fa-caret-right"></i></a>
 
                                         <div class="panel radius fixed-height collapsible hide">
                                             <ul class="no-bullet hierarchical-facets">

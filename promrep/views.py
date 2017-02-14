@@ -181,8 +181,21 @@ class PersonDetailView(DetailView):
     def get_context_data(self, **kwargs):  # noqa
         context = super(
             PersonDetailView, self).get_context_data(**kwargs)
-        context['relationships'] = RelationshipAssertion.objects.filter(
-            person=self.get_object)
+
+        relationships = {}
+
+        relationships_qs = RelationshipAssertion.objects.filter(
+            person=self.get_object
+        ).order_by('relationship__order')
+
+        for r in relationships_qs:
+            if r.relationship not in relationships:
+                relationships[r.relationship] = []
+
+            relationships[r.relationship].append(r)
+
+        context['relationships'] = relationships
+
         return context
 
 

@@ -186,7 +186,7 @@ class PersonDetailView(DetailView):
 
         relationships_qs = RelationshipAssertion.objects.filter(
             person=self.get_object
-        ).order_by('relationship__order')
+        ).order_by('relationship__order', 'relationship_number')
 
         for r in relationships_qs:
             if r.relationship not in relationships:

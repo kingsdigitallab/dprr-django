@@ -45,9 +45,14 @@
             <dt class="capitalize">{{ relationship_type }}</dt>
             {% for r in relationships|get_item:relationship_type %}
             <dd>
-            <a href="{% url 'person-detail' r.related_person.id %}">
-                {{ r.related_person }}
+            {% with person=r.related_person %}
+            <a href="{% url 'person-detail' person.id %}">
+                {{ person }}
+                {% if person.highest_office %}
+                ({{ person.highest_office }})
+                {% endif %}
             </a>
+            {% endwith %}
             </dd>
             {% endfor %}
             {% endfor %}

@@ -22,12 +22,14 @@ class PersonTest(TestCase):
             {'text': '- f.', 'f': None, 'n': None},
             {'text': '- n.', 'f': None, 'n': None},
             {'text': 'A. f. T. n.', 'f': ['Aulus'], 'n': ['Titus']},
-            {'text': 'A. or C. ? f. K. n.', 'f': ['Aulus', 'Gaius'],
+            {'text': 'A. or C. ? f. K. n.', 'f': ['Aulus', 'Gaius', 'Caius'],
              'n': ['Caeso']},
             {'text': '- f. K. n.', 'f': None, 'n': ['Caeso']},
-            {'text': 'A. or C. f. Cn. or Her. n.', 'f': ['Aulus', 'Gaius'],
-             'n': ['Gnaeus', 'Herius']},
-            {'text': 'A. or C. f. - n.', 'f': ['Aulus', 'Gaius'], 'n': None},
+            {'text': 'A. or C. f. Cn. or Her. n.',
+             'f': ['Aulus', 'Gaius', 'Caius'],
+             'n': ['Gnaeus', 'Cnaeus', 'Herius']},
+            {'text': 'A. or C. f. - n.', 'f': ['Aulus', 'Gaius', 'Caius'],
+             'n': None},
             {'text': '- f. - n.', 'f': None, 'n': None},
         ]
         self.other_names = [
@@ -80,3 +82,29 @@ class PersonTest(TestCase):
             self.person.other_names = on['other_names']
             self.assertEqual(on['other_names_plain'],
                              self.person.other_names_plain)
+
+
+class PraenomenTest(TestCase):
+
+    def setUp(self):
+        self.praenomens = [
+            {'name': 'Aulus', 'abbrev': 'A.', 'alternate_name': None},
+            {'name': 'Caeso', 'abbrev': 'K.', 'alternate_name': None},
+            {'name': 'Gaius', 'abbrev': 'C.', 'alternate_name': 'Caius'},
+            {'name': 'Gnaeus', 'abbrev': 'Cn.', 'alternate_name': 'Cnaeus'},
+            {'name': 'Herius', 'abbrev': 'Her.', 'alternate_name': None},
+            {'name': 'Titus', 'abbrev': 'T.', 'alternate_name': None},
+        ]
+
+    def test__has_alternate_name(self):
+        for p in self.praenomens:
+            praenomen = Praenomen(name=p['name'], abbrev=p['abbrev'])
+            self.assertEqual(
+                p['alternate_name'] is not None,
+                praenomen.has_alternate_name())
+
+    def test__alternate_name(self):
+        for p in self.praenomens:
+            praenomen = Praenomen(name=p['name'], abbrev=p['abbrev'])
+            self.assertEqual(
+                p['alternate_name'], praenomen.alternate_name)

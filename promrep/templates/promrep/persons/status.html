@@ -1,0 +1,23 @@
+{% if status %}
+<li {% if unceratin %}class="uncertain"{% endif %}>
+    {{ title }}{% if uncertain %}?{% endif %}
+
+    {% if notes %}
+    <a href="#" class="expander status right">Expand
+        <i class="fa fa-caret-right"></i>
+    </a>
+    <p class="hide collapsible">
+    {% if notes.all %}
+        {% for note in notes.all %}
+        {{ note|capfirst }}
+        {% if not forloop.last %}
+        <br>
+        {% endif %}
+        {% endfor %}
+    {% else %}
+        {{ notes|capfirst }}
+    {% endif %}
+    </p>
+    {% endif %}
+</li>
+{% endif %}

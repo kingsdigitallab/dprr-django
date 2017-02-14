@@ -455,6 +455,20 @@ class Person(TimeStampedModel):
     def related_label(self):
         return self.url_to_edit_person()
 
+    def has_status_information(self):
+        return self.patrician or self.nobilis or self.novus or self.is_eques()
+
+    def is_eques(self):
+        return self.statusassertion_set.filter(
+            status__name__iexact='eques') > 0
+
+    def get_eques_status_assertion(self):
+        if not self.is_eques():
+            return None
+
+        return self.statusassertion_set.filter(
+            status__name__iexact='eques').first()
+
 
 @with_author
 class TribeAssertion(TimeStampedModel):
@@ -533,21 +547,21 @@ class DateInformation(TimeStampedModel):
         verbose_name = 'Date'
 
     def __unicode__(self):
-        date_str = ""
+        date_str = ''
 
         if self.uncertain:
-            date_str = date_str + "?"
+            date_str = '?'
 
         if self.value < 0:
-            date_str = date_str + str(abs(self.value)) + " B.C."
+            date_str = date_str + str(abs(self.value)) + ' B.C.'
         else:
-            date_str = date_str + str(self.value) + " A.D."
+            date_str = date_str + str(self.value) + ' A.D.'
 
-        di_str = "{} {}, {}".format(self.get_date_interval_display(),
+        di_str = '{} {}, {}'.format(self.get_date_interval_display(),
                                     date_str,
                                     self.date_type)
         if self.secondary_source:
-            di_str += " ({})".format(self.secondary_source.abbrev_name)
+            di_str += ' ({})'.format(self.secondary_source.abbrev_name)
 
         return di_str
 

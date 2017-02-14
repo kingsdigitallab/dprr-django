@@ -63,13 +63,12 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
         if not object.person.praenomen:
             return None
 
-        praenomen = object.person.praenomen.name
+        praenomen = object.person.praenomen
 
-        if praenomen[0].upper() == 'G':
-            alternate_spelling = 'C' + praenomen[1:]
-            return [praenomen, alternate_spelling]
+        if praenomen.has_alternate_name():
+            return [praenomen.name, praenomen.alternate_name]
 
-        return praenomen
+        return praenomen.name
 
     def prepare_nomen(self, object):
         """The list of nomens to filter on should not show parentheses or

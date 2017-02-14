@@ -67,12 +67,25 @@ class Praenomen(models.Model):
     abbrev = models.CharField(max_length=32, unique=True)
     name = models.CharField(max_length=128, unique=True)
 
-    def __unicode__(self):
-        return self.name
-
     class Meta:
         verbose_name_plural = 'Praenomina'
         ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+    @property
+    def alternate_name(self):
+        if self.has_alternate_name():
+            return 'C' + self.name[1:]
+
+        return None
+
+    def has_alternate_name(self):
+        if not self.name:
+            return False
+
+        return self.name[0].upper() == 'G'
 
 
 class Sex(models.Model):
@@ -405,9 +418,14 @@ class Person(TimeStampedModel):
         for abbrev in text:
             # only need the content up to the first space
             abbrev = abbrev.split()[0]
-            p = Praenomen.objects.filter(abbrev=abbrev)
-            if p:
-                praenomens.append(p[0].name)
+            praenomens_qs = Praenomen.objects.filter(abbrev=abbrev)
+
+            if praenomens_qs:
+                p = praenomens_qs[0]
+                praenomens.append(p.name)
+
+                if p.has_alternate_name():
+                    praenomens.append(p.alternate_name)
 
         return praenomens
 

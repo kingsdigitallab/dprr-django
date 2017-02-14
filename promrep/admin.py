@@ -79,12 +79,13 @@ class RelationshipAssertionListInline(admin.TabularInline):
 
 
 class RelationshipTypeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'description', 'created', 'modified')
+    list_display = ('id', 'name', 'order', 'description', 'created',
+                    'modified')
     list_display_links = ('name', 'description')
     readonly_fields = ('id', 'created', 'modified')
 
     search_fields = ('name', 'description')
-    fields = ('id', ('name', 'description'), )
+    fields = ('id', ('name', 'order', 'description'), )
 
     show_change_link = True
 

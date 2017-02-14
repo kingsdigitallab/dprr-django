@@ -1,12 +1,12 @@
+from collections import OrderedDict
+
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.views.generic.detail import DetailView
 from haystack.generic_views import FacetedSearchView
 from promrep.forms import PromrepFacetedSearchForm
-from promrep.models import (
-    Office, Person, PostAssertion, Province, RelationshipAssertion,
-    StatusAssertion
-)
+from promrep.models import (Office, Person, PostAssertion, Province,
+                            RelationshipAssertion, StatusAssertion)
 from promrep.solr_backends.solr_backend_field_collapsing import \
     GroupedSearchQuerySet
 
@@ -181,8 +181,21 @@ class PersonDetailView(DetailView):
     def get_context_data(self, **kwargs):  # noqa
         context = super(
             PersonDetailView, self).get_context_data(**kwargs)
-        context['relationships'] = RelationshipAssertion.objects.filter(
-            person=self.get_object)
+
+        relationships = OrderedDict()
+
+        relationships_qs = RelationshipAssertion.objects.filter(
+            person=self.get_object
+        ).order_by('relationship__order')
+
+        for r in relationships_qs:
+            if r.relationship not in relationships:
+                relationships[r.relationship] = []
+
+            relationships[r.relationship].append(r)
+
+        context['relationships'] = relationships
+
         return context
 
 

@@ -8,76 +8,82 @@
 <div class="row">
     <div class="large-12 columns">
 
-      <h2>{{ person }}</h2>
+        <h2>{{ person }}</h2>
 
-      <p>
-          Project ID: {{ person.id }}
-      </p>
+        <p>
+        Project ID: {{ person.id }}
+        </p>
 
-      {% if person.patrician %}
-      <p>
-          Patrician{% if person.patrician_uncertainty %}?{% endif %}
-      </p>
-      {% endif %}
+        {% if person.patrician %}
+        <p>
+        Patrician{% if person.patrician_uncertainty %}?{% endif %}
+        </p>
+        {% endif %}
 
-      {% if person.gens %}
-      <p>
-          Gens: {{ person.gens }}{% if person.gens_uncertainty %}?{% endif %}
-      </p>
-      {% endif %}
+        {% if person.gens %}
+        <p>
+        Gens: {{ person.gens }}{% if person.gens_uncertainty %}?{% endif %}
+        </p>
+        {% endif %}
 
-      {% if person.review_flag %}
-          <p><strong>Warning: person needs revision</strong></p>
-      {% endif %}
+        {% if person.review_flag %}
+        <p><strong>Warning: person needs revision</strong></p>
+        {% endif %}
 
-      {% if person.dateinformation_set.all %}
-      <h3>Life Dates</h3>
-      <ul class="timeline no-bullet">
-          {% for di in person.dateinformation_set.all %}
-          <li>{{ di }}
-              {% if di.notes %}
+        {% if person.dateinformation_set.all %}
+        <h3>Life Dates</h3>
+        <ul class="timeline no-bullet">
+            {% for di in person.dateinformation_set.all %}
+            <li>{{ di }}
+                {% if di.notes %}
                 <a href="#" class="expander life-dates right">Expand <i class="fa fa-caret-right"></i></a>
                 <p class="hide collapsible">{{ di.notes|capfirst }}</p>
-              {% endif %}
-          </li>
-          {% endfor %}
-      </ul>
-      {% endif %}
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
 
-      {% if relationships %}
-      <div id="network-container">
-        <h3>Relationships recorded in the sources</h3>
+        {% if relationships %}
         {% comment %}
         {# Disabling javascript for the graph #}
-        <div id="network"></div>
+        <div id="network-container">
+            <h3>Relationships recorded in the sources</h3>
+            <div id="network"></div>
+        </div>
         {% endcomment %}
-      </div>
 
-      <dl class="top-padding">
-          {% for rel in relationships %}
-          <dt class="capitalize">{{ rel.relationship }}</dt>
-              <dd><a href="{% url 'person-detail' rel.related_person.id %}">{{ rel.related_person }}</a></dd>
-          {% endfor %}
-      </dl>
-      {% endif %}
+        <dl class="top-padding">
+            {% for relationship_type in relationships.keys %}
+            <dt class="capitalize">{{ relationship_type }}</dt>
+            {% for r in relationships|get_item:relationship_type %}
+            <dd>
+            <a href="{% url 'person-detail' r.related_person.id %}">
+                {{ r.related_person }}
+            </a>
+            </dd>
+            {% endfor %}
+            {% endfor %}
+        </dl>
+        {% endif %}
 
-      <h3>Career</h3>
-      <ul class="timeline no-bullet">
-        {% for pa in person.post_assertions.all %}
-        <li><span class="{% if pa.uncertain == True %}gray{% else %}green{% endif %}">{{ pa.print_date | safe }}</span> <strong>{{ pa.office | title }}</strong> {% if pa.provinces %}{{ pa.print_provinces }}{% endif %}
-          {% if pa.notes.count %}
-          <a href="#" class="expander right">Expand <i class="fa fa-caret-right"></i></a>
-          <ul class="no-bullet hide collapsible">
-              {% for note in pa.notes.all %}
-              <li>{{ note.text }} (in <em>{{ note.secondary_source.abbrev_name }}</em>)</li>
-              {% endfor %}
-          </ul>
-          {% endif %}
+        <h3>Career</h3>
+        <ul class="timeline no-bullet">
+            {% for pa in person.post_assertions.all %}
+            <li><span class="{% if pa.uncertain == True %}gray{% else %}green{% endif %}">{{ pa.print_date | safe }}</span> <strong>{{ pa.office | title }}</strong> {% if pa.provinces %}{{ pa.print_provinces }}{% endif %}
+                {% if pa.notes.count %}
+                <a href="#" class="expander right">Expand <i class="fa fa-caret-right"></i></a>
+                <ul class="no-bullet hide collapsible">
+                    {% for note in pa.notes.all %}
+                    <li>{{ note.text }} (in <em>{{ note.secondary_source.abbrev_name }}</em>)</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
 
-        </li>
-        {% endfor %}
-    </ul>
-</div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 
 {% endblock %}
@@ -97,9 +103,9 @@
 <script src="{% static 'javascripts/network.js' %}"></script>
 
 <script>
-    $(document).ready(function() {
-        networkGraph.load({{ person.id }}, "{% url 'person-network' person.id %}");
-    });
+$(document).ready(function() {
+    networkGraph.load({{ person.id }}, "{% url 'person-network' person.id %}");
+});
 </script>
 {% endcomment %}
 {% endblock %}

@@ -17,6 +17,10 @@
     {% else %}
         {{ notes|capfirst }}
     {% endif %}
+    {% if status.date_secondary_source %}
+        {{ status.date_source_text }}
+        ({{ status.date_secondary_source.name }})
+    {% endif %}
     </p>
     {% endif %}
 </li>

@@ -25,12 +25,6 @@
         </ul>
         {% endif %}
 
-        {% if person.gens %}
-        <p>
-        Gens: {{ person.gens }}{% if person.gens_uncertain %}?{% endif %}
-        </p>
-        {% endif %}
-
         {% if person.dateinformation_set.all %}
         <h3>Life Dates</h3>
         <ul class="timeline no-bullet">

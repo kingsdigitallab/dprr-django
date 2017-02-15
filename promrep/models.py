@@ -313,10 +313,6 @@ class Person(TimeStampedModel):
     novus_uncertain = models.NullBooleanField(default=False)
     novus_notes = models.TextField(blank=True)
 
-    eques = models.NullBooleanField(default=None, null=True)
-    eques_uncertain = models.BooleanField(default=False)
-    eques_notes = models.TextField(blank=True)
-
     nobilis = models.NullBooleanField(default=None, null=True)
     nobilis_uncertain = models.BooleanField(default=False)
     nobilis_notes = models.TextField(blank=True)

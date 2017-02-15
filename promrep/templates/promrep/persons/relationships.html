@@ -7,7 +7,10 @@
     <dt class="capitalize">{{ relationship_type }}</dt>
 
     {% for r in relationships|get_item:relationship_type %}
-    <dd {% if r.relationship_number %}class="relationship-{{ r.relationship_number }}"{% endif %}>
+    <dd class="{% if r.relationship_number %}relationship-{{ r.relationship_number }}{% endif %}{% if r.uncertain %} uncertain{% endif %}
+">
+
+    {% if r.uncertain %}?{% endif %}
 
     {% with person=r.related_person %}
     <a href="{% url 'person-detail' person.id %}">

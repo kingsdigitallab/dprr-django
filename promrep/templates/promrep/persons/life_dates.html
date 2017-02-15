@@ -3,7 +3,10 @@
 <ul class="timeline no-bullet">
     {% for di in person.get_dates %}
     <li>{{ di }}
-        {% if di.notes %}
+        {% if di.has_ruepke_secondary_source %}
+        <a href="#" class="expander life-dates right">Expand <i class="fa fa-caret-right"></i></a>
+        <p class="hide collapsible">{{ di.get_ruepke_notes|capfirst }}</p>
+        {% elif di.notes %}
         <a href="#" class="expander life-dates right">Expand <i class="fa fa-caret-right"></i></a>
         <p class="hide collapsible">{{ di.notes|capfirst }}</p>
         {% endif %}

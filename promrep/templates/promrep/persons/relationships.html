@@ -1,0 +1,22 @@
+{% load wagtailbase_tags %}
+
+{% if relationships %}
+<h3>Relationships</h3>
+<dl class="top-padding">
+    {% for relationship_type in relationships.keys %}
+    <dt class="capitalize">{{ relationship_type }}</dt>
+    {% for r in relationships|get_item:relationship_type %}
+    <dd {% if r.relationship_number %}class="relationship-{{ r.relationship_number }}"{% endif %}>
+    {% with person=r.related_person %}
+    <a href="{% url 'person-detail' person.id %}">
+        {{ person }}
+        {% if person.highest_office %}
+        ({{ person.highest_office }})
+        {% endif %}
+    </a>
+    {% endwith %}
+    </dd>
+    {% endfor %}
+    {% endfor %}
+</dl>
+{% endif %}

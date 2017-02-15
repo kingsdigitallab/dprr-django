@@ -45,7 +45,7 @@
             {% for relationship_type in relationships.keys %}
             <dt class="capitalize">{{ relationship_type }}</dt>
             {% for r in relationships|get_item:relationship_type %}
-            <dd>
+            <dd {% if r.relationship_number %}class="relationship-{{ r.relationship_number }}"{% endif %}>
             {% with person=r.related_person %}
             <a href="{% url 'person-detail' person.id %}">
                 {{ person }}

@@ -471,6 +471,12 @@ class Person(TimeStampedModel):
 
         return self.dateinformation_set.all().order_by('value')
 
+    def get_career(self):
+        if not self.post_assertions.all():
+            return None
+
+        return self.post_assertions.all().order_by('-date_start')
+
 
 @with_author
 class TribeAssertion(TimeStampedModel):
@@ -666,12 +672,14 @@ class Group(TimeStampedModel):
 
     def print_date(self):
         if self.date_year:
-            if self.date_year < 0:
-                return str(abs(self.date_year)) + " B.C."
-            else:
-                return str(self.date_year) + " A.D."
-        else:
-            return ""
+            date_str = str(abs(self.date_year))
+
+            if self.date_year >= 0:
+                return 'A.D. ' + date_str
+
+            return date_str
+
+        return ''
 
     def __unicode__(self):
         members = str(self.persons.count())
@@ -841,6 +849,20 @@ class PostAssertion(TimeStampedModel):
                 date_str = "date uncertain"
 
         return date_str.strip()
+
+    def has_ruepke_secondary_source(self):
+        return self.secondary_source.abbrev_name == 'Ruepke'
+
+    def get_ruepke_notes(self):
+        if not self.has_ruepke_secondary_source():
+            return None
+
+        texts = [
+            note.text for note in self.person.notes.filter(
+                note_type__name='ruepke_B')
+        ]
+
+        return ', '.join(texts)
 
 
 @with_author

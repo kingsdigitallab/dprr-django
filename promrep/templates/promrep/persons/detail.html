@@ -29,22 +29,7 @@
 
         {% include "promrep/persons/relationships.html" %}
 
-        <h3>Career</h3>
-        <ul class="timeline no-bullet">
-            {% for pa in person.post_assertions.all %}
-            <li><span class="{% if pa.uncertain %}gray{% else %}green{% endif %}">{{ pa.print_date | safe }}</span> <strong>{{ pa.office | title }}</strong> {% if pa.provinces %}{{ pa.print_provinces }}{% endif %}
-                {% if pa.notes.count %}
-                <a href="#" class="expander right">Expand <i class="fa fa-caret-right"></i></a>
-                <ul class="no-bullet hide collapsible">
-                    {% for note in pa.notes.all %}
-                    <li>{{ note.text }} (in <em>{{ note.secondary_source.abbrev_name }}</em>)</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-
-            </li>
-            {% endfor %}
-        </ul>
+        {% include "promrep/persons/career.html" %}
     </div>
 </div>
 {% endblock %}

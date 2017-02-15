@@ -549,13 +549,15 @@ class DateInformation(TimeStampedModel):
         verbose_name = 'Date'
 
     def __unicode__(self):
-        date_str = str(abs(self.value))
+        date_str = ''
+
+        if self.value >= 0:
+            date_str = 'A.D. '
+
+        date_str += str(abs(self.value))
 
         if self.uncertain:
             date_str += '?'
-
-        if self.value >= 0:
-            date_str += ' A.D.'
 
         label = self.get_date_interval_display()
         label = label if label != self.INTERVAL_CHOICES[0][1] else ''

@@ -549,24 +549,37 @@ class DateInformation(TimeStampedModel):
         verbose_name = 'Date'
 
     def __unicode__(self):
-        date_str = ''
+        date_str = str(abs(self.value))
 
         if self.uncertain:
-            date_str = '?'
+            date_str += '?'
 
-        if self.value < 0:
-            date_str = date_str + str(abs(self.value))
-        else:
-            date_str = date_str + str(self.value) + ' A.D.'
+        if self.value >= 0:
+            date_str += ' A.D.'
 
         label = self.get_date_interval_display()
         label = label if label != self.INTERVAL_CHOICES[0][1] else ''
 
         di_str = '{} {}, {}'.format(label, date_str, self.date_type)
+
         if self.secondary_source:
             di_str += ' ({})'.format(self.secondary_source.abbrev_name)
 
         return di_str
+
+    def has_ruepke_secondary_source(self):
+        return self.secondary_source.abbrev_name == 'Ruepke'
+
+    def get_ruepke_notes(self):
+        if not self.has_ruepke_secondary_source():
+            return None
+
+        texts = [
+            note.text for note in self.person.notes.filter(
+                note_type__name='ruepke_LD')
+        ]
+
+        return ', '.join(texts)
 
 
 @with_author

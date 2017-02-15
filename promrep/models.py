@@ -555,13 +555,14 @@ class DateInformation(TimeStampedModel):
             date_str = '?'
 
         if self.value < 0:
-            date_str = date_str + str(abs(self.value)) + ' B.C.'
+            date_str = date_str + str(abs(self.value))
         else:
             date_str = date_str + str(self.value) + ' A.D.'
 
-        di_str = '{} {}, {}'.format(self.get_date_interval_display(),
-                                    date_str,
-                                    self.date_type)
+        label = self.get_date_interval_display()
+        label = label if label != self.INTERVAL_CHOICES[0][1] else ''
+
+        di_str = '{} {}, {}'.format(label, date_str, self.date_type)
         if self.secondary_source:
             di_str += ' ({})'.format(self.secondary_source.abbrev_name)
 

@@ -1,0 +1,13 @@
+{% if person.get_dates %}
+<h3>Life Dates</h3>
+<ul class="timeline no-bullet">
+    {% for di in person.get_dates %}
+    <li>{{ di }}
+        {% if di.notes %}
+        <a href="#" class="expander life-dates right">Expand <i class="fa fa-caret-right"></i></a>
+        <p class="hide collapsible">{{ di.notes|capfirst }}</p>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}

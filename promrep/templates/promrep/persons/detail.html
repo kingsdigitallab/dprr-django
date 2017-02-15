@@ -25,19 +25,7 @@
         </ul>
         {% endif %}
 
-        {% if person.dateinformation_set.all %}
-        <h3>Life Dates</h3>
-        <ul class="timeline no-bullet">
-            {% for di in person.dateinformation_set.all %}
-            <li>{{ di }}
-                {% if di.notes %}
-                <a href="#" class="expander life-dates right">Expand <i class="fa fa-caret-right"></i></a>
-                <p class="hide collapsible">{{ di.notes|capfirst }}</p>
-                {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+        {% include "promrep/persons/life_dates.html" %}
 
         {% include "promrep/persons/relationships.html" %}
 

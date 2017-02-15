@@ -465,6 +465,12 @@ class Person(TimeStampedModel):
         return self.statusassertion_set.filter(
             status__name__iexact='eques').first()
 
+    def get_dates(self):
+        if not self.dateinformation_set.all():
+            return None
+
+        return self.dateinformation_set.all().order_by('value')
+
 
 @with_author
 class TribeAssertion(TimeStampedModel):

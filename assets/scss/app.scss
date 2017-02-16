@@ -318,6 +318,78 @@ h3.quick-home {
     }
 }
 
+.relationships {
+    dd {
+        border-bottom: 1px dotted scale-color($secondary-color, $lightness: -15%);
+
+        .label {
+            background-color: transparent;
+            margin-right: 3px;
+            width: 30px;
+        }
+
+        &.relationship-1 {
+            .label {
+                background-color: rgba(255, 225, 95, 1);
+            }
+        }
+
+        &.relationship-2 {
+            .label {
+                background-color: rgba(72, 60, 84, .8);
+            }
+        }
+
+        &.relationship-3 {
+            .label {
+                background-color: rgba(67, 138, 221, .7);
+            }
+        }
+
+        &.relationship-4 {
+            .label {
+                background-color: rgba(171, 112, 21, .7);
+            }
+        }
+
+        &.relationship-5 {
+            .label {
+                background-color: rgba(129, 174, 141, 1);
+            }
+        }
+
+        &.relationship-6 {
+            .label {
+                background-color: rgba(123, 133, 169, .7);
+            }
+        }
+
+        &.relationship-7 {
+            .label {
+                background-color: rgba(137, 84, 92, .7);
+            }
+        }
+
+        &.relationship-8 {
+            .label {
+                background-color: rgba(123, 255, 225, 1);
+            }
+        }
+
+        &.relationship-9 {
+            .label {
+                background-color: rgba(255, 163, 173, 1);
+            }
+        }
+
+        &.relationship-10 {
+            .label {
+                background-color: rgba(163, 255, 0, .8);
+            }
+        }
+    }
+}
+
 .timeline {
     // .label {
     //     font-size: 1rem;

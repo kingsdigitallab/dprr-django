@@ -230,13 +230,18 @@ if not os.path.exists(MEDIA_ROOT):
 
 ITEMS_PER_PAGE = ws.ITEMS_PER_PAGE
 
-
 # -----------------------------------------------------------------------------
 # Django Compressor
 # http://django-compressor.readthedocs.org/en/latest/
 # -----------------------------------------------------------------------------
 
 COMPRESS_PRECOMPILERS = ws.COMPRESS_PRECOMPILERS
+
+# -----------------------------------------------------------------------------
+# Haystack
+# -----------------------------------------------------------------------------
+
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 50
 
 # -----------------------------------------------------------------------------
 # Wagtail

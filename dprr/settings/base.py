@@ -235,6 +235,10 @@ ITEMS_PER_PAGE = ws.ITEMS_PER_PAGE
 # http://django-compressor.readthedocs.org/en/latest/
 # -----------------------------------------------------------------------------
 
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.cssmin.CSSMinFilter'
+]
+
 COMPRESS_PRECOMPILERS = ws.COMPRESS_PRECOMPILERS
 
 # -----------------------------------------------------------------------------

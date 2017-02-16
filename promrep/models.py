@@ -576,6 +576,9 @@ class DateInformation(TimeStampedModel):
         return di_str
 
     def has_ruepke_secondary_source(self):
+        if not self.secondary_source:
+            return False
+
         return self.secondary_source.abbrev_name == 'Ruepke'
 
     def get_ruepke_notes(self):

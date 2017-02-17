@@ -431,10 +431,10 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
 <script type="text/javascript">
     var autocompleteDict = {
         {% for item in autocomplete_facets %}
-        "{{ item }}": [
+        '{{ item }}': [
             {% for term in facets.fields|get_item:item %}
             {% with value=term.0 count=term.1 %}
-            {"name": "{{ value.strip }}", "count": "{{count}}"}
+            {'name': '{{ value.strip }}', 'count': '{{count}}'}
             {% if not forloop.last %}, {% endif %} {% endwith %}
             {% endfor %}
         ]

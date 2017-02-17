@@ -27,7 +27,7 @@ var autocomplete = {
             }
           }
         },
-        maxNumberOfElements: 20,
+        maxNumberOfElements: 10,
         sort: { enabled: true },
         onChooseEvent: function() {
           $input.closest('form').submit();

@@ -579,7 +579,7 @@ class DateInformation(TimeStampedModel):
         if not self.secondary_source:
             return False
 
-        return self.secondary_source.abbrev_name == 'Ruepke'
+        return self.secondary_source.abbrev_name.lower() == 'ruepke'
 
     def get_ruepke_notes(self):
         if not self.has_ruepke_secondary_source():
@@ -854,7 +854,10 @@ class PostAssertion(TimeStampedModel):
         return date_str.strip()
 
     def has_ruepke_secondary_source(self):
-        return self.secondary_source.abbrev_name == 'Ruepke'
+        if not self.secondary_source:
+            return False
+
+        return self.secondary_source.abbrev_name.lower() == 'ruepke'
 
     def get_ruepke_notes(self):
         if not self.has_ruepke_secondary_source():

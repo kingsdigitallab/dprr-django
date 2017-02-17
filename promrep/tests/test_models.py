@@ -1,5 +1,6 @@
 from django.test import TestCase
-from promrep.models import Person, Praenomen
+from promrep.models import (DateInformation, NoteType, Person, PersonNote,
+                            PostAssertion, Praenomen, SecondarySource)
 
 
 class PersonTest(TestCase):
@@ -108,3 +109,85 @@ class PraenomenTest(TestCase):
             praenomen = Praenomen(name=p['name'], abbrev=p['abbrev'])
             self.assertEqual(
                 p['alternate_name'], praenomen.alternate_name)
+
+
+class DateInformationTest(TestCase):
+
+    def setUp(self):
+        self.date_info_empty = DateInformation()
+
+        ss = SecondarySource(name='Broughton', abbrev_name='Broughton')
+        self.date_info_broughton = DateInformation(secondary_source=ss)
+
+        ss = SecondarySource(name='Ruepkeeeeeee', abbrev_name='RUEPKE')
+        self.date_info_ruepke_upper = DateInformation(secondary_source=ss)
+
+        ss = SecondarySource(name='Ruepkeeeeeee', abbrev_name='ruepke')
+        self.date_info_ruepke_lower = DateInformation(secondary_source=ss)
+
+    def test__has_ruepke_secondary_source(self):
+        self.assertFalse(self.date_info_empty.has_ruepke_secondary_source())
+        self.assertFalse(
+            self.date_info_broughton.has_ruepke_secondary_source())
+        self.assertTrue(
+            self.date_info_ruepke_upper.has_ruepke_secondary_source())
+        self.assertTrue(
+            self.date_info_ruepke_lower.has_ruepke_secondary_source())
+
+
+class PostAssertionTest(TestCase):
+
+    def setUp(self):
+        self.pa_empty = PostAssertion(secondary_source=SecondarySource())
+
+        person = Person()
+        ss = SecondarySource(name='Broughton', abbrev_name='Broughton')
+        self.pa_broughton = PostAssertion(secondary_source=ss)
+        self.pa_broughton.person = person
+
+        note_ss = SecondarySource(name='x', abbrev_name='y')
+        note_ss.save()
+
+        note_type = NoteType(name='x')
+        note_type.save()
+
+        note = PersonNote(
+            note_type=note_type, secondary_source=note_ss, text='hello')
+        note.save()
+
+        person = Person()
+        person.save()
+        person.notes.add(note)
+
+        ss = SecondarySource(name='Ruepkeeeeeee', abbrev_name='RUEPKE')
+        self.pa_ruepke_upper = PostAssertion(secondary_source=ss)
+        self.pa_ruepke_upper.person = person
+
+        note_type = NoteType(name='ruepke_B')
+        note_type.save()
+
+        self.note_text = 'note text'
+        note = PersonNote(note_type=note_type, secondary_source=note_ss,
+                          text=self.note_text)
+        note.save()
+
+        person = Person()
+        person.save()
+        person.notes.add(note)
+
+        ss = SecondarySource(name='Ruepkeeeeeee', abbrev_name='ruepke')
+        self.pa_ruepke_lower = PostAssertion(secondary_source=ss)
+        self.pa_ruepke_lower.person = person
+
+    def test__has_ruepke_secondary_source(self):
+        self.assertFalse(self.pa_empty.has_ruepke_secondary_source())
+        self.assertFalse(self.pa_broughton.has_ruepke_secondary_source())
+        self.assertTrue(self.pa_ruepke_upper.has_ruepke_secondary_source())
+        self.assertTrue(self.pa_ruepke_lower.has_ruepke_secondary_source())
+
+    def test__get_ruepke_notes(self):
+        self.assertIsNone(self.pa_empty.get_ruepke_notes())
+        self.assertIsNone(self.pa_broughton.get_ruepke_notes())
+        self.assertEqual('', self.pa_ruepke_upper.get_ruepke_notes())
+        self.assertEqual(self.note_text,
+                         self.pa_ruepke_lower.get_ruepke_notes())

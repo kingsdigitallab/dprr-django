@@ -542,7 +542,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     fieldsets = [
         ('Database', {
-            'fields': [('id', 'review_flag'), 'review_notes']},
+            'fields': [('id', 'dprr_id', 'review_flag'), 'review_notes']},
          ),
         ('General Info',
          {
@@ -595,6 +595,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     list_display = (
         'id',
+        'dprr_id',
         'url_to_edit_person',
         'review_flag',
         'updated_by',
@@ -603,8 +604,10 @@ class PersonAdmin(admin.ModelAdmin):
         'created',
     )
 
-    search_fields = ['id', 'nomen', 'cognomen', 'praenomen__abbrev',
-                     'praenomen__name', 'other_names', 're_number', ]
+    search_fields = ['id', 'dprr_id', 'nomen', 'cognomen',
+                     'praenomen__abbrev', 'praenomen__name',
+                     'alt_praenomen__abbrev', 'alt_praenomen__name',
+                     'other_names', 're_number', ]
 
     list_filter = ('nomen', 'review_flag', REUpdatedListFilter, 'patrician',
                    'novus', 'nobilis', )

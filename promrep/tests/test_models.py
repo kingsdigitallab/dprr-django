@@ -57,11 +57,11 @@ class PersonTest(TestCase):
         for p in self.praenomens:
             Praenomen(name=p['name'], abbrev=p['abbrev']).save()
 
-    def test__dprr_id(self):
+    def test__generate_dprr_id(self):
         for item in self.dprr_ids:
             self.person.id = item['id']
             self.person.nomen = item['nomen']
-            self.assertEqual(item['dprr_id'], self.person.dprr_id)
+            self.assertEqual(item['dprr_id'], self.person.generate_dprr_id())
 
     def test__f(self):
         # 1. fail the test

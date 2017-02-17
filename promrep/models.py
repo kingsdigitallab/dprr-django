@@ -263,6 +263,9 @@ class StatusAssertionNote(Note):
 
 @with_author
 class Person(TimeStampedModel):
+    dprr_id = models.CharField(max_length=16, blank=True, null=True,
+                               unique=True)
+
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
     praenomen_uncertain = models.BooleanField(
         verbose_name='Uncertain Praenomen', default=False)
@@ -381,8 +384,7 @@ class Person(TimeStampedModel):
 
         return " ".join(name_l)
 
-    @property
-    def dprr_id(self):
+    def generate_dprr_id(self):
         if not self.nomen:
             return None
 

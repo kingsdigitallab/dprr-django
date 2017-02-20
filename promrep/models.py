@@ -477,7 +477,7 @@ class Person(TimeStampedModel):
         if not self.post_assertions.all():
             return None
 
-        return self.post_assertions.all().order_by('-date_start')
+        return self.post_assertions.all().order_by('date_start')
 
 
 @with_author

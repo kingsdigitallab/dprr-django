@@ -3,10 +3,8 @@
 <ul class="timeline no-bullet">
     {% for pa in person.get_career %}
     <li>
-        {% if pa.uncertain %}?{% endif %}
-
         <strong {% if pa.uncertain %}class="uncertain"{% endif %}>
-            {{ pa.office | title }}
+            {{ pa.office | title }}{% if pa.uncertain %}?{% endif %}
         </strong>
 
         <span class="date">

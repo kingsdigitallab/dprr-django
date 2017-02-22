@@ -149,23 +149,17 @@ def setup_environment():
 
 
 @task
-def quick_deploy(branch=None):
+def deploy(branch=None, index='yes'):
     update(branch)
-    own_django_log()
-    collect_static()
-    update_index()
-    touch_wsgi()
-
-
-@task
-def deploy(branch=None):
-    update(branch)
-#    install_requirements()
+    # install_requirements()
     migrate()
     own_django_log()
     collect_static()
     # clear_cache()
-    update_index()
+
+    if index.lower() == 'yes':
+        update_index()
+
     touch_wsgi()
 
 

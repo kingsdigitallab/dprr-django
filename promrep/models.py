@@ -388,7 +388,15 @@ class Person(TimeStampedModel):
         if not self.nomen:
             return None
 
-        return '{}{:0>4}'.format(self.nomen.upper()[:4], self.id)
+        nomen = self.nomen.upper()
+
+        if nomen[0] == '-':
+            nomen = 'ANON'
+
+        if '(' in nomen:
+            nomen = re.sub(r'\W', '', nomen)
+
+        return '{}{:0>4}'.format(nomen[:4], self.id)
 
     @property
     def f(self):

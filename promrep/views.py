@@ -26,13 +26,6 @@ class PromrepFacetedSearchView(FacetedSearchView):
         StatusAssertion,
         RelationshipAssertion).group_by('person_id')
 
-    def get_initial(self):
-        initial = super(PromrepFacetedSearchView, self).get_initial()
-        initial['date_from'] = PromrepFacetedSearchForm.MIN_DATE
-        initial['date_to'] = PromrepFacetedSearchForm.MAX_DATE
-
-        return initial
-
     def get_queryset(self):
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
         all_facets = self.autocomplete_facets + self.facet_fields
@@ -47,13 +40,14 @@ class PromrepFacetedSearchView(FacetedSearchView):
     def get_context_data(self, **kwargs):  # noqa
         context = super(
             PromrepFacetedSearchView, self).get_context_data(**kwargs)
-        context['querydict'] = self.request.GET
 
         if self.request.GET.getlist('selected_facets'):
             context['selected_facets'] = self.request.GET.getlist(
                 'selected_facets')
 
         qs = self.request.GET.copy()
+        context['querydict'] = qs
+
         if self.request.GET.get('q'):
             qs.pop('q')
 
@@ -164,8 +158,10 @@ class PromrepFacetedSearchView(FacetedSearchView):
         except:
             pass
 
-        context['office_fdict'] = dict(
-            context['facets']['fields']['offices'])
+        if 'offices' not in context['facets']['fields']:
+            context.update({'facets': self.get_queryset().facet_counts()})
+
+        context['office_fdict'] = dict(context['facets']['fields']['offices'])
 
         context['province_list'] = Province.objects.all()
         context['province_fdict'] = dict(
@@ -185,7 +181,7 @@ class PersonDetailView(DetailView):
         relationships = OrderedDict()
 
         relationships_qs = RelationshipAssertion.objects.filter(
-            person=self.get_object
+            person=self.get_object()
         ).order_by('relationship__order', 'relationship_number')
 
         for r in relationships_qs:

@@ -179,11 +179,8 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
         attrs={'class': 'autocomplete', 'title': 'Grandfather'}))
     f = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'autocomplete', 'title': 'Father'}))
-    other_names = forms.CharField(
-        required=False, widget=forms.TextInput(
-            attrs={'class': 'autocomplete',
-                   'title': 'Additional Cognomina'})
-    )
+    other_names = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Additional Cognomina'}))
     tribe = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'autocomplete', 'title': 'Tribe'}))
 
@@ -222,7 +219,7 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
                           'n', 'f', 'other_names', 'tribe'):
                 if field in data:
                     if data.get(field):
-                        sqs = sqs.narrow('{}:{}'.format(
-                            field, data.get(field)))
+                        sqs = sqs.narrow(
+                            '{}:{}'.format(field, data.get(field)))
 
         return sqs

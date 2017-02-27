@@ -93,7 +93,7 @@ class BasePage(Page):
 
     All pages in wagtailbase inherit from this class."""
 
-    is_abstract = True
+    is_creatable = False
 
     @classmethod
     def register_subpage_type(cls, new_page_type):
@@ -140,11 +140,9 @@ class BaseIndexPage(RoutablePageMixin, BasePage):
     children pages."""
     introduction = RichTextField(blank=True)
 
-    search_fields = Page.search_fields + (  # Inherit search_fields from Page
-        index.SearchField('introduction'),
-    )
+    search_fields = Page.search_fields + [index.SearchField('introduction')]
 
-    is_abstract = True
+    is_creatable = False
 
     @property
     def children(self):
@@ -176,10 +174,9 @@ class BaseRichTextPage(BasePage):
     """Base class for rich text pages."""
     content = RichTextField()
 
-    search_fields = Page.search_fields + (  # Inherit search_fields from Page
-        index.SearchField('content'),
-    )
-    is_abstract = True
+    search_fields = Page.search_fields + [index.SearchField('content')]
+
+    is_creatable = False
 
     @property
     def index_page(self):

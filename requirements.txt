@@ -5,15 +5,14 @@ Pillow
 Unidecode
 beautifulsoup4
 bleach
-ddh-django-utils
 django-appconf
-django-author==0.4.0
+django-author
 django-extensions
 django-grappelli
 django-model-utils
 django-mptt
 django-mptt-admin
-django-redis==3.6.1
+django-redis
 git+git://github.com/kingsdigitallab/django-haystack.git
 lxml
 psycopg2

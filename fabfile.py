@@ -22,6 +22,7 @@ from django.conf import settings  # noqa
 REPOSITORY = 'git@github.com:kingsdigitallab/dprr-django.git'
 
 env.user = settings.FABRIC_USER
+env.gateway = 'ssh.cch.kcl.ac.uk'
 env.hosts = ['dprr.dighum.kcl.ac.uk']
 env.root_path = '/vol/dprr/webroot/'
 env.envs_path = os.path.join(env.root_path, 'envs')
@@ -148,23 +149,17 @@ def setup_environment():
 
 
 @task
-def quick_deploy(branch=None):
+def deploy(branch=None, index='yes'):
     update(branch)
-    own_django_log()
-    collect_static()
-    update_index()
-    touch_wsgi()
-
-
-@task
-def deploy(branch=None):
-    update(branch)
-#    install_requirements()
+    install_requirements()
     migrate()
     own_django_log()
     collect_static()
     # clear_cache()
-    update_index()
+
+    if index.lower() == 'yes':
+        update_index()
+
     touch_wsgi()
 
 

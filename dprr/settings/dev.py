@@ -2,8 +2,8 @@ from base import *  # noqa
 
 DEBUG = True
 
-CACHE_REDIS_DATABASE = '3'
-CACHES['default']['LOCATION'] = '127.0.0.1:6379:' + CACHE_REDIS_DATABASE  # noqa
+CACHE_REDIS_DATABASE = '2'
+CACHES['default']['LOCATION'] = '127.0.0.1:6379/' + CACHE_REDIS_DATABASE  # noqa
 
 INTERNAL_IPS = ('dprr-dev.dighum.kcl.ac.uk', '137.73.123.239', )
 
@@ -22,8 +22,6 @@ LOGGING_LEVEL = logging.DEBUG  # noqa
 LOGGING['loggers']['django']['level'] = LOGGING_LEVEL  # noqa
 LOGGING['loggers']['django_auth_ldap']['level'] = LOGGING_LEVEL  # noqa
 LOGGING['loggers']['promrep']['level'] = LOGGING_LEVEL  # noqa
-
-TEMPLATE_DEBUG = True
 
 # -----------------------------------------------------------------------------
 # Development Installed Applications Settings

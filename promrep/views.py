@@ -1,23 +1,23 @@
+from collections import OrderedDict
+
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.views.generic.detail import DetailView
 from haystack.generic_views import FacetedSearchView
 from promrep.forms import PromrepFacetedSearchForm
-from promrep.models import (
-    Office, Person, PostAssertion, Province, RelationshipAssertion,
-    StatusAssertion
-)
+from promrep.models import (Office, Person, PostAssertion, Province,
+                            RelationshipAssertion, StatusAssertion)
 from promrep.solr_backends.solr_backend_field_collapsing import \
     GroupedSearchQuerySet
 
 
 class PromrepFacetedSearchView(FacetedSearchView):
-    facet_fields = ['eques', 'gender', 'nobilis', 'novus', 'tribe',
+    facet_fields = ['gender', 'nobilis', 'novus', 'tribe',
                     'patrician', 'province', 'offices', 'life_date_types',
-                    'senator']
+                    'eques']
 
     autocomplete_facets = ['praenomen', 'nomen', 'cognomen', 're_number',
-                           'province', 'n', 'f', 'other_names']
+                           'province', 'n', 'f', 'other_names', 'tribe']
 
     form_class = PromrepFacetedSearchForm
     load_all = True
@@ -25,13 +25,6 @@ class PromrepFacetedSearchView(FacetedSearchView):
         PostAssertion,
         StatusAssertion,
         RelationshipAssertion).group_by('person_id')
-
-    def get_initial(self):
-        initial = super(PromrepFacetedSearchView, self).get_initial()
-        initial['date_from'] = PromrepFacetedSearchForm.MIN_DATE
-        initial['date_to'] = PromrepFacetedSearchForm.MAX_DATE
-
-        return initial
 
     def get_queryset(self):
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
@@ -47,13 +40,14 @@ class PromrepFacetedSearchView(FacetedSearchView):
     def get_context_data(self, **kwargs):  # noqa
         context = super(
             PromrepFacetedSearchView, self).get_context_data(**kwargs)
-        context['querydict'] = self.request.GET
 
         if self.request.GET.getlist('selected_facets'):
             context['selected_facets'] = self.request.GET.getlist(
                 'selected_facets')
 
         qs = self.request.GET.copy()
+        context['querydict'] = qs
+
         if self.request.GET.get('q'):
             qs.pop('q')
 
@@ -119,10 +113,55 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 context[afacet] = (url, self.request.GET.get(afacet))
 
         # hierarchical facets data
-        # TODO: simplify?
-        context['office_list'] = Office.objects.all()
-        context['office_fdict'] = dict(
-            context['facets']['fields']['offices'])
+        try:
+            magisterial = Office.objects.get(id=2)
+            if magisterial:
+                context[
+                    'magisterial_office_list'
+                ] = magisterial.get_descendants()
+        except:
+            pass
+
+        try:
+            promagistracies = Office.objects.get(id=214)
+            if promagistracies:
+                context[
+                    'promagistracies_office_list'
+                ] = promagistracies.get_descendants()
+        except:
+            pass
+
+        try:
+            priesthoods = Office.objects.get(id=1)
+            if priesthoods:
+                context[
+                    'priesthoods_office_list'
+                ] = priesthoods.get_descendants()
+        except:
+            pass
+
+        try:
+            non_magisterial = Office.objects.get(id=210)
+            if non_magisterial:
+                context[
+                    'non_magisterial_office_list'
+                ] = non_magisterial.get_descendants()
+        except:
+            pass
+
+        try:
+            distinctions = Office.objects.get(id=270)
+            if distinctions:
+                context[
+                    'distinctions_office_list'
+                ] = distinctions.get_descendants()
+        except:
+            pass
+
+        if 'offices' not in context['facets']['fields']:
+            context.update({'facets': self.get_queryset().facet_counts()})
+
+        context['office_fdict'] = dict(context['facets']['fields']['offices'])
 
         context['province_list'] = Province.objects.all()
         context['province_fdict'] = dict(
@@ -138,8 +177,21 @@ class PersonDetailView(DetailView):
     def get_context_data(self, **kwargs):  # noqa
         context = super(
             PersonDetailView, self).get_context_data(**kwargs)
-        context['relationships'] = RelationshipAssertion.objects.filter(
-            person=self.get_object)
+
+        relationships = OrderedDict()
+
+        relationships_qs = RelationshipAssertion.objects.filter(
+            person=self.get_object()
+        ).order_by('relationship__order', 'relationship_number')
+
+        for r in relationships_qs:
+            if r.relationship not in relationships:
+                relationships[r.relationship] = []
+
+            relationships[r.relationship].append(r)
+
+        context['relationships'] = relationships
+
         return context
 
 

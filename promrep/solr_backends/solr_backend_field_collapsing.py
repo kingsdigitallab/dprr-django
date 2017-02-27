@@ -8,13 +8,15 @@ from __future__ import absolute_import
 
 import logging
 
-from django.db.models.loading import get_model
+from django.apps import apps
 from haystack.backends import EmptyResults
 from haystack.backends.solr_backend import (SolrEngine, SolrSearchBackend,
                                             SolrSearchQuery)
 from haystack.constants import DJANGO_CT, DJANGO_ID, ID
 from haystack.models import SearchResult
 from haystack.query import SearchQuerySet
+
+get_model = apps.get_model
 
 
 # Since there's no chance of this being portable (yet!) we'll import explicitly

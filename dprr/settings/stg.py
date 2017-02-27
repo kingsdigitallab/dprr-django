@@ -1,7 +1,7 @@
 from base import *  # noqa
 
-CACHE_REDIS_DATABASE = '2'
-CACHES['default']['LOCATION'] = '127.0.0.1:6379:' + CACHE_REDIS_DATABASE  # noqa
+CACHE_REDIS_DATABASE = '1'
+CACHES['default']['LOCATION'] = '127.0.0.1:6379/' + CACHE_REDIS_DATABASE  # noqa
 
 INTERNAL_IPS = ('dprr-stg.dighum.kcl.ac.uk', '137.73.123.239',)
 ALLOWED_HOSTS = ['dprr-stg.dighum.kcl.ac.uk']

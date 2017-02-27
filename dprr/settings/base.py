@@ -14,7 +14,6 @@ https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 import os
 
 from ddhldap.settings import *  # noqa
-from django.conf import global_settings
 from wagtailbase import settings as ws
 
 BASE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..')
@@ -28,7 +27,6 @@ PROJECT_TITLE = 'Digitising the Prosopography of the Roman Republic'
 # -----------------------------------------------------------------------------
 
 ADMINS = (
-    ('Luis Figueira', 'luis.figueira@kcl.ac.uk'),
 )
 MANAGERS = ADMINS
 
@@ -38,14 +36,14 @@ ALLOWED_HOSTS = []
 # https://docs.djangoproject.com/en/dev/topics/cache/
 # http://redis.io/topics/lru-cache
 # http://niwibe.github.io/django-redis/
-CACHE_REDIS_DATABASE = '1'
+CACHE_REDIS_DATABASE = '0'
 
 CACHES = {
     'default': {
-        'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': '127.0.0.1:6379:' + CACHE_REDIS_DATABASE,
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/' + CACHE_REDIS_DATABASE,
         'OPTIONS': {
-            'CLIENT_CLASS': 'redis_cache.client.DefaultClient',
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
             'IGNORE_EXCEPTIONS': True
         }
     }
@@ -58,7 +56,6 @@ DATABASES = {
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-TEMPLATE_DEBUG = False
 
 INSTALLED_APPS = (
     'grappelli.dashboard',
@@ -156,16 +153,25 @@ ROOT_URLCONF = PROJECT_NAME + '.urls'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ''
 
-TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
-    'django.core.context_processors.request',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.media',
+                'django.template.context_processors.request',
+                'django.template.context_processors.static',
+                'django.contrib.messages.context_processors.messages',
+            ],
+            'debug': False,
+        },
+    },
+]
 
-TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'), )
-
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
 
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 LANGUAGE_CODE = 'en-gb'
@@ -230,13 +236,22 @@ if not os.path.exists(MEDIA_ROOT):
 
 ITEMS_PER_PAGE = ws.ITEMS_PER_PAGE
 
-
 # -----------------------------------------------------------------------------
 # Django Compressor
 # http://django-compressor.readthedocs.org/en/latest/
 # -----------------------------------------------------------------------------
 
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.cssmin.CSSMinFilter'
+]
+
 COMPRESS_PRECOMPILERS = ws.COMPRESS_PRECOMPILERS
+
+# -----------------------------------------------------------------------------
+# Haystack
+# -----------------------------------------------------------------------------
+
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 50
 
 # -----------------------------------------------------------------------------
 # Wagtail

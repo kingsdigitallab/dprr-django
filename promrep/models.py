@@ -67,12 +67,25 @@ class Praenomen(models.Model):
     abbrev = models.CharField(max_length=32, unique=True)
     name = models.CharField(max_length=128, unique=True)
 
-    def __unicode__(self):
-        return self.name
-
     class Meta:
         verbose_name_plural = 'Praenomina'
         ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+    @property
+    def alternate_name(self):
+        if self.has_alternate_name():
+            return 'C' + self.name[1:]
+
+        return None
+
+    def has_alternate_name(self):
+        if not self.name:
+            return False
+
+        return self.name[0].upper() == 'G'
 
 
 class Sex(models.Model):
@@ -250,6 +263,9 @@ class StatusAssertionNote(Note):
 
 @with_author
 class Person(TimeStampedModel):
+    dprr_id = models.CharField(max_length=16, blank=True, null=True,
+                               unique=True)
+
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
     praenomen_uncertain = models.BooleanField(
         verbose_name='Uncertain Praenomen', default=False)
@@ -299,10 +315,6 @@ class Person(TimeStampedModel):
     novus = models.NullBooleanField(default=None, null=True)
     novus_uncertain = models.NullBooleanField(default=False)
     novus_notes = models.TextField(blank=True)
-
-    eques = models.NullBooleanField(default=None, null=True)
-    eques_uncertain = models.BooleanField(default=False)
-    eques_notes = models.TextField(blank=True)
 
     nobilis = models.NullBooleanField(default=None, null=True)
     nobilis_uncertain = models.BooleanField(default=False)
@@ -372,33 +384,63 @@ class Person(TimeStampedModel):
 
         return " ".join(name_l)
 
+    def generate_dprr_id(self):
+        if not self.nomen:
+            return None
+
+        return '{}{:0>4}'.format(self.nomen.upper()[:4], self.id)
+
     @property
     def f(self):
+        return self._get_ancestor_praenomens(r'([^-].*?) f\..*')
+
+    def _get_ancestor_praenomens(self, pattern):
         if not self.filiation:
             return None
 
         filiation = self.filiation.strip()
 
-        found = re.search(r'([^-].*?) f\..*', filiation)
+        found = re.search(pattern, filiation)
 
         if not found:
             return None
 
-        return found.groups()[0]
+        praenomens = []
+        text = found.groups()[0]
+
+        if ' or ' in text:
+            text = text.split(' or ')
+        else:
+            text = [text]
+
+        for abbrev in text:
+            # only need the content up to the first space
+            abbrev = abbrev.split()[0]
+            praenomens_qs = Praenomen.objects.filter(abbrev=abbrev)
+
+            if praenomens_qs:
+                p = praenomens_qs[0]
+                praenomens.append(p.name)
+
+                if p.has_alternate_name():
+                    praenomens.append(p.alternate_name)
+
+        return praenomens
 
     @property
     def n(self):
-        if not self.filiation:
+        return self._get_ancestor_praenomens(
+            r'(?:.*\s+f\.\s+)?(.*[^-])\s+n\.')
+
+    @property
+    def other_names_plain(self):
+        """Returns a plain version of the other names, without special
+        characters or numbers."""
+        if not self.other_names:
             return None
 
-        filiation = self.filiation.strip()
-
-        found = re.search(r'(?:.*\s+f\.\s+)?(.*[^-])\s+n\.', filiation)
-
-        if not found:
-            return None
-
-        return found.groups()[0]
+        other_names = self.other_names.strip()
+        return re.sub(r'([^\w\.\s])|(\d+)', '', other_names).strip()
 
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (
@@ -410,6 +452,32 @@ class Person(TimeStampedModel):
 
     def related_label(self):
         return self.url_to_edit_person()
+
+    def has_status_information(self):
+        return self.patrician or self.nobilis or self.novus or self.is_eques()
+
+    def is_eques(self):
+        return self.statusassertion_set.filter(
+            status__name__iexact='eques') > 0
+
+    def get_eques_status_assertion(self):
+        if not self.is_eques():
+            return None
+
+        return self.statusassertion_set.filter(
+            status__name__iexact='eques').first()
+
+    def get_dates(self):
+        if not self.dateinformation_set.all():
+            return None
+
+        return self.dateinformation_set.all().order_by('value')
+
+    def get_career(self):
+        if not self.post_assertions.all():
+            return None
+
+        return self.post_assertions.all().order_by('date_start')
 
 
 @with_author
@@ -489,23 +557,42 @@ class DateInformation(TimeStampedModel):
         verbose_name = 'Date'
 
     def __unicode__(self):
-        date_str = ""
+        date_str = ''
+
+        if self.value >= 0:
+            date_str = 'A.D. '
+
+        date_str += str(abs(self.value))
 
         if self.uncertain:
-            date_str = date_str + "?"
+            date_str += '?'
 
-        if self.value < 0:
-            date_str = date_str + str(abs(self.value)) + " B.C."
-        else:
-            date_str = date_str + str(self.value) + " A.D."
+        label = self.get_date_interval_display()
+        label = label if label != self.INTERVAL_CHOICES[0][1] else ''
 
-        di_str = "{} {}, {}".format(self.get_date_interval_display(),
-                                    date_str,
-                                    self.date_type)
+        di_str = '{} {}, {}'.format(label, date_str, self.date_type)
+
         if self.secondary_source:
-            di_str += " ({})".format(self.secondary_source.abbrev_name)
+            di_str += ' ({})'.format(self.secondary_source.abbrev_name)
 
         return di_str
+
+    def has_ruepke_secondary_source(self):
+        if not self.secondary_source:
+            return False
+
+        return self.secondary_source.abbrev_name.lower() == 'ruepke'
+
+    def get_ruepke_notes(self):
+        if not self.has_ruepke_secondary_source():
+            return None
+
+        texts = [
+            note.text for note in self.person.notes.filter(
+                note_type__name='ruepke_LD')
+        ]
+
+        return ', '.join(texts)
 
 
 @with_author
@@ -538,6 +625,7 @@ class Office(MPTTModel, TimeStampedModel):
 class RelationshipType(TimeStampedModel):
 
     name = models.CharField(max_length=256, unique=True)
+    order = models.PositiveSmallIntegerField(default=0)
     description = models.CharField(max_length=1024, blank=True)
 
     def __unicode__(self):
@@ -589,12 +677,14 @@ class Group(TimeStampedModel):
 
     def print_date(self):
         if self.date_year:
-            if self.date_year < 0:
-                return str(abs(self.date_year)) + " B.C."
-            else:
-                return str(self.date_year) + " A.D."
-        else:
-            return ""
+            date_str = str(abs(self.date_year))
+
+            if self.date_year >= 0:
+                return 'A.D. ' + date_str
+
+            return date_str
+
+        return ''
 
     def __unicode__(self):
         members = str(self.persons.count())
@@ -764,6 +854,23 @@ class PostAssertion(TimeStampedModel):
                 date_str = "date uncertain"
 
         return date_str.strip()
+
+    def has_ruepke_secondary_source(self):
+        if not self.secondary_source:
+            return False
+
+        return self.secondary_source.abbrev_name.lower() == 'ruepke'
+
+    def get_ruepke_notes(self):
+        if not self.has_ruepke_secondary_source():
+            return None
+
+        texts = [
+            note.text for note in self.person.notes.filter(
+                note_type__name='ruepke_B')
+        ]
+
+        return ', '.join(texts)
 
 
 @with_author

@@ -1,0 +1,40 @@
+{% if person.get_career %}
+<h3>Career</h3>
+<ul class="timeline no-bullet">
+    {% for pa in person.get_career %}
+    <li>
+        <strong {% if pa.uncertain %}class="uncertain"{% endif %}>
+            {{ pa.office | title }}{% if pa.uncertain %}?{% endif %}
+        </strong>
+
+        <span class="date">
+            {{ pa.print_date|safe }}
+        </span>
+
+        {% if pa.provinces %}
+        {{ pa.print_provinces }}
+        {% endif %}
+
+        {% if pa.secondary_source %}
+        ({{ pa.secondary_source }})
+        {% endif %}
+
+        {% if pa.has_ruepke_secondary_source and not pa.notes.count %}
+        <a href="#" class="expander right">Expand
+            <i class="fa fa-caret-right"></i>
+        </a>
+        <p class="hide collapsible">{{ pa.get_ruepke_notes|capfirst }}</p>
+        {% elif pa.notes.count %}
+        <a href="#" class="expander right">Expand
+            <i class="fa fa-caret-right"></i>
+        </a>
+        <ul class="no-bullet hide collapsible">
+            {% for note in pa.notes.all %}
+            <li>{{ note.text }} (<em>{{ note.secondary_source.abbrev_name }}</em>)</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}

@@ -48,7 +48,8 @@ class Command(BaseCommand):
                         inv = RelationshipAssertion(
                             person=relassert.related_person,
                             related_person=relassert.person,
-                            relationship=inv_type)
+                            relationship=inv_type,
+                            uncertain=relassert.uncertain)
                         # inv.save()
                         csv_log.writerow({
                             "person": inv.person,

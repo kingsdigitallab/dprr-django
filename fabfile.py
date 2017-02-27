@@ -151,7 +151,7 @@ def setup_environment():
 @task
 def deploy(branch=None, index='yes'):
     update(branch)
-    # install_requirements()
+    install_requirements()
     migrate()
     own_django_log()
     collect_static()

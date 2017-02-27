@@ -9,8 +9,10 @@ class PersonTest(TestCase):
         self.dprr_ids = [
             {'nomen': None, 'id': 1, 'dprr_id': None},
             {'nomen': 'Iulius', 'id': 1957, 'dprr_id': 'IULI1957'},
+            {'nomen': '(Li)cinius', 'id': 1957, 'dprr_id': 'LICI1957'},
             {'nomen': 'Tullius', 'id': 72, 'dprr_id': 'TULL0072'},
             {'nomen': 'Yo', 'id': 1, 'dprr_id': 'YO0001'},
+            {'nomen': '-Something', 'id': 1, 'dprr_id': 'ANON0001'},
         ]
         self.filiations = [
             {'text': None, 'f': None, 'n': None},

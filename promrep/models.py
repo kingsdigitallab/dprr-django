@@ -937,6 +937,11 @@ class RelationshipAssertion(TimeStampedModel):
         return "{} is {} {}".format(
             self.person, self.relationship, self.related_person)
 
+    # flag indicates that the Status Assertion was manually verified
+    #   and should not be edited/deleted automatically    
+    is_verified = models.BooleanField(
+        verbose_name="Editor Verified", default=False)
+
     # Return the inverse of the objects
     # relationship type based on gender of people
     def get_inverse_relationship(self):

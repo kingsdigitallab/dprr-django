@@ -152,13 +152,24 @@ class PostAssertionIndex(AssertionIndex):
         # these should all be recorded as Status assertions instead
         #      see: https://jira.dighum.kcl.ac.uk/browse/DPRR-256
 
-        senator_offices = Office.objects.get(
-            name='senator').get_descendants(include_self=True)
-        sen_q = Q(office__in=senator_offices)
+        sen_q = None
+
+        try:
+            senator_offices = Office.objects.get(
+                name='senator').get_descendants(include_self=True)
+            sen_q = Q(office__in=senator_offices)
+        except:
+            pass
 
         # flat list of different office ids the person held
-        olist = object.person.post_assertions.exclude(sen_q).values_list(
+        olist = object.person.post_assertions.values_list(
             'office__id', flat=True)
+
+        if sen_q:
+            # flat list of different office ids the person held
+            olist = object.person.post_assertions.exclude(sen_q).values_list(
+                'office__id', flat=True)
+
         # list of Office objects
         olist = [Office.objects.get(id=o) for o in list(set(olist))]
 

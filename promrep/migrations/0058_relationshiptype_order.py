@@ -16,5 +16,5 @@ class Migration(migrations.Migration):
             name='order',
             field=models.PositiveSmallIntegerField(default=0),
         ),
-         
+           
     ]

@@ -10,7 +10,11 @@ def add_inverse(apps, relationship, sex, inverse_name):
     RelationshipInverse = apps.get_model("promrep", "RelationshipInverse")
     RelationshipType = apps.get_model("promrep", "RelationshipType")
     inverse, created = RelationshipType.objects.get_or_create(name=inverse_name)
-    RelationshipInverse.objects.get_or_create(relationship=relationship, sex=sex, inverse_relationship=inverse)    
+    RelationshipInverse.objects.get_or_create(relationship=relationship, sex=sex, inverse_relationship=inverse)
+
+def removed_inverse(apps, schema_editor):    
+    RelationshipInverse = apps.get_model("promrep", "RelationshipInverse")
+    RelationshipInverse.objects.all().delete()
 
 
 def add_inverse_relationship_types(apps, schema_editor):
@@ -146,5 +150,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-    	migrations.RunPython(add_inverse_relationship_types)
+    	migrations.RunPython(add_inverse_relationship_types,removed_inverse)
     ] 

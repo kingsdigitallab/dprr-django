@@ -144,8 +144,6 @@ class RelationshipAssertionAdmin(admin.ModelAdmin):
                     'relationship_number', 'uncertain', 'secondary_source',
                     'review_flag', 'created', 'modified')
 
-    ordering = ('id', 'relationship_number')
-
     readonly_fields = ('id', 'created', 'modified')
 
     raw_id_fields = ['person', 'related_person',
@@ -187,7 +185,7 @@ admin.site.register(RelationshipAssertion, RelationshipAssertionAdmin)
 class InverseRelationshipInline(admin.StackedInline):
     model = RelationshipAssertion
     form = RelationshipAssertionInlineForm
-    ordering = ('id', 'relationship_number')
+
     fk_name = 'related_person'
     extra = 0
 
@@ -219,7 +217,7 @@ class InverseRelationshipInline(admin.StackedInline):
 class DirectRelationshipInline(admin.StackedInline):
     model = RelationshipAssertion
     form = RelationshipAssertionInlineForm
-    ordering = ('id', 'relationship_number')
+
     fk_name = 'person'
     extra = 0
 

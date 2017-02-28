@@ -953,7 +953,7 @@ class RelationshipAssertion(TimeStampedModel):
             return None
 
     class Meta:
-        ordering = ['relationship_number', 'id']
+        ordering = ['relationship__order', 'relationship_number', 'id']
 
 
 class RelationshipInverse(models.Model):

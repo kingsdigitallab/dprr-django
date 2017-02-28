@@ -60,6 +60,7 @@ class StatusAssertionInline(admin.StackedInline):
 
 class RelationshipAssertionListInline(admin.TabularInline):
     verbose_name_plural = 'Relationship Assertions'
+    ordering = ('id', 'relationship_number')
 
     model = RelationshipAssertion.references.through
     extra = 0
@@ -143,6 +144,8 @@ class RelationshipAssertionAdmin(admin.ModelAdmin):
     list_display = ('id', 'person', 'relationship', 'related_person',
                     'relationship_number', 'uncertain', 'secondary_source',
                     'review_flag', 'created', 'modified')
+
+    ordering = ('id', 'relationship_number')
 
     readonly_fields = ('id', 'created', 'modified')
 
@@ -424,6 +427,7 @@ class PersonNoteInline(admin.StackedInline):
 
 
 class PostAssertionInline(admin.StackedInline):
+
     """Included in the Person Admin"""
 
     model = PostAssertion

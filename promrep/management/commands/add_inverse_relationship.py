@@ -24,6 +24,9 @@ class Command(BaseCommand):
                     "person",
                     "related_person",
                     "inverse_relationship_type",
+                    "uncertain",
+                    "primary source",
+                    "secondary source",
                     "id",
                     "original_person",
                     "original_related_person",
@@ -37,24 +40,36 @@ class Command(BaseCommand):
             for relassert in RelationshipAssertion.objects.all():
                 # Get inverse of relationship
                 inv_type = relassert.get_inverse_relationship()
+                # print inv_type
                 if inv_type is not None:
                     # Check if inverse already exists
                     invs = RelationshipAssertion.objects.filter(
                         person=relassert.related_person,
                         related_person=relassert.person,
-                        relationship=inv_type)
+                        relationship=inv_type.inverse_relationship)
                     if invs.count() == 0:
                         # Add inverse relationship
+                        refs = relassert.references.all()
                         inv = RelationshipAssertion(
                             person=relassert.related_person,
                             related_person=relassert.person,
-                            relationship=inv_type,
-                            uncertain=relassert.uncertain)
+                            relationship=inv_type.inverse_relationship,
+                            uncertain=relassert.uncertain,
+                            secondary_source=relassert.secondary_source,
+
+                        )
+                        refstring = ""
+                        for ref in refs:
+                            refstring += ref.print_primary_source_refs()
+                        # inv.references=refs
                         # inv.save()
                         csv_log.writerow({
                             "person": inv.person,
                             "related_person": inv.related_person,
                             "inverse_relationship_type": inv.relationship,
+                            "uncertain": inv.uncertain,
+                            "primary source": refstring,
+                            "secondary source": inv.secondary_source,
                             "id": relassert.id,
                             "original_person": relassert.person,
                             "original_related_person":

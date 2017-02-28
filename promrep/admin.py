@@ -60,7 +60,6 @@ class StatusAssertionInline(admin.StackedInline):
 
 class RelationshipAssertionListInline(admin.TabularInline):
     verbose_name_plural = 'Relationship Assertions'
-    ordering = ('id', 'relationship_number')
 
     model = RelationshipAssertion.references.through
     extra = 0
@@ -188,6 +187,7 @@ admin.site.register(RelationshipAssertion, RelationshipAssertionAdmin)
 class InverseRelationshipInline(admin.StackedInline):
     model = RelationshipAssertion
     form = RelationshipAssertionInlineForm
+    ordering = ('id', 'relationship_number')
     fk_name = 'related_person'
     extra = 0
 
@@ -219,6 +219,7 @@ class InverseRelationshipInline(admin.StackedInline):
 class DirectRelationshipInline(admin.StackedInline):
     model = RelationshipAssertion
     form = RelationshipAssertionInlineForm
+    ordering = ('id', 'relationship_number')
     fk_name = 'person'
     extra = 0
 

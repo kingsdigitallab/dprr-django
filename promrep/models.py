@@ -190,6 +190,7 @@ class Note(TimeStampedModel):
 
 @with_author
 class RelationshipAssertionReference(Note):
+
     """This is a SecondarySourceNote/Reference
     """
 
@@ -938,7 +939,7 @@ class RelationshipAssertion(TimeStampedModel):
             self.person, self.relationship, self.related_person)
 
     # flag indicates that the Status Assertion was manually verified
-    #   and should not be edited/deleted automatically    
+    # and should not be edited/deleted automatically
     is_verified = models.BooleanField(
         verbose_name="Editor Verified", default=False)
 

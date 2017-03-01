@@ -41,12 +41,18 @@ class Command(BaseCommand):
         return relationships
 
     def writeassetion(self, new_assert, source_assert):
+        refstring = ""
+        for ref in new_assert.references:
+            refstring += ref.print_primary_source_refs()
         self.csv_log.writerow({
             "inferred_person_id": new_assert.person.id,
             "inferred_person": new_assert.person,
             "inferred_related_person_id": new_assert.related_person.id,
             "inferred_related_person": new_assert.related_person,
             "inferred_relationship_type": new_assert.relationship,
+            "uncertain": new_assert.uncertain,
+            "primary source": refstring,
+            "secondary source": new_assert.secondary_source,
             "assertion_id": source_assert.id,
             "source_person_id": source_assert.person.id,
             "source_person": source_assert.person,
@@ -228,6 +234,9 @@ class Command(BaseCommand):
                     "inferred_person_id",
                     "inferred_person",
                     "inferred_relationship_type",
+                    "uncertain",
+                    "primary source",
+                    "secondary source",
                     "inferred_related_person_id",
                     "inferred_related_person",
                     "assertion_id",

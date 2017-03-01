@@ -60,10 +60,10 @@ class Command(BaseCommand):
 
                         )
                         refstring = ""
+                        inv.save()
                         for ref in refs:
                             refstring += ref.print_primary_source_refs()
-                        inv.save()
-                        inv.references.add(refs)
+                            inv.references.add(ref)
                         csv_log.writerow({
                             "person": inv.person,
                             "related_person": inv.related_person,

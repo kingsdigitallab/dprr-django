@@ -4,58 +4,60 @@
 {% load compress staticfiles wagtailbase_tags wagtailuserbar %}
 
 <html lang="en">
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=IE8">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=IE8">
 
-	<!-- TODO: implement keywords and description -->
-	<meta name="keywords" content="{% block meta_keywords %}{% endblock %}">
-	<meta name="description" content="{% block meta_description %}{% endblock %}">
+        <!-- TODO: implement keywords and description -->
+        <meta name="keywords" content="{% block meta_keywords %}{% endblock %}">
+        <meta name="description" content="{% block meta_description %}{% endblock %}">
 
-	<!-- Favicon -->
-	{% include 'includes/favicon.html' %}
+        <!-- Favicon -->
+        {% include 'includes/favicon.html' %}
 
-	<title>{% block meta_title %}{% endblock %} | DPRR</title>
+        <title>{% block meta_title %}{% endblock %} | DPRR</title>
 
-	<!-- <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" /> -->
+        <!-- <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" /> -->
 
-	{% compress css %}
-	{# SCSS compilation relies on django compressor #}
-	<link rel="stylesheet" type="text/x-scss" href="{% static 'scss/app.scss' %}" />
-	{% endcompress %}
+        {% compress css %}
+        {# SCSS compilation relies on django compressor #}
+        <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/app.scss' %}" />
+        {% endcompress %}
 
-	{% block headercss %}
-	{% endblock %}
+        {% block headercss %}
+        {% endblock %}
 
+        {% compress js %}
+        <script src="{% static 'vendor/modernizr/modernizr.js' %}"></script>
+        {% endcompress %}
+    </head>
+    <body id="body"{% block pageclass %}{% endblock %}>
 
-	<script src="{% static 'vendor/modernizr/modernizr.js' %}"></script>
-</head>
-<body id="body"{% block pageclass %}{% endblock %}>
+        {% include "includes/header.html" %}
 
-	{% include "includes/header.html" %}
+        {% include "includes/nav.html" %}
 
-	{% include "includes/nav.html" %}
+        <div class="contain-to-grid content-area">
+            <section class="main">
+                {% block main %}
+                {% endblock %}
+            </section>
+        </div>
 
-	<div class="contain-to-grid content-area">
-		<section class="main">
-		{% block main %}
-		{% endblock %}
-		</section>
-	</div>
+        {% include "includes/footer.html" %}
 
-	{% include "includes/footer.html" %}
+        {% compress js %}
+        <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
+        <script src="{% static 'vendor/foundation/js/foundation.min.js' %}"></script>
+        <script src="{% static 'javascripts/config.js' %}"></script>
 
-	<script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
-	<script src="{% static 'vendor/foundation/js/foundation.min.js' %}"></script>
-	<script src="{% static 'javascripts/config.js' %}"></script>
+        {% block footerscripts %}
+        {% endblock %}
 
-	{% block footerscripts %}
-	{% endblock %}
-
-	<script>
-		$(document).foundation();
-	</script>
-
-</body>
+        <script>
+        $(document).foundation();
+        </script>
+        {% endcompress %}
+    </body>
 </html>

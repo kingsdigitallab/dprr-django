@@ -68,5 +68,5 @@ There are various scripts in the `promrep/scripts` folder. Most were written to 
 
 ##### Management Scripts
 
-* `add_highest_office`: script that adds the `highest_office` field to all persons on the database. The script checks if the `highest_office_edited` field is False and, if so, overwrites it.
-* `add_senator_statusassertions`: # this script enriches the database with the Senator StatusAssertions; for full rules and dicussion please see the [original JIRA ticket]( https://jira.dighum.kcl.ac.uk/projects/DPRR/issues/DPRR-256)
+* `add_highest_office`: script that adds the `highest_office` field to all persons on the database. The script checks if the `highest_office_edited` field is False and, if so, overwrites it;
+* `add_senator_statusassertions`: # this script enriches the database with the Senator StatusAssertions; for full rules and dicussion please see the [original JIRA ticket]( https://jira.dighum.kcl.ac.uk/projects/DPRR/issues/DPRR-256). Only adds/removes StatusAssertions if the person doesn't have any Senatorial StatusAssertions flagged as `is_verified` (defaults to False). 

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load ddh_utils_tags staticfiles wagtailbase_tags wagtailcore_tags %}
+{% load wagtailbase_tags %}
 
 {% block meta_title %}Person Details{% endblock %}
 
@@ -7,92 +7,29 @@
 
 <div class="row">
     <div class="large-12 columns">
+        <h2>{{ person.dprr_id }} {{ person }}</h2>
 
-      <h1>{{ person }}</h1>
+        {% if person.review_flag %}
+        <p><strong>Warning: person needs revision</strong></p>
+        {% endif %}
 
-      <p>
-          Project ID: {{ person.id }}
-      </p>
+        {% if person.has_status_information %}
+        <ul class="timeline no-bullet">
+            {% include "promrep/persons/status.html" with title="Patrician" status=person.patrician uncertain=person.patrician_uncertain notes=person.patrician_notes %}
+            {% include "promrep/persons/status.html" with title="Nobilis" status=person.nobilis uncertain=person.nobilis_uncertain notes=person.nobilis_notes %}
+            {% include "promrep/persons/status.html" with title="Novus" status=person.novus uncertain=person.novus_uncertain notes=person.novus_notes %}
 
-      {% if person.patrician %}
-      <p>
-          Patrician{% if person.patrician_uncertainty %}?{% endif %}
-      </p>
-      {% endif %}
+            {% with eques=person.get_eques_status_assertion %}
+            {% include "promrep/persons/status.html" with title="Eques" status=eques uncertain=eques.uncertain notes=eques.notes %}
+            {% endwith %}
+        </ul>
+        {% endif %}
 
-      {% if person.gens %}
-      <p>
-          Gens: {{ person.gens }}{% if person.gens_uncertainty %}?{% endif %}
-      </p>
-      {% endif %}
+        {% include "promrep/persons/life_dates.html" %}
 
-      {% if person.review_flag %}
-          <p><strong>Warning: person needs revision</strong></p>
-      {% endif %}
+        {% include "promrep/persons/relationships.html" %}
 
-      {% if person.dateinformation_set.all %}
-      <h2>Life Dates</h2>
-      <ul>
-          {% for di in person.dateinformation_set.all %}
-          <li>{{ di }}
-              {% if di.notes %}
-                <a href="#" class="small button round less-padding expander life-dates right">Info <i class="fa fa-caret-right"></i></a>
-                <p class="hide collapsible">{{ di.notes|capfirst }}</p>
-              {% endif %}
-          </li>
-          {% endfor %}
-      </ul>
-      <span class="info show"><i class="fa fa-info-circle"></i> Click to display life dates</span>
-      {% endif %}
-
-      <div id="network-container">
-        <h2 class="svg-title">Relationships recorded in the sources</h2>
-        <div id="network"></div>
-      </div>
-
-      <dl>
-          {% for rel in relationships %}
-          <dt>{{ rel.relationship }}</dt>
-              <dd><a href="{% url 'person-detail' rel.related_person.id %}">{{ rel.related_person }}</a></dd>
-          {% endfor %}
-      </dl>
-
-      <h2>Offices</h2>
-      <ul class="timeline no-bullet bottom-margin">
-        {% for pa in person.post_assertions.all %}
-        <li><span class="label radius{% if pa.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ pa.print_date | safe }}</span> <strong>{{ pa.office | title }} {% if pa.provinces %} <a href="#">{{ pa.print_provinces }}</a> {% endif %}</strong>
-          <a href="#" class="expander right">Description <i class="fa fa-caret-right"></i></a>
-            {% if pa.notes.count %}
-            <ul class="no-bullet hide collapsible">
-                {% for note in pa.notes.all %}
-                <li>{{note.text}} (in <em>{{note.secondary_source.abbrev_name}}</em>)</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-
-        </li>
-        {% endfor %}
-    </ul>
+        {% include "promrep/persons/career.html" %}
+    </div>
 </div>
-</div>
-
-{% endblock %}
-
-{% block footerscripts %}
-<script src="{% static 'vendor/linkurious.js/dist/sigma.min.js' %}"></script>
-<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.layouts.forceLink.min.js' %}"></script>
-<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.parsers.json.min.js' %}"></script>
-<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.plugins.animate.min.js' %}"></script>
-<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.plugins.dragNodes.min.js' %}"></script>
-<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.plugins.tooltips.min.js' %}"></script>
-<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.renderers.edgeLabels.min.js' %}"></script>
-<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.renderers.linkurious.min.js' %}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
-<script src="{% static 'javascripts/network.js' %}"></script>
-
-<script>
-    $(document).ready(function() {
-        networkGraph.load({{ person.id }}, "{% url 'person-network' person.id %}");
-    });
-</script>
 {% endblock %}

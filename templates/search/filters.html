@@ -1,0 +1,106 @@
+{% load ddh_utils_tags %}
+
+{% if query or selected_facets or date_filter or praenomen or nomen or cognomen or other_names or re_number or n or f or other_names or tribe %}
+<ul class="inline-list no-bullet free-filters">
+    {% if praenomen %}
+    <li>
+        <span class="label radius">
+            <a href="{{ praenomen.0 }}#search" title="Remove filter">Praenomen: {{ praenomen.1 }}
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </span>
+    </li>
+    {% endif %}
+    {% if nomen %}
+    <li>
+        <span class="label radius">
+            <a href="{{ nomen.0 }}#search" title="Remove filter">Nomen: {{ nomen.1 }}
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </span>
+    </li>
+    {% endif %}
+    {% if cognomen %}
+    <li>
+        <span class="label radius">
+            <a href="{{ cognomen.0 }}#search" title="Remove filter">Cognomen: {{ cognomen.1 }}
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </span>
+    </li>
+    {% endif %}
+    {% if re_number %}
+    <li>
+        <span class="label radius">
+            <a href="{{ re_number.0 }}#search" title="Remove filter">RE Number: {{ re_number.1 }}
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </span>
+    </li>
+    {% endif %}
+    {% if f %}
+    <li>
+        <span class="label radius">
+            <a href="{{ f.0 }}#search" title="Remove filter">f.: {{ f.1 }}
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </span>
+    </li>
+    {% endif %}
+    {% if n %}
+    <li>
+        <span class="label radius">
+            <a href="{{ n.0 }}#search" title="Remove filter">n.: {{ n.1 }}
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </span>
+    </li>
+    {% endif %}
+    {% if other_names %}
+    <li>
+        <span class="label radius">
+            <a href="{{ other_names.0 }}#search" title="Remove filter">Additional Cognomina: {{ other_names.1 }}
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </span>
+    </li>
+    {% endif %}
+    {% if tribe %}
+    <li>
+        <span class="label radius">
+            <a href="{{ tribe.0 }}#search" title="Remove filter">Tribe: {{ tribe.1 }}
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </span>
+    </li>
+    {% endif %}
+    {% if query %}
+    <li>
+        <span class="label radius">
+            <a href="{{ remove_text_filter }}#search" title="Remove filter">Text: {{ query }}
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </span>
+    </li>
+    {% endif %}
+    {% if date_filter %}
+    <li>
+        <span class="label radius">
+            <a href="{{ date_filter.0}}#search" title="Remove filter">Post Date: {{ date_filter.1 }}
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </span>
+    </li>
+    {% endif %}
+    {% for facet in selected_facets %}
+    <li>
+        <span class="label radius">
+            {{ facet }}
+            <a href="{% remove_facet_link querydict facet %}#search">
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </span>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}

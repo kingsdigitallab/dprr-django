@@ -63,12 +63,25 @@ class Praenomen(models.Model):
     abbrev = models.CharField(max_length=32, unique=True)
     name = models.CharField(max_length=128, unique=True)
 
-    def __unicode__(self):
-        return self.name
-
     class Meta:
         verbose_name_plural = 'Praenomina'
         ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+    @property
+    def alternate_name(self):
+        if self.has_alternate_name():
+            return 'C' + self.name[1:]
+
+        return None
+
+    def has_alternate_name(self):
+        if not self.name:
+            return False
+
+        return self.name[0].upper() == 'G'
 
 
 class Sex(models.Model):
@@ -80,6 +93,7 @@ class Sex(models.Model):
 
 @with_author
 class Gens(models.Model):
+
     class Meta:
         verbose_name_plural = "Gens"
 
@@ -125,8 +139,8 @@ class PrimarySourceReference(TimeStampedModel):
     #   Note and PrimarySource
 
     limit = models.Q(app_label='promrep', model='PersonNote') | \
-            models.Q(app_label='promrep', model='PostAssertionNote') | \
-            models.Q(app_label='promrep', model='RelationshipAssertionReference')
+        models.Q(app_label='promrep', model='PostAssertionNote') | \
+        models.Q(app_label='promrep', model='RelationshipAssertionReference')
 
     content_type = models.ForeignKey(
         ContentType,
@@ -170,6 +184,7 @@ class Note(TimeStampedModel):
 
 @with_author
 class RelationshipAssertionReference(Note):
+
     """This is a SecondarySourceNote/Reference
     """
 
@@ -199,6 +214,7 @@ class RelationshipAssertionReference(Note):
 
 @with_author
 class PostAssertionNote(Note):
+
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
@@ -212,6 +228,7 @@ class PostAssertionNote(Note):
 
 @with_author
 class PersonNote(Note):
+
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
@@ -226,6 +243,7 @@ class PersonNote(Note):
 
 @with_author
 class StatusAssertionNote(Note):
+
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
@@ -240,6 +258,9 @@ class StatusAssertionNote(Note):
 
 @with_author
 class Person(TimeStampedModel):
+    dprr_id = models.CharField(max_length=16, blank=True, null=True,
+                               unique=True)
+
     praenomen = models.ForeignKey(Praenomen, blank=True, null=True)
     praenomen_uncertain = models.BooleanField(
         verbose_name='Uncertain Praenomen', default=False)
@@ -289,10 +310,6 @@ class Person(TimeStampedModel):
     novus = models.NullBooleanField(default=None, null=True)
     novus_uncertain = models.NullBooleanField(default=False)
     novus_notes = models.TextField(blank=True)
-
-    eques = models.NullBooleanField(default=None, null=True)
-    eques_uncertain = models.BooleanField(default=False)
-    eques_notes = models.TextField(blank=True)
 
     nobilis = models.NullBooleanField(default=None, null=True)
     nobilis_uncertain = models.BooleanField(default=False)
@@ -362,33 +379,71 @@ class Person(TimeStampedModel):
 
         return " ".join(name_l)
 
+    def generate_dprr_id(self):
+        if not self.nomen:
+            return None
+
+        nomen = self.nomen.upper()
+
+        if nomen[0] == '-':
+            nomen = 'ANON'
+
+        if '(' in nomen:
+            nomen = re.sub(r'\W', '', nomen)
+
+        return '{}{:0>4}'.format(nomen[:4], self.id)
+
     @property
     def f(self):
+        return self._get_ancestor_praenomens(r'([^-].*?) f\..*')
+
+    def _get_ancestor_praenomens(self, pattern):
         if not self.filiation:
             return None
 
         filiation = self.filiation.strip()
 
-        found = re.search(r'([^-].*?) f\..*', filiation)
+        found = re.search(pattern, filiation)
 
         if not found:
             return None
 
-        return found.groups()[0]
+        praenomens = []
+        text = found.groups()[0]
+
+        if ' or ' in text:
+            text = text.split(' or ')
+        else:
+            text = [text]
+
+        for abbrev in text:
+            # only need the content up to the first space
+            abbrev = abbrev.split()[0]
+            praenomens_qs = Praenomen.objects.filter(abbrev=abbrev)
+
+            if praenomens_qs:
+                p = praenomens_qs[0]
+                praenomens.append(p.name)
+
+                if p.has_alternate_name():
+                    praenomens.append(p.alternate_name)
+
+        return praenomens
 
     @property
     def n(self):
-        if not self.filiation:
+        return self._get_ancestor_praenomens(
+            r'(?:.*\s+f\.\s+)?(.*[^-])\s+n\.')
+
+    @property
+    def other_names_plain(self):
+        """Returns a plain version of the other names, without special
+        characters or numbers."""
+        if not self.other_names:
             return None
 
-        filiation = self.filiation.strip()
-
-        found = re.search(r'(?:.*\s+f\.\s+)?(.*[^-])\s+n\.', filiation)
-
-        if not found:
-            return None
-
-        return found.groups()[0]
+        other_names = self.other_names.strip()
+        return re.sub(r'([^\w\.\s])|(\d+)', '', other_names).strip()
 
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (
@@ -400,6 +455,32 @@ class Person(TimeStampedModel):
 
     def related_label(self):
         return self.url_to_edit_person()
+
+    def has_status_information(self):
+        return self.patrician or self.nobilis or self.novus or self.is_eques()
+
+    def is_eques(self):
+        return self.statusassertion_set.filter(
+            status__name__iexact='eques') > 0
+
+    def get_eques_status_assertion(self):
+        if not self.is_eques():
+            return None
+
+        return self.statusassertion_set.filter(
+            status__name__iexact='eques').first()
+
+    def get_dates(self):
+        if not self.dateinformation_set.all():
+            return None
+
+        return self.dateinformation_set.all().order_by('value')
+
+    def get_career(self):
+        if not self.post_assertions.all():
+            return None
+
+        return self.post_assertions.all().order_by('date_start')
 
 
 @with_author
@@ -479,23 +560,42 @@ class DateInformation(TimeStampedModel):
         verbose_name = 'Date'
 
     def __unicode__(self):
-        date_str = ""
+        date_str = ''
+
+        if self.value >= 0:
+            date_str = 'A.D. '
+
+        date_str += str(abs(self.value))
 
         if self.uncertain:
-            date_str = date_str + "?"
+            date_str += '?'
 
-        if self.value < 0:
-            date_str = date_str + str(abs(self.value)) + " B.C."
-        else:
-            date_str = date_str + str(self.value) + " A.D."
+        label = self.get_date_interval_display()
+        label = label if label != self.INTERVAL_CHOICES[0][1] else ''
 
-        di_str = "{} {}, {}".format(self.get_date_interval_display(),
-                                    date_str,
-                                    self.date_type)
+        di_str = '{} {}, {}'.format(label, date_str, self.date_type)
+
         if self.secondary_source:
-            di_str += " ({})".format(self.secondary_source.abbrev_name)
+            di_str += ' ({})'.format(self.secondary_source.abbrev_name)
 
         return di_str
+
+    def has_ruepke_secondary_source(self):
+        if not self.secondary_source:
+            return False
+
+        return self.secondary_source.abbrev_name.lower() == 'ruepke'
+
+    def get_ruepke_notes(self):
+        if not self.has_ruepke_secondary_source():
+            return None
+
+        texts = [
+            note.text for note in self.person.notes.filter(
+                note_type__name='ruepke_LD')
+        ]
+
+        return ', '.join(texts)
 
 
 @with_author
@@ -526,6 +626,7 @@ class Office(MPTTModel, TimeStampedModel):
 @with_author
 class RelationshipType(TimeStampedModel):
     name = models.CharField(max_length=256, unique=True)
+    order = models.PositiveSmallIntegerField(default=0)
     description = models.CharField(max_length=1024, blank=True)
 
     def __unicode__(self):
@@ -577,12 +678,14 @@ class Group(TimeStampedModel):
 
     def print_date(self):
         if self.date_year:
-            if self.date_year < 0:
-                return str(abs(self.date_year)) + " B.C."
-            else:
-                return str(self.date_year) + " A.D."
-        else:
-            return ""
+            date_str = str(abs(self.date_year))
+
+            if self.date_year >= 0:
+                return 'A.D. ' + date_str
+
+            return date_str
+
+        return ''
 
     def __unicode__(self):
         members = str(self.persons.count())
@@ -673,7 +776,7 @@ class PostAssertion(TimeStampedModel):
             off = self.office.__unicode__()
 
         name = str(self.person.__unicode__()) + \
-               ": " + off + " " + self.print_date()
+            ": " + off + " " + self.print_date()
 
         name = name + " (" + self.secondary_source.abbrev_name + ")"
         return name
@@ -753,6 +856,23 @@ class PostAssertion(TimeStampedModel):
 
         return date_str.strip()
 
+    def has_ruepke_secondary_source(self):
+        if not self.secondary_source:
+            return False
+
+        return self.secondary_source.abbrev_name.lower() == 'ruepke'
+
+    def get_ruepke_notes(self):
+        if not self.has_ruepke_secondary_source():
+            return None
+
+        texts = [
+            note.text for note in self.person.notes.filter(
+                note_type__name='ruepke_B')
+        ]
+
+        return ', '.join(texts)
+
 
 @with_author
 class PostAssertionProvince(models.Model):
@@ -810,169 +930,29 @@ class RelationshipAssertion(TimeStampedModel):
         return "{} is {} {}".format(
             self.person, self.relationship, self.related_person)
 
+    # flag indicates that the Status Assertion was manually verified
+    # and should not be edited/deleted automatically
+    is_verified = models.BooleanField(
+        verbose_name="Editor Verified", default=False)
+
     # Return the inverse of the objects
     # relationship type based on gender of people
     def get_inverse_relationship(self):
         try:
-            if self.relationship.name == "father of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="son of")
-                else:
-                    return RelationshipType.objects.get(name="daughter of")
-            elif self.relationship.name == "married to":
-                return self.relationship
-            elif self.relationship.name == "son of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="father of")
-                else:
-                    return RelationshipType.objects.get(name="mother of")
-            elif self.relationship.name == "brother of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="brother of")
-                else:
-                    return RelationshipType.objects.get(name="sister of")
-            elif self.relationship.name == "adopted son of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="adoptive father of")
-                else:
-                    return RelationshipType.objects.get(name="adoptive mother of")
-            elif self.relationship.name == "daughter of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="father of")
-                else:
-                    return RelationshipType.objects.get(name="mother of")
-            elif self.relationship.name == "sister of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="brother of")
-                else:
-                    return RelationshipType.objects.get(name="sister of")
-            elif self.relationship.name == "betrothed to":
-                return self.relationship
-            elif self.relationship.name == "divorced from":
-                return self.relationship
-            elif self.relationship.name == "mother of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="son of")
-                else:
-                    return RelationshipType.objects.get(name="daughter of")
-            elif self.relationship.name == "nephew of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="uncle of")
-                else:
-                    return RelationshipType.objects.get(name="aunt of")
-            elif self.relationship.name == "adoptive brother of":
-                if self.related_person.sex.name == "Male":
-                    return self.relationship
-                else:
-                    return RelationshipType.objects.get(name="adoptive sister of")
-            elif self.relationship.name == "uncle of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="nephew of")
-                else:
-                    return RelationshipType.objects.get(name="niece of")
-            elif self.relationship.name == "related to":
-                return self.relationship
-            elif self.relationship.name == "halfsister of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="halfbrother of")
-                else:
-                    return RelationshipType.objects.get(name="halfsister of")
-            elif self.relationship.name == "great grandfather of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="great grandson of")
-                else:
-                    return RelationshipType.objects.get(name="great granddaughter of")
-            elif self.relationship.name == "grandson of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="grandfather of")
-                else:
-                    return RelationshipType.objects.get(name="grandmother of")
-            elif self.relationship.name == "stepfather of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="stepson of")
-                else:
-                    return RelationshipType.objects.get(name="stepdaughter of")
-            elif self.relationship.name == "cousin of":
-                return self.relationship
-            elif self.relationship.name == "adoptive father of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="adopted son of")
-                else:
-                    return RelationshipType.objects.get(name="adopted daughter of")
-            elif self.relationship.name == "stepson of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="stepfather of")
-                else:
-                    return RelationshipType.objects.get(name="stepmother of")
-            elif self.relationship.name == "stepbrother of":
-                if self.related_person.sex.name == "Male":
-                    return self.relationship
-                else:
-                    return RelationshipType.objects.get(name="stepsister of")
-            elif self.relationship.name == "grandfather of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="grandson of")
-                else:
-                    return RelationshipType.objects.get(name="granddaughter of")
-            elif self.relationship.name == "great grandson of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="great grandfather of")
-                else:
-                    return RelationshipType.objects.get(name="great granddaughter of")
-            elif self.relationship.name == "grandmother of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="grandson of")
-                else:
-                    return RelationshipType.objects.get(name="granddaughter of")
-            elif self.relationship.name == "great uncle of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="great nephew of")
-                else:
-                    return RelationshipType.objects.get(name="great niece of")
-            elif self.relationship.name == "halfbrother of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="halfbrother of")
-                else:
-                    return RelationshipType.objects.get(name="halfsister of")
-            elif self.relationship.name == "granddaughter of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="grandfather of")
-                else:
-                    return RelationshipType.objects.get(name="grandmother of")
-            elif self.relationship.name == "adopted grandson of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="adopted grandfather of")
-                else:
-                    return RelationshipType.objects.get(name="adopted grandmother of")
-            elif self.relationship.name == "mother of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="son of")
-                else:
-                    return RelationshipType.objects.get(name="daughter of")
-            elif self.relationship.name == "great granddaughter of":
-                if self.related_person.sex.name == "Male":
-                    return RelationshipType.objects.get(name="great grandfather of")
-                else:
-                    return RelationshipType.objects.get(name="great grandmother of")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            return RelationshipInverse.objects.get(
+                relationship=self.relationship, sex=self.related_person.sex)
         except Exception:
             return None
 
     class Meta:
-        ordering = ['relationship_number', 'id']
+        ordering = ['relationship__order', 'relationship_number', 'id']
+
+
+class RelationshipInverse(models.Model):
+    relationship = models.ForeignKey(RelationshipType)
+    sex = models.ForeignKey(Sex)
+    inverse_relationship = models.ForeignKey(
+        RelationshipType, related_name='inverse')
 
 
 @with_author
@@ -1036,7 +1016,7 @@ class StatusAssertion(TimeStampedModel):
         if self.date_display_text:
             date_str = self.date_display_text
         elif self.date_start == self.date_end and \
-                        self.date_start_uncertain == self.date_end_uncertain:
+                self.date_start_uncertain == self.date_end_uncertain:
             date_str = date_to_string(
                 self.date_start, self.date_start_uncertain)
         else:
@@ -1050,7 +1030,7 @@ class StatusAssertion(TimeStampedModel):
 
             if self.date_end:
                 date_str = date_str + \
-                           date_to_string(self.date_end, self.date_end_uncertain)
+                    date_to_string(self.date_end, self.date_end_uncertain)
             else:
                 date_str = date_str + "?"
 

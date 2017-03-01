@@ -6,17 +6,25 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
 {% endblock %}
 
 {% block headercss %}
-<!-- EasyAutocomplete CSS file -->
 <link rel="stylesheet" href="{% static 'vendor/EasyAutocomplete/dist/easy-autocomplete.min.css' %}">
 {% endblock %}
 
 {% block main %}
 <div class="row">
     <div class="large-12 columns" id="search">
-        <header>
+        <header class="top-search">
             <h1 id="search-box">Search</h1>
-            <button class="small button secondary options"><i class="fa fa-cog"></i> <span id="showhide">Hide</span> search settings</button>
-            <a href="/browse/" class="right options"><span class="small button"><i class="fa fa-refresh"></i> Start new search</span></a>
+            <button class="small button secondary options">
+                <i class="fa fa-cog"></i>
+                <span id="showhide">Hide</span>
+                search settings
+            </button>
+            <a href="/browse/" class="right options">
+                <span class="small button">
+                    <i class="fa fa-refresh"></i>
+                    Start new search
+                </span>
+            </a>
         </header>
         <form method="get" action=".">
             <div class="search-box">
@@ -29,108 +37,20 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                     <div class="row">
                         <div class="large-12 columns">
                             <div class="panel results-preview" data-magellan-expedition="fixed">
-                                <h4>Results preview
-                                <a href="#search-results-box" class="less-padding button right do-not-print">Show <strong>{{ paginator.count }}</strong> results</a></h4>
-                                <p class="info"><i class="fa fa-info-circle"></i> Some info on this section.</p>
-                                <h3>
-                                    <strong>{{ paginator.count }}</strong> records available based on your filters <a href="{% url 'haystack_search' %}#search" class="do-not-print"><i class="fa fa-trash"></i> Clear all</a>
-                                </h3>
+                                <h4>Search results
+                                    <a href="#search-results-box" class="less-padding button right do-not-print">
+                                        Show <strong>{{ paginator.count }}</strong> results
+                                    </a>
+                                </h4>
+                                <h4>
+                                    <strong>{{ paginator.count }}</strong>
+                                    records available based on your filters
+                                    <a href="{% url 'haystack_search' %}#search" class="do-not-print">
+                                        <i class="fa fa-trash"></i> Clear all
+                                    </a>
+                                </h4>
 
-                                {% if query or selected_facets or date_filter or praenomen or nomen or cognomen or other_names or re_number or n or f or other_names %}
-                                <ul class="inline-list no-bullet free-filters">
-                                    {% if praenomen %}
-                                    <li>
-                                        <span class="label radius">
-                                            <a href="{{ praenomen.0 }}#search" title="Remove filter">Praenomen: {{ praenomen.1 }}
-                                                <i class="fa fa-times-circle"></i>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    {% endif %}
-                                    {% if nomen %}
-                                    <li>
-                                        <span class="label radius">
-                                            <a href="{{ nomen.0 }}#search" title="Remove filter">Nomen: {{ nomen.1 }}
-                                                <i class="fa fa-times-circle"></i>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    {% endif %}
-                                    {% if cognomen %}
-                                    <li>
-                                        <span class="label radius">
-                                            <a href="{{ cognomen.0 }}#search" title="Remove filter">Cognomen: {{ cognomen.1 }}
-                                                <i class="fa fa-times-circle"></i>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    {% endif %}
-                                    {% if re_number %}
-                                    <li>
-                                        <span class="label radius">
-                                            <a href="{{ re_number.0 }}#search" title="Remove filter">RE Number: {{ re_number.1 }}
-                                                <i class="fa fa-times-circle"></i>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    {% endif %}
-                                    {% if f %}
-                                    <li>
-                                        <span class="label radius">
-                                            <a href="{{ f.0 }}#search" title="Remove filter">f.: {{ f.1 }}
-                                                <i class="fa fa-times-circle"></i>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    {% endif %}
-                                    {% if n %}
-                                    <li>
-                                        <span class="label radius">
-                                            <a href="{{ n.0 }}#search" title="Remove filter">n.: {{ n.1 }}
-                                                <i class="fa fa-times-circle"></i>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    {% endif %}
-                                    {% if other_names %}
-                                    <li>
-                                        <span class="label radius">
-                                            <a href="{{ other_names.0 }}#search" title="Remove filter">Other names: {{ other_names.1 }}
-                                                <i class="fa fa-times-circle"></i>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    {% endif %}
-                                    {% if query %}
-                                    <li>
-                                        <span class="label radius">
-                                            <a href="{{ remove_text_filter }}#search" title="Remove filter">Text: {{ query }}
-                                                <i class="fa fa-times-circle"></i>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    {% endif %}
-                                    {% if date_filter %}
-                                    <li>
-                                        <span class="label radius">
-                                            <a href="{{ date_filter.0}}#search" title="Remove filter">Post Date: {{ date_filter.1 }}
-                                                <i class="fa fa-times-circle"></i>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    {% endif %}
-                                    {% for facet in selected_facets %}
-                                    <li>
-                                        <span class="label radius">
-                                            {{ facet }}
-                                            <a href="{% remove_facet_link querydict facet %}#search">
-                                                <i class="fa fa-times-circle"></i>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                                {% endif %}
+                                {% include "search/filters.html" %}
                             </div>
                         </div>
                     </div>
@@ -138,133 +58,134 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                         <div class="large-12 columns">
                             <div class="panel callout">
                                 <h3 class="panel-heading">Name</h3>
-                                <p class="info"><i class="fa fa-info-circle"></i> Start typing</p>
-                                <div class="row name-row hyphen">
-                                    <div class="medium-2 columns">
-                                        {{ form.praenomen }}
-                                        <label>Praenomen</label>
-                                    </div>
-                                    <div class="medium-3 columns">
-                                        {{ form.nomen }}
-                                        <label>Nomen</label>
-                                    </div>
-                                    <div class="medium-1 columns">
-                                        {{ form.re_number }}
-                                        <label>RE</label>
-                                    </div>
-                                    <div class="medium-1 columns">
-                                        {{ form.f }}
-                                        <label>Father initial</label>
-                                    </div>
-                                    <div class="medium-1 columns">
-                                        {{ form.n }}
-                                        <label>Grandfather initial</label>
-                                    </div>
-                                    <div class="medium-2 columns">
-                                        {{ form.cognomen }}
-                                        <label>Cognomen</label>
-                                    </div>
-                                    <div class="medium-2 columns">
-                                        {{ form.other_names }}
-                                        <label>Other names</label>
-                                    </div>
-                                </div>
+                                <p class="info">
+                                <i class="fa fa-info-circle"></i>
+                                Autocomplete suggestions will appear once you start typing
+                                </p>
+
+                                {% include "search/name.html" %}
                             </div>
+
                             <div class="panel callout">
                                 <h3 class="panel-heading">Personal data</h3>
-                                <p class="info"><i class="fa fa-info-circle"></i> Some info on this section</p>
-                                {{ form.date_from.errors }} {{ form.date_to.errors }}
+                                <p class="info">
+                                <i class="fa fa-info-circle"></i>
+                                Some info on this section
+                                </p>
+                                {{ form.date_from.errors }}
+                                {{ form.date_to.errors }}
                                 <div class="row range">
-                                    <div class="small-1 columns">
-                                        <h4><br>Date:</h4>
+                                    <div class="medium-2 columns">
+                                        <h4>
+                                            <br>
+                                            Life Dates
+                                            <a data-dropdown="life-dates" aria-controls="life-dates" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <div id="life-dates" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about the <strong>Life Dates</strong></p>
+                                        </div>
                                     </div>
-                                    <div class="small-5 columns">
+                                    <div class="medium-4 columns">
                                         <label>After</label>
                                         {{ form.date_from }}
                                     </div>
-                                    <div class="small-4 columns">
+                                    <div class="medium-4 columns">
                                         <label>Before</label>
                                         {{ form.date_to }}
                                     </div>
-                                    <div class="small-2 columns">
+                                    <div class="medium-2 columns">
                                         <label>&nbsp;</label>
                                         <button type="submit" class="less-padding expand secondary">Apply</button>
                                     </div>
                                 </div>
-                                <ul class="button-group">
-                                    {% for term in facets.fields|get_item:"gender" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
-                                    <li>
-                                        <a href="{% add_facet_link querydict "gender" value %}#search" class="button secondary less-padding smaller-fontsize">
-                                            {{ value }}&nbsp;<span class="label radius">{{ count }}</span>
-                                        </a>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %}
-                                </ul>
-
-                                <ul>
-                                    {% for term in facets.fields|get_item:"life_date_types" %} {% with value=term.0 count=term.1 %}
-                                    <li>
-                                        <a href="{% add_facet_link querydict "life_date_types" value %}#search" class="button secondary less-padding smaller-fontsize">
-                                            {{ value|title }}&nbsp;<span class="label radius right">{{ count }}</span>
-                                        </a>
-                                    </li>
-                                    {% endwith %} {% endfor %}
-                                </ul>
-
-                                <h4>Class</h4>
-                                <ul class="button-group">
-                                    {% for term in facets.fields|get_item:"nobilis" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
-                                    <li>
-                                        <a href="{% add_facet_link querydict "nobilis" value %}#search" class="button secondary less-padding">Nobilis <span class="label radius">{{ count }}</span></a>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %}
-
-                                    {% for term in facets.fields|get_item:"novus" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
-                                    <li>
-                                        <a href="{% add_facet_link querydict "novus" value %}#search" class="button secondary less-padding">Novus <span class="label radius">{{ count }}</span></a>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %}
-
-                                    {% for term in facets.fields|get_item:"patrician" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
-                                    <li>
-                                        <a href="{% add_facet_link querydict "patrician" value %}#search" class="button secondary less-padding">Patrician <span class="label radius">{{ count }}</span></a>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %}
-                                </ul>
-
-                                <ul class="button-group">
-                                    {% for term in facets.fields|get_item:"eques" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
-                                    <li>
-                                        <a href="{% add_facet_link querydict "eques" value %}#search" class="button secondary less-padding">Eques R. <span class="label radius">{{ count }}</span></a>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %}
-
-                                    {% for term in facets.fields|get_item:"senator" %} {% with value=term.0 count=term.1 %} {% if value == "true" and count > 0 %}
-                                    <li>
-                                        <a href="{% add_facet_link querydict "senator" value %}#search" class="button secondary less-padding">Senator <span class="label radius">{{ count }}</span></a>
-                                    </li>
-                                    {% endif %} {% endwith %} {% endfor %}
-                                </ul>
 
                                 <div class="row">
-                                    <div class="large-6 columns">
-                                        <button data-dropdown="tribes" aria-controls="tribes" aria-expanded="false" class="secondary less-padding button expand dropdown">Tribes</button>
-                                        <br>
-                                        <ul id="tribes" data-dropdown-content class="f-dropdown drop-list" role="menu" aria-hidden="false" tabindex="-1">
-                                            {% for term in facets.fields|get_item:"tribe" %} {% with value=term.0 count=term.1 %} {% if count > 0 %}
-                                            <li><a href="{% add_facet_link querydict "tribe" value %}#search"><span class="secondary label radius right">{{ count }}</span>{{ value }}</a></li>
-                                            {% endif %} {% endwith %} {% endfor %}
-                                        </ul>
-                                    </div>
-                                    <div class="large-6 columns">
-                                        <div class="row collapse">
-                                            <div class="small-9 columns">
-                                                <input type="text" name="origin" placeholder="Search for origin">
-                                            </div>
-                                            <div class="small-3 columns">
-                                                <button type="submit" class="postfix secondary button"><i class="fa fa-search"></i></button>
+                                    <div class="medium-4 columns">
+                                        <div class="row">
+                                            <div class="large-9 columns">
+                                                <h4>
+                                                    Gender
+                                                    <a data-dropdown="gender" aria-controls="gender" aria-expanded="false" class="smaller-fontsize">
+                                                        <i class="fa fa-info-circle"></i>
+                                                    </a>
+                                                </h4>
+
+                                                <div id="gender" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                                    <p>Info about <strong>gender</strong></p>
+                                                </div>
+
+                                                <ul class="stack button-group">
+                                                    {% for term in facets.fields|get_item:"gender" reversed %}
+                                                    {% with value=term.0 count=term.1 %}
+                                                    {% if count > 0 %}
+                                                    <li>
+                                                        <a href="{% add_facet_link querydict "gender" value %}#search"
+                                                           class="button secondary less-padding smaller-fontsize text-left">
+                                                            {{ value }}&nbsp;
+                                                            <span class="label radius right">{{ count }}</span>
+                                                        </a>
+                                                    </li>
+                                                    {% endif %}
+                                                    {% endwith %}
+                                                    {% endfor %}
+                                                </ul>
                                             </div>
                                         </div>
+
+                                        <h4>
+                                            <br>
+                                            Status
+                                            <a data-dropdown="status" aria-controls="status" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <div id="status" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>
+                                            Info about <strong>Status</strong><br>
+                                            Some generic text here.
+                                            </p>
+                                            <p><strong>Eques R:</strong> description here.</p>
+                                            <p><strong>Nobilis:</strong> description here.</p>
+                                            <p><strong>Novus:</strong> description here.</p>
+                                            <p><strong>Patrician:</strong> description here.</p>
+                                        </div>
+
+                                        <ul class="button-group">
+                                            {% include "search/status.html" with item="nobilis" title="Nobilis" %}
+
+                                            {% include "search/status.html" with item="novus" title="Novus" %}
+
+                                            {% include "search/status.html" with item="patrician" title="Patrician" %}
+
+                                            {% include "search/status.html" with item="eques" title="Eques R" %}
+                                        </ul>
+                                    </div>
+                                    <div class="medium-8 columns datetypes">
+                                        <h4>Date Types
+                                            <a data-dropdown="date-types" aria-controls="date-types" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <div id="date-types" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about the <strong>Date Types</strong></p>
+                                        </div>
+                                        <ul class="stack button-group two-columns">
+                                            {% for term in facets.fields|get_item:"life_date_types" %}
+                                            {% with value=term.0 count=term.1 %}
+                                            <li>
+                                                <a href="{% add_facet_link querydict "life_date_types" value %}#search"
+                                                   class="button secondary less-padding smaller-fontsize text-left">
+                                                    <span class="label radius right">{{ count }}</span>{{ value|title }}
+                                                </a>
+                                            </li>
+                                            {% endwith %}
+                                            {% endfor %}
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -273,76 +194,124 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                     <div class="row do-not-print">
                         <div class="large-12 columns">
                             <div class="panel callout">
-                                <h3 class="panel-heading">Office</h3>
-                                <p class="info"><i class="fa fa-info-circle"></i> Time frame: 509 B.C. - 33 B.C.</p>
-                                {{ form.date_from.errors }} {{ form.date_to.errors }}
+                                <h3 class="panel-heading">Career</h3>
+                                <p class="info"><i class="fa fa-info-circle"></i> Time frame: 509 B.C. - 31 B.C.</p>
+                                {{ form.date_from.errors }}
+                                {{ form.date_to.errors }}
                                 <div class="row range">
-                                    <div class="small-1 columns">
-                                        <h4><br>Date:</h4>
+                                    <div class="medium-2 columns">
+                                        <h4>
+                                            <br>
+                                            Career Dates
+                                            <a data-dropdown="career-dates" aria-controls="career-dates" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <div id="career-dates" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about the <strong>Career Dates</strong></p>
+                                        </div>
                                     </div>
-                                    <div class="small-5 columns">
+                                    <div class="medium-4 columns">
                                         <label>After</label>
                                         {{ form.date_from }}
                                     </div>
-                                    <div class="small-4 columns">
+                                    <div class="medium-4 columns">
                                         <label>Before</label>
                                         {{ form.date_to }}
                                     </div>
-                                    <div class="small-2 columns">
+                                    <div class="medium-2 columns">
                                         <label>&nbsp;</label>
                                         <button type="submit" class="less-padding expand secondary">Apply</button>
                                     </div>
                                 </div>
                                 <div class="row">
+                                    <div class="medium-6 large-3 columns">
+                                        <h4>Magistracies
+                                            <a data-dropdown="magistracies-info" aria-controls="magistracies-info" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <div id="magistracies-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about the <strong>Magistracies Offices</strong></p>
+                                        </div>
+
+                                        {% include "search/offices.html" with office_list=magisterial_office_list %}
+                                    </div>
+                                    <div class="medium-6 large-3 columns">
+                                        <h4>Promagistracies
+                                            <a data-dropdown="promagistracies-info" aria-controls="promagistracies-info" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <div id="promagistracies-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about the <strong>Promagistracies Offices</strong></p>
+                                        </div>
+
+                                        {% include "search/offices.html" with office_list=promagistracies_office_list %}
+                                    </div>
+                                    <div class="medium-6 large-3 columns">
+                                        <h4>Priesthoods
+                                            <a data-dropdown="priesthoods-info" aria-controls="priesthoods-info" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <div id="priesthoods-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about the <strong>Priesthoods Offices</strong></p>
+                                        </div>
+
+                                        {% include "search/offices.html" with office_list=priesthoods_office_list %}
+                                    </div>
+                                    <div class="medium-6 large-3 columns">
+                                        <h4>Lower Offices
+                                            <a data-dropdown="lower-info" aria-controls="lower-info" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <div id="lower-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about the <strong>Lower Offices</strong></p>
+                                        </div>
+
+                                        {% include "search/offices.html" with office_list=non_magisterial_office_list %}
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="large-6 columns">
-                                        <div class="panel radius fixed-height">
-                                            <h4>Office type</h4>
-                                            <ul class="no-bullet hierarchical-facets">
+                                        <h4 class="panel-heading">Distinctions
+                                            <a data-dropdown="distinctions" aria-controls="distinctions" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
 
-                                            {% comment %}
-                                              Add options for the hierarchical facets:
-                                              using the MPTT template tags to rebuild the tree:
-                                                    https://django-mptt.github.io/django-mptt/templates.html
-                                            {% endcomment %}
+                                        <a href="#" class="expander smaller-fontsize">Expand list of available distinctions <i class="fa fa-caret-right"></i></a>
 
-                                            {% with treenodes=office_list %}
-                                            {% recursetree treenodes %}
+                                        <div class="collapsible hide">
+                                            {% include "search/offices.html" with office_list=distinctions_office_list %}
+                                        </div>
 
-                                            {% with num=office_fdict|lookup:node.name %}
-
-                                            {% if num %}
-                                                {% comment %} parent node {% endcomment %}
-                                                {% if not node.is_leaf_node %}
-                                                <li><span class="label radius pull-right">{{office_fdict|lookup:node.name}}</span>
-
-                                                    <a href="{% select_facet_link 'offices' node.name %}"><span class="label radius secondary pull-right">Add all</a>
-                                                    <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
-                                                    <ul class="hide collapsible">
-                                                        {{ children }}
-                                                    </ul>
-                                                </li>
-                                                {% else %}
-                                                {% comment %} no children {% endcomment %}
-                                                <li><a href="{% select_facet_link 'offices' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
-                                                {% endif %}
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endrecursetree %}
-                                            {% endwith %}
-                                            {% comment %} closes the with treenodes {% endcomment %}
-
-                                            </ul>
+                                        <div id="distinctions" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about <strong>Distinctions</strong></p>
                                         </div>
                                     </div>
                                     <div class="large-6 columns">
-                                        <div class="panel radius fixed-height">
-                                            <h4>Province</h4>
-                                            <ul class="no-bullet hierarchical-facets">
+                                        <h4 class="panel-heading">Location
+                                            <a data-dropdown="location" aria-controls="location" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
 
+                                        <a href="#" class="expander smaller-fontsize">Expand list of available locations <i class="fa fa-caret-right"></i></a>
+
+                                        <div class="panel radius fixed-height collapsible hide">
+                                            <ul class="no-bullet hierarchical-facets">
                                                 {% comment %}
-                                                  Add options for the hierarchical facets:
-                                                  using the MPTT template tags to rebuild the tree:
-                                                        https://django-mptt.github.io/django-mptt/templates.html
+                                                Add options for the hierarchical facets:
+                                                using the MPTT template tags to rebuild the tree:
+                                                https://django-mptt.github.io/django-mptt/templates.html
                                                 {% endcomment %}
 
                                                 {% with treenodes=province_list %}
@@ -363,7 +332,12 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                                 </li>
                                                 {% else %}
                                                 {% comment %} no children {% endcomment %}
-                                                <li><a href="{% select_facet_link 'province' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
+                                                <li>
+                                                    <a href="{% select_facet_link 'province' node.name %}">
+                                                        <span class="label radius pull-right">{{num}}</span>
+                                                        &nbsp;&nbsp;{{ node.name }}
+                                                    </a>
+                                                </li>
                                                 {% endif %}
                                                 {% endif %}
                                                 {% endwith %}
@@ -371,6 +345,10 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                                 {% endwith %}
                                                 {% comment %} closes the with treenodes {% endcomment %}
                                             </ul>
+                                        </div>
+
+                                        <div id="location" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about <strong>Location</strong></p>
                                         </div>
                                     </div>
                                 </div>
@@ -385,13 +363,17 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     {{ form.q }}
                                 </div>
                                 <div class="small-3 columns">
-                                    <button type="submit" class="postfix button"><i class="fa fa-search"></i></button>
+                                    <button type="submit" class="postfix button">
+                                        <i class="fa fa-search"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                         <div class="large-3 large-offset-3 columns">
                             <h4>&nbsp;</h4>
-                            <a href="#search-results-box" class="less-padding expand button">Show <strong>{{ paginator.count }}</strong> results</a>
+                            <a href="#search-results-box" class="less-padding expand button">
+                                Show <strong>{{ paginator.count }}</strong> results
+                            </a>
                         </div>
                     </div>
                 </section>
@@ -399,473 +381,79 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
         </form>
     </div>
 </div>
-<div class="row extra-margin" id="search-results-box">
+<div class="row" id="search-results-box">
     <div class="large-12 columns">
         <hr>
-        <h2>Search Results <span class="label radius">{{ paginator.count }}</span> <a href="#search" class="less-padding button right edit-search do-not-print"><i class="fa fa-edit"></i> Edit search</a></h2>
-        <ul class="inline-list right export do-not-print">
-            <li>
-                <a class="right" aria-lablledby="#print" id="printme"><i class="fa fa-print"></i><label id="print">Print</label></a>
-            </li>
-            <li>
-                <a class="right" aria-lablledby="#pdf"><i class="fa fa-file-pdf-o"></i><label id="pdf">PDF</label></a>
-            </li>
-            <li>
-                <a class="right" aria-lablledby="#csv"><i class="fa fa-save"></i><label id="cvs">CSV</label></a>
-            </li>
-        </ul>
-        <ul class="inline-list left key">
-            <li>Dates can be: </li>
-            <li>Certain <i class="fa fa-check-circle fa-lg green"></i></li>
-            <li>or</li>
-            <li>Uncertain <i class="fa fa-question-circle fa-lg gray"></i></li>
-        </ul>
+        <h2>Search Results
+            <span class="label radius">{{ paginator.count }}</span> 
+            <a href="#search" class="less-padding button right edit-search do-not-print">
+                <i class="fa fa-edit"></i>
+                Edit search
+            </a>
+            <ul class="inline-list right export do-not-print">
+                <li>
+                    <a class="right" aria-lablledby="#print" id="printme">
+                        <i class="fa fa-print"></i>
+                        <label id="print">Print</label>
+                    </a>
+                </li>
+                <li>
+                    <a class="right" aria-lablledby="#pdf">
+                        <i class="fa fa-file-pdf-o"></i>
+                        <label id="pdf">PDF</label>
+                    </a>
+                </li>
+                <li>
+                    <a class="right" aria-lablledby="#csv">
+                        <i class="fa fa-save"></i>
+                        <label id="cvs">CSV</label>
+                    </a>
+                </li>
+            </ul>
+        </h2>
         <hr>
         <ol start="{{ page_obj.start_index }}" class="search-results">
             {% for result in object_list %}
             <li>
-                {% with doc=result.documents.0 %}
-                <h3>
-                    <a href="{% url 'person-detail' doc.person_id %}">{{ doc.person }} <span class="label radius secondary{% comment %}{% if doc.uncertain == True %} gray-bg{% else %} green-bg{% endif %}{% endcomment %}">{{ doc.highest_office }}{% if doc.uncertain == True %} <i class="fa fa-question-circle gray"></i>{% else %} <i class="fa fa-check-circle green"></i>{% endif %}</span></a>
-                </h3>
-                {% for dd in result.documents %}
-                <p>
-                    {% highlight dd.text with query html_tag 'strong' max_length 120 %}
-                </p>
-                {% endfor %}
-                <a href="#" class="expander">Expand <i class="fa fa-caret-right fa-lg"></i></a>
-                <div class="row hide collapsible">
-                    <div class="large-6 columns">
-                        <p>Placeholder</p>
-                        <p><em>&lt;List of offices held&gt;</em></p>
-                        <!-- TODO: List offices held, if any
-                        <h4>Offices held</h4>
-                        <ul class="no-bullet list-offices">
-                            {# for #}
-                            <li><span class="label radius secondary">87 B.C. Flamen Dialis</span></li>
-                            <li><span class="label radius secondary">81 B.C. Legatus (Envoy)</span></li>
-                            <li><span class="label radius secondary">73-44 B.C. Pontifex</span></li>
-                            <li><span class="label radius secondary">71 B.C. Tribunus Militum</span></li>
-                            <li><span class="label radius secondary">69 B.C. Quaestor</span></li>
-                            <li><span class="label radius secondary">68-49 B.C. Promagistrate</span></li>
-                            <li><span class="label radius secondary">65 B.C. Aedilis Curulis</span></li>
-                            <li><span class="label radius secondary">64 B.C. Iudex Quaestionis</span></li>
-                            <li><span class="label radius secondary">63 B.C. Duumvir Perduellionis</span></li>
-                            <li><span class="label radius secondary">62 B.C. Praetor</span></li>
-                            <li><span class="label radius secondary">59-44 B.C. Consul</span></li>
-                            <li><span class="label radius secondary">49-44 B.C. Dictator</span></li>
-                            {# endfor #}
-                        </ul>
-                        -->
-                    </div>
-                    <div class="large-6 columns">
-                        <p>Placeholder visualisation</p>
-                        <div class="svg-container">
-                            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 815 485">
-                                <g transform="translate(40,0)">
-                                    <g>
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
-                                            L120,224.664" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.995,4.9748" d="
-                                            M125.31,224.441c100.252-6.197,103.002-182.519,204.875-185.894" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,38.664L333,38.664
-                                            " />
-                                    </g>
-                                    <g>
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
-                                            L120,224.664" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0072,5.0359" d="
-                                            M125.369,224.498c100.182-4.019,102.964-117.105,204.773-119.302" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,105.664
-                                            L333,105.664" />
-                                    </g>
-                                    <path fill="none" stroke="#DF6800" stroke-width="2" d="M119.833,224.608c106.667,0,106.667-52.778,213.333-52.778" />
-                                    <path fill="none" stroke="#DF6800" stroke-width="2" d="M119.833,224.608c106.667,0,106.667,13.889,213.333,13.889" />
-                                    <path fill="none" stroke="#DF6800" stroke-width="2" d="M119.833,224.608c106.667,0,106.667,113.89,213.333,113.89" />
-                                    <g>
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
-                                            L120,224.664" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0073,5.0363" d="
-                                            M125.363,224.82c100.189,7.75,102.968,226.051,204.786,230.281" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.668,455.162
-                                            c0.166,0.001,0.332,0.002,0.499,0.002" />
-                                    </g>
-                                    <g>
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,39.5h1" />
-                                        <path fill="#330099" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1,5" d="
-                                            M338.5,39.5h205" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,38.664
-                                            C546.166,38.664,546,38.664,546,38.664" />
-                                    </g>
-                                    <g>
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,106.5h1" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1,5" d="
-                                                M338.5,106.5h205" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,105.664
-                                                C546.166,105.664,546,105.664,546,105.664" />
-                                    </g>
-                                    <path fill="#DF6800" stroke="#DF6800" stroke-width="2" d="M332.5,172.5h213" />
-                                    <path fill="none" stroke="#DF6800" stroke-width="2" d="M332.5,239.5h213" />
-                                    <g>
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,339.5h1" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0045,5.0225" d="
-                                                M338.69,338.469c100.196-1.119,102.972-32.686,204.798-33.296" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,305.664
-                                                C546.166,305.664,546,305.664,546,305.664" />
-                                    </g>
-                                    <g>
-                                        <path fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,339.5h3" />
-                                        <g>
-                                            <line fill="#157F00" x1="342.5" y1="338.5" x2="540.5" y2="338.5" />
-                                            <g>
-                                                <line fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x1="342.5" y1="338.5" x2="345.5" y2="338.5" />
-                                                <line fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6,10" x1="355.5" y1="338.5" x2="532.5" y2="338.5" />
-                                                <line fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x1="537.5" y1="338.5" x2="540.5" y2="338.5" />
-                                            </g>
-                                        </g>
-                                        <path fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M542.5,339.5h3" />
-                                    </g>
-                                    <path fill="none" stroke="#DF6800" stroke-width="2" d="M333.167,338.498c106.666,0,106.666,33.332,213.333,33.332" />
-                                    <g>
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,456.5h1" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.9919,4.9593" d="
-                                                M338.627,455.149c100.271-0.555,103.014-16.347,204.895-16.648" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,438.664 C546.166,438.664,546,438.664,546,438.664" />
-                                    </g>
-                                    <g>
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,456.5h1" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.9919,4.9593" d="
-                                                M338.627,455.179c100.271,0.555,103.014,16.347,204.895,16.648" />
-                                        <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,471.664 C546.166,471.664,546,471.664,546,471.664" />
-                                    </g>
-                                    <g id="{{ person.id }}" transform="translate(213.33333333333337,219.44444444444443)">
-                                        <circle fill="#EEEEEE" stroke="#999999" stroke-width="2" cx="-93.833" cy="5.22" r="9" />
-                                        <text transform="matrix(1 0 0 1 -191.5159 9.1639)" enable-background="new">
-                                            <tspan x="0" y="0" font-family="'Open Sans Condensed Bold'" font-size="15">C. Iulius (131)</tspan>
-                                            <tspan x="-8" y="18" font-family="'Open Sans Condensed Bold'" font-size="15">C. f. C. n. Caesar</tspan>
-                                        </text>
-                                    </g>
-                                    <g transform="translate(426.66666666666674,33.333333333333336)">
-                                        <circle fill="#EEEEEE" stroke="#999999" cx="-93.5" cy="5.164" r="4.5" />
-                                        <text transform="matrix(1 0 0 1 -168.5031 -3.8362)" font-family="'Open Sans Condensed Light Italic'" font-size="14">adoptive father of</text>
-                                    </g>
-                                    <g transform="translate(640,33.333333333333336)">
-                                        <a xlink:href="#" class="svg-link">
-                                            <circle fill="#9980CC" stroke="#330099" cx="-93.5" cy="5.164" r="4.5" />
-                                            <text transform="matrix(1 0 0 1 -85.5 8.1638)" enable-background="new">
-                                                <tspan x="0" y="0" font-family="'Open Sans Condensed Light'" font-size="16">C. Iulius (132) C. f. C. n. Caesar Octavianus</tspan>
-                                                <tspan x="0" y="19.2" font-family="'Open Sans Condensed Light'" font-size="16">= C. Octavius C. f. Thurinus (or Caepias)</tspan>
-                                            </text>
-                                        </a>
-                                    </g>
-                                    <g transform="translate(426.66666666666674,100)">
-                                        <circle fill="#EEEEEE" stroke="#999999" cx="-93.5" cy="5.164" r="4.5" />
-                                        <text transform="matrix(1 0 0 1 -142.2116 -3.8359)" font-family="'Open Sans Condensed Light Italic'" font-size="14">betrothed to</text>
-                                    </g>
-                                    <g transform="translate(640,100)">
-                                        <a xlink:href="#" class="svg-link">
-                                            <circle fill="#9980CC" stroke="#330099" cx="-93.5" cy="5.164" r="4.5" />
-                                            <text transform="matrix(1 0 0 1 -85.5 8.1641)" font-family="'Open Sans Condensed Light'" font-size="16">-. Cossutia (7)</text>
-                                        </a>
-                                    </g>
-                                    <g transform="translate(426.66666666666674,166.66666666666666)">
-                                        <circle fill="#EEEEEE" stroke="#999999" cx="-93.5" cy="5.164" r="4.5" />
-                                        <text transform="matrix(1 0 0 1 -150.1335 -3.8356)" font-family="'Open Sans Condensed Light Italic'" font-size="14">divorced from</text>
-                                    </g>
-                                    <g transform="translate(640,166.66666666666666)">
-                                        <a xlink:href="#" class="svg-link">
-                                            <circle fill="#EFB380" stroke="#DF6800" cx="-93.5" cy="5.164" r="4.5" />
-                                            <text transform="matrix(1 0 0 1 -85.5 8.1644)" font-family="'Open Sans Condensed Light'" font-size="16">-. Pompeia (52)</text>
-                                        </a>
-                                    </g>
-                                    <g transform="translate(426.66666666666674,233.33333333333334)">
-                                        <circle fill="#EEEEEE" stroke="#999999" cx="-93.5" cy="5.164" r="4.5" />
-                                        <text transform="matrix(1 0 0 1 -123.8581 -3.8362)" font-family="'Open Sans Condensed Light Italic'" font-size="14">father of</text>
-                                    </g>
-                                    <g transform="translate(640,233.33333333333334)">
-                                        <a xlink:href="#" class="svg-link">
-                                            <circle fill="#EFB380" stroke="#DF6800" cx="-93.5" cy="5.164" r="4.5" />
-                                            <text transform="matrix(1 0 0 1 -85.5 8.1638)" font-family="'Open Sans Condensed Light'" font-size="16">-. Iulia (547)</text>
-                                        </a>
-                                    </g>
-                                    <g transform="translate(426.66666666666674,333.3333333333333)">
-                                        <circle fill="#EEEEEE" stroke="#999999" cx="-93.5" cy="5.165" r="4.5" />
-                                        <text transform="matrix(1 0 0 1 -133.0163 -3.8363)" font-family="'Open Sans Condensed Light Italic'" font-size="14">married to</text>
-                                    </g>
-                                    <g transform="translate(640,300)">
-                                        <a xlink:href="#" class="svg-link">
-                                            <circle fill="#9980CC" stroke="#330099" cx="-93.5" cy="5.164" r="4.5" />
-                                            <text transform="matrix(1 0 0 1 -85.5 8.1641)" font-family="'Open Sans Condensed Light'" font-size="16">-. Calpurnia (126)</text>
-                                        </a>
-                                    </g>
-                                    <g transform="translate(640,333.3333333333333)">
-                                        <a xlink:href="#" class="svg-link">
-                                            <circle fill="#8ABF80" stroke="#157F00" cx="-93.5" cy="5.165" r="4.5" />
-                                            <text transform="matrix(1 0 0 1 -85.5 8.1637)" font-family="'Open Sans Condensed Light'" font-size="16">-. Cornelia (126)</text>
-                                        </a>
-                                    </g>
-                                    <g transform="translate(640,366.66666666666663)">
-                                        <a xlink:href="#" class="svg-link">
-                                            <circle fill="#EFB380" stroke="#DF6800" cx="-93.5" cy="5.163" r="4.5" />
-                                            <text transform="matrix(1 0 0 1 -85.5 8.1644)" font-family="'Open Sans Condensed Light'" font-size="16">-. Pompeia (143)</text>
-                                        </a>
-                                    </g>
-                                    <g transform="translate(426.66666666666674,450)">
-                                        <circle fill="#EEEEEE" stroke="#999999" cx="-93.5" cy="5.164" r="4.5" />
-                                        <text transform="matrix(1 0 0 1 -113.4655 -3.8359)" font-family="'Open Sans Condensed Light Italic'" font-size="14">son of</text>
-                                    </g>
-                                    <g transform="translate(640,433.33333333333337)">
-                                        <a xlink:href="#" class="svg-link">
-                                            <circle fill="#9980CC" stroke="#330099" cx="-93.5" cy="5.164" r="4.5" />
-                                            <text transform="matrix(1 0 0 1 -85.5 8.1637)" font-family="'Open Sans Condensed Light'" font-size="16">-. Aurelia (248)</text>
-                                        </a>
-                                    </g>
-                                    <g transform="translate(640,466.6666666666667)">
-                                        <a xlink:href="#" class="svg-link">
-                                            <circle fill="#9980CC" stroke="#330099" cx="-93.5" cy="5.164" r="4.5" />
-                                            <text transform="matrix(1 0 0 1 -85.5 8.1644)" font-family="'Open Sans Condensed Light'" font-size="16">C. Iulius (130) C. f. Caesar</text>
-                                        </a>
-                                    </g>
-                                </g>
-                                <g>
-                                    <line fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x1="-0.5" y1="64.5" x2="3.5" y2="64.5" />
-                                    <line fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6,10" x1="13.5" y1="64.5" x2="41.5" y2="64.5" />
-                                    <line fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x1="46.5" y1="64.5" x2="49.5" y2="64.5" />
-                                </g>
-                                <path fill="none" stroke="#DF6800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M-0.5,25.5h50" />
-                                <g>
-                                    <line fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x1="-0.5" y1="44.5" x2="0.5" y2="44.5" />
-                                    <line fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1,5" x1="5.5" y1="44.5" x2="46.5" y2="44.5" />
-                                    <line fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x1="49.5" y1="44.5" x2="49.5" y2="44.5" />
-                                </g>
-                                <text transform="matrix(1 0 0 1 67.4175 28.6235)" font-family="'Open Sans Condensed Light Italic'" font-size="12">Relation recorded in the source for both records</text>
-                                <text transform="matrix(1 0 0 1 67.4175 48.353)" font-family="'Open Sans Condensed Light Italic'" font-size="12">Relation recorded in the source of the person</text>
-                                <text transform="matrix(1 0 0 1 67.4175 68.083)" font-family="'Open Sans Condensed Light Italic'" font-size="12">Relation recorded in the source of the related person</text>
-                                <circle fill="#9980CC" stroke="#330099" cx="55" cy="44.664" r="5" />
-                                <circle fill="#EFB380" stroke="#DF6800" cx="55" cy="24.664" r="5" />
-                                <circle fill="#8ABF80" stroke="#157F00" cx="55" cy="64.664" r="5" />
-                            </svg>
-                            <a href="#" class="enlarge" data-reveal-id="graphModal"><i class="fa fa-search-plus fa-2x"></i></a>
-                            <div id="graphModal" class="reveal-modal" data-reveal aria-labelledby="Julius Caesars' graph" aria-hidden="true" role="dialog">
-                                <a class="close-reveal-modal" aria-label="Close">&#215;</a>
-                                <div class="svg-container">
-                                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 815 485">
-                                        <g transform="translate(40,0)">
-                                            <g>
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
-                                                    L120,224.664" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.995,4.9748" d="
-                                                    M125.31,224.441c100.252-6.197,103.002-182.519,204.875-185.894" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,38.664L333,38.664
-                                                    " />
-                                            </g>
-                                            <g>
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
-                                                    L120,224.664" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0072,5.0359" d="
-                                                    M125.369,224.498c100.182-4.019,102.964-117.105,204.773-119.302" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M333,105.664
-                                                    L333,105.664" />
-                                            </g>
-                                            <path fill="none" stroke="#DF6800" stroke-width="2" d="M119.833,224.608c106.667,0,106.667-52.778,213.333-52.778" />
-                                            <path fill="none" stroke="#DF6800" stroke-width="2" d="M119.833,224.608c106.667,0,106.667,13.889,213.333,13.889" />
-                                            <path fill="none" stroke="#DF6800" stroke-width="2" d="M119.833,224.608c106.667,0,106.667,113.89,213.333,113.89" />
-                                            <g>
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M120,224.664
-                                                    L120,224.664" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0073,5.0363" d="
-                                                    M125.363,224.82c100.189,7.75,102.968,226.051,204.786,230.281" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.668,455.162
-                                                    c0.166,0.001,0.332,0.002,0.499,0.002" />
-                                            </g>
-                                            <g>
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,39.5h1" />
-                                                <path fill="#330099" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1,5" d="
-                                                    M338.5,39.5h205" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,38.664
-                                                    C546.166,38.664,546,38.664,546,38.664" />
-                                            </g>
-                                            <g>
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,106.5h1" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1,5" d="
-                                                        M338.5,106.5h205" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,105.664
-                                                        C546.166,105.664,546,105.664,546,105.664" />
-                                            </g>
-                                            <path fill="#DF6800" stroke="#DF6800" stroke-width="2" d="M332.5,172.5h213" />
-                                            <path fill="none" stroke="#DF6800" stroke-width="2" d="M332.5,239.5h213" />
-                                            <g>
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,339.5h1" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0045,5.0225" d="
-                                                        M338.69,338.469c100.196-1.119,102.972-32.686,204.798-33.296" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,305.664
-                                                        C546.166,305.664,546,305.664,546,305.664" />
-                                            </g>
-                                            <g>
-                                                <path fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,339.5h3" />
-                                                <g>
-                                                    <line fill="#157F00" x1="342.5" y1="338.5" x2="540.5" y2="338.5" />
-                                                    <g>
-                                                        <line fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x1="342.5" y1="338.5" x2="345.5" y2="338.5" />
-                                                        <line fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6,10" x1="355.5" y1="338.5" x2="532.5" y2="338.5" />
-                                                        <line fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x1="537.5" y1="338.5" x2="540.5" y2="338.5" />
-                                                    </g>
-                                                </g>
-                                                <path fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M542.5,339.5h3" />
-                                            </g>
-                                            <path fill="none" stroke="#DF6800" stroke-width="2" d="M333.167,338.498c106.666,0,106.666,33.332,213.333,33.332" />
-                                            <g>
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,456.5h1" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.9919,4.9593" d="
-                                                        M338.627,455.149c100.271-0.555,103.014-16.347,204.895-16.648" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,438.664 C546.166,438.664,546,438.664,546,438.664" />
-                                            </g>
-                                            <g>
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M332.5,456.5h1" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.9919,4.9593" d="
-                                                        M338.627,455.179c100.271,0.555,103.014,16.347,204.895,16.648" />
-                                                <path fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M546,471.664 C546.166,471.664,546,471.664,546,471.664" />
-                                            </g>
-                                            <g id="{{ person.id }}" transform="translate(213.33333333333337,219.44444444444443)">
-                                                <circle fill="#EEEEEE" stroke="#999999" stroke-width="2" cx="-93.833" cy="5.22" r="9" />
-                                                <text transform="matrix(1 0 0 1 -191.5159 9.1639)" enable-background="new">
-                                                    <tspan x="0" y="0" font-family="'Open Sans Condensed Bold'" font-size="15">C. Iulius (131)</tspan>
-                                                    <tspan x="-8" y="18" font-family="'Open Sans Condensed Bold'" font-size="15">C. f. C. n. Caesar</tspan>
-                                                </text>
-                                            </g>
-                                            <g transform="translate(426.66666666666674,33.333333333333336)">
-                                                <circle fill="#EEEEEE" stroke="#999999" cx="-93.5" cy="5.164" r="4.5" />
-                                                <text transform="matrix(1 0 0 1 -168.5031 -3.8362)" font-family="'Open Sans Condensed Light Italic'" font-size="14">adoptive father of</text>
-                                            </g>
-                                            <g transform="translate(640,33.333333333333336)">
-                                                <a xlink:href="#" class="svg-link">
-                                                    <circle fill="#9980CC" stroke="#330099" cx="-93.5" cy="5.164" r="4.5" />
-                                                    <text transform="matrix(1 0 0 1 -85.5 8.1638)" enable-background="new">
-                                                        <tspan x="0" y="0" font-family="'Open Sans Condensed Light'" font-size="16">C. Iulius (132) C. f. C. n. Caesar Octavianus</tspan>
-                                                        <tspan x="0" y="19.2" font-family="'Open Sans Condensed Light'" font-size="16">= C. Octavius C. f. Thurinus (or Caepias)</tspan>
-                                                    </text>
-                                                </a>
-                                            </g>
-                                            <g transform="translate(426.66666666666674,100)">
-                                                <circle fill="#EEEEEE" stroke="#999999" cx="-93.5" cy="5.164" r="4.5" />
-                                                <text transform="matrix(1 0 0 1 -142.2116 -3.8359)" font-family="'Open Sans Condensed Light Italic'" font-size="14">betrothed to</text>
-                                            </g>
-                                            <g transform="translate(640,100)">
-                                                <a xlink:href="#" class="svg-link">
-                                                    <circle fill="#9980CC" stroke="#330099" cx="-93.5" cy="5.164" r="4.5" />
-                                                    <text transform="matrix(1 0 0 1 -85.5 8.1641)" font-family="'Open Sans Condensed Light'" font-size="16">-. Cossutia (7)</text>
-                                                </a>
-                                            </g>
-                                            <g transform="translate(426.66666666666674,166.66666666666666)">
-                                                <circle fill="#EEEEEE" stroke="#999999" cx="-93.5" cy="5.164" r="4.5" />
-                                                <text transform="matrix(1 0 0 1 -150.1335 -3.8356)" font-family="'Open Sans Condensed Light Italic'" font-size="14">divorced from</text>
-                                            </g>
-                                            <g transform="translate(640,166.66666666666666)">
-                                                <a xlink:href="#" class="svg-link">
-                                                    <circle fill="#EFB380" stroke="#DF6800" cx="-93.5" cy="5.164" r="4.5" />
-                                                    <text transform="matrix(1 0 0 1 -85.5 8.1644)" font-family="'Open Sans Condensed Light'" font-size="16">-. Pompeia (52)</text>
-                                                </a>
-                                            </g>
-                                            <g transform="translate(426.66666666666674,233.33333333333334)">
-                                                <circle fill="#EEEEEE" stroke="#999999" cx="-93.5" cy="5.164" r="4.5" />
-                                                <text transform="matrix(1 0 0 1 -123.8581 -3.8362)" font-family="'Open Sans Condensed Light Italic'" font-size="14">father of</text>
-                                            </g>
-                                            <g transform="translate(640,233.33333333333334)">
-                                                <a xlink:href="#" class="svg-link">
-                                                    <circle fill="#EFB380" stroke="#DF6800" cx="-93.5" cy="5.164" r="4.5" />
-                                                    <text transform="matrix(1 0 0 1 -85.5 8.1638)" font-family="'Open Sans Condensed Light'" font-size="16">-. Iulia (547)</text>
-                                                </a>
-                                            </g>
-                                            <g transform="translate(426.66666666666674,333.3333333333333)">
-                                                <circle fill="#EEEEEE" stroke="#999999" cx="-93.5" cy="5.165" r="4.5" />
-                                                <text transform="matrix(1 0 0 1 -133.0163 -3.8363)" font-family="'Open Sans Condensed Light Italic'" font-size="14">married to</text>
-                                            </g>
-                                            <g transform="translate(640,300)">
-                                                <a xlink:href="#" class="svg-link">
-                                                    <circle fill="#9980CC" stroke="#330099" cx="-93.5" cy="5.164" r="4.5" />
-                                                    <text transform="matrix(1 0 0 1 -85.5 8.1641)" font-family="'Open Sans Condensed Light'" font-size="16">-. Calpurnia (126)</text>
-                                                </a>
-                                            </g>
-                                            <g transform="translate(640,333.3333333333333)">
-                                                <a xlink:href="#" class="svg-link">
-                                                    <circle fill="#8ABF80" stroke="#157F00" cx="-93.5" cy="5.165" r="4.5" />
-                                                    <text transform="matrix(1 0 0 1 -85.5 8.1637)" font-family="'Open Sans Condensed Light'" font-size="16">-. Cornelia (126)</text>
-                                                </a>
-                                            </g>
-                                            <g transform="translate(640,366.66666666666663)">
-                                                <a xlink:href="#" class="svg-link">
-                                                    <circle fill="#EFB380" stroke="#DF6800" cx="-93.5" cy="5.163" r="4.5" />
-                                                    <text transform="matrix(1 0 0 1 -85.5 8.1644)" font-family="'Open Sans Condensed Light'" font-size="16">-. Pompeia (143)</text>
-                                                </a>
-                                            </g>
-                                            <g transform="translate(426.66666666666674,450)">
-                                                <circle fill="#EEEEEE" stroke="#999999" cx="-93.5" cy="5.164" r="4.5" />
-                                                <text transform="matrix(1 0 0 1 -113.4655 -3.8359)" font-family="'Open Sans Condensed Light Italic'" font-size="14">son of</text>
-                                            </g>
-                                            <g transform="translate(640,433.33333333333337)">
-                                                <a xlink:href="#" class="svg-link">
-                                                    <circle fill="#9980CC" stroke="#330099" cx="-93.5" cy="5.164" r="4.5" />
-                                                    <text transform="matrix(1 0 0 1 -85.5 8.1637)" font-family="'Open Sans Condensed Light'" font-size="16">-. Aurelia (248)</text>
-                                                </a>
-                                            </g>
-                                            <g transform="translate(640,466.6666666666667)">
-                                                <a xlink:href="#" class="svg-link">
-                                                    <circle fill="#9980CC" stroke="#330099" cx="-93.5" cy="5.164" r="4.5" />
-                                                    <text transform="matrix(1 0 0 1 -85.5 8.1644)" font-family="'Open Sans Condensed Light'" font-size="16">C. Iulius (130) C. f. Caesar</text>
-                                                </a>
-                                            </g>
-                                        </g>
-                                        <g>
-                                            <line fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x1="-0.5" y1="64.5" x2="3.5" y2="64.5" />
-                                            <line fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6,10" x1="13.5" y1="64.5" x2="41.5" y2="64.5" />
-                                            <line fill="none" stroke="#157F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x1="46.5" y1="64.5" x2="49.5" y2="64.5" />
-                                        </g>
-                                        <path fill="none" stroke="#DF6800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M-0.5,25.5h50" />
-                                        <g>
-                                            <line fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x1="-0.5" y1="44.5" x2="0.5" y2="44.5" />
-                                            <line fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1,5" x1="5.5" y1="44.5" x2="46.5" y2="44.5" />
-                                            <line fill="none" stroke="#330099" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x1="49.5" y1="44.5" x2="49.5" y2="44.5" />
-                                        </g>
-                                        <text transform="matrix(1 0 0 1 67.4175 28.6235)" font-family="'Open Sans Condensed Light Italic'" font-size="12">Relation recorded in the source for both records</text>
-                                        <text transform="matrix(1 0 0 1 67.4175 48.353)" font-family="'Open Sans Condensed Light Italic'" font-size="12">Relation recorded in the source of the person</text>
-                                        <text transform="matrix(1 0 0 1 67.4175 68.083)" font-family="'Open Sans Condensed Light Italic'" font-size="12">Relation recorded in the source of the related person</text>
-                                        <circle fill="#9980CC" stroke="#330099" cx="55" cy="44.664" r="5" />
-                                        <circle fill="#EFB380" stroke="#DF6800" cx="55" cy="24.664" r="5" />
-                                        <circle fill="#8ABF80" stroke="#157F00" cx="55" cy="64.664" r="5" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endwith %}
+                {% include "search/person.html" with doc=result.documents.0 %}
             </li>
             {% empty %}
             <li>No results found!</li>
             {% endfor %}
         </ol>
+
         {% display_pagination querydict page_obj %}
     </div>
 </div>
 {% endblock main %}
 
 {% block footerscripts %}
-    <script type="text/javascript">
-        var autocompleteDict = {
-            {% for item in autocomplete_facets %}
-            "{{ item }}": [
-                {% for term in facets.fields|get_item:item %}
-                    {% with value=term.0 count=term.1 %}
-                        {"name": "{{ value.strip }}", "count": "{{count}}"}
-                        {% if not forloop.last %}, {% endif %} {% endwith %}
-                {% endfor %}
-                ]
-                {% if not forloop.last %},{% endif %}
+<script type="text/javascript">
+    var autocompleteDict = {
+        {% for item in autocomplete_facets %}
+        '{{ item }}': [
+            {% for term in facets.fields|get_item:item %}
+            {% with value=term.0 count=term.1 %}
+            {'name': '{{ value.strip }}', 'count': '{{count}}'}
+            {% if not forloop.last %}, {% endif %} {% endwith %}
             {% endfor %}
-        }
-    </script>
+        ]
+        {% if not forloop.last %},{% endif %}
+        {% endfor %}
+    }
+</script>
 
-    <!-- EasyAutocomplete -->
-    <script src="{% static 'vendor/EasyAutocomplete/dist/jquery.easy-autocomplete.js' %}"></script>
-    <script src="{% static 'javascripts/search.js' %}"></script>
+<!-- EasyAutocomplete -->
+<script src="{% static 'vendor/EasyAutocomplete/dist/jquery.easy-autocomplete.js' %}"></script>
+<script src="{% static 'javascripts/search.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    var href = window.location.href;
+
+    if (href.indexOf('page=') > 0) {
+        var top = $('#search-results-box').offset().top;
+        $('html, body').scrollTop(top);
+    }
+});
+</script>
 {% endblock %}

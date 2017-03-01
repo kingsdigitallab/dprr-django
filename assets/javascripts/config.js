@@ -21,7 +21,7 @@ $(document).ready(function() {
 		$('#showhide').text(txt);
 		// toggle extra-margin class to remove blank space when collapsing
 		// the search box
-		$('#search-results-box').toggleClass("extra-margin");
+		// $('#search-results-box').toggleClass("extra-margin");
 		return false;
 	});
 

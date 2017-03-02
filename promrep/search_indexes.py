@@ -178,7 +178,7 @@ class PostAssertionIndex(AssertionIndex):
                 for o in off.get_ancestors(include_self=True)]
 
     def prepare_life_date_types(self, object):
-        date_types = ['birth', 'exile', 'restored', 'proscribed',
+        date_types = ['birth', 'exiled', 'restored', 'proscribed',
                       'expelled from Senate']
         relationship_types = {'adopted son of': 'adopted'}
 

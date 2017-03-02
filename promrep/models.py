@@ -493,6 +493,9 @@ class Person(TimeStampedModel):
 
         return self.post_assertions.all().order_by('date_start')
 
+    def get_reference_notes(self):
+        return self.notes.filter(note_type=1)
+
 
 @with_author
 class TribeAssertion(TimeStampedModel):

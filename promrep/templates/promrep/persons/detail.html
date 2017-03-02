@@ -13,6 +13,12 @@
         <p><strong>Warning: person under revision</strong></p>
         {% endif %}
 
+        {% for note in person.get_reference_notes %}
+        <p class="note">
+        {{ note }}
+        </p>
+        {% endfor %}
+
         {% if person.has_status_information %}
         <h3>Status</h3>
         <ul class="timeline no-bullet">

@@ -26,7 +26,7 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
     dprr_id = indexes.CharField(model_attr='person__dprr_id', null=True)
 
     praenomen = indexes.MultiValueField(faceted=True, null=True)
-    nomen = indexes.CharField(faceted=True, null=True)
+    nomen = indexes.MultiValueField(faceted=True, null=True)
 
     f = indexes.MultiValueField(model_attr='person__f',
                                 faceted=True, null=True)
@@ -36,10 +36,9 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
     re_number = indexes.CharField(model_attr='person__re_number',
                                   faceted=True, null=True)
 
-    other_names = indexes.CharField(
-        model_attr='person__other_names_plain', faceted=True, null=True)
+    cognomen = indexes.MultiValueField(faceted=True, null=True)
 
-    cognomen = indexes.CharField(faceted=True, null=True)
+    other_names = indexes.MultiValueField(faceted=True, null=True)
 
     gender = indexes.CharField(
         model_attr='person__sex__name', faceted=True, null=True)
@@ -75,14 +74,21 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
         brackets."""
 
         nomen = object.person.nomen.strip()
-        return re.sub(r'[\?\[\]\(\)]', '', nomen)
+        nomen = re.sub(r'[\?\[\]\(\)]', '', nomen)
+
+        return object.person._split_name(nomen)
 
     def prepare_cognomen(self, object):
         """The list of cognomens to filter on should not show parentheses or
         brackets."""
 
         cognomen = object.person.cognomen.strip()
-        return re.sub(r'[\?\[\]\(\)]', '', cognomen)
+        cognomen = re.sub(r'[\?\[\]\(\)]', '', cognomen)
+
+        return object.person._split_name(cognomen)
+
+    def prepare_other_names(self, object):
+        return object.person._split_name(object.person.other_names_plain)
 
     def prepare_tribe(self, object):
         return list(set(object.person.tribes.values_list('name', flat=True)))
@@ -178,7 +184,7 @@ class PostAssertionIndex(AssertionIndex):
                 for o in off.get_ancestors(include_self=True)]
 
     def prepare_life_date_types(self, object):
-        date_types = ['birth', 'exile', 'restored', 'proscribed',
+        date_types = ['birth', 'exiled', 'restored', 'proscribed',
                       'expelled from Senate']
         relationship_types = {'adopted son of': 'adopted'}
 

@@ -156,13 +156,19 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     """Extends FacetedSearchForm, as we have special requirements in terms of
     facet handling and date filtering."""
 
+    AUTOCOMPLETE_FACETS = ['praenomen', 'nomen', 'cognomen', 're_number',
+                           'n', 'f', 'other_names', 'tribe']
+
     MIN_DATE = -509
-    MAX_DATE = -33
+    MAX_DATE = -31
+
+    MIN_DATE_FORM = -1 * MAX_DATE
+    MAX_DATE_FORM = -1 * MIN_DATE
 
     date_from = forms.IntegerField(
-        required=False, max_value=MAX_DATE, min_value=MIN_DATE)
+        required=False, max_value=MAX_DATE_FORM, min_value=MIN_DATE_FORM)
     date_to = forms.IntegerField(
-        required=False, max_value=MAX_DATE, min_value=MIN_DATE)
+        required=False, max_value=MAX_DATE_FORM, min_value=MIN_DATE_FORM)
 
     # class autocomplete is used by the search.js script to select the fields
     # the name of the fields has to match the facet names defined in
@@ -174,7 +180,7 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     cognomen = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'autocomplete', 'title': 'Cognomen'}))
     re_number = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'placeholder': 'RE', 'title': 'RE'}))
+        attrs={'title': 'RE'}))
     n = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'autocomplete', 'title': 'Grandfather'}))
     f = forms.CharField(required=False, widget=forms.TextInput(
@@ -210,16 +216,24 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
                         data.get('date_to', self.MAX_DATE) or self.MAX_DATE)
                 )
 
-            if 'praenomen' in data:
-                if data.get('praenomen'):
-                    sqs = sqs.narrow(
-                        'praenomen:{}'.format(data.get('praenomen')))
-
-            for field in ('nomen', 'cognomen', 're_number',
-                          'n', 'f', 'other_names', 'tribe'):
-                if field in data:
-                    if data.get(field):
-                        sqs = sqs.narrow(
-                            '{}:{}'.format(field, data.get(field)))
+            for field in self.AUTOCOMPLETE_FACETS:
+                if data.get(field):
+                    sqs = sqs.narrow('{}:{}'.format(field, data.get(field)))
 
         return sqs
+
+    def clean_date_from(self):
+        date_from = self.cleaned_data['date_from']
+
+        if date_from:
+            date_from = -1 * date_from
+
+        return date_from
+
+    def clean_date_to(self):
+        date_to = self.cleaned_data['date_to']
+
+        if date_to:
+            date_to = -1 * date_to
+
+        return date_to

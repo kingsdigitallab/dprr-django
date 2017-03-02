@@ -64,3 +64,23 @@ def remove_facet_link(qd, facet):
     except ValueError:
         pass
     return '?{0}'.format(qd.urlencode())
+
+
+@register.filter
+def facet_pretty_print(value):
+    if not value:
+        return None
+
+    suffix = '_exact'
+    if suffix in value:
+        value = value.replace(suffix, '')
+
+    value = value.replace('_', ' ')
+
+    obvious = ':true'
+    if obvious in value:
+        value = value.replace(obvious, '')
+
+    value = value.replace(':', ': ')
+
+    return value.title()

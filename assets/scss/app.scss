@@ -470,7 +470,7 @@ h3.quick-home {
 }
 
 .drop-list {
-    max-height: 550px; /* To overcome the overflow: hidden that cuts the list off */
+    height: 550px; /* To overcome the overflow: hidden that cuts the list off */
     overflow: scroll;
 
     li {
@@ -544,7 +544,9 @@ h3.quick-home {
 /* Auto-complete */
 .easy-autocomplete-container {
     ul {
+        max-height: 400px;
         margin-left: 0;
+        overflow: scroll;
     }
 
     width: 280px !important;

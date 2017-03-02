@@ -15,7 +15,7 @@
 
         {% for note in person.get_reference_notes %}
         <p class="note">
-        {{ note }}
+        {{ note }} (<em>{{ note.secondary_source.abbrev_name }}</em>)
         </p>
         {% endfor %}
 

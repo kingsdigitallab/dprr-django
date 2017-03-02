@@ -479,7 +479,8 @@ class Person(TimeStampedModel):
         if not self.dateinformation_set.all():
             return None
 
-        return self.dateinformation_set.all().order_by('value')
+        return self.dateinformation_set.exclude(
+            date_type__name='attested').order_by('value')
 
     def get_career(self):
         if not self.post_assertions.all():

@@ -407,7 +407,7 @@ h3.quick-home {
         &:before {
             color: $primary-color;
             // content: "\f111 \A \f106";
-            content: "\f106";
+            content: "\f107";
             display: inline-block;
             font-family: "FontAwesome";
             padding-right: 10px;
@@ -433,7 +433,7 @@ h3.quick-home {
     }
 
     ul {
-        border-left: 1px dotted $primary-color;
+        // border-left: 1px dotted $primary-color;
         margin-left: .28125rem !important;
         margin-top: -.5rem;
         padding-left: 1.25rem;

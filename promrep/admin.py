@@ -13,7 +13,7 @@ from models import (DateInformation, DateType, Gens, GensAssertion, Group,
                     Province, RelationshipAssertion,
                     RelationshipAssertionReference, RelationshipType, RoleType,
                     SecondarySource, StatusAssertion, StatusAssertionNote,
-                    StatusType, Tribe, TribeAssertion)
+                    StatusType, Tribe, TribeAssertion, PrimarySource)
 from promrep.forms import (PostInlineForm, RelationshipAssertionInlineForm,
                            StatusInlineForm)
 
@@ -771,3 +771,6 @@ class PrimarySourceAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'abbrev_name', 'biblio')
     readonly_fields = ('id', )
     list_display_links = ('id', 'abbrev_name', 'name', 'biblio')
+
+
+admin.site.register(PrimarySource, PrimarySourceAdmin)

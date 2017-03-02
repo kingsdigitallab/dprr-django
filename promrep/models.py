@@ -14,7 +14,6 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 
 def date_to_string(date_int, date_uncertain, date_suffix=True):
-
     date_str = ""
     suffix = " B.C."
 
@@ -38,7 +37,6 @@ def date_to_string(date_int, date_uncertain, date_suffix=True):
 
 @with_author
 class SecondarySource(TimeStampedModel):
-
     name = models.CharField(max_length=256, unique=True)
     abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
     biblio = models.CharField(max_length=512, unique=True, blank=True)
@@ -52,7 +50,6 @@ class SecondarySource(TimeStampedModel):
 
 
 class PrimarySource(models.Model):
-
     name = models.CharField(max_length=256, unique=True)
     abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
     biblio = models.CharField(max_length=512, unique=True, blank=True)
@@ -63,7 +60,6 @@ class PrimarySource(models.Model):
 
 @with_author
 class Praenomen(models.Model):
-
     abbrev = models.CharField(max_length=32, unique=True)
     name = models.CharField(max_length=128, unique=True)
 
@@ -89,7 +85,6 @@ class Praenomen(models.Model):
 
 
 class Sex(models.Model):
-
     name = models.CharField(max_length=32, unique=True)
 
     def __unicode__(self):
@@ -123,7 +118,6 @@ class Tribe(models.Model):
 
 
 class RoleType(TimeStampedModel):
-
     name = models.CharField(max_length=128, unique=True)
     description = models.CharField(max_length=1024, blank=True)
 
@@ -416,11 +410,7 @@ class Person(TimeStampedModel):
 
         praenomens = []
         text = found.groups()[0]
-
-        if ' or ' in text:
-            text = text.split(' or ')
-        else:
-            text = [text]
+        text = self._split_name(text)
 
         for abbrev in text:
             # only need the content up to the first space
@@ -435,6 +425,15 @@ class Person(TimeStampedModel):
                     praenomens.append(p.alternate_name)
 
         return praenomens
+
+    def _split_name(self, value):
+        if not value:
+            return None
+
+        if ' or ' in value:
+            return value.split(' or ')
+
+        return [value]
 
     @property
     def n(self):
@@ -467,7 +466,7 @@ class Person(TimeStampedModel):
 
     def is_eques(self):
         return self.statusassertion_set.filter(
-            status__name__iexact='eques') > 0
+            status__name__iexact='eques').count() > 0
 
     def get_eques_status_assertion(self):
         if not self.is_eques():
@@ -480,13 +479,17 @@ class Person(TimeStampedModel):
         if not self.dateinformation_set.all():
             return None
 
-        return self.dateinformation_set.all().order_by('value')
+        return self.dateinformation_set.exclude(
+            date_type__name='attested').order_by('value')
 
     def get_career(self):
         if not self.post_assertions.all():
             return None
 
         return self.post_assertions.all().order_by('date_start')
+
+    def get_reference_notes(self):
+        return self.notes.filter(note_type=1)
 
 
 @with_author
@@ -606,7 +609,6 @@ class DateInformation(TimeStampedModel):
 
 @with_author
 class Office(MPTTModel, TimeStampedModel):
-
     name = models.CharField(max_length=256, unique=True)
     abbrev_name = models.CharField(max_length=128, blank=True)
     description = models.CharField(max_length=1024, blank=True)
@@ -632,7 +634,6 @@ class Office(MPTTModel, TimeStampedModel):
 
 @with_author
 class RelationshipType(TimeStampedModel):
-
     name = models.CharField(max_length=256, unique=True)
     order = models.PositiveSmallIntegerField(default=0)
     description = models.CharField(max_length=1024, blank=True)
@@ -710,7 +711,7 @@ class Group(TimeStampedModel):
     def related_label(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
-        return u'<a href="%s">%s</a>' % (url, self.__unicode__(), )
+        return u'<a href="%s">%s</a>' % (url, self.__unicode__(),)
 
 
 @with_author

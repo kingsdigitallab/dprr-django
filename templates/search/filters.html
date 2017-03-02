@@ -95,7 +95,7 @@
     {% for facet in selected_facets %}
     <li>
         <span class="label radius">
-            {{ facet }}
+            {{ facet|facet_pretty_print }}
             <a href="{% remove_facet_link querydict facet %}#search">
                 <i class="fa fa-times-circle"></i>
             </a>

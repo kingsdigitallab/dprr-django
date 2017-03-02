@@ -5,17 +5,18 @@ var autocomplete = {
 
     options = {
       adjustWidth: false,
-      data: autocompleteDict[$input.attr('name')],
-      getValue: 'name',
+      data: autocompleteDict[$input.attr("name")],
+      getValue: "name",
       template: {
-        type: 'custom',
+        type: "custom",
         method: function(value, item) {
           return value +
             ' <span class="label radius">' +
             item.count +
-            '</span>';
+            "</span>";
         }
       },
+      //placeholder: $input.attr('title')
       list: {
         match: {
           enabled: true,
@@ -30,17 +31,16 @@ var autocomplete = {
         maxNumberOfElements: 10,
         sort: { enabled: true },
         onChooseEvent: function() {
-          $input.closest('form').submit();
-        },
-      },
-      placeholder: $input.attr('title')
+          $input.closest("form").submit();
+        }
+      }
     };
 
     $input.easyAutocomplete(options);
   },
   init: function() {
     self = this;
-    $('input.autocomplete').each(function() {
+    $("input.autocomplete").each(function() {
       self.setUp(this);
     });
   }

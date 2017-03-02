@@ -65,6 +65,12 @@ class PersonTest(TestCase):
             self.person.nomen = item['nomen']
             self.assertEqual(item['dprr_id'], self.person.generate_dprr_id())
 
+    def test___split_name(self):
+        self.assertIsNone(self.person._split_name(None))
+        self.assertIsNone(self.person._split_name(''))
+        self.assertEqual(['a', 'b'], self.person._split_name('a or b'))
+        self.assertEqual(['a'], self.person._split_name('a'))
+
     def test__f(self):
         # 1. fail the test
         # self.fail()

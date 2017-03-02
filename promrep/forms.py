@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.safestring import mark_safe
 from haystack.forms import FacetedSearchForm
+from django.core.urlresolvers import reverse
 
 
 def get_range_parts(value_range):
@@ -14,6 +15,7 @@ def get_range_parts(value_range):
 
 
 class ModelLinkWidget(forms.Widget):
+
     """This widget adds a link, to edit the current inline, after the
     inline form fields.
     """
@@ -23,10 +25,14 @@ class ModelLinkWidget(forms.Widget):
         self.object = obj
 
     def render(self, name, value, attrs=None):
-        edit_link = '<a href="../../../%s/%s/%s/">Edit %s</a>' % \
-            (self.object._meta.app_label,
-             self.object._meta.object_name.lower(),
-             self.object.pk, self.object._meta.verbose_name.lower())
+        # edit_link = '<a href="../../../%s/%s/%s/">Edit %s</a>' % \
+        #     (self.object._meta.app_label,
+        #      self.object._meta.object_name.lower(),
+        #      self.object.pk, self.object._meta.verbose_name.lower())
+        edit_link = reverse('admin:%s_%s_change' % (
+            object._meta.app_label,
+            object._meta.model_name),
+            args=[object.id])
 
         if self.object.pk:
             return mark_safe(u'%s' % (edit_link))
@@ -65,6 +71,7 @@ class StatusProvincesWidget(forms.Widget):
 
 
 class PostInlineForm(forms.ModelForm):
+
     """This form renders a model and adds a link to edit the nested inline
     model. This is useful for inline editing when the nested inline fields are
     not displayed.
@@ -92,6 +99,7 @@ class PostInlineForm(forms.ModelForm):
 
 
 class PersonInlineForm(forms.ModelForm):
+
     """This form renders a model and adds a link to edit the nested inline
     model. This is useful for inline editing when the nested inline fields are
     not displayed."""
@@ -110,6 +118,7 @@ class PersonInlineForm(forms.ModelForm):
 
 
 class RelationshipAssertionInlineForm(forms.ModelForm):
+
     """This form renders a model and adds a link to edit the nested inline
     model. This is useful for inline editing when the nested inline fields are
     not displayed."""
@@ -128,6 +137,7 @@ class RelationshipAssertionInlineForm(forms.ModelForm):
 
 
 class StatusInlineForm(forms.ModelForm):
+
     """This form renders a model and adds a link to edit the nested inline
     model. This is useful for inline editing when the nested inline fields are
     not displayed.
@@ -156,13 +166,19 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     """Extends FacetedSearchForm, as we have special requirements in terms of
     facet handling and date filtering."""
 
+    AUTOCOMPLETE_FACETS = ['praenomen', 'nomen', 'cognomen', 're_number',
+                           'n', 'f', 'other_names', 'tribe']
+
     MIN_DATE = -509
-    MAX_DATE = -33
+    MAX_DATE = -31
+
+    MIN_DATE_FORM = -1 * MAX_DATE
+    MAX_DATE_FORM = -1 * MIN_DATE
 
     date_from = forms.IntegerField(
-        required=False, max_value=MAX_DATE, min_value=MIN_DATE)
+        required=False, max_value=MAX_DATE_FORM, min_value=MIN_DATE_FORM)
     date_to = forms.IntegerField(
-        required=False, max_value=MAX_DATE, min_value=MIN_DATE)
+        required=False, max_value=MAX_DATE_FORM, min_value=MIN_DATE_FORM)
 
     # class autocomplete is used by the search.js script to select the fields
     # the name of the fields has to match the facet names defined in
@@ -174,7 +190,7 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     cognomen = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'autocomplete', 'title': 'Cognomen'}))
     re_number = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'placeholder': 'RE', 'title': 'RE'}))
+        attrs={'title': 'RE'}))
     n = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'autocomplete', 'title': 'Grandfather'}))
     f = forms.CharField(required=False, widget=forms.TextInput(
@@ -210,16 +226,24 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
                         data.get('date_to', self.MAX_DATE) or self.MAX_DATE)
                 )
 
-            if 'praenomen' in data:
-                if data.get('praenomen'):
-                    sqs = sqs.narrow(
-                        'praenomen:{}'.format(data.get('praenomen')))
-
-            for field in ('nomen', 'cognomen', 're_number',
-                          'n', 'f', 'other_names', 'tribe'):
-                if field in data:
-                    if data.get(field):
-                        sqs = sqs.narrow(
-                            '{}:{}'.format(field, data.get(field)))
+            for field in self.AUTOCOMPLETE_FACETS:
+                if data.get(field):
+                    sqs = sqs.narrow('{}:{}'.format(field, data.get(field)))
 
         return sqs
+
+    def clean_date_from(self):
+        date_from = self.cleaned_data['date_from']
+
+        if date_from:
+            date_from = -1 * date_from
+
+        return date_from
+
+    def clean_date_to(self):
+        date_to = self.cleaned_data['date_to']
+
+        if date_to:
+            date_to = -1 * date_to
+
+        return date_to

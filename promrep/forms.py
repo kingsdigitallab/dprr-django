@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.safestring import mark_safe
 from haystack.forms import FacetedSearchForm
+from django.core.urlresolvers import reverse
 
 
 def get_range_parts(value_range):
@@ -14,6 +15,7 @@ def get_range_parts(value_range):
 
 
 class ModelLinkWidget(forms.Widget):
+
     """This widget adds a link, to edit the current inline, after the
     inline form fields.
     """
@@ -23,10 +25,14 @@ class ModelLinkWidget(forms.Widget):
         self.object = obj
 
     def render(self, name, value, attrs=None):
-        edit_link = '<a href="../../../%s/%s/%s/">Edit %s</a>' % \
-            (self.object._meta.app_label,
-             self.object._meta.object_name.lower(),
-             self.object.pk, self.object._meta.verbose_name.lower())
+        # edit_link = '<a href="../../../%s/%s/%s/">Edit %s</a>' % \
+        #     (self.object._meta.app_label,
+        #      self.object._meta.object_name.lower(),
+        #      self.object.pk, self.object._meta.verbose_name.lower())
+        edit_link = reverse('admin:%s_%s_change' % (
+            object._meta.app_label,
+            object._meta.model_name),
+            args=[object.id])
 
         if self.object.pk:
             return mark_safe(u'%s' % (edit_link))
@@ -65,6 +71,7 @@ class StatusProvincesWidget(forms.Widget):
 
 
 class PostInlineForm(forms.ModelForm):
+
     """This form renders a model and adds a link to edit the nested inline
     model. This is useful for inline editing when the nested inline fields are
     not displayed.
@@ -92,6 +99,7 @@ class PostInlineForm(forms.ModelForm):
 
 
 class PersonInlineForm(forms.ModelForm):
+
     """This form renders a model and adds a link to edit the nested inline
     model. This is useful for inline editing when the nested inline fields are
     not displayed."""
@@ -110,6 +118,7 @@ class PersonInlineForm(forms.ModelForm):
 
 
 class RelationshipAssertionInlineForm(forms.ModelForm):
+
     """This form renders a model and adds a link to edit the nested inline
     model. This is useful for inline editing when the nested inline fields are
     not displayed."""
@@ -128,6 +137,7 @@ class RelationshipAssertionInlineForm(forms.ModelForm):
 
 
 class StatusInlineForm(forms.ModelForm):
+
     """This form renders a model and adds a link to edit the nested inline
     model. This is useful for inline editing when the nested inline fields are
     not displayed.

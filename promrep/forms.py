@@ -26,9 +26,9 @@ class ModelLinkWidget(forms.Widget):
 
     def render(self, name, value, attrs=None):
         edit_url = reverse('admin:%s_%s_change' % (
-            object._meta.app_label,
-            object._meta.model_name),
-            args=[object.id])
+            self.object._meta.app_label,
+            self.object._meta.model_name),
+            args=[self.object.id])
         edit_link = '<a href="%s">Edit %s</a>' % \
             (edit_url,
              self.object._meta.verbose_name.lower())

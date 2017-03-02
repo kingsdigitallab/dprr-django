@@ -180,7 +180,7 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     cognomen = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'autocomplete', 'title': 'Cognomen'}))
     re_number = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'placeholder': 'RE', 'title': 'RE'}))
+        attrs={'title': 'RE'}))
     n = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'autocomplete', 'title': 'Grandfather'}))
     f = forms.CharField(required=False, widget=forms.TextInput(

@@ -16,8 +16,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
                     'patrician', 'province', 'offices', 'life_date_types',
                     'eques']
 
-    autocomplete_facets = ['praenomen', 'nomen', 'cognomen', 're_number',
-                           'province', 'n', 'f', 'other_names', 'tribe']
+    autocomplete_facets = PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS
 
     form_class = PromrepFacetedSearchForm
     load_all = True

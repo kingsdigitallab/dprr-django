@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import logging
 from promrep.models import Person, RelationshipAssertion, RelationshipType
+from promrep.models import SecondarySource
 import csv
 import datetime
 
@@ -17,22 +18,23 @@ class Command(BaseCommand):
 
     def findfromsiblings(self, person, sibs, relationship, single):
         relationships = []
+        dprr_source = SecondarySource.objects.get(name='DPRR Team')
         for sib in sibs:
             try:
                 found = RelationshipAssertion.objects.get(
                     related_person=sib.related_person,
+                    secondary_source=dprr_source,
                     relationship=relationship)
             except ObjectDoesNotExist:
                 found = None
             except MultipleObjectsReturned:
                 found = None
-                print "Multiple found for "
-                + sib.related_person.__unicode__()
-                + ":" + relationship.name
             if found is not None:
                 new_assert = RelationshipAssertion(
-                    extra_info="Inferred", person=person,
+                    extra_info="Inferred",
+                    person=person,
                     related_person=found.person,
+                    secondary_source=dprr_source,
                     relationship=relationship)
                 relationships.append(new_assert)
                 self.writeassetion(new_assert, found)
@@ -41,9 +43,8 @@ class Command(BaseCommand):
         return relationships
 
     def writeassetion(self, new_assert, source_assert):
-        refstring = ""
-        for ref in new_assert.references:
-            refstring += ref.print_primary_source_refs()
+        print new_assert
+        # new_assert.save()
         self.csv_log.writerow({
             "inferred_person_id": new_assert.person.id,
             "inferred_person": new_assert.person,
@@ -51,7 +52,6 @@ class Command(BaseCommand):
             "inferred_related_person": new_assert.related_person,
             "inferred_relationship_type": new_assert.relationship,
             "uncertain": new_assert.uncertain,
-            "primary source": refstring,
             "secondary source": new_assert.secondary_source,
             "assertion_id": source_assert.id,
             "source_person_id": source_assert.person.id,
@@ -69,7 +69,7 @@ class Command(BaseCommand):
         type_father = RelationshipType.objects.get(name="father of")
         type_son = RelationshipType.objects.get(name="son of")
         type_daughter = RelationshipType.objects.get(name="daughter of")
-
+        dprr_source = SecondarySource.objects.get(name='DPRR Team')
         for person in Person.objects.all():
             sibs = []
             children = []
@@ -95,11 +95,6 @@ class Command(BaseCommand):
                     sibs.append(relassert)
                 elif relassert.relationship.name == "married to":
                     spouse = relassert
-            print u"Father: " + unicode(father)
-            print u"Mother: " + unicode(mother)
-            for sib in sibs:
-                print u"Sib " + unicode(sib)
-
             # Check for father and mother
             if father is None and len(sibs) > 0:
                 finds = self.findfromsiblings(person, sibs, type_father, True)
@@ -125,8 +120,8 @@ class Command(BaseCommand):
                         extra_info="Inferred",
                         related_person=sib.related_person,
                         person=mother.related_person,
+                        secondary_source=dprr_source,
                         relationship=type_mother)
-                    print u"New Mother " + unicode(new_assert)
                     new_rels.append(new_assert)
                     self.writeassetion(new_assert, sib)
                     new_inv = RelationshipAssertion(
@@ -143,11 +138,9 @@ class Command(BaseCommand):
                         extra_info="Inferred",
                         related_person=sib.related_person,
                         person=father.related_person,
+                        secondary_source=dprr_source,
                         relationship=type_father)
                     new_rels.append(new_assert)
-                    print
-                    u"New Father " + unicode(new_assert) + "based on"
-                    + unicode(sib)
                     self.writeassetion(new_assert, sib)
                     new_rels.append(
                         RelationshipAssertion(
@@ -165,6 +158,7 @@ class Command(BaseCommand):
                             extra_info="Inferred",
                             related_person=spouse.related_person,
                             person=kid.related_person,
+                            secondary_source=dprr_source,
                             relationship=type_son)
                         new_rels.append(new_assert)
                         self.writeassetion(new_assert, spouse)
@@ -172,6 +166,7 @@ class Command(BaseCommand):
                             extra_info="Inferred",
                             person=spouse.related_person,
                             related_person=kid.related_person,
+                            secondary_source=dprr_source,
                             relationship=type_father)
                         new_rels.append(new_inv)
                         # self.writeassetion(new_inv, spouse)
@@ -183,6 +178,7 @@ class Command(BaseCommand):
                         new_assert = RelationshipAssertion(
                             extra_info="Inferred",
                             related_person=spouse.related_person,
+                            secondary_source=dprr_source,
                             person=kid.related_person,
                             relationship=type_daughter)
                         new_rels.append(new_assert)
@@ -190,6 +186,7 @@ class Command(BaseCommand):
                         new_inv = RelationshipAssertion(
                             extra_info="Inferred",
                             person=spouse.related_person,
+                            secondary_source=dprr_source,
                             related_person=kid.related_person,
                             relationship=type_mother)
                         new_rels.append(new_inv)
@@ -235,7 +232,6 @@ class Command(BaseCommand):
                     "inferred_person",
                     "inferred_relationship_type",
                     "uncertain",
-                    "primary source",
                     "secondary source",
                     "inferred_related_person_id",
                     "inferred_related_person",
@@ -254,5 +250,4 @@ class Command(BaseCommand):
             # self.add_inverse_relationships()
             # todo When saving Iterate this until no new relationships created
             self.add_inferred_relationships()
-
         print("Wrote {}".format(log_fname))

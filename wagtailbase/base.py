@@ -128,8 +128,6 @@ class BasePage(Page):
 
         template = select_template([page_template, default_template])
 
-        print template.template.name
-
         logger.debug('get_template: {0}'.format(template.template.name))
         return template.template.name
 

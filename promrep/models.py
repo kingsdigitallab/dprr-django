@@ -461,7 +461,7 @@ class Person(TimeStampedModel):
 
     def is_eques(self):
         return self.statusassertion_set.filter(
-            status__name__iexact='eques') > 0
+            status__name__iexact='eques').count() > 0
 
     def get_eques_status_assertion(self):
         if not self.is_eques():

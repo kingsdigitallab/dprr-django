@@ -416,11 +416,7 @@ class Person(TimeStampedModel):
 
         praenomens = []
         text = found.groups()[0]
-
-        if ' or ' in text:
-            text = text.split(' or ')
-        else:
-            text = [text]
+        text = self._split_name(text)
 
         for abbrev in text:
             # only need the content up to the first space
@@ -435,6 +431,15 @@ class Person(TimeStampedModel):
                     praenomens.append(p.alternate_name)
 
         return praenomens
+
+    def _split_name(self, value):
+        if not value:
+            return None
+
+        if ' or ' in value:
+            return value.split(' or ')
+
+        return [value]
 
     @property
     def n(self):

@@ -61,39 +61,11 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
             context['remove_text_filter'] = url
 
-        # handles the special case of range facets
-        if ('date_from' or 'date_to') in self.request.GET:
-            qs = self.request.GET.copy()
+        context['era_filter'] = self._get_date_url_and_filter(
+            'era_from', 'era_to')
 
-            if 'date_from' in qs:
-                qs.pop('date_from')
-
-            if 'date_to' in qs:
-                qs.pop('date_to')
-
-            # always remove the page number
-            if 'page' in qs:
-                qs.pop('page')
-
-            url = reverse('haystack_search')
-            if len(qs):
-                url = '?{0}'.format(qs.urlencode())
-
-            date_text = ''
-            if self.request.GET.get(
-                    'date_to') and self.request.GET.get('date_from'):
-                date_text = self.request.GET.get(
-                    'date_from') + ' to ' + self.request.GET.get(
-                    'date_to')
-            elif self.request.GET.get('date_to'):
-                date_text = 'Before ' + self.request.GET.get('date_to')
-            elif self.request.GET.get('date_from'):
-                date_text = 'After ' + self.request.GET.get('date_from')
-
-            # if neither dates have values
-            #   no need to print the filter...
-            if date_text != '':
-                context['date_filter'] = (url, date_text)
+        context['date_filter'] = self._get_date_url_and_filter(
+            'date_from', 'date_to')
 
         # used to generate the lists for the autocomplete dictionary
         context['autocomplete_facets'] = self.autocomplete_facets
@@ -167,6 +139,33 @@ class PromrepFacetedSearchView(FacetedSearchView):
             context['facets']['fields']['province'])
 
         return context
+
+    def _get_date_url_and_filter(self, field_from, field_to):
+        if (field_from or field_to) in self.request.GET:
+            field_text = None
+
+            qs = self.request.GET.copy()
+
+            if qs.get(field_from) and qs.get(field_to):
+                field_text = '{} to {}'.format(
+                    qs.pop(field_from)[0], qs.pop(field_to)[0])
+            elif qs.get(field_to):
+                field_text = 'Before {}'.format(qs.pop(field_to)[0])
+            elif qs.get(field_from):
+                field_text = 'After {}'.format(qs.pop(field_from)[0])
+
+            # always remove the page number
+            if 'page' in qs:
+                qs.pop('page')
+
+            url = reverse('haystack_search')
+            if len(qs):
+                url = '?{}'.format(qs.urlencode())
+
+            if field_text:
+                return (url, field_text)
+
+        return None
 
 
 class PersonDetailView(DetailView):

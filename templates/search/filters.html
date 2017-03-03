@@ -1,6 +1,6 @@
 {% load ddh_utils_tags %}
 
-{% if query or selected_facets or date_filter or praenomen or nomen or cognomen or other_names or re_number or n or f or other_names or tribe %}
+{% if query or selected_facets or era_filter or date_filter or praenomen or nomen or cognomen or other_names or re_number or n or f or other_names or tribe %}
 <ul class="inline-list no-bullet free-filters">
     {% if praenomen %}
     <li>
@@ -78,6 +78,15 @@
     <li>
         <span class="label radius">
             <a href="{{ remove_text_filter }}#search" title="Remove filter">Text: {{ query }}
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </span>
+    </li>
+    {% endif %}
+    {% if era_filter %}
+    <li>
+        <span class="label radius">
+            <a href="{{ era_filter.0}}#search" title="Remove filter">Era Date: {{ era_filter.1 }}
                 <i class="fa fa-times-circle"></i>
             </a>
         </span>

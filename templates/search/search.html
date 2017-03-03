@@ -68,12 +68,9 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
 
                             <div class="panel callout">
                                 <h3 class="panel-heading">Personal data</h3>
-                                <p class="info">
-                                <i class="fa fa-info-circle"></i>
-                                Some info on this section
-                                </p>
-                                {{ form.date_from.errors }}
-                                {{ form.date_to.errors }}
+                                <p class="info"><i class="fa fa-info-circle"></i> Time frame: 509 B.C. - 31 B.C.</p>
+                                {{ form.era_from.errors }}
+                                {{ form.era_to.errors }}
                                 <div class="row range">
                                     <div class="medium-2 columns">
                                         <h4>
@@ -90,11 +87,11 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                                     </div>
                                     <div class="medium-4 columns">
                                         <label>After</label>
-                                        {{ form.date_from }}
+                                        {{ form.era_from }}
                                     </div>
                                     <div class="medium-4 columns">
                                         <label>Before</label>
-                                        {{ form.date_to }}
+                                        {{ form.era_to }}
                                     </div>
                                     <div class="medium-2 columns">
                                         <label>&nbsp;</label>

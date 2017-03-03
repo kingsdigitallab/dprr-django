@@ -280,6 +280,14 @@ def touch_wsgi():
 
 
 @task
+def command(name=None):
+    require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
+
+    with cd(env.path), prefix(env.within_virtualenv):
+        run('./manage.py {}'.format(name if name else ''))
+
+
+@task
 def runserver(port='8000'):
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 

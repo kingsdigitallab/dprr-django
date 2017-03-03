@@ -51,6 +51,9 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
     tribe = indexes.MultiValueField(faceted=True)
 
+    era = MultiValueIntegerField(faceted=True)
+    era_order = indexes.IntegerField()
+
     # used to display the highest office achieved in the search page
     highest_office = indexes.CharField(faceted=False)
 
@@ -92,6 +95,31 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_tribe(self, object):
         return list(set(object.person.tribes.values_list('name', flat=True)))
+
+    def prepare_era(self, object):
+        """range of dates for the era"""
+        person = object.person
+        start = PromrepFacetedSearchForm.MIN_DATE
+        end = PromrepFacetedSearchForm.MAX_DATE
+
+        if person.era_from:
+            start = person.era_from
+
+        if person.era_to:
+            end = person.era_to
+
+        res = range(start, end + 1, 1)
+
+        return res
+
+    def prepare_era_order(self, object):
+        person = object.person
+        start = PromrepFacetedSearchForm.MIN_DATE
+
+        if person.era_from:
+            start = person.era_from
+
+        return start
 
     def prepare_highest_office(self, object):
         """returns a string with the highest office/date a specific person

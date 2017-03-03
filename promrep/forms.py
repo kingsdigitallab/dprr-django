@@ -174,6 +174,11 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     MIN_DATE_FORM = -1 * MAX_DATE
     MAX_DATE_FORM = -1 * MIN_DATE
 
+    era_from = forms.IntegerField(
+        required=False, max_value=MAX_DATE_FORM, min_value=MIN_DATE_FORM)
+    era_to = forms.IntegerField(
+        required=False, max_value=MAX_DATE_FORM, min_value=MIN_DATE_FORM)
+
     date_from = forms.IntegerField(
         required=False, max_value=MAX_DATE_FORM, min_value=MIN_DATE_FORM)
     date_to = forms.IntegerField(
@@ -215,6 +220,16 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
         if self.is_bound:
             data = self.cleaned_data
 
+            era_from = data.get('era_from', None)
+            era_to = data.get('era_to', None)
+
+            if era_from or era_to:
+                sqs = sqs.narrow(
+                    'era:[{} TO {}]'.format(
+                        data.get('era_from', self.MIN_DATE) or self.MIN_DATE,
+                        data.get('era_to', self.MAX_DATE) or self.MAX_DATE)
+                )
+
             date_from = data.get('date_from', None)
             date_to = data.get('date_to', None)
 
@@ -230,6 +245,22 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
                     sqs = sqs.narrow('{}:{}'.format(field, data.get(field)))
 
         return sqs
+
+    def clean_era_from(self):
+        era_from = self.cleaned_data['era_from']
+
+        if era_from:
+            era_from = -1 * era_from
+
+        return era_from
+
+    def clean_era_to(self):
+        era_to = self.cleaned_data['era_to']
+
+        if era_to:
+            era_to = -1 * era_to
+
+        return era_to
 
     def clean_date_from(self):
         date_from = self.cleaned_data['date_from']

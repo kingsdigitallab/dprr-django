@@ -7,5 +7,35 @@ Senators
 
 {% block main %}
 <div class="row">
+    <div class="small-10 columns">
+        <div class="range-slider" data-slider data-options="display_selector: #year; initial: 180;">
+            <span class="range-slider-handle" role="slider" tabindex="0"></span>
+            <span class="range-slider-active-segment"></span>
+        </div>
+    </div>
+    <div class="small-2 columns">
+        <input type="number" id="year" value="180">
+    </div>
 </div>
+<div class="row">
+    <div class="large-12 columns">
+        <h2>Senators in the year {{ }}</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="large-12 columns">
+        <h3>Certain</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="large-12 columns">
+        <h3 class="Uncertain">Uncertain</h3>
+    </div>
+</div>
+<div class="row" data-equalizer>
+    {# TODO: Loop through the senators and render them as 'cards' #}
+    <div class="medium-4 large-2" data-equalizer-watch>
+    </div>
+</div>
+
 {% endblock main %}

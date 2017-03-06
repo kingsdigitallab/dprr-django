@@ -2,6 +2,47 @@
 {% load ddh_utils_tags wagtailbase_tags %}
 
 {% block meta_title %}
+Senate
+{% endblock %}
+
+{% block main %}
+<div class="row">
+    <form method="get" action=".">
+        {{ form.senate_date }}
+        <button type="submit" class="less-padding expand secondary">Apply</button>
+    </form>
+</div>
+<div class="row">
+    <h4>
+        <strong>{{ paginator.count }}</strong> senators available
+        {% if senate_date %}
+        <span>in year
+            <a href="{{ senate_date.0 }}" title="Remove date">{{ senate_date.1 }}
+                <i class="fa fa-times-circle"></i>
+            </a>
+        </span>
+        {% endif %}
+    </h4>
+    <ol start="{{ page_obj.start_index }}" class="search-results">
+        {% for result in object_list %}
+        <li>
+            {% include "search/person.html" with doc=result.documents.0 %}
+        </li>
+        {% empty %}
+        <li>No results found!</li>
+        {% endfor %}
+    </ol>
+
+    {% display_pagination querydict page_obj %}
+</div>
+{% endblock main %}
+
+{# OLD version #}
+
+{% extends "base.html" %}
+{% load ddh_utils_tags wagtailbase_tags %}
+
+{% block meta_title %}
 Senators
 {% endblock %}
 

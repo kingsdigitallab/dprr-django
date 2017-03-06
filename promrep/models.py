@@ -190,6 +190,7 @@ class RelationshipAssertionReference(Note):
 
     primary_source_references = GenericRelation(
         PrimarySourceReference,
+        null=True,
         related_query_name='relationship_assertion_references')
 
     def print_primary_source_refs(self):

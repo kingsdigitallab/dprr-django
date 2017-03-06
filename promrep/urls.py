@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from promrep.views import (PersonDetailView, PromrepFacetedSearchView,
-                           get_relationships_network)
+                           SenateSearchView, get_relationships_network)
 
 urlpatterns = [
     url(r'^$', PromrepFacetedSearchView.as_view(), name='haystack_search'),
@@ -8,4 +8,5 @@ urlpatterns = [
         name='person-detail'),
     url(r'^person/(?P<pk>\d+)/network/$', get_relationships_network,
         name='person-network'),
+    url(r'^senate/$', SenateSearchView.as_view(), name='senate_search')
 ]

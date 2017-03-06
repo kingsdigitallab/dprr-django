@@ -3,8 +3,8 @@ from collections import OrderedDict
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.views.generic.detail import DetailView
-from haystack.generic_views import FacetedSearchView
-from promrep.forms import PromrepFacetedSearchForm
+from haystack.generic_views import FacetedSearchView, SearchView
+from promrep.forms import PromrepFacetedSearchForm, SenateSearchForm
 from promrep.models import (Office, Person, PostAssertion, Province,
                             RelationshipAssertion, StatusAssertion)
 from promrep.solr_backends.solr_backend_field_collapsing import \
@@ -231,3 +231,41 @@ def _get_relationships_network(person):
             edges.append(edge)
 
     return {'nodes': nodes, 'edges': edges}
+
+
+class SenateSearchView(SearchView):
+    load_all = True
+    form_class = SenateSearchForm
+    queryset = GroupedSearchQuerySet().models(
+        StatusAssertion).group_by('person_id').order_by('-date')
+    template_name = 'search/senate.html'
+
+    def get_queryset(self):
+        queryset = super(SenateSearchView, self).get_queryset()
+        queryset = queryset.narrow('senator:true')
+
+        return queryset
+
+    def get_context_data(self, **kwargs):  # noqa
+        context = super(SenateSearchView, self).get_context_data(**kwargs)
+        qs = self.request.GET.copy()
+
+        context['querydict'] = qs
+
+        if 'senate_date' in qs:
+            field_text = None
+
+            if qs.get('senate_date'):
+                field_text = '{}'.format(qs.pop('senate_date')[0])
+
+            # always remove the page number
+            if 'page' in qs:
+                qs.pop('page')
+
+            url = reverse('senate_search')
+            if len(qs):
+                url = '?{}'.format(qs.urlencode())
+
+            context['senate_date'] = (url, field_text)
+
+        return context

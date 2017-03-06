@@ -6,39 +6,64 @@ Senate
 {% endblock %}
 
 {% block main %}
+
 <div class="row">
-    <form method="get" action=".">
-        {{ form.senate_date }}
-        <button type="submit" class="less-padding expand secondary">Apply</button>
-    </form>
+    <div class="large-12 columns">
+        <h1>Senate composition</h1>
+        <p><i class="fa fa-info-circle"></i> Display the Senators for a specific year in the range from 180 B.C. and 31 B.C.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-10 columns">
+        <div class="range-slider" data-slider data-options="display_selector: #year; initial: -180; start: -180; end: -31;">
+            <span class="range-slider-handle" role="slider" tabindex="0"></span>
+            <span class="range-slider-active-segment"></span>
+        </div>
+    </div>
+    <div class="small-2 columns">
+        <input type="number" id="year" value="-180">
+    </div>
+</div>
+
+<div class="row">
+    <div class="large-12 columns">
+        <form method="get" action=".">
+            {{ form.senate_date }}
+            <button type="submit" class="less-padding expand secondary">Apply</button>
+        </form>
+    </div>
 </div>
 <div class="row">
-    <h4>
-        <strong>{{ paginator.count }}</strong> senators available
-        {% if senate_date %}
-        <span>in year
-            <a href="{{ senate_date.0 }}" title="Remove date">{{ senate_date.1 }}
-                <i class="fa fa-times-circle"></i>
-            </a>
-        </span>
-        {% endif %}
-    </h4>
-    <ol start="{{ page_obj.start_index }}" class="search-results">
-        {% for result in object_list %}
-        <li>
-            {% include "search/person.html" with doc=result.documents.0 %}
-        </li>
-        {% empty %}
-        <li>No results found!</li>
-        {% endfor %}
-    </ol>
+    <div class="large-12 columns">
+        <h4>
+            <strong>{{ paginator.count }}</strong> senators available
+            {% if senate_date %}
+            <span>in year
+                <a href="{{ senate_date.0 }}" title="Remove date">{{ senate_date.1 }}
+                    <i class="fa fa-times-circle"></i>
+                </a>
+            </span>
+            {% endif %}
+        </h4>
+        <ol start="{{ page_obj.start_index }}" class="search-results">
+            {% for result in object_list %}
+            <li>
+                {% include "search/person.html" with doc=result.documents.0 %}
+            </li>
+            {% empty %}
+            <li>No results found!</li>
+            {% endfor %}
+        </ol>
 
-    {% display_pagination querydict page_obj %}
+        {% display_pagination querydict page_obj %}
+    </div>
 </div>
 {% endblock main %}
 
 {# OLD version #}
 
+{% comment %}
 {% extends "base.html" %}
 {% load ddh_utils_tags wagtailbase_tags %}
 
@@ -93,3 +118,5 @@ Senators
 </div>
 
 {% endblock main %}
+
+{% endcomment %}

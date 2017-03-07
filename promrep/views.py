@@ -243,35 +243,32 @@ class SenateSearchView(SearchView):
     load_all = True
     form_class = SenateSearchForm
     queryset = GroupedSearchQuerySet().models(
-        StatusAssertion).group_by('person_id').order_by('-date')
+        StatusAssertion).group_by('person_id')
     template_name = 'search/senate.html'
 
     def get_queryset(self):
         queryset = super(SenateSearchView, self).get_queryset()
-        queryset = queryset.narrow('senator:true')
 
-        return queryset
+        if 'senate_date' in self.request.GET:
+            queryset = GroupedSearchQuerySet().models(
+                StatusAssertion).group_by('person_id')
+            queryset = queryset.narrow('senator:true')
+        else:
+            queryset = queryset.narrow('date:[{0} TO {0}]'.format(
+                SenateSearchForm.INITIAL_DATE))
+
+        return queryset.order_by('-date')
 
     def get_context_data(self, **kwargs):  # noqa
         context = super(SenateSearchView, self).get_context_data(**kwargs)
         qs = self.request.GET.copy()
+        senate_date = SenateSearchForm.INITIAL_DATE_DISPLAY
 
         context['querydict'] = qs
 
         if 'senate_date' in qs:
-            field_text = None
+            senate_date = qs.pop('senate_date')[0]
 
-            if qs.get('senate_date'):
-                field_text = '{}'.format(qs.pop('senate_date')[0])
-
-            # always remove the page number
-            if 'page' in qs:
-                qs.pop('page')
-
-            url = reverse('senate_search')
-            if len(qs):
-                url = '?{}'.format(qs.urlencode())
-
-            context['senate_date'] = (url, field_text)
+        context['senate_date'] = senate_date
 
         return context

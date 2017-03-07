@@ -56,7 +56,11 @@
         {% endblock %}
 
         <script>
-        $(document).foundation();
+        $(document).foundation({
+            slider: {
+                precision: 0
+            }
+        });
         </script>
         {% endcompress %}
     </body>

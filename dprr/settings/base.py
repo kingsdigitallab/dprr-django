@@ -247,6 +247,28 @@ COMPRESS_CSS_FILTERS = [
 
 COMPRESS_PRECOMPILERS = ws.COMPRESS_PRECOMPILERS
 
+
+# -----------------------------------------------------------------------------
+# DPRR
+# -----------------------------------------------------------------------------
+
+LOOKUPS = {
+    'offices': {
+        'magisterial': 2, 'promagistracies': 214, 'priesthoods': 1,
+        'non_magisterial': 210, 'distinctions': 270
+    },
+    'notes': {
+        'ruepke_source': 'ruepke', 'date_information_source': 'ruepke_LD',
+        'post_assertion_source': 'ruepke_B'
+    },
+    'status': {
+        'eques': 'eques'
+    },
+    'dates': {
+        'person_exclude': 'attested'
+    }
+}
+
 # -----------------------------------------------------------------------------
 # Haystack
 # -----------------------------------------------------------------------------

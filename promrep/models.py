@@ -6,6 +6,7 @@ import re
 from author.decorators import with_author
 from django.contrib.contenttypes.fields import (GenericForeignKey,
                                                 GenericRelation)
+from django.conf import settings as s
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -467,21 +468,22 @@ class Person(TimeStampedModel):
 
     def is_eques(self):
         return self.statusassertion_set.filter(
-            status__name__iexact='eques').count() > 0
+            status__name__iexact=s.LOOKUPS['status']['eques']).count() > 0
 
     def get_eques_status_assertion(self):
         if not self.is_eques():
             return None
 
         return self.statusassertion_set.filter(
-            status__name__iexact='eques').first()
+            status__name__iexact=s.LOOKUPS['status']['eques']).first()
 
     def get_dates(self):
         if not self.dateinformation_set.all():
             return None
 
         return self.dateinformation_set.exclude(
-            date_type__name='attested').order_by('value')
+            date_type__name=s.LOOKUPS['dates']['person_exclude']).order_by(
+                'value')
 
     def get_career(self):
         if not self.post_assertions.all():
@@ -594,7 +596,8 @@ class DateInformation(TimeStampedModel):
         if not self.secondary_source:
             return False
 
-        return self.secondary_source.abbrev_name.lower() == 'ruepke'
+        return self.secondary_source.abbrev_name.lower() == \
+            s.LOOKUPS['notes']['ruepke_source']
 
     def get_ruepke_notes(self):
         if not self.has_ruepke_secondary_source():
@@ -602,7 +605,7 @@ class DateInformation(TimeStampedModel):
 
         texts = [
             note.text for note in self.person.notes.filter(
-                note_type__name='ruepke_LD')
+                note_type__name=s.LOOKUPS['notes']['date_information_source'])
         ]
 
         return ', '.join(texts)
@@ -870,7 +873,8 @@ class PostAssertion(TimeStampedModel):
         if not self.secondary_source:
             return False
 
-        return self.secondary_source.abbrev_name.lower() == 'ruepke'
+        return self.secondary_source.abbrev_name.lower() == \
+            s.LOOKUPS['notes']['ruepke_source']
 
     def get_ruepke_notes(self):
         if not self.has_ruepke_secondary_source():
@@ -878,7 +882,7 @@ class PostAssertion(TimeStampedModel):
 
         texts = [
             note.text for note in self.person.notes.filter(
-                note_type__name='ruepke_B')
+                note_type__name=s.LOOKUPS['notes']['post_assertion_source'])
         ]
 
         return ', '.join(texts)

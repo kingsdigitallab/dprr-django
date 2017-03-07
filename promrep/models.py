@@ -157,7 +157,7 @@ class PrimarySourceReference(TimeStampedModel):
 
     content_object = GenericForeignKey('content_type', 'object_id')
 
-    primary_source = models.ForeignKey(PrimarySource, null=True)
+    primary_source = models.ForeignKey(PrimarySource, default=1)
     text = models.TextField(blank=True)
 
     def __unicode__(self):

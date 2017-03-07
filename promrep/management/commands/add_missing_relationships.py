@@ -44,24 +44,33 @@ class Command(BaseCommand):
                     break
         return relationships
 
+    def reset_assertions(self):
+        RelationshipAssertion.objects.filter(extra_info="Inferred").delete()
+
     def writeassetion(self, new_assert, source_assert):
         print new_assert
-        new_assert.save()
-        self.csv_log.writerow({
-            "inferred_person_id": new_assert.person.id,
-            "inferred_person": new_assert.person,
-            "inferred_related_person_id": new_assert.related_person.id,
-            "inferred_related_person": new_assert.related_person,
-            "inferred_relationship_type": new_assert.relationship,
-            "uncertain": new_assert.uncertain,
-            "secondary source": new_assert.secondary_source,
-            "assertion_id": source_assert.id,
-            "source_person_id": source_assert.person.id,
-            "source_person": source_assert.person,
-            "source_related_person_id": source_assert.related_person.id,
-            "source_related_person": source_assert.related_person,
-            "source_relationship_type": source_assert.relationship,
-        })
+        # Final check to weed out duplicates
+        if (RelationshipAssertion.objects.filter(
+           person=new_assert.person,
+           related_person=new_assert.related_person,
+           relationship=new_assert.relationship).count() == 0):
+            new_assert.uncertain = source_assert.uncertain
+            new_assert.save()
+            self.csv_log.writerow({
+                "inferred_person_id": new_assert.person.id,
+                "inferred_person": new_assert.person,
+                "inferred_related_person_id": new_assert.related_person.id,
+                "inferred_related_person": new_assert.related_person,
+                "inferred_relationship_type": new_assert.relationship,
+                "uncertain": new_assert.uncertain,
+                "secondary source": new_assert.secondary_source,
+                "assertion_id": source_assert.id,
+                "source_person_id": source_assert.person.id,
+                "source_person": source_assert.person,
+                "source_related_person_id": source_assert.related_person.id,
+                "source_related_person": source_assert.related_person,
+                "source_relationship_type": source_assert.relationship,
+            })
 
     def add_inferred_relationships(self):
         new_rels = []
@@ -226,5 +235,6 @@ class Command(BaseCommand):
                 extrasaction='ignore')
             self.csv_log = csv_log
             csv_log.writeheader()
+            self.reset_assertions()
             self.add_inferred_relationships()
         print("Wrote {}".format(log_fname))

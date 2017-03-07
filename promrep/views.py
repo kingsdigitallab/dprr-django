@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from django.conf import settings as s
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.views.generic.detail import DetailView
@@ -83,9 +84,11 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
                 context[afacet] = (url, self.request.GET.get(afacet))
 
+        office_lookups = s.LOOKUPS['offices']
+
         # hierarchical facets data
         try:
-            magisterial = Office.objects.get(id=2)
+            magisterial = Office.objects.get(id=office_lookups['magisterial'])
             if magisterial:
                 context[
                     'magisterial_office_list'
@@ -94,7 +97,8 @@ class PromrepFacetedSearchView(FacetedSearchView):
             pass
 
         try:
-            promagistracies = Office.objects.get(id=214)
+            promagistracies = Office.objects.get(
+                id=office_lookups['promagistracies'])
             if promagistracies:
                 context[
                     'promagistracies_office_list'
@@ -103,7 +107,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
             pass
 
         try:
-            priesthoods = Office.objects.get(id=1)
+            priesthoods = Office.objects.get(id=office_lookups['priesthoods'])
             if priesthoods:
                 context[
                     'priesthoods_office_list'
@@ -112,7 +116,8 @@ class PromrepFacetedSearchView(FacetedSearchView):
             pass
 
         try:
-            non_magisterial = Office.objects.get(id=210)
+            non_magisterial = Office.objects.get(
+                id=office_lookups['non_magisterial'])
             if non_magisterial:
                 context[
                     'non_magisterial_office_list'
@@ -121,7 +126,8 @@ class PromrepFacetedSearchView(FacetedSearchView):
             pass
 
         try:
-            distinctions = Office.objects.get(id=270)
+            distinctions = Office.objects.get(
+                id=office_lookups['distinctions'])
             if distinctions:
                 context[
                     'distinctions_office_list'

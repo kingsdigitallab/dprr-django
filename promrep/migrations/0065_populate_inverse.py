@@ -3,23 +3,25 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-from django.core.exceptions import ObjectDoesNotExist
 
 
 def add_inverse(apps, relationship, sex, inverse_name):
     RelationshipInverse = apps.get_model("promrep", "RelationshipInverse")
     RelationshipType = apps.get_model("promrep", "RelationshipType")
-    inverse, created = RelationshipType.objects.get_or_create(name=inverse_name)
-    RelationshipInverse.objects.get_or_create(relationship=relationship, sex=sex, inverse_relationship=inverse)
+    inverse, created = RelationshipType.objects.get_or_create(
+        name=inverse_name)
+    RelationshipInverse.objects.get_or_create(
+        relationship=relationship, sex=sex, inverse_relationship=inverse)
 
-def removed_inverse(apps, schema_editor):    
+
+def removed_inverse(apps, schema_editor):
     RelationshipInverse = apps.get_model("promrep", "RelationshipInverse")
     RelationshipInverse.objects.all().delete()
 
 
 def add_inverse_relationship_types(apps, schema_editor):
     Sex = apps.get_model("promrep", "Sex")
-    RelationshipType = apps.get_model("promrep", "RelationshipType")   
+    RelationshipType = apps.get_model("promrep", "RelationshipType")
     male, created = Sex.objects.get_or_create(name="Male")
     female, created = Sex.objects.get_or_create(name="Female")
     rtype, created = RelationshipType.objects.get_or_create(name="father of")
@@ -43,16 +45,20 @@ def add_inverse_relationship_types(apps, schema_editor):
     rtype, created = RelationshipType.objects.get_or_create(name="sister of")
     add_inverse(apps, rtype,  male, "brother of")
     add_inverse(apps, rtype,  female, "sister of")
-    rtype, created = RelationshipType.objects.get_or_create(name="adoptive son of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="adoptive son of")
     add_inverse(apps, rtype,  male, "adopted father of")
     add_inverse(apps, rtype,  female, "adopted mother of")
-    rtype, created = RelationshipType.objects.get_or_create(name="adoptive daughter of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="adoptive daughter of")
     add_inverse(apps, rtype,  male, "adopted father of")
     add_inverse(apps, rtype,  female, "adopted mother of")
-    rtype, created = RelationshipType.objects.get_or_create(name="betrothed to")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="betrothed to")
     add_inverse(apps, rtype,  male, "betrothed to")
     add_inverse(apps, rtype,  female, "betrothed to")
-    rtype, created = RelationshipType.objects.get_or_create(name="divorced from")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="divorced from")
     add_inverse(apps, rtype,  male, "divorced from")
     add_inverse(apps, rtype,  female, "divorced from")
     rtype, created = RelationshipType.objects.get_or_create(name="nephew of")
@@ -61,7 +67,8 @@ def add_inverse_relationship_types(apps, schema_editor):
     rtype, created = RelationshipType.objects.get_or_create(name="niece of")
     add_inverse(apps, rtype,  male, "uncle of")
     add_inverse(apps, rtype,  female, "aunt of")
-    rtype, created = RelationshipType.objects.get_or_create(name="adoptive brother of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="adoptive brother of")
     add_inverse(apps, rtype,  male, "adoptive brother of")
     add_inverse(apps, rtype,  female, "adoptive sister of")
     rtype, created = RelationshipType.objects.get_or_create(name="uncle of")
@@ -73,49 +80,60 @@ def add_inverse_relationship_types(apps, schema_editor):
     rtype, created = RelationshipType.objects.get_or_create(name="related to")
     add_inverse(apps, rtype,  male, "related to")
     add_inverse(apps, rtype,  female, "related to")
-    rtype, created = RelationshipType.objects.get_or_create(name="halfsister of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="halfsister of")
     add_inverse(apps, rtype,  male, "halfbrother of")
     add_inverse(apps, rtype,  female, "halfsister of")
 
-    rtype, created = RelationshipType.objects.get_or_create(name="halfsister of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="halfsister of")
     add_inverse(apps, rtype,  male, "halfbrother of")
     add_inverse(apps, rtype,  female, "halfsister of")
 
-    rtype, created = RelationshipType.objects.get_or_create(name="great grandfather of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="great grandfather of")
     add_inverse(apps, rtype,  male, "great grandson of")
     add_inverse(apps, rtype,  female, "great grandson of")
-    rtype, created = RelationshipType.objects.get_or_create(name="great grandmother of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="great grandmother of")
     add_inverse(apps, rtype,  male, "great grandson of")
     add_inverse(apps, rtype,  female, "great grandson of")
-    rtype, created = RelationshipType.objects.get_or_create(name="grandfather of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="grandfather of")
     add_inverse(apps, rtype,  male, "grandson of")
     add_inverse(apps, rtype,  female, "grandson of")
-    rtype, created = RelationshipType.objects.get_or_create(name="grandmother of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="grandmother of")
     add_inverse(apps, rtype,  male, "grandson of")
     add_inverse(apps, rtype,  female, "grandson of")
 
     rtype, created = RelationshipType.objects.get_or_create(name="grandson of")
     add_inverse(apps, rtype,  male, "grandfather of")
     add_inverse(apps, rtype,  female, "grandmother of")
-    rtype, created = RelationshipType.objects.get_or_create(name="granddaughter of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="granddaughter of")
     add_inverse(apps, rtype,  male, "grandfather of")
     add_inverse(apps, rtype,  female, "grandmother of")
 
-    rtype, created = RelationshipType.objects.get_or_create(name="stepfather of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="stepfather of")
     add_inverse(apps, rtype,  male, "stepson of")
     add_inverse(apps, rtype,  female, "stepdaughter of")
-    rtype, created = RelationshipType.objects.get_or_create(name="stepmother of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="stepmother of")
     add_inverse(apps, rtype,  male, "stepson of")
     add_inverse(apps, rtype,  female, "stepdaughter of")
     rtype, created = RelationshipType.objects.get_or_create(name="cousin of")
     add_inverse(apps, rtype,  male, "cousin of")
     add_inverse(apps, rtype,  female, "cousin of")
 
-    rtype, created = RelationshipType.objects.get_or_create(name="adoptive father of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="adoptive father of")
     add_inverse(apps, rtype,  male, "adopted son of")
     add_inverse(apps, rtype,  female, "adopted daughter of")
 
-    rtype, created = RelationshipType.objects.get_or_create(name="adoptive mother of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="adoptive mother of")
     add_inverse(apps, rtype,  male, "adopted son of")
     add_inverse(apps, rtype,  female, "adopted daughter of")
 
@@ -123,25 +141,31 @@ def add_inverse_relationship_types(apps, schema_editor):
     add_inverse(apps, rtype,  male, "stepfather of")
     add_inverse(apps, rtype,  female, "stepmother of")
 
-    rtype, created = RelationshipType.objects.get_or_create(name="stepdaughter of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="stepdaughter of")
     add_inverse(apps, rtype,  male, "stepfather of")
     add_inverse(apps, rtype,  female, "stepmother of")
 
-    rtype, created = RelationshipType.objects.get_or_create(name="great grandson of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="great grandson of")
     add_inverse(apps, rtype,  male, "great grandfather of")
     add_inverse(apps, rtype,  female, "great grandmother of")
 
-    rtype, created = RelationshipType.objects.get_or_create(name="great granddaughter of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="great granddaughter of")
     add_inverse(apps, rtype,  male, "great grandfather of")
     add_inverse(apps, rtype,  female, "great grandmother of")
 
-    rtype, created = RelationshipType.objects.get_or_create(name="great uncle of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="great uncle of")
     add_inverse(apps, rtype,  male, "great nephew of")
     add_inverse(apps, rtype,  female, "great niece of")
 
-    rtype, created = RelationshipType.objects.get_or_create(name="adopted grandson of")
+    rtype, created = RelationshipType.objects.get_or_create(
+        name="adopted grandson of")
     add_inverse(apps, rtype,  male, "adopted grandfather of")
     add_inverse(apps, rtype,  female, "adopted grandmother of")
+
 
 class Migration(migrations.Migration):
 
@@ -150,5 +174,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-    	migrations.RunPython(add_inverse_relationship_types,removed_inverse)
-    ] 
+        migrations.RunPython(add_inverse_relationship_types, removed_inverse)
+    ]

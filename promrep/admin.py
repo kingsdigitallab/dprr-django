@@ -142,6 +142,7 @@ class RelationshipAssertionReferenceInline(admin.StackedInline):
 class RelationshipAssertionAdmin(admin.ModelAdmin):
     list_display = ('id', 'person', 'relationship', 'related_person',
                     'relationship_number', 'uncertain', 'secondary_source',
+                    'extra_info',
                     'review_flag', 'created', 'modified')
 
     readonly_fields = ('id', 'created', 'modified')
@@ -171,6 +172,7 @@ class RelationshipAssertionAdmin(admin.ModelAdmin):
                      'person__id',
                      'related_person__id',
                      'person__re_number',
+                     'extra_info',
                      'related_person__re_number', )
 
     inlines = (RelationshipAssertionReferenceInline, )

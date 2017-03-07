@@ -10,13 +10,13 @@ Senate
 <div class="row">
     <div class="large-12 columns">
         <h1>Senate composition</h1>
-        <p><i class="fa fa-info-circle"></i> Display the Senators for a specific year in the range from 180 B.C. and 31 B.C.</p>
+        <p><i class="fa fa-info-circle"></i> Display the Senators for a specific year in the range from 180 B.C. to 31 B.C.</p>
     </div>
 </div>
 
 <div class="row">
     <form method="get" action=".">
-        <div class="small-10 columns">
+        <div class="small-8 columns">
             <div class="range-slider" data-slider data-options="display_selector: #id_senate_date; initial: {{ senate_date }}; start: 180; end: 31;">
                 <span class="range-slider-handle" role="slider" tabindex="0"></span>
                 <span class="range-slider-active-segment"></span>
@@ -25,6 +25,9 @@ Senate
         <div class="small-2 columns">
             {{ form.senate_date }}
         </div>
+        <div class="small-2 columns">
+            <button type="submit" class="small button secondary expand less-padding">Apply</button>
+        </div>
     </form>
 </div>
 
@@ -32,7 +35,7 @@ Senate
     <div class="large-12 columns">
         <h4>
             <strong>{{ paginator.count }}</strong> senators for the year
-            {{ senate_date }}
+            {{ senate_date }} B.C.
         </h4>
         <ol start="{{ page_obj.start_index }}" class="search-results">
             {% for result in object_list %}

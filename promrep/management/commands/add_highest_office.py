@@ -107,7 +107,7 @@ class Command(BaseCommand):
                         hoffice = "{} {}".format(off, date)
 
                 elif sas.exists():
-                    off = sas.first().status.name
+                    off = sas.first().status.get_display_name()
                     date = sas.first().date_start
 
                     if date is not None:

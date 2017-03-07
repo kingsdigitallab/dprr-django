@@ -972,10 +972,17 @@ class RelationshipInverse(models.Model):
 @with_author
 class StatusType(TimeStampedModel):
     name = models.CharField(max_length=256, unique=True)
+    abbrev_name = models.CharField(max_length=32, blank=True, null=True)
     description = models.CharField(max_length=1024, blank=True)
 
     def __unicode__(self):
         return "{}".format(self.name)
+
+    def get_display_name(self):
+        if self.abbrev_name:
+            return self.abbrev_name
+
+        return self.name
 
 
 @with_author

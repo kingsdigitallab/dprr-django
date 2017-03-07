@@ -157,7 +157,7 @@ class PrimarySourceReference(TimeStampedModel):
 
     content_object = GenericForeignKey('content_type', 'object_id')
 
-    primary_source = models.ForeignKey(PrimarySource, null=True)
+    primary_source = models.ForeignKey(PrimarySource, default=1)
     text = models.TextField(blank=True)
 
     def __unicode__(self):
@@ -190,6 +190,7 @@ class RelationshipAssertionReference(Note):
 
     primary_source_references = GenericRelation(
         PrimarySourceReference,
+        null=True,
         related_query_name='relationship_assertion_references')
 
     def print_primary_source_refs(self):

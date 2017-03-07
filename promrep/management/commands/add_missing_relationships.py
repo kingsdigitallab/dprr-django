@@ -6,8 +6,10 @@ from promrep.models import SecondarySource
 import csv
 import datetime
 
-
+# Populate inferred family relationships based on rules in DPRR-257
+# IMPORTANT NOTE: Assumes inverse relationships already populated
 # EHall 19/1/2017
+
 
 class Command(BaseCommand):
     args = '<page document_path document_path ...>'
@@ -42,27 +44,34 @@ class Command(BaseCommand):
                     break
         return relationships
 
+    def reset_assertions(self):
+        RelationshipAssertion.objects.filter(extra_info="Inferred").delete()
+
     def writeassetion(self, new_assert, source_assert):
         print new_assert
-        # new_assert.save()
-        self.csv_log.writerow({
-            "inferred_person_id": new_assert.person.id,
-            "inferred_person": new_assert.person,
-            "inferred_related_person_id": new_assert.related_person.id,
-            "inferred_related_person": new_assert.related_person,
-            "inferred_relationship_type": new_assert.relationship,
-            "uncertain": new_assert.uncertain,
-            "secondary source": new_assert.secondary_source,
-            "assertion_id": source_assert.id,
-            "source_person_id": source_assert.person.id,
-            "source_person": source_assert.person,
-            "source_related_person_id": source_assert.related_person.id,
-            "source_related_person": source_assert.related_person,
-            "source_relationship_type": source_assert.relationship,
-        })
+        # Final check to weed out duplicates
+        if (RelationshipAssertion.objects.filter(
+           person=new_assert.person,
+           related_person=new_assert.related_person,
+           relationship=new_assert.relationship).count() == 0):
+            new_assert.uncertain = source_assert.uncertain
+            new_assert.save()
+            self.csv_log.writerow({
+                "inferred_person_id": new_assert.person.id,
+                "inferred_person": new_assert.person,
+                "inferred_related_person_id": new_assert.related_person.id,
+                "inferred_related_person": new_assert.related_person,
+                "inferred_relationship_type": new_assert.relationship,
+                "uncertain": new_assert.uncertain,
+                "secondary source": new_assert.secondary_source,
+                "assertion_id": source_assert.id,
+                "source_person_id": source_assert.person.id,
+                "source_person": source_assert.person,
+                "source_related_person_id": source_assert.related_person.id,
+                "source_related_person": source_assert.related_person,
+                "source_relationship_type": source_assert.relationship,
+            })
 
-    # Populate inferred family relationships based on rules in DPRR-257
-    # IMPORTANT NOTE: Assumes inverse relationships already populated
     def add_inferred_relationships(self):
         new_rels = []
         type_mother = RelationshipType.objects.get(name="mother of")
@@ -127,9 +136,10 @@ class Command(BaseCommand):
                     new_inv = RelationshipAssertion(
                         extra_info="Inferred", person=sib.related_person,
                         related_person=mother.related_person,
+                        secondary_source=dprr_source,
                         relationship=mother.relationship)
                     new_rels.append(new_inv)
-                    # self.writeassetion(new_inv, sib)
+                    self.writeassetion(new_inv, sib)
                 if father is not None \
                         and RelationshipAssertion.objects.filter(
                             related_person=sib.related_person,
@@ -142,11 +152,14 @@ class Command(BaseCommand):
                         relationship=type_father)
                     new_rels.append(new_assert)
                     self.writeassetion(new_assert, sib)
-                    new_rels.append(
-                        RelationshipAssertion(
-                            extra_info="Inferred", person=sib.related_person,
-                            related_person=father.related_person,
-                            relationship=father.relationship))
+                    new_inv = RelationshipAssertion(
+                        extra_info="Inferred",
+                        person=sib.related_person,
+                        related_person=father.related_person,
+                        secondary_source=dprr_source,
+                        relationship=father.relationship)
+                    new_rels.append(new_inv)
+                    self.writeassetion(new_inv, sib)
             # Verify children
             if spouse is not None:
                 for kid in children:
@@ -169,7 +182,7 @@ class Command(BaseCommand):
                             secondary_source=dprr_source,
                             relationship=type_father)
                         new_rels.append(new_inv)
-                        # self.writeassetion(new_inv, spouse)
+                        self.writeassetion(new_inv, spouse)
 
                     if (spouse.related_person.sex.name == "Female" and
                             RelationshipAssertion.objects.filter(
@@ -190,33 +203,9 @@ class Command(BaseCommand):
                             related_person=kid.related_person,
                             relationship=type_mother)
                         new_rels.append(new_inv)
-                        # self.writeassetion(new_inv, spouse)
+                        self.writeassetion(new_inv, spouse)
 
         return new_rels
-
-    def add_inverse_relationships(self):
-        new_invs = []
-        for relassert in RelationshipAssertion.objects.all():
-            # Get inverse of relationship
-            inv_type = relassert.get_inverse_relationship()
-            if inv_type is not None:
-                # Check if inverse already exists
-                invs = RelationshipAssertion.objects.filter(
-                    person=relassert.related_person,
-                    related_person=relassert.person, relationship=inv_type)
-                if invs.count() == 0:
-                    # Add inverse relationship
-                    inv = RelationshipAssertion(
-                        extra_info="Inferred", person=relassert.related_person,
-                        related_person=relassert.person,
-                        relationship=inv_type)
-                    # inv.save()
-                    new_invs.append(inv)
-                else:
-                    inv = invs[0]
-                # todo Link to original
-                relassert.inverse_relationship = inv
-        return new_invs
 
     def handle(self, *args, **options):  # noqa
 
@@ -246,8 +235,6 @@ class Command(BaseCommand):
                 extrasaction='ignore')
             self.csv_log = csv_log
             csv_log.writeheader()
-            # todo run inverse first when saving
-            # self.add_inverse_relationships()
-            # todo When saving Iterate this until no new relationships created
+            self.reset_assertions()
             self.add_inferred_relationships()
         print("Wrote {}".format(log_fname))

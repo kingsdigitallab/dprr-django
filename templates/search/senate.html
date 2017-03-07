@@ -31,14 +31,8 @@ Senate
 <div class="row">
     <div class="large-12 columns">
         <h4>
-            <strong>{{ paginator.count }}</strong> senators available
-            {% if senate_date %}
-            <span>in year
-                <a href="{{ senate_date.0 }}" title="Remove date">{{ senate_date.1 }}
-                    <i class="fa fa-times-circle"></i>
-                </a>
-            </span>
-            {% endif %}
+            <strong>{{ paginator.count }}</strong> senators for the year
+            {{ senate_date }}
         </h4>
         <ol start="{{ page_obj.start_index }}" class="search-results">
             {% for result in object_list %}
@@ -55,62 +49,10 @@ Senate
 </div>
 {% endblock main %}
 
-{# OLD version #}
-
-{% comment %}
-{% extends "base.html" %}
-{% load ddh_utils_tags wagtailbase_tags %}
-
-{% block meta_title %}
-Senators
+{% block footerscripts %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.range-slider').foundation('slider', 'set_value', {{ senate_date }});
+});
+</script>
 {% endblock %}
-
-{% block main %}
-<div class="row">
-    <div class="small-10 columns">
-        <div class="range-slider" data-slider data-options="display_selector: #year; initial: 180;">
-            <span class="range-slider-handle" role="slider" tabindex="0"></span>
-            <span class="range-slider-active-segment"></span>
-        </div>
-    </div>
-    <div class="small-2 columns">
-        <input type="number" id="year" value="180">
-    </div>
-</div>
-<div class="row">
-    <div class="large-12 columns">
-        <h2>Senators in the year {{ }}</h2>
-    </div>
-</div>
-<div class="row">
-    <div class="large-12 columns">
-        <h3>Certain (Ascending order)</h3>
-    </div>
-</div>
-<div class="row" data-equalizer>
-    {# TODO: Loop through the senators and render them as 'cards' #}
-    <div class="medium-4 large-2" data-equalizer-watch>
-        <h3>Senator's name</h3>
-        <p>Details</p>
-        <p>Start date</p>
-        <p>End date</p>
-    </div>
-</div>
-<div class="row">
-    <div class="large-12 columns">
-        <h3 class="Uncertain">Uncertain (Descending order)</h3>
-    </div>
-</div>
-<div class="row" data-equalizer>
-    {# TODO: Loop through the senators and render them as 'cards' #}
-    <div class="medium-4 large-2" data-equalizer-watch>
-        <h3>Senator's name</h3>
-        <p>Details</p>
-        <p>Start date</p>
-        <p>End date</p>
-    </div>
-</div>
-
-{% endblock main %}
-
-{% endcomment %}

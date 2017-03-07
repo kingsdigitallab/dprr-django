@@ -12,15 +12,12 @@ class Migration(migrations.Migration):
         ('promrep', '0068_add_primarysource_default'),
     ]
 
-    operations = [
-        migrations.RunSQL('SET CONSTRAINTS ALL IMMEDIATE',
-                          reverse_sql=migrations.RunSQL.noop),
-        migrations.AlterField(
+    operations = [       
+        
+            migrations.AlterField(
             model_name='primarysourcereference',
             name='primary_source',
-            field=models.ForeignKey(
-                default=1,
-                on_delete=django.db.models.deletion.CASCADE,
-                to='promrep.PrimarySource'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='promrep.PrimarySource'),
         ),
+        
     ]

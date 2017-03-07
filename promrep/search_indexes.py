@@ -77,16 +77,19 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
         brackets."""
 
         nomen = object.person.nomen.strip()
-        nomen = re.sub(r'[\?\[\]\(\)]', '', nomen)
+        nomen = self._clean_name(nomen)
 
         return object.person._split_name(nomen)
+
+    def _clean_name(self, value):
+        return re.sub(r'[\?\[\]\(\)]', '', value)
 
     def prepare_cognomen(self, object):
         """The list of cognomens to filter on should not show parentheses or
         brackets."""
 
         cognomen = object.person.cognomen.strip()
-        cognomen = re.sub(r'[\?\[\]\(\)]', '', cognomen)
+        cognomen = self._clean_name(cognomen)
 
         return object.person._split_name(cognomen)
 
@@ -129,9 +132,6 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
 
 class PostAssertionIndex(AssertionIndex):
-    # TODO: is this needed?
-    # text = indexes.CharField(document=True, use_template=True)
-
     # TODO: remove; deprecated?
     office = indexes.FacetMultiValueField()
     offices = indexes.FacetMultiValueField()

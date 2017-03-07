@@ -3,7 +3,7 @@
   "version": "0.1",
   "dependencies": {
     "jquery": null,
-    "foundation": null,
+    "foundation": "5.5.3",
     "font-awesome": null
   },
   "ignore": [

@@ -280,13 +280,15 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
 
 
 class SenateSearchForm(SearchForm):
+    INITIAL_DATE = -180
+    INITIAL_DATE_DISPLAY = -1 * INITIAL_DATE
+
     senate_date = forms.IntegerField(
-        required=False, max_value=PromrepFacetedSearchForm.MAX_DATE_FORM,
+        required=True, initial=(-1 * INITIAL_DATE),
+        max_value=PromrepFacetedSearchForm.MAX_DATE_FORM,
         min_value=PromrepFacetedSearchForm.MIN_DATE_FORM)
 
     def no_query_found(self):
-        """Determines the behaviour when no query was found; returns all the
-        results."""
         return self.searchqueryset.all()
 
     def search(self):
@@ -295,14 +297,10 @@ class SenateSearchForm(SearchForm):
         if not self.is_valid():
             return self.no_query_found()
 
-        # Narrow the search by the ranges of dates
-        # Requires, of course, that the form be bound.
         if self.is_bound:
             data = self.cleaned_data
 
             senate_date = data.get('senate_date', None)
-
-            print(senate_date)
 
             if senate_date:
                 sqs = sqs.narrow('date:[{0} TO {0}]'.format(
@@ -315,5 +313,7 @@ class SenateSearchForm(SearchForm):
 
         if senate_date:
             senate_date = -1 * senate_date
+        else:
+            senate_date = self.INITIAL_DATE
 
         return senate_date

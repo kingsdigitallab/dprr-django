@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from django.conf import settings as s
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.views.generic.detail import DetailView
@@ -83,9 +84,11 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
                 context[afacet] = (url, self.request.GET.get(afacet))
 
+        office_lookups = s.LOOKUPS['offices']
+
         # hierarchical facets data
         try:
-            magisterial = Office.objects.get(id=2)
+            magisterial = Office.objects.get(id=office_lookups['magisterial'])
             if magisterial:
                 context[
                     'magisterial_office_list'
@@ -94,7 +97,8 @@ class PromrepFacetedSearchView(FacetedSearchView):
             pass
 
         try:
-            promagistracies = Office.objects.get(id=214)
+            promagistracies = Office.objects.get(
+                id=office_lookups['promagistracies'])
             if promagistracies:
                 context[
                     'promagistracies_office_list'
@@ -103,7 +107,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
             pass
 
         try:
-            priesthoods = Office.objects.get(id=1)
+            priesthoods = Office.objects.get(id=office_lookups['priesthoods'])
             if priesthoods:
                 context[
                     'priesthoods_office_list'
@@ -112,7 +116,8 @@ class PromrepFacetedSearchView(FacetedSearchView):
             pass
 
         try:
-            non_magisterial = Office.objects.get(id=210)
+            non_magisterial = Office.objects.get(
+                id=office_lookups['non_magisterial'])
             if non_magisterial:
                 context[
                     'non_magisterial_office_list'
@@ -121,7 +126,8 @@ class PromrepFacetedSearchView(FacetedSearchView):
             pass
 
         try:
-            distinctions = Office.objects.get(id=270)
+            distinctions = Office.objects.get(
+                id=office_lookups['distinctions'])
             if distinctions:
                 context[
                     'distinctions_office_list'
@@ -237,35 +243,32 @@ class SenateSearchView(SearchView):
     load_all = True
     form_class = SenateSearchForm
     queryset = GroupedSearchQuerySet().models(
-        StatusAssertion).group_by('person_id').order_by('-date')
+        StatusAssertion).group_by('person_id')
     template_name = 'search/senate.html'
 
     def get_queryset(self):
         queryset = super(SenateSearchView, self).get_queryset()
-        queryset = queryset.narrow('senator:true')
 
-        return queryset
+        if 'senate_date' in self.request.GET:
+            queryset = GroupedSearchQuerySet().models(
+                StatusAssertion).group_by('person_id')
+            queryset = queryset.narrow('senator:true')
+        else:
+            queryset = queryset.narrow('date:[{0} TO {0}]'.format(
+                SenateSearchForm.INITIAL_DATE))
+
+        return queryset.order_by('-date')
 
     def get_context_data(self, **kwargs):  # noqa
         context = super(SenateSearchView, self).get_context_data(**kwargs)
         qs = self.request.GET.copy()
+        senate_date = SenateSearchForm.INITIAL_DATE_DISPLAY
 
         context['querydict'] = qs
 
         if 'senate_date' in qs:
-            field_text = None
+            senate_date = qs.pop('senate_date')[0]
 
-            if qs.get('senate_date'):
-                field_text = '{}'.format(qs.pop('senate_date')[0])
-
-            # always remove the page number
-            if 'page' in qs:
-                qs.pop('page')
-
-            url = reverse('senate_search')
-            if len(qs):
-                url = '?{}'.format(qs.urlencode())
-
-            context['senate_date'] = (url, field_text)
+        context['senate_date'] = senate_date
 
         return context

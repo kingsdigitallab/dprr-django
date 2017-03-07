@@ -9,8 +9,8 @@ def add_primarysource_defaults(apps, schema_editor):
     PrimarySource = apps.get_model("promrep", "PrimarySource")
     PrimarySource.objects.get_or_create(id=1,
                                         name='Not specified',
-                                        abbrev_name='',
-                                        biblio='')
+                                        abbrev_name='NA',
+                                        biblio='NA')
 
 
 class Migration(migrations.Migration):

@@ -17,7 +17,7 @@ Senate
 <div class="row">
     <form method="get" action=".">
         <div class="small-10 columns">
-            <div class="range-slider" data-slider data-options="display_selector: #id_senate_date; start: 180; end: 31;">
+            <div class="range-slider" data-slider data-options="display_selector: #id_senate_date; initial: {{ senate_date }}; start: 180; end: 31;">
                 <span class="range-slider-handle" role="slider" tabindex="0"></span>
                 <span class="range-slider-active-segment"></span>
             </div>
@@ -49,10 +49,3 @@ Senate
 </div>
 {% endblock main %}
 
-{% block footerscripts %}
-<script type="text/javascript">
-$(document).ready(function() {
-    $('.range-slider').foundation('slider', 'set_value', {{ senate_date }});
-});
-</script>
-{% endblock %}

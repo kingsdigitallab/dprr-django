@@ -15,25 +15,19 @@ Senate
 </div>
 
 <div class="row">
-    <div class="small-10 columns">
-        <div class="range-slider" data-slider data-options="display_selector: #year; initial: -180; start: -180; end: -31;">
-            <span class="range-slider-handle" role="slider" tabindex="0"></span>
-            <span class="range-slider-active-segment"></span>
+    <form method="get" action=".">
+        <div class="small-10 columns">
+            <div class="range-slider" data-slider data-options="display_selector: #id_senate_date; start: 180; end: 31;">
+                <span class="range-slider-handle" role="slider" tabindex="0"></span>
+                <span class="range-slider-active-segment"></span>
+            </div>
         </div>
-    </div>
-    <div class="small-2 columns">
-        <input type="number" id="year" value="-180">
-    </div>
+        <div class="small-2 columns">
+            {{ form.senate_date }}
+        </div>
+    </form>
 </div>
 
-<div class="row">
-    <div class="large-12 columns">
-        <form method="get" action=".">
-            {{ form.senate_date }}
-            <button type="submit" class="less-padding expand secondary">Apply</button>
-        </form>
-    </div>
-</div>
 <div class="row">
     <div class="large-12 columns">
         <h4>

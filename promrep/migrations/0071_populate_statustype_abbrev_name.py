@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
-STATUS_TYPE = [('Eques', 'eq. R.'), ('senator', 'sen.')]
+STATUS_TYPE = [('eques Romanus', 'eq. R.'), ('senator', 'sen.')]
 
 
 def populate_abbrev_name(apps, schema_editor):

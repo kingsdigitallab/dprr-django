@@ -10,14 +10,18 @@ Senate
 <div class="row">
     <div class="large-12 columns">
         <h1>Senate composition</h1>
-        <p><i class="fa fa-info-circle"></i> Display the Senators for a specific year in the range from 180 B.C. and 31 B.C.</p>
+        <p>
+        <i class="fa fa-info-circle"></i>
+        Display the Senators for a specific year in the range from 180 B.C. and 31 B.C.
+        </p>
     </div>
 </div>
 
 <div class="row">
     <form method="get" action=".">
         <div class="small-10 columns">
-            <div class="range-slider" data-slider data-options="display_selector: #id_senate_date; initial: {{ senate_date }}; start: 180; end: 31;">
+            <div class="range-slider" data-slider
+                 data-options="display_selector: #id_senate_date; initial: {{ senate_date }}; start: 180; end: 31;">
                 <span class="range-slider-handle" role="slider" tabindex="0"></span>
                 <span class="range-slider-active-segment"></span>
             </div>
@@ -31,14 +35,30 @@ Senate
 <div class="row">
     <div class="large-12 columns">
         <h4>
-            <strong>{{ paginator.count }}</strong> senators for the year
-            {{ senate_date }}
+            <strong>{{ paginator.count }}</strong>
+            senators for the year
+            <strong>{{ senate_date }}</strong>
         </h4>
         <ol start="{{ page_obj.start_index }}" class="search-results">
             {% for result in object_list %}
+            {% with doc=result.documents.0 %}
             <li>
                 {% include "search/person.html" with doc=result.documents.0 %}
+                {% if doc.date_start %}
+                {{ doc.date_start }}
+                {% if doc.date_start_uncertain %}?{% endif %}
+                {% else %}
+                ?
+                {% endif %}
+                to
+                {% if doc.date_end %}
+                {{ doc.date_end }}
+                {% if doc.date_end_uncertain %}?{% endif %}
+                {% else %}
+                ?
+                {% endif %}
             </li>
+            {% endwith %}
             {% empty %}
             <li>No results found!</li>
             {% endfor %}

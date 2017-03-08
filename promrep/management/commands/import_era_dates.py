@@ -38,10 +38,10 @@ class Command(BaseCommand):
         try:
             person = Person.objects.get(id=person_id)
 
-            if era_from:
+            if era_from and not person.era_from:
                 person.era_from = era_from
 
-            if era_to:
+            if era_to and not person.era_to:
                 person.era_to = era_to
 
             person.save()

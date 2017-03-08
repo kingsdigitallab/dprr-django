@@ -118,14 +118,6 @@ class Tribe(models.Model):
         ordering = ['id', ]
 
 
-class RoleType(TimeStampedModel):
-    name = models.CharField(max_length=128, unique=True)
-    description = models.CharField(max_length=1024, blank=True)
-
-    def __unicode__(self):
-        return self.name
-
-
 class NoteType(TimeStampedModel):
     name = models.CharField(max_length=128, unique=True)
     description = models.TextField(max_length=1024, blank=True)
@@ -678,7 +670,6 @@ class PostAssertion(TimeStampedModel):
     province_original = models.CharField(max_length=512, blank=True)
     province_original_expanded = models.CharField(max_length=512, blank=True)
 
-    role = models.ForeignKey(RoleType, default=1)
     original_text = models.CharField(max_length=1024, blank=True)
     office_xref = models.CharField(max_length=1024, blank=True)
 

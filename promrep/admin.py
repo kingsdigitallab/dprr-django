@@ -11,14 +11,13 @@ from models import (DateInformation, DateType, Gens, GensAssertion,
                     Office, Person, PersonNote, PostAssertion,
                     PostAssertionNote, Praenomen, PrimarySourceReference,
                     Province, RelationshipAssertion,
-                    RelationshipAssertionReference, RelationshipType, RoleType,
+                    RelationshipAssertionReference, RelationshipType,
                     SecondarySource, StatusAssertion, StatusAssertionNote,
                     StatusType, Tribe, TribeAssertion, PrimarySource)
 from promrep.forms import (PostInlineForm, RelationshipAssertionInlineForm,
                            StatusInlineForm)
 
 admin.site.register(DateType)
-admin.site.register(RoleType)
 admin.site.register(StatusAssertionNote)
 
 
@@ -336,7 +335,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
                     'created',
                     'modified')
 
-    list_filter = ('role', 'office', 'secondary_source', )
+    list_filter = ('office', 'secondary_source', )
 
     readonly_fields = ('id', )
 
@@ -348,7 +347,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
                   'person',
                   'office',
                   'secondary_source',
-                  ('role', 'uncertain'),
+                  ('uncertain'),
                   ('original_text', 'office_xref'),
               ),
               }
@@ -445,7 +444,7 @@ class PostAssertionInline(admin.StackedInline):
     readonly_fields = ('id', )
 
     fields = (('id', 'review_flag', ),
-              ('office', 'role'),
+              ('office',),
               ('uncertain', ),
               ('secondary_source', ),
               ('original_text', 'office_xref'),

@@ -1,8 +1,9 @@
 import re
 
+from django.conf import settings as s
 from django.db.models import Q
 from haystack import indexes
-from promrep.forms import PromrepFacetedSearchForm
+from promrep.forms import PromrepFacetedSearchForm, SenateSearchForm
 from promrep.models import (
     Office, PostAssertion, RelationshipAssertion, StatusAssertion
 )
@@ -246,6 +247,12 @@ class StatusAssertionIndex(AssertionIndex):
     rank = indexes.CharField(model_attr='status__name', faceted=True)
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
     date = MultiValueIntegerField(faceted=True)
+    date_start = indexes.IntegerField(model_attr='date_start', null=True)
+    date_start_uncertain = indexes.BooleanField(
+        model_attr='date_start_uncertain', default=False)
+    date_end = indexes.IntegerField(model_attr='date_end', null=True)
+    date_end_uncertain = indexes.BooleanField(
+        model_attr='date_end_uncertain', default=False)
 
     senator = indexes.BooleanField(faceted=True, default=False)
     eques = indexes.BooleanField(faceted=True, default=False)
@@ -260,7 +267,7 @@ class StatusAssertionIndex(AssertionIndex):
     def prepare_date(self, object):
         """range of dates for the post"""
 
-        start = PromrepFacetedSearchForm.MIN_DATE
+        start = SenateSearchForm.INITIAL_DATE
         end = PromrepFacetedSearchForm.MAX_DATE
 
         if object.date_start:
@@ -275,10 +282,10 @@ class StatusAssertionIndex(AssertionIndex):
         return res
 
     def prepare_senator(self, object):
-        return object.status.name.lower() == "senator"
+        return object.status.name.lower() == s.LOOKUPS['status']['senator']
 
     def prepare_eques(self, object):
-        return object.status.name.lower() == "eques"
+        return object.status.name.lower() == s.LOOKUPS['status']['eques']
 
 
 class RelationshipAssertionIndex(AssertionIndex):

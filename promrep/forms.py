@@ -284,8 +284,8 @@ class SenateSearchForm(SearchForm):
     INITIAL_DATE_DISPLAY = -1 * INITIAL_DATE
 
     senate_date = forms.IntegerField(
-        required=True, initial=(-1 * INITIAL_DATE),
-        max_value=PromrepFacetedSearchForm.MAX_DATE_FORM,
+        required=True, initial=INITIAL_DATE_DISPLAY,
+        max_value=INITIAL_DATE_DISPLAY,
         min_value=PromrepFacetedSearchForm.MIN_DATE_FORM)
 
     def no_query_found(self):

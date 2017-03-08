@@ -7,18 +7,17 @@ from django.contrib.contenttypes.admin import GenericStackedInline
 from django.core.urlresolvers import reverse
 from django.utils.html import format_html
 from django_mptt_admin.admin import DjangoMpttAdmin
-from models import (DateInformation, DateType, Gens, GensAssertion, Group,
+from models import (DateInformation, DateType, Gens, GensAssertion,
                     Office, Person, PersonNote, PostAssertion,
                     PostAssertionNote, Praenomen, PrimarySourceReference,
                     Province, RelationshipAssertion,
-                    RelationshipAssertionReference, RelationshipType, RoleType,
+                    RelationshipAssertionReference, RelationshipType,
                     SecondarySource, StatusAssertion, StatusAssertionNote,
                     StatusType, Tribe, TribeAssertion, PrimarySource)
 from promrep.forms import (PostInlineForm, RelationshipAssertionInlineForm,
                            StatusInlineForm)
 
 admin.site.register(DateType)
-admin.site.register(RoleType)
 admin.site.register(StatusAssertionNote)
 
 
@@ -336,7 +335,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
                     'created',
                     'modified')
 
-    list_filter = ('role', 'office', 'secondary_source', )
+    list_filter = ('office', 'secondary_source', )
 
     readonly_fields = ('id', )
 
@@ -348,8 +347,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
                   'person',
                   'office',
                   'secondary_source',
-                  ('role', 'uncertain'),
-                  'group',
+                  ('uncertain'),
                   ('original_text', 'office_xref'),
               ),
               }
@@ -365,10 +363,10 @@ class PostAssertionAdmin(admin.ModelAdmin):
         )})
     ]
 
-    raw_id_fields = ('group', 'person', 'office', )
+    raw_id_fields = ('person', 'office', )
 
     related_lookup_fields = {
-        'fk': ['group', 'person', 'office', ],
+        'fk': ['person', 'office', ],
     }
 
     inlines = (PostAssertionNoteInline, PostAssertionProvinceInline)
@@ -446,10 +444,9 @@ class PostAssertionInline(admin.StackedInline):
     readonly_fields = ('id', )
 
     fields = (('id', 'review_flag', ),
-              ('office', 'role'),
+              ('office',),
               ('uncertain', ),
               ('secondary_source', ),
-              ('group', ),
               ('original_text', 'office_xref'),
               ('date_display_text',),
               ('date_source_text', 'date_secondary_source', ),
@@ -461,10 +458,9 @@ class PostAssertionInline(admin.StackedInline):
               'edit_link',
               )
 
-    raw_id_fields = ('notes', 'group',)
+    raw_id_fields = ('notes',)
 
     related_lookup_fields = {
-        'fk': ['group', ],
         'm2m': ['notes', ],
     }
 
@@ -629,15 +625,6 @@ class PersonAdmin(admin.ModelAdmin):
 admin.site.register(Person, PersonAdmin)
 
 
-class PostInline(admin.TabularInline):
-    model = Group
-    classes = ('grp-collapse grp-open',)
-
-    readonly_fields = ('id', 'get_persons', 'related_label')
-    fields = ('id', 'related_label', 'get_persons')
-    extra = 0
-
-
 class OfficeAdmin(DjangoMpttAdmin):
     readonly_fields = ('id', )
     mptt_indent_field = "name"
@@ -651,43 +638,6 @@ class OfficeAdmin(DjangoMpttAdmin):
 
 
 admin.site.register(Office, OfficeAdmin)
-
-
-class GroupAdmin(admin.ModelAdmin):
-
-    search_fields = ['id',
-                     'postassertion__person__nomen',
-                     'postassertion__person__cognomen',
-                     'postassertion__office']
-
-    list_display = (
-        'id',
-        'date_year',
-        'date_info',
-        'notes',
-        'modified',
-        'created',
-    )
-
-    readonly_fields = ('id', )
-    list_display_links = ('id', 'notes', )
-
-    fieldsets = [('Database Info', {'fields': [('id')]}),
-                 ('',
-                  {
-                      'fields': (
-                          ('date_year', 'date_info', ),
-                          ('notes', ),
-                      ),
-                  }
-                  ),
-                 ]
-
-    inlines = [PostAssertionInline, ]
-    exclude = ('persons',)
-
-
-admin.site.register(Group, GroupAdmin)
 
 
 class StatusAssertionAdmin(admin.ModelAdmin):

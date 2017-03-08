@@ -667,63 +667,10 @@ class Province(MPTTModel, TimeStampedModel):
 
 
 @with_author
-class Group(TimeStampedModel):
-    persons = models.ManyToManyField(Person, through='PostAssertion')
-    display_text = models.CharField(max_length=1024, blank=True)
-
-    notes = models.TextField(blank=True)
-
-    # date information
-    date_year = models.IntegerField(blank=True, null=True)
-    date_info = models.CharField(max_length=1024, blank=True, null=True)
-
-    class Meta:
-        ordering = ['id', ]
-
-    def get_persons(self):
-        s = []
-        for ap in self.postassertion_set.all():
-            s.append(ap.person.__unicode__() + ' [' + ap.role.name + ']')
-
-        return '; '.join(s)
-
-    get_persons.short_description = "Persons"
-
-    def print_date(self):
-        if self.date_year:
-            date_str = str(abs(self.date_year))
-
-            if self.date_year >= 0:
-                return 'A.D. ' + date_str
-
-            return date_str
-
-        return ''
-
-    def __unicode__(self):
-        members = str(self.persons.count())
-        office_list = Office.objects.filter(
-            postassertion__group=self).distinct().values_list(
-            'name',
-            flat=True)
-
-        offices = "; ".join(office_list)
-
-        return "Group: {0} members; Office: {1} ({2})".format(
-            members, offices, self.date_info)
-
-    def related_label(self):
-        url = reverse('admin:%s_%s_change' % (
-            self._meta.app_label, self._meta.model_name), args=[self.id])
-        return u'<a href="%s">%s</a>' % (url, self.__unicode__(),)
-
-
-@with_author
 class PostAssertion(TimeStampedModel):
     person = models.ForeignKey(Person, related_name='post_assertions')
     office = models.ForeignKey(Office)
 
-    group = models.ForeignKey(Group, blank=True, null=True)
     secondary_source = models.ForeignKey(SecondarySource)
 
     provinces = models.ManyToManyField(

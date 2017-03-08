@@ -262,7 +262,7 @@ LOOKUPS = {
         'post_assertion_source': 'ruepke_B'
     },
     'status': {
-        'eques': 'eques'
+        'eques': 'eques romanos', 'senator': 'senator'
     },
     'dates': {
         'person_exclude': 'attested'

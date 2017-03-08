@@ -1,5 +1,6 @@
 import re
 
+from django.conf import settings as s
 from django.db.models import Q
 from haystack import indexes
 from promrep.forms import PromrepFacetedSearchForm
@@ -275,10 +276,10 @@ class StatusAssertionIndex(AssertionIndex):
         return res
 
     def prepare_senator(self, object):
-        return object.status.name.lower() == "senator"
+        return object.status.name.lower() == s.LOOKUPS['status']['senator']
 
     def prepare_eques(self, object):
-        return object.status.name.lower() == "eques"
+        return object.status.name.lower() == s.LOOKUPS['status']['eques']
 
 
 class RelationshipAssertionIndex(AssertionIndex):

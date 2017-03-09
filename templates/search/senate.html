@@ -10,7 +10,7 @@ Senate
 <div class="row">
     <div class="large-12 columns">
         <h1>Senate composition</h1>
-        <p>
+        <p class="info">
         <i class="fa fa-info-circle"></i> 
         Display the Senators for a specific year in the range from 180 B.C. to 31 B.C.
         </p>
@@ -19,17 +19,17 @@ Senate
 
 <div class="row">
     <form method="get" action=".">
-        <div class="small-8 columns">
-            <div class="range-slider" data-slider
+        <div class="small-5 columns">
+            <div class="range-slider slider" data-slider
                  data-options="display_selector: #id_senate_date; initial: {{ senate_date }}; start: 180; end: 31;">
                 <span class="range-slider-handle" role="slider" tabindex="0"></span>
                 <span class="range-slider-active-segment"></span>
             </div>
         </div>
-        <div class="small-2 columns">
+        <div class="small-1 columns">
             {{ form.senate_date }}
         </div>
-        <div class="small-2 columns">
+        <div class="small-2 columns end">
             <button type="submit" class="small button secondary expand less-padding">Apply</button>
         </div>
     </form>

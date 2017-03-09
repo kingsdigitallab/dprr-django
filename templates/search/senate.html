@@ -9,44 +9,43 @@ Senate
 
 <div class="row">
     <div class="large-12 columns">
-        <h1>Senate composition</h1>
-        <p>
+        <h1><span class="senators"><strong>{{ paginator.count }}</strong></span> 
+        Senators for the year <strong>{{ senate_date }}</strong> <small>B.C.</small></h1>
+        <p class="info">
         <i class="fa fa-info-circle"></i> 
-        Display the Senators for a specific year in the range from 180 B.C. to 31 B.C.
+        Drag the slider or input an number within the range from 180 B.C. to 31 B.C.
         </p>
     </div>
 </div>
 
-<div class="row">
-    <form method="get" action=".">
-        <div class="small-8 columns">
-            <div class="range-slider" data-slider
-                 data-options="display_selector: #id_senate_date; initial: {{ senate_date }}; start: 180; end: 31;">
-                <span class="range-slider-handle" role="slider" tabindex="0"></span>
-                <span class="range-slider-active-segment"></span>
+<form method="get" action=".">
+    <div class="row small-collapse medium-uncollapse">
+            <div class="small-6 columns">
+                <div class="range-slider slider" data-slider
+                     data-options="display_selector: #id_senate_date; initial: {{ senate_date }}; start: 180; end: 31;">
+                    <span class="range-slider-handle" role="slider" tabindex="0"></span>
+                    <span class="range-slider-active-segment"></span>
+                </div>
             </div>
-        </div>
-        <div class="small-2 columns">
-            {{ form.senate_date }}
-        </div>
-        <div class="small-2 columns">
-            <button type="submit" class="small button secondary expand less-padding">Apply</button>
-        </div>
-    </form>
-</div>
+            <div class="small-3 medium-2 large-1 columns">
+                {{ form.senate_date }}
+            </div>
+            <div class="small-3 medium-3 large-2 columns end">
+                <button type="submit" class="small button secondary expand less-padding">Apply</button>
+            </div>
+    </div>
+</form>
 
 <div class="row">
     <div class="large-12 columns">
-        <h4>
-            <strong>{{ paginator.count }}</strong> senators for the year
-            {{ senate_date }} B.C.
-        </h4>
-        <ol start="{{ page_obj.start_index }}" class="search-results">
+        <ol start="{{ page_obj.start_index }}" class="search-results senators-in-year">
             {% for result in object_list %}
             {% with doc=result.documents.0 %}
             <li>
-                {% include "search/person.html" with doc=result.documents.0 %}
-                {{ doc.date_display }}
+                <div class="ffs">
+                    {% include "search/person.html" with doc=result.documents.0 %}
+                    <span class="details">{{ doc.date_display }}</span>
+                </div>
             </li>
             {% endwith %}
             {% empty %}

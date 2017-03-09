@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import logging
 from promrep.models import Person, RelationshipAssertion, RelationshipType
-from promrep.models import SecondarySource
+from promrep.models import SecondarySource, RelationshipInverse
 import csv
 import datetime
 
@@ -32,12 +32,15 @@ class Command(BaseCommand):
             except MultipleObjectsReturned:
                 found = None
             if found is not None:
+                inverse = RelationshipInverse.objects.get(
+                    relationship=relationship,
+                    sex=person.sex)
                 new_assert = RelationshipAssertion(
                     extra_info="Inferred",
                     person=person,
                     related_person=found.person,
                     secondary_source=dprr_source,
-                    relationship=relationship)
+                    relationship=inverse.inverse_relationship)
                 relationships.append(new_assert)
                 self.writeassetion(new_assert, found)
                 if single:

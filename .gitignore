@@ -58,7 +58,6 @@ target/
 # Local
 .DS_Store
 .babelrc
-*.csv
 local.py
 logs/
 node_modules/

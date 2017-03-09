@@ -253,6 +253,7 @@ class StatusAssertionIndex(AssertionIndex):
     date_end = indexes.IntegerField(model_attr='date_end', null=True)
     date_end_uncertain = indexes.BooleanField(
         model_attr='date_end_uncertain', default=False)
+    date_display = indexes.CharField()
 
     senator = indexes.BooleanField(faceted=True, default=False)
     eques = indexes.BooleanField(faceted=True, default=False)
@@ -286,6 +287,9 @@ class StatusAssertionIndex(AssertionIndex):
 
     def prepare_eques(self, object):
         return object.status.name.lower() == s.LOOKUPS['status']['eques']
+
+    def prepare_date_display(self, object):
+        return object.print_dates()
 
 
 class RelationshipAssertionIndex(AssertionIndex):

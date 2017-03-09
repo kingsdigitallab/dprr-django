@@ -47,21 +47,9 @@ Senate
                         {% include "search/person.html" with doc=result.documents.0 %}
                     </div>
                     <div class="large-5 columns year-range">
-                        {% if doc.date_start %}
-                        {{ doc.date_start }}
-                        {% if doc.date_start_uncertain %}?{% endif %}
-                        {% else %}
-                        ?
-                        {% endif %}
-                        to
-                        {% if doc.date_end %}
-                        {{ doc.date_end }}
-                        {% if doc.date_end_uncertain %}?{% endif %}
-                        {% else %}
-                        ?
-                        {% endif %}
+                       {{ doc.date_display }}
                     </div>
-                </div>                
+                </div>
             </li>
             {% endwith %}
             {% empty %}

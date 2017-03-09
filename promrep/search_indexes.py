@@ -141,6 +141,8 @@ class PostAssertionIndex(AssertionIndex):
 
     province = indexes.MultiValueField(faceted=True)
     date = MultiValueIntegerField(faceted=True)
+    date_start = indexes.IntegerField(model_attr='date_start', null=True)
+    date_end = indexes.IntegerField(model_attr='date_end', null=True)
 
     life_date_types = indexes.MultiValueField(faceted=True)
 

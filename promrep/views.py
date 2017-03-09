@@ -257,7 +257,7 @@ class SenateSearchView(SearchView):
             queryset = queryset.narrow('date:[{0} TO {0}]'.format(
                 SenateSearchForm.INITIAL_DATE))
 
-        return queryset.order_by('-date')
+        return queryset.order_by('-date_start').order_by('-date_end')
 
     def get_context_data(self, **kwargs):  # noqa
         context = super(SenateSearchView, self).get_context_data(**kwargs)

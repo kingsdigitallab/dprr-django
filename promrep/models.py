@@ -337,41 +337,44 @@ class Person(TimeStampedModel):
         name_l = []
 
         # TODO: only showing praenomen for men
-        if self.sex.name == "Male":
-
+        if self.sex.name == 'Male':
             if self.praenomen:
                 prae_str = self.praenomen.abbrev
 
                 if self.alt_praenomen:
-                    prae_str += " (or {})".format(self.alt_praenomen.abbrev)
+                    prae_str += ' (or {})'.format(self.alt_praenomen.abbrev)
                 elif self.praenomen_uncertain:
-                    prae_str += "?"
+                    prae_str += '?'
 
                 if prae_str.strip():
                     name_l.append(prae_str)
 
         if self.nomen:
-            name_l.append(self.nomen)
+            name_l.append('{}{}'.format(
+                self.nomen, '?' if self.nomen_uncertain else ''))
 
         if self.re_number:
             name_l.append("({})".format(self.re_number))
 
         if self.filiation:
             if self.filiation not in ['- f. - n.', '- f.', '- n.']:
-                name_l.append("{}".format(self.filiation))
+                name_l.append('{}'.format(
+                    self.filiation, '?' if self.filiation_uncertain else ''))
 
         if self.tribeassertion_set.exists():
-            name_l += ['{}{}'.format(ta.tribe.abbrev,
-                                     '?' if ta.uncertain else '')
-                       for ta in self.tribeassertion_set.all()]
+            name_l += ['{}{}'.format(
+                ta.tribe.abbrev, '?' if ta.uncertain else '')
+                for ta in self.tribeassertion_set.all()]
 
         if self.cognomen:
-            name_l.append(self.cognomen)
+            name_l.append('{}{}'.format(
+                self.cognomen, '?' if self.cognomen_uncertain else ''))
 
         if self.other_names:
-            name_l.append(self.other_names)
+            name_l.append('{}{}'.format(
+                self.other_names, '?' if self.other_names_uncertain else ''))
 
-        return " ".join(name_l)
+        return ' '.join(name_l)
 
     def generate_dprr_id(self):
         if not self.nomen:

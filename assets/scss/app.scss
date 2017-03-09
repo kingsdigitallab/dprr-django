@@ -547,8 +547,8 @@ h3.quick-home {
 
 .senators {
     animation: flash 3s ease;
-    -webkit-animation-fill-mode: forwards; /* Safari 4.0 - 8.0 */
-    animation-fill-mode: forwards;
+    // -webkit-animation-fill-mode: forwards; /* Safari 4.0 - 8.0 */
+    // animation-fill-mode: forwards;
     padding: 0 .5rem;
 }
 

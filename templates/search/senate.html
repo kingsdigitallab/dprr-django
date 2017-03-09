@@ -9,8 +9,8 @@ Senate
 
 <div class="row">
     <div class="large-12 columns">
-        <h1>Senators for the year {{ senate_date }} <small>B.C.</small>: 
-        <span class="senators"><strong>{{ paginator.count }}</strong></span></h1>
+        <h1><span class="senators"><strong>{{ paginator.count }}</strong></span> 
+        Senators for the year <strong>{{ senate_date }}</strong> <small>B.C.</small></h1>
         <p class="info">
         <i class="fa fa-info-circle"></i> 
         Drag the slider or input an number within the range from 180 B.C. to 31 B.C.
@@ -42,7 +42,7 @@ Senate
             {% for result in object_list %}
             {% with doc=result.documents.0 %}
             <li>
-                <div class="row">
+                <div class="row collapse">
                     <div class="large-7 columns">
                         {% include "search/person.html" with doc=result.documents.0 %}
                     </div>

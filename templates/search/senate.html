@@ -38,29 +38,30 @@ Senate
 
 <div class="row">
     <div class="large-12 columns">
-        <ol start="{{ page_obj.start_index }}" class="senators-in-year">
+        <ol start="{{ page_obj.start_index }}" class="search-results senators-in-year">
             {% for result in object_list %}
             {% with doc=result.documents.0 %}
             <li>
-                <div class="block">
-                    {% include "search/person.html" with doc=result.documents.0 %}
-
-                    <span class="year-range">
-                    {% if doc.date_start %}
-                    {{ doc.date_start }}
-                    {% if doc.date_start_uncertain %}?{% endif %}
-                    {% else %}
-                    ?
-                    {% endif %}
-                    to
-                    {% if doc.date_end %}
-                    {{ doc.date_end }}
-                    {% if doc.date_end_uncertain %}?{% endif %}
-                    {% else %}
-                    ?
-                    {% endif %}
-                    </span>
-                </div>
+                <div class="row">
+                    <div class="large-7 columns">
+                        {% include "search/person.html" with doc=result.documents.0 %}
+                    </div>
+                    <div class="large-5 columns year-range">
+                        {% if doc.date_start %}
+                        {{ doc.date_start }}
+                        {% if doc.date_start_uncertain %}?{% endif %}
+                        {% else %}
+                        ?
+                        {% endif %}
+                        to
+                        {% if doc.date_end %}
+                        {{ doc.date_end }}
+                        {% if doc.date_end_uncertain %}?{% endif %}
+                        {% else %}
+                        ?
+                        {% endif %}
+                    </div>
+                </div>                
             </li>
             {% endwith %}
             {% empty %}

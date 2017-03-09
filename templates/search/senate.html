@@ -20,7 +20,7 @@ Senate
 
 <form method="get" action=".">
     <div class="row small-collapse medium-uncollapse">
-            <div class="small-5 columns">
+            <div class="small-6 columns">
                 <div class="range-slider slider" data-slider
                      data-options="display_selector: #id_senate_date; initial: {{ senate_date }}; start: 180; end: 31;">
                     <span class="range-slider-handle" role="slider" tabindex="0"></span>
@@ -30,7 +30,7 @@ Senate
             <div class="small-3 medium-2 large-1 columns">
                 {{ form.senate_date }}
             </div>
-            <div class="small-4 medium-3 large-2 columns end">
+            <div class="small-3 medium-3 large-2 columns end">
                 <button type="submit" class="small button secondary expand less-padding">Apply</button>
             </div>
     </div>
@@ -42,13 +42,9 @@ Senate
             {% for result in object_list %}
             {% with doc=result.documents.0 %}
             <li>
-                <div class="row">
-                    <div class="small-7 columns">
-                        {% include "search/person.html" with doc=result.documents.0 %}
-                    </div>
-                    <div class="small-3 large-2 columns end year-range">
-                       {{ doc.date_display }}
-                    </div>
+                <div class="ffs">
+                    {% include "search/person.html" with doc=result.documents.0 %}
+                    <span class="details">{{ doc.date_display }}</span>
                 </div>
             </li>
             {% endwith %}

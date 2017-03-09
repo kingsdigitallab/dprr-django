@@ -561,8 +561,6 @@ h3.quick-home {
 
 .senators {
     animation: flash 3s ease;
-    // -webkit-animation-fill-mode: forwards; /* Safari 4.0 - 8.0 */
-    // animation-fill-mode: forwards;
     padding: 0 .5rem;
 }
 
@@ -571,10 +569,19 @@ h3.quick-home {
     to { background: scale-color(yellow, $lightness: 50%); }
 }
 
-.senators-in-year {
-    
-}
+.ffs {
+    display: inline-block;
+    h4 {
+        float: left;
+        line-height: 1.5;
+        margin-top: -.875rem;
+        padding: .5rem .5rem 0;
+    }
 
+    .details {
+        padding-left: .5rem;
+    }
+}
 /* Auto-complete */
 .easy-autocomplete-container {
     ul {
@@ -998,12 +1005,23 @@ svg {
         font-size: 2.5rem !important;
         width: 80%;
     }
+    .ffs {
+        h4 {
+            width: 700px;
+        }
+    }
 }
 
 @media #{$medium-only} {
     h1.site-title,
     h2.site-title {
         font-size: 2rem;
+    }
+
+    .ffs {
+        h4 {
+            width: 450px;
+        }
     }
 }
 

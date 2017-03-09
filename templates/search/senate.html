@@ -42,8 +42,8 @@ Senate
             {% for result in object_list %}
             {% with doc=result.documents.0 %}
             <li>
-                <div class="row collapse">
-                    <div class="large-7 columns">
+                <div class="row">
+                    <div class="small-7 columns">
                         {% include "search/person.html" with doc=result.documents.0 %}
                     </div>
                     <div class="small-3 large-2 columns end year-range">

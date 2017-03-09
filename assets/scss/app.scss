@@ -39,6 +39,17 @@ ul {
     }
 }
 
+.button-group.stack > li > button,
+.button-group.stack > li .button {
+    border-color: rgba(255, 255, 255, 1);
+}
+
+.button-group.stack > li {
+    &:first-child {
+        border: none;
+    }
+}
+
 .capitalize::first-letter {
     text-transform: capitalize; 
 }
@@ -95,11 +106,14 @@ ul {
         margin: 0;
         padding: 0;
     }
+
     li {
         border-bottom: 1px solid scale-color($secondary-color, $lightness: -10%);
+
         .label {
             margin-top: .25rem;
         }
+
         &:last-child {
             border-bottom: none;
         }

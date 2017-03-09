@@ -36,12 +36,13 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 facet, sort='index', limit=-1, mincount=1)
 
         selected_facets = self.request.GET.getlist('selected_facets')
-        if selected_facets:
-            if 'offices' in selected_facets:
+        for facet in selected_facets:
+            if 'offices' in facet:
                 queryset = queryset.order_by(
-                    '-date_start').order_by('-date_end')
+                    'date_start').order_by('date_end')
+                break
 
-        return queryset.order_by('-era_order')
+        return queryset.order_by('era_order')
 
     def get_context_data(self, **kwargs):  # noqa
         context = super(

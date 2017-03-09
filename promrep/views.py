@@ -250,7 +250,7 @@ class SenateSearchView(SearchView):
     load_all = True
     form_class = SenateSearchForm
     queryset = GroupedSearchQuerySet().models(
-        StatusAssertion).group_by('person_id')
+        StatusAssertion).narrow('senator:true').group_by('person_id')
     template_name = 'search/senate.html'
 
     def get_queryset(self):
@@ -258,8 +258,7 @@ class SenateSearchView(SearchView):
 
         if 'senate_date' in self.request.GET:
             queryset = GroupedSearchQuerySet().models(
-                StatusAssertion).group_by('person_id')
-            queryset = queryset.narrow('senator:true')
+                StatusAssertion).narrow('senator:true').group_by('person_id')
         else:
             queryset = queryset.narrow('date:[{0} TO {0}]'.format(
                 SenateSearchForm.INITIAL_DATE))

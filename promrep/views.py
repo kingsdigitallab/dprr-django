@@ -35,7 +35,13 @@ class PromrepFacetedSearchView(FacetedSearchView):
             queryset = queryset.facet(
                 facet, sort='index', limit=-1, mincount=1)
 
-        return queryset
+        selected_facets = self.request.GET.getlist('selected_facets')
+        if selected_facets:
+            if 'offices' in selected_facets:
+                queryset = queryset.order_by(
+                    '-date_start').order_by('-date_end')
+
+        return queryset.order_by('-era_order')
 
     def get_context_data(self, **kwargs):  # noqa
         context = super(
@@ -46,7 +52,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 'selected_facets')
 
         qs = self.request.GET.copy()
-        context['querydict'] = qs
+        context['querydict'] = qs.copy()
 
         if self.request.GET.get('q'):
             qs.pop('q')
@@ -257,14 +263,16 @@ class SenateSearchView(SearchView):
             queryset = queryset.narrow('date:[{0} TO {0}]'.format(
                 SenateSearchForm.INITIAL_DATE))
 
-        return queryset.order_by('-date_start').order_by('-date_end')
+        return queryset.order_by(
+            'date_start_uncertain').order_by(
+                'date_start').order_by('date_end')
 
     def get_context_data(self, **kwargs):  # noqa
         context = super(SenateSearchView, self).get_context_data(**kwargs)
         qs = self.request.GET.copy()
         senate_date = SenateSearchForm.INITIAL_DATE_DISPLAY
 
-        context['querydict'] = qs
+        context['querydict'] = qs.copy()
 
         if 'senate_date' in qs:
             senate_date = qs.pop('senate_date')[0]

@@ -180,32 +180,33 @@ class PostAssertionIndex(AssertionIndex):
         return res
 
     def prepare_office(self, object):
-
         # Hierarquical facet
         return [o.name for o in object.office.get_ancestors(include_self=True)]
 
     def prepare_offices(self, object):
         # we don't want any senator post assertions
         # these should all be recorded as Status assertions instead
-        #      see: https://jira.dighum.kcl.ac.uk/browse/DPRR-256
+        # see: https://jira.dighum.kcl.ac.uk/browse/DPRR-256
 
-        sen_q = None
+        olist = object.person.post_assertions
+
+        if object.date_start:
+            olist = olist.exclude(date_start__lt=object.date_start)
+
+        if object.date_end:
+            olist = olist.exclude(date_end__gt=object.date_end)
 
         try:
             senator_offices = Office.objects.get(
                 name='senator').get_descendants(include_self=True)
             sen_q = Q(office__in=senator_offices)
+
+            if sen_q:
+                olist = olist.exclude(sen_q)
         except:
             pass
 
-        # flat list of different office ids the person held
-        olist = object.person.post_assertions.values_list(
-            'office__id', flat=True)
-
-        if sen_q:
-            # flat list of different office ids the person held
-            olist = object.person.post_assertions.exclude(sen_q).values_list(
-                'office__id', flat=True)
+        olist = olist.values_list('office__id', flat=True)
 
         # list of Office objects
         olist = [Office.objects.get(id=o) for o in list(set(olist))]

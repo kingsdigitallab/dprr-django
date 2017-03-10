@@ -145,8 +145,6 @@ def setup_environment():
     clone_repo()
     install_requirements()
 
-# quicker deployment - no requirements/migrations
-
 
 @task
 def deploy(branch=None, index='yes'):

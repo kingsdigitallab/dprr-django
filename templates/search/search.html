@@ -27,6 +27,9 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
             </a>
         </header>
         <form method="get" action=".">
+          {% for facet_value in selected_facets %}
+            <input class="selected_facets_input" type="hidden" name="selected_facets" value="{{ facet_value }}">
+          {% endfor %}
             <div class="search-box">
                 <section data-section="non-expandable" data-expandable-group-member="facets" id="dprr-filter">
                     <div class="row do-not-print">
@@ -382,7 +385,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
     <div class="large-12 columns">
         <hr>
         <h2>Search Results
-            <span class="label radius">{{ paginator.count }}</span> 
+            <span class="label radius">{{ paginator.count }}</span>
             <a href="#search" class="less-padding button right edit-search do-not-print">
                 <i class="fa fa-edit"></i>
                 Edit search

@@ -415,17 +415,17 @@
     become: yes
     service: name=tomcat7 state=restarted
 
- - hosts: all
-   vars_files:
-     - vars.yml
-   gather_facts: false
-   tasks:
-   - name: haystack | rebuild solr index
-     command: "{{ user_home }}/venv/bin/python {{ project_root }}/manage.py rebuild_index --noinput"
-     tags:
-       - django
-       - haystack
-       - solr
+- hosts: all
+  vars_files:
+    - vars.yml
+  gather_facts: false
+  tasks:
+  - name: haystack | rebuild solr index
+    command: "{{ user_home }}/venv/bin/python {{ project_root }}/manage.py rebuild_index --noinput"
+    tags:
+      - django
+      - haystack
+      - solr
 
 - hosts: all
   vars_files:

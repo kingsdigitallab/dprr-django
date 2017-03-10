@@ -27,7 +27,14 @@ $(document).ready(function() {
 
 	// Printing search results
 	$('#printme').bind("click", function() {
-		// TODO: remove pagination and show full list of results
-		window.print();
+		// Trigger reload with minimal pagination for printing
+		var separator= '?';
+		if (document.URL.includes("?")){separator='&';}
+		document.location.href=document.URL+separator+'printme=1'
 	});
+	if (document.URL.includes("printme")){
+		//Print the reloaded page
+		window.print();
+	}
+	
 });

@@ -18,13 +18,23 @@ class PromrepFacetedSearchView(FacetedSearchView):
                     'eques']
 
     autocomplete_facets = PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS
-
     form_class = PromrepFacetedSearchForm
     load_all = True
+    print_paginate = 200
+
     queryset = GroupedSearchQuerySet().models(
         PostAssertion,
         StatusAssertion,
         RelationshipAssertion).group_by('person_id')
+
+    def get_paginate_by(self, queryset):
+        """
+        Get the number of items to paginate by, or ``None`` for no pagination.
+        """
+        if self.request.GET.get('printme'):
+            return self.print_paginate
+        else:
+            return self.paginate_by
 
     def get_queryset(self):
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
@@ -54,6 +64,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
         qs = self.request.GET.copy()
         context['querydict'] = qs.copy()
+        self.paginate_by = 200
 
         if self.request.GET.get('q'):
             qs.pop('q')

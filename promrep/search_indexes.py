@@ -310,14 +310,6 @@ class PostAssertionIndex(AssertionIndex):
         # Get a single-item queryset...
         olist = object.person.post_assertions.filter(pk=object.pk)
 
-        if object.person.id == 1692:
-            print "Person 1692: "
-            print object.date_start
-            print object.date_end
-            print object
-            print olist
-            print "====="
-
         try:
             senator_offices = Office.objects.get(
                 name='senator').get_descendants(include_self=True)

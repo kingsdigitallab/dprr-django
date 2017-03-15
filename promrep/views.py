@@ -25,6 +25,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
     queryset = GroupedSearchQuerySet().models(
         PostAssertion,
         StatusAssertion,
+        Person,
         RelationshipAssertion).group_by('person_id')
 
     def get_paginate_by(self, queryset):

@@ -295,6 +295,9 @@ class PostAssertionIndex(AssertionIndex):
         # these should all be recorded as Status assertions instead
         # see: https://jira.dighum.kcl.ac.uk/browse/DPRR-256
 
+        # Why are we iterating through ALL post assertions while
+        # indexing a single assertion?
+        '''
         olist = object.person.post_assertions
 
         if object.date_start:
@@ -302,6 +305,18 @@ class PostAssertionIndex(AssertionIndex):
 
         if object.date_end:
             olist = olist.exclude(date_end__gt=object.date_end)
+        '''
+
+        # Get a single-item queryset...
+        olist = object.person.post_assertions.filter(pk=object.pk)
+
+        if object.person.id == 1692:
+            print "Person 1692: "
+            print object.date_start
+            print object.date_end
+            print object
+            print olist
+            print "====="
 
         try:
             senator_offices = Office.objects.get(

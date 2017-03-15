@@ -791,20 +791,28 @@ class PostAssertion(TimeStampedModel):
                 st = str(abs(int(self.date_start)))
 
                 if self.date_start_uncertain:
-                    st = "{}?".format(st)
+                    st = "before {}".format(st)
 
             if self.date_end:
                 en = str(abs(self.date_end))
 
                 if self.date_end_uncertain:
-                    en = "{}?".format(en)
+                    en = "after {}".format(en)
 
             if st and en:
                 date_str = "{} to {}".format(st, en)
             elif st:
-                date_str = "after {}".format(st)
+                if self.date_start_uncertain:
+                    # Already taken care of above
+                    date_str = st
+                else:
+                    date_str = "after {}".format(st)
             elif en:
-                date_str = "before {}".format(en)
+                if self.date_end_uncertain:
+                    # Alreadt taken care of above
+                    date_str = en
+                else:
+                    date_str = "before {}".format(en)
             else:
                 date_str = "date uncertain"
 

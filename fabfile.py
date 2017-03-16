@@ -212,6 +212,17 @@ def update_index():
 
 
 @task
+def rebuild_index():
+    require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
+
+    with cd(env.path), prefix(env.within_virtualenv):
+        run('./manage.py build_solr_schema > schema.xml')
+        run('mv schema.xml ../../solr/collection1/conf/')
+        sudo('service tomcat7-{} restart'.format(env.srvr))
+        run('./manage.py rebuild_index')
+
+
+@task
 def clear_cache():
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 

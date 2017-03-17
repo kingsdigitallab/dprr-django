@@ -259,7 +259,8 @@ class PostAssertionIndex(AssertionIndex):
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
 
-        return self.get_model().objects.all()
+        return self.get_model().objects.all().exclude(
+            Q(date_start__isnull=True) & Q(date_end__isnull=True))
 
     def prepare_province(self, object):
         # hierarchical facet
@@ -310,6 +311,7 @@ class PostAssertionIndex(AssertionIndex):
         # Get a single-item queryset...
         olist = object.person.post_assertions.filter(pk=object.pk)
 
+        # This is how it was done before... not going to mess with it.
         try:
             senator_offices = Office.objects.get(
                 name='senator').get_descendants(include_self=True)

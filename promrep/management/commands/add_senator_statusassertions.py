@@ -325,22 +325,33 @@ def get_last_life_date(person):
     #   is when they are dead (all types !!), exiled or expelled.)
 
     date_dict = {}
+    expelled_date_types = [
+        "exile", "expelled from Senate", "extradited", "proscribed"]
 
-    date_types = ["death", "death - natural", "death - violent",
-                  "exile", "expelled from Senate", "extradited",
-                  "proscribed"]
+    death_date_types = ["death", "death - natural", "death - violent"]
 
-    dates = person.dateinformation_set.filter(
-        date_type__name__in=date_types).order_by('value')
+    death_dates = person.dateinformation_set.filter(
+        date_type__name__in=death_date_types).order_by('value')
+    expelled_dates = person.dateinformation_set.filter(
+        date_type__name__in=expelled_date_types).order_by('value')
+    use_date = None
 
-    if dates.exists():
+    if expelled_dates.exists():
+        # Prosribed etc. more accurate use these first
+        use_date = expelled_dates.first()
+        uncertain = False
+
+    elif death_dates.exists():
         # If the person has a life date of expelled or exiled or death or
         #   death - violent, set the end date of the senator status assertion
         #   to the earliest of these life dates, certainty = the same
         #   certainty as the life date
+        use_date = death_dates.first()
+        uncertain = death_dates.first().uncertain
 
-        date_dict['last_life_date'] = dates.first().value
-        date_dict['last_life_date_uncertain'] = dates.first().uncertain
-        date_dict['last_life_date_type'] = dates.first().date_type.name
+    if use_date:
+        date_dict['last_life_date'] = use_date.value
+        date_dict['last_life_date_uncertain'] = uncertain
+        date_dict['last_life_date_type'] = use_date.date_type.name
 
     return date_dict

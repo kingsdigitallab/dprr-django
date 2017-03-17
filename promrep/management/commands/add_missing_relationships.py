@@ -184,6 +184,29 @@ class Command(BaseCommand):
                             related_person=person,
                             relationship=sib_relationship)
                         self.writeassetion(new_sibling, related_sibling)
+            # Make sure children are listed as siblings of one another
+            for kid in children:
+                if kid.related_person.sex.name == "Male":
+                    sib_relationship = RelationshipType.objects.get(
+                        name="brother of")
+                else:
+                    sib_relationship = RelationshipType.objects.get(
+                        name="sister of")
+                for sib in children:
+                    if sib != kid and RelationshipAssertion.objects.filter(
+                        Q(person=kid.related_person),
+                        Q(related_person=sib.related_person),
+                        Q(relationship__name="brother of") |
+                        Q(relationship__name="sister of")
+                    ).count() == 0:
+                        new_sib = RelationshipAssertion(
+                            person=kid.related_person,
+                            related_person=sib.related_person,
+                            relationship=sib_relationship,
+                            extra_info="Inferred",
+                            secondary_source=dprr_source,
+                        )
+                        self.writeassetion(new_sib, sib)
 
             # Verify children
             if spouse is not None:

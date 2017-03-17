@@ -4,6 +4,7 @@ import logging
 from promrep.models import Person, RelationshipAssertion, RelationshipType
 from promrep.models import SecondarySource, RelationshipInverse
 import csv
+from django.db.models import Q
 import datetime
 
 # Populate inferred family relationships based on rules in DPRR-257
@@ -163,6 +164,27 @@ class Command(BaseCommand):
                         relationship=type_father)
                     new_rels.append(new_assert)
                     self.writeassetion(new_assert, sib)
+                # check the siblings' siblings
+                related_siblings = RelationshipAssertion.objects.filter(
+                    Q(person=sib.related_person),
+                    Q(relationship__name="brother of") |
+                    Q(relationship__name="sister of"))
+                for related_sibling in related_siblings:
+                    if related_sibling.related_person != person:
+                        if related_sibling.related_person.sex.name == "Male":
+                            sib_relationship = RelationshipType.objects.get(
+                                name="brother of")
+                        else:
+                            sib_relationship = RelationshipType.objects.get(
+                                name="sister of")
+                        new_sibling = RelationshipAssertion(
+                            extra_info="Inferred",
+                            secondary_source=dprr_source,
+                            person=related_sibling.related_person,
+                            related_person=person,
+                            relationship=sib_relationship)
+                        self.writeassetion(new_sibling, related_sibling)
+
             # Verify children
             if spouse is not None:
                 for kid in children:

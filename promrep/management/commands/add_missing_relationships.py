@@ -68,7 +68,7 @@ class Command(BaseCommand):
            person=new_assert.person,
            related_person=new_assert.related_person,
            relationship=new_assert.relationship).count() == 0):
-            new_assert.uncertain = source_assert.uncertain
+            new_assert.uncertain = True
             new_assert.save()
             self.csv_log.writerow({
                 "inferred_person_id": new_assert.person.id,
@@ -96,7 +96,7 @@ class Command(BaseCommand):
                     extra_info="Inferred Inverse",
                     person=new_assert.related_person,
                     related_person=new_assert.person,
-                    uncertain=source_assert.uncertain,
+                    uncertain=True,
                     secondary_source=dprr_source,
                     relationship=inv_type.inverse_relationship)
                 new_inv.save()

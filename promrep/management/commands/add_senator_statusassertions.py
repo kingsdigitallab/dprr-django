@@ -167,8 +167,14 @@ class Command(BaseCommand):
 
                     use_last_life_date = False
 
+                    if person.id == 2571:
+                        import pdb
+                        pdb.set_trace()
+
                     if last_life_date:
-                        if(last_life_date['last_life_date'] >=
+                        if('death' not in
+                           last_life_date['last_life_date_type'] or
+                           last_life_date['last_life_date'] >=
                            date_last_office):
                             use_last_life_date = True
 

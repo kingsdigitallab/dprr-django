@@ -323,7 +323,7 @@ class Command(BaseCommand):
 
         return odict
 
-    def get_last_life_date(person):
+    def get_last_life_date(self, person):
         """For a given person returns a dictionary
         with the last senate related life date
         as well as type and certainty

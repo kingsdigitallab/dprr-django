@@ -408,7 +408,7 @@ class StatusAssertionIndex(AssertionIndex):
         return object.status.name.lower() == s.LOOKUPS['status']['eques']
 
     def prepare_date_display(self, object):
-        return object.print_dates()
+        return object.print_date()
 
 
 class RelationshipAssertionIndex(AssertionIndex):

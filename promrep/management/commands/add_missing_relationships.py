@@ -96,6 +96,7 @@ class Command(BaseCommand):
                     extra_info="Inferred Inverse",
                     person=new_assert.related_person,
                     related_person=new_assert.person,
+                    uncertain=source_assert.uncertain,
                     secondary_source=dprr_source,
                     relationship=inv_type.inverse_relationship)
                 new_inv.save()

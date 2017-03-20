@@ -34,6 +34,8 @@ class Command(BaseCommand):
         now = datetime.datetime.now()
         date = now.strftime("%d_%B_%Y")
         log_fname = "senator_data_log-{}.csv".format(date)
+        senator_office = Office.objects.get_or_create(
+            name='senator - office unknown')
 
         status_type, created = StatusType.objects.get_or_create(name="senator")
         sec_source, created = SecondarySource.objects.get_or_create(
@@ -60,9 +62,8 @@ class Command(BaseCommand):
             o for o in non_sen_offices if o not in off_exc_list]
 
         non_sen_q = Q(post_assertions__office__in=non_senator_offices)
-
-        senator_offices = Office.objects.get(
-            name='senator').get_descendants(include_self=True)
+        # Descendants removed so just the one office
+        senator_offices = senator_office
         sen_q = Q(post_assertions__office__in=senator_offices)
 
         # we need to delete all existing StatusAssertions that have not been

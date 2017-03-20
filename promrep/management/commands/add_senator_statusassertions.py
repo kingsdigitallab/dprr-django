@@ -18,6 +18,7 @@ import csv
 class Command(BaseCommand):
     args = '<page document_path document_path ...>'
     help = 'Adds the Senator Status assertions'
+    senator_office_name = 'senator - office unknown'
 
     def handle(self, *args, **options):  # noqa
 
@@ -34,8 +35,9 @@ class Command(BaseCommand):
         now = datetime.datetime.now()
         date = now.strftime("%d_%B_%Y")
         log_fname = "senator_data_log-{}.csv".format(date)
+
         senator_office = Office.objects.get_or_create(
-            name='senator - office unknown')
+            name=self.senator_office_name)
 
         status_type, created = StatusType.objects.get_or_create(name="senator")
         sec_source, created = SecondarySource.objects.get_or_create(
@@ -127,7 +129,7 @@ class Command(BaseCommand):
                     'person': person.id,
                 }
 
-                last_life_date = get_last_life_date(person)
+                last_life_date = self.get_last_life_date(person)
                 log_dict.update(last_life_date)
 
                 if person in only_senators:
@@ -152,7 +154,7 @@ class Command(BaseCommand):
                         Q(office__in=non_senator_offices) |
                         Q(office__in=senator_offices)).order_by('date_start')
 
-                    date_start_dict = get_date_start(pa_list)
+                    date_start_dict = self.get_date_start(pa_list)
 
                     log_dict['first_qualifying_office'] = date_start_dict[
                         'first_qualifying_office']
@@ -208,157 +210,157 @@ class Command(BaseCommand):
 
         print("Wrote {}".format(log_fname))
 
-
-def get_date_start(post_assertions):
-    """Given a list of postassertions, returns a dictionary
-     with the start date, uncertainty and debug data
-    """
-    date_start = None
-    uncertain = False
-    office_name_log = ""
-
-    aed_list = [o.name for o in Office.objects.get(
-        name="aedilis").get_descendants(include_self=True)]
-
-    pra_list = [o.name for o in Office.objects.get(
-        name="praetor").get_descendants(include_self=True)]
-
-    con_list = [o.name for o in Office.objects.get(
-        name="consul").get_descendants(include_self=True)]
-
-    tri_list = [o.name for o in Office.objects.get(
-        name="tribunus plebis").get_descendants(include_self=True)]
-
-    sen_list = [o.name for o in Office.objects.get(
-        name="senator").get_descendants(include_self=True)]
-
-    qua_list = [o.name for o in Office.objects.get(
-        name="quaestor").get_descendants(include_self=True)]
-
-    pri_list = [o.name for o in Office.objects.get(
-        name="princeps senatus").get_descendants(include_self=True)]
-
-    cen_list = [o.name for o in Office.objects.get(
-        name="censor").get_descendants(include_self=True)]
-
-    offices_list = aed_list + pra_list + con_list + tri_list + \
-        sen_list + qua_list + cen_list + pri_list
-
-    # If person has a quaestor post assertion, then set the start date of the
-    # senator post assertion = quaestor start date + 1
-    # same certainty as postasserion
-
-    # TODO: add princeps senatus and censores
-    pa_list = post_assertions.filter(
-        office__name__in=offices_list,
-        date_start__gte=-180).order_by('date_start')
-
-    if pa_list.exists():
-
-        earliest_pa = pa_list.first()
-        office_name = earliest_pa.office.name
-        # if the person has no quaestor post assertion
-        office_name_log = "{} ({})".format(
-            office_name,
-            earliest_pa.date_start
-        )
-
-        if office_name in sen_list:
-            date_start = earliest_pa.date_start
-            uncertain = earliest_pa.date_start_uncertain
-            office_name_log = "{} ({})".format(
-                earliest_pa.office.name, earliest_pa.date_start)
-
-        elif office_name in qua_list:
-            date_start = earliest_pa.date_start + 1
-            uncertain = earliest_pa.date_start_uncertain
-            office_name_log = "{} ({})".format(
-                earliest_pa.office.name, earliest_pa.date_start)
-
-        elif office_name in aed_list:
-            # earliest postassertion is aedile (and subtypes)
-            # start date of the senator post assertion is the start date of
-            # the aedileship - 2, certainty = uncertain
-
-            date_start = earliest_pa.date_start - 2
-            uncertain = True
-
-        elif office_name in tri_list:
-            # earliest post assertion is tribune of the plebs and subtypes
-            # start date of the senator status assertion to the start
-            # date of the tribunate of the plebs,
-            # certainty = the same as the post assertion
-
-            date_start = earliest_pa.date_start
-            uncertain = earliest_pa.date_start_uncertain
-
-        elif office_name in pra_list:
-            # earliest postassertion is praetor (and subtypes)
-            # start date of the senator post assertion is the start date of
-            # the praetorship - 2, certainty = uncertain
-
-            date_start = earliest_pa.date_start - 2
-            uncertain = True
-        elif office_name in con_list:
-            # earliest post assertion is consul (and subtypes)
-            # start date of the senator post assertion to the start date of
-            # the consulship - 5, certainty = uncertain
-
-            date_start = earliest_pa.date_start - 5
-            uncertain = True
-        else:
-            date_start = earliest_pa.date_start - 5
-            uncertain = earliest_pa.date_start_uncertain
-
-            # print("Couldn't start date: person {}, office {}".format(
-            #     earliest_pa.person.id, office_name_log))
-
-    odict = {
-        'date_start': date_start,
-        'date_start_uncertain': uncertain,
-        'first_qualifying_office': office_name_log
-    }
-
-    return odict
-
-
-def get_last_life_date(person):
-    """For a given person returns a dictionary
-    with the last senate related life date
-    as well as type and certainty
-    """
-
-    #   The only time we can be sure that a person is no longer a senator
-    #   is when they are dead (all types !!), exiled or expelled.)
-
-    date_dict = {}
-    expelled_date_types = [
-        "exile", "expelled from Senate", "extradited", "proscribed"]
-
-    death_date_types = ["death", "death - natural", "death - violent"]
-
-    death_dates = person.dateinformation_set.filter(
-        date_type__name__in=death_date_types).order_by('value')
-    expelled_dates = person.dateinformation_set.filter(
-        date_type__name__in=expelled_date_types).order_by('value')
-    use_date = None
-
-    if expelled_dates.exists():
-        # Prosribed etc. more accurate use these first
-        use_date = expelled_dates.first()
+    def get_date_start(self, post_assertions):
+        """Given a list of postassertions, returns a dictionary
+         with the start date, uncertainty and debug data
+        """
+        date_start = None
         uncertain = False
+        office_name_log = ""
 
-    elif death_dates.exists():
-        # If the person has a life date of expelled or exiled or death or
-        #   death - violent, set the end date of the senator status assertion
-        #   to the earliest of these life dates, certainty = the same
-        #   certainty as the life date
-        use_date = death_dates.first()
-        uncertain = death_dates.first().uncertain
+        aed_list = [o.name for o in Office.objects.get(
+            name="aedilis").get_descendants(include_self=True)]
 
-    if use_date:
-        date_dict['last_life_date'] = use_date.value
-        date_dict['last_life_date_uncertain'] = uncertain
-        date_dict['last_life_date_type'] = use_date.date_type.name
+        pra_list = [o.name for o in Office.objects.get(
+            name="praetor").get_descendants(include_self=True)]
 
-    return date_dict
+        con_list = [o.name for o in Office.objects.get(
+            name="consul").get_descendants(include_self=True)]
+
+        tri_list = [o.name for o in Office.objects.get(
+            name="tribunus plebis").get_descendants(include_self=True)]
+
+        sen_list = [o.name for o in Office.objects.get(
+            name=self.senator_office_name).get_descendants(include_self=True)]
+
+        qua_list = [o.name for o in Office.objects.get(
+            name="quaestor").get_descendants(include_self=True)]
+
+        pri_list = [o.name for o in Office.objects.get(
+            name="princeps senatus").get_descendants(include_self=True)]
+
+        cen_list = [o.name for o in Office.objects.get(
+            name="censor").get_descendants(include_self=True)]
+
+        offices_list = aed_list + pra_list + con_list + tri_list + \
+            sen_list + qua_list + cen_list + pri_list
+
+        # If person has a quaestor post assertion,
+        # then set the start date of the
+        # senator post assertion = quaestor start date + 1
+        # same certainty as postasserion
+
+        # TODO: add princeps senatus and censores
+        pa_list = post_assertions.filter(
+            office__name__in=offices_list,
+            date_start__gte=-180).order_by('date_start')
+
+        if pa_list.exists():
+
+            earliest_pa = pa_list.first()
+            office_name = earliest_pa.office.name
+            # if the person has no quaestor post assertion
+            office_name_log = "{} ({})".format(
+                office_name,
+                earliest_pa.date_start
+            )
+
+            if office_name in sen_list:
+                date_start = earliest_pa.date_start
+                uncertain = earliest_pa.date_start_uncertain
+                office_name_log = "{} ({})".format(
+                    earliest_pa.office.name, earliest_pa.date_start)
+
+            elif office_name in qua_list:
+                date_start = earliest_pa.date_start + 1
+                uncertain = earliest_pa.date_start_uncertain
+                office_name_log = "{} ({})".format(
+                    earliest_pa.office.name, earliest_pa.date_start)
+
+            elif office_name in aed_list:
+                # earliest postassertion is aedile (and subtypes)
+                # start date of the senator post assertion is the start date of
+                # the aedileship - 2, certainty = uncertain
+
+                date_start = earliest_pa.date_start - 2
+                uncertain = True
+
+            elif office_name in tri_list:
+                # earliest post assertion is tribune of the plebs and subtypes
+                # start date of the senator status assertion to the start
+                # date of the tribunate of the plebs,
+                # certainty = the same as the post assertion
+
+                date_start = earliest_pa.date_start
+                uncertain = earliest_pa.date_start_uncertain
+
+            elif office_name in pra_list:
+                # earliest postassertion is praetor (and subtypes)
+                # start date of the senator post assertion is the start date of
+                # the praetorship - 2, certainty = uncertain
+
+                date_start = earliest_pa.date_start - 2
+                uncertain = True
+            elif office_name in con_list:
+                # earliest post assertion is consul (and subtypes)
+                # start date of the senator post assertion to the start date of
+                # the consulship - 5, certainty = uncertain
+
+                date_start = earliest_pa.date_start - 5
+                uncertain = True
+            else:
+                date_start = earliest_pa.date_start - 5
+                uncertain = earliest_pa.date_start_uncertain
+
+                # print("Couldn't start date: person {}, office {}".format(
+                #     earliest_pa.person.id, office_name_log))
+
+        odict = {
+            'date_start': date_start,
+            'date_start_uncertain': uncertain,
+            'first_qualifying_office': office_name_log
+        }
+
+        return odict
+
+    def get_last_life_date(person):
+        """For a given person returns a dictionary
+        with the last senate related life date
+        as well as type and certainty
+        """
+
+        #   The only time we can be sure that a person is no longer a senator
+        #   is when they are dead (all types !!), exiled or expelled.)
+
+        date_dict = {}
+        expelled_date_types = [
+            "exile", "expelled from Senate", "extradited", "proscribed"]
+
+        death_date_types = ["death", "death - natural", "death - violent"]
+
+        death_dates = person.dateinformation_set.filter(
+            date_type__name__in=death_date_types).order_by('value')
+        expelled_dates = person.dateinformation_set.filter(
+            date_type__name__in=expelled_date_types).order_by('value')
+        use_date = None
+
+        if expelled_dates.exists():
+            # Prosribed etc. more accurate use these first
+            use_date = expelled_dates.first()
+            uncertain = False
+
+        elif death_dates.exists():
+            # If the person has a life date of expelled or exiled or death or
+            #  death - violent,
+            # set the end date of the senator status assertion
+            #  to the earliest of these life dates, certainty = the same
+            #   certainty as the life date
+            use_date = death_dates.first()
+            uncertain = death_dates.first().uncertain
+
+        if use_date:
+            date_dict['last_life_date'] = use_date.value
+            date_dict['last_life_date_uncertain'] = uncertain
+            date_dict['last_life_date_type'] = use_date.date_type.name
+
+        return date_dict

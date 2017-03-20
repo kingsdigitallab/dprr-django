@@ -476,9 +476,17 @@ class Person(TimeStampedModel):
         if not self.dateinformation_set.all():
             return None
 
-        return self.dateinformation_set.exclude(
+        date_qs = self.dateinformation_set.exclude(
             date_type__name=s.LOOKUPS['dates']['person_exclude']).order_by(
                 'value')
+
+        dates = list(date_qs)
+
+        for index, item in enumerate(dates):
+            if 'death' in item.date_type.name:
+                dates.insert(len(dates) - 1, dates.pop(index))
+
+        return dates
 
     def get_career(self):
         if not self.post_assertions.all():

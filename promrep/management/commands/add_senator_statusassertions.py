@@ -330,7 +330,8 @@ class Command(BaseCommand):
 
         date_dict = {}
         expelled_date_types = [
-            "exile", "expelled from Senate", "extradited", "proscribed"]
+            "exile", "exiled",
+            "expelled from Senate", "extradited", "proscribed"]
 
         death_date_types = ["death", "death - natural", "death - violent"]
 

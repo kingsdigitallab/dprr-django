@@ -1067,7 +1067,7 @@ class StatusAssertion(TimeStampedModel):
         return "{} {}{} {} ({})".format(self.person,
                                         self.status,
                                         "?" if self.uncertain else "",
-                                        self.print_dates(),
+                                        self.print_date(),
                                         self.secondary_source.abbrev_name)
 
 

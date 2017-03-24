@@ -22,10 +22,11 @@ class PromrepFacetedSearchView(FacetedSearchView):
     load_all = True
     print_paginate = 200
 
-    # Removed Person from this...
+    # Person allows us to search people with no assertions
     queryset = GroupedSearchQuerySet().models(
         PostAssertion,
         StatusAssertion,
+        Person,
         RelationshipAssertion).group_by('person_id')
 
     def get_paginate_by(self, queryset):

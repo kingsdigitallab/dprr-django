@@ -18,117 +18,9 @@ class MultiValueIntegerField(indexes.MultiValueField):
         return list([int(x) for x in value])
 
 
-class PersonIndex(indexes.SearchIndex, indexes.Indexable):
-
-    text = indexes.CharField(document=True, use_template=False)
-
-    person_id = indexes.IntegerField(model_attr='id')
-    dprr_id = indexes.CharField(model_attr='dprr_id', null=True)
-
-    praenomen = indexes.MultiValueField(faceted=True, null=True)
-    nomen = indexes.MultiValueField(faceted=True, null=True)
-
-    f = indexes.MultiValueField(model_attr='f',
-                                faceted=True, null=True)
-    n = indexes.MultiValueField(model_attr='n',
-                                faceted=True, null=True)
-
-    re_number = indexes.CharField(model_attr='re_number',
-                                  faceted=True, null=True)
-
-    cognomen = indexes.MultiValueField(faceted=True, null=True)
-
-    other_names = indexes.MultiValueField(faceted=True, null=True)
-
-    gender = indexes.CharField(
-        model_attr='sex__name', faceted=True, null=True)
-    patrician = indexes.BooleanField(
-        model_attr='patrician', default=False, faceted=True)
-    novus = indexes.BooleanField(
-        model_attr='novus', default=False, faceted=True)
-    nobilis = indexes.BooleanField(
-        model_attr='nobilis', default=False, faceted=True)
-
-    tribe = indexes.MultiValueField(faceted=True)
-
-    era = MultiValueIntegerField(faceted=True)
-    era_order = indexes.IntegerField()
-
-    def get_model(self):
-        return Person
-
-    def prepare_praenomen(self, object):
-        if not object.praenomen:
-            return None
-
-        praenomen = object.praenomen
-
-        if praenomen.has_alternate_name():
-            return [praenomen.name, praenomen.alternate_name]
-
-        return praenomen.name
-
-    def prepare_nomen(self, object):
-        """The list of nomens to filter on should not show parentheses or
-        brackets."""
-
-        nomen = object.nomen.strip()
-        nomen = self._clean_name(nomen)
-
-        return object._split_name(nomen)
-
-    def _clean_name(self, value):
-        return re.sub(r'[\?\[\]\(\)]', '', value)
-
-    def prepare_cognomen(self, object):
-        """The list of cognomens to filter on should not show parentheses or
-        brackets."""
-
-        cognomen = object.cognomen.strip()
-        cognomen = self._clean_name(cognomen)
-
-        return object._split_name(cognomen)
-
-    def prepare_other_names(self, object):
-        return object._split_name(object.other_names_plain)
-
-    def prepare_tribe(self, object):
-        return list(set(object.tribes.values_list('name', flat=True)))
-
-    def prepare_era(self, object):
-        """range of dates for the era"""
-        person = object
-        start = PromrepFacetedSearchForm.MIN_DATE
-        end = PromrepFacetedSearchForm.MAX_DATE
-
-        if person.era_from:
-            start = person.era_from
-
-        if person.era_to:
-            end = person.era_to
-
-        res = range(start, end + 1, 1)
-
-        return res
-
-    def index_queryset(self, using=None):
-        """Used when the entire index for model is updated."""
-        return self.get_model().objects.all()
-
-    def prepare_era_order(self, object):
-        person = object
-        start = PromrepFacetedSearchForm.MIN_DATE
-
-        if person.era_from:
-            start = person.era_from
-
-        return start
-
-
 class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
     # generic class for shared functions
     text = indexes.CharField(document=True, use_template=True)
-
     person = indexes.CharField(model_attr='person', faceted=True)
     person_id = indexes.IntegerField(model_attr='person__id')
     dprr_id = indexes.CharField(model_attr='person__dprr_id', null=True)
@@ -296,9 +188,6 @@ class PostAssertionIndex(AssertionIndex):
         # these should all be recorded as Status assertions instead
         # see: https://jira.dighum.kcl.ac.uk/browse/DPRR-256
 
-        # Why are we iterating through ALL post assertions while
-        # indexing a single assertion?
-        '''
         olist = object.person.post_assertions
 
         if object.date_start:
@@ -306,10 +195,6 @@ class PostAssertionIndex(AssertionIndex):
 
         if object.date_end:
             olist = olist.exclude(date_end__gt=object.date_end)
-        '''
-
-        # Get a single-item queryset...
-        olist = object.person.post_assertions.filter(pk=object.pk)
 
         # This is how it was done before... not going to mess with it.
         try:
@@ -419,3 +304,110 @@ class RelationshipAssertionIndex(AssertionIndex):
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
+
+
+class PersonIndex(indexes.SearchIndex, indexes.Indexable):
+
+    text = indexes.CharField(document=True, use_template=False)
+
+    person_id = indexes.IntegerField(model_attr='id')
+    dprr_id = indexes.CharField(model_attr='dprr_id', null=True)
+
+    praenomen = indexes.MultiValueField(faceted=True, null=True)
+    nomen = indexes.MultiValueField(faceted=True, null=True)
+
+    f = indexes.MultiValueField(model_attr='f',
+                                faceted=True, null=True)
+    n = indexes.MultiValueField(model_attr='n',
+                                faceted=True, null=True)
+
+    re_number = indexes.CharField(model_attr='re_number',
+                                  faceted=True, null=True)
+
+    cognomen = indexes.MultiValueField(faceted=True, null=True)
+
+    other_names = indexes.MultiValueField(faceted=True, null=True)
+
+    gender = indexes.CharField(
+        model_attr='sex__name', faceted=True, null=True)
+    patrician = indexes.BooleanField(
+        model_attr='patrician', default=False, faceted=True)
+    novus = indexes.BooleanField(
+        model_attr='novus', default=False, faceted=True)
+    nobilis = indexes.BooleanField(
+        model_attr='nobilis', default=False, faceted=True)
+
+    tribe = indexes.MultiValueField(faceted=True)
+
+    era = MultiValueIntegerField(faceted=True)
+    era_order = indexes.IntegerField()
+
+    def get_model(self):
+        return Person
+
+    def prepare_praenomen(self, object):
+        if not object.praenomen:
+            return None
+
+        praenomen = object.praenomen
+
+        if praenomen.has_alternate_name():
+            return [praenomen.name, praenomen.alternate_name]
+
+        return praenomen.name
+
+    def prepare_nomen(self, object):
+        """The list of nomens to filter on should not show parentheses or
+        brackets."""
+
+        nomen = object.nomen.strip()
+        nomen = self._clean_name(nomen)
+
+        return object._split_name(nomen)
+
+    def _clean_name(self, value):
+        return re.sub(r'[\?\[\]\(\)]', '', value)
+
+    def prepare_cognomen(self, object):
+        """The list of cognomens to filter on should not show parentheses or
+        brackets."""
+
+        cognomen = object.cognomen.strip()
+        cognomen = self._clean_name(cognomen)
+
+        return object._split_name(cognomen)
+
+    def prepare_other_names(self, object):
+        return object._split_name(object.other_names_plain)
+
+    def prepare_tribe(self, object):
+        return list(set(object.tribes.values_list('name', flat=True)))
+
+    def prepare_era(self, object):
+        """range of dates for the era"""
+        person = object
+        start = PromrepFacetedSearchForm.MIN_DATE
+        end = PromrepFacetedSearchForm.MAX_DATE
+
+        if person.era_from:
+            start = person.era_from
+
+        if person.era_to:
+            end = person.era_to
+
+        res = range(start, end + 1, 1)
+
+        return res
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()
+
+    def prepare_era_order(self, object):
+        person = object
+        start = PromrepFacetedSearchForm.MIN_DATE
+
+        if person.era_from:
+            start = person.era_from
+
+        return start

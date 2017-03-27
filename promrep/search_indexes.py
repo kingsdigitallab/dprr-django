@@ -54,6 +54,15 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
     era = MultiValueIntegerField(faceted=True)
     era_order = indexes.IntegerField()
 
+    date_start = indexes.IntegerField(null=True)
+    date_end = indexes.IntegerField(null=True)
+
+    def prepare_date_start(self, object):
+        return None
+
+    def prepare_date_end(self, object):
+        return None
+
     # used to display the highest office achieved in the search page
     highest_office = indexes.CharField(faceted=False)
 
@@ -140,8 +149,14 @@ class PostAssertionIndex(AssertionIndex):
 
     province = indexes.MultiValueField(faceted=True)
     date = MultiValueIntegerField(faceted=True)
-    date_start = indexes.IntegerField(model_attr='date_start', null=True)
-    date_end = indexes.IntegerField(model_attr='date_end', null=True)
+    # date_start = indexes.IntegerField(model_attr='date_start', null=True)
+    # date_end = indexes.IntegerField(model_attr='date_end', null=True)
+
+    def prepare_date_start(self, object):
+        return object.date_start
+
+    def prepare_date_end(self, object):
+        return object.date_end
 
     life_date_types = indexes.MultiValueField(faceted=True)
 

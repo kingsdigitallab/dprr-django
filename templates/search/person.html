@@ -1,3 +1,4 @@
+{% load promrep_tags %}
 <h4>
     <a href="{% url 'person-detail' doc.person_id %}">
         {{ doc.dprr_id }}
@@ -5,6 +6,8 @@
 
         {% if doc.highest_office %}
         ({{ doc.highest_office }})
-        {% endif %}
+        {% endif %}        
+        {% get_office_badges doc.person_id%}
     </a>
+
 </h4>

@@ -23,6 +23,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
     load_all = True
     print_paginate = 200
 
+    # Person allows us to search people with no assertions
     queryset = GroupedSearchQuerySet().models(
         PostAssertion,
         StatusAssertion,
@@ -48,12 +49,15 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 facet, sort='index', limit=-1, mincount=1)
 
         selected_facets = self.request.GET.getlist('selected_facets')
+        offices = False
         for facet in selected_facets:
             if 'offices' in facet:
                 queryset = queryset.order_by(
-                    'date_start').order_by('date_end')
+                    'date_start', 'date_end')
+                offices = True
                 break
-
+        if offices:
+            return queryset
         return queryset.order_by('era_order')
 
     def get_context_data(self, **kwargs):  # noqa
@@ -63,6 +67,17 @@ class PromrepFacetedSearchView(FacetedSearchView):
         if self.request.GET.getlist('selected_facets'):
             context['selected_facets'] = self.request.GET.getlist(
                 'selected_facets')
+            # Find all selected offices for later use in search results
+            selected_offices = []
+            for facet in self.request.GET.getlist('selected_facets'):
+                if 'offices' in facet:
+                    office_name = facet.replace('offices:', '')
+                    selected_offices.append(office_name)
+                    # Add Children to the list as well
+                    office = Office.objects.get(name=office_name)
+                    for child_office in office.get_descendants():
+                        selected_offices.append(child_office.name)
+            context['selected_offices'] = selected_offices
 
         qs = self.request.GET.copy()
         context['querydict'] = qs.copy()

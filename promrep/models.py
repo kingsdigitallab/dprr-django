@@ -476,9 +476,17 @@ class Person(TimeStampedModel):
         if not self.dateinformation_set.all():
             return None
 
-        return self.dateinformation_set.exclude(
+        date_qs = self.dateinformation_set.exclude(
             date_type__name=s.LOOKUPS['dates']['person_exclude']).order_by(
                 'value')
+
+        dates = list(date_qs)
+
+        for index, item in enumerate(dates):
+            if 'death' in item.date_type.name:
+                dates.insert(len(dates) - 1, dates.pop(index))
+
+        return dates
 
     def get_career(self):
         if not self.post_assertions.all():
@@ -979,8 +987,16 @@ class StatusAssertion(TimeStampedModel):
     # notes
     notes = models.ManyToManyField(StatusAssertionNote, blank=True)
 
-    # TODO: same as used in PostAssertion..
-    def print_dates(self):
+    def print_date(self):  # noqa
+        """returns a friendly version of the post assertion dates"""
+
+        # So where the post has uncertain start and certain end,
+        #    this represents 'before' the end date plus 1.
+        # e.g.
+        # start date = -91 uncertain, end date = -91 certain means 'before 90'.
+        # start date = -91 certain, end date = -91 uncertain means 'after 92'.
+        # start date = 91 = end date, both uncertain means 'c. 91'.
+
         date_str = ""
 
         if self.date_display_text:
@@ -1011,20 +1027,28 @@ class StatusAssertion(TimeStampedModel):
                 st = str(abs(int(self.date_start)))
 
                 if self.date_start_uncertain:
-                    st = "{}?".format(st)
+                    st = "before {}".format(st)
 
             if self.date_end:
                 en = str(abs(self.date_end))
 
                 if self.date_end_uncertain:
-                    en = "{}?".format(en)
+                    en = "after {}".format(en)
 
             if st and en:
                 date_str = "{} to {}".format(st, en)
             elif st:
-                date_str = "after {}".format(st)
+                if self.date_start_uncertain:
+                    # Already taken care of above
+                    date_str = st
+                else:
+                    date_str = "after {}".format(st)
             elif en:
-                date_str = "before {}".format(en)
+                if self.date_end_uncertain:
+                    # Alreadt taken care of above
+                    date_str = en
+                else:
+                    date_str = "before {}".format(en)
             else:
                 date_str = "date uncertain"
 
@@ -1043,7 +1067,7 @@ class StatusAssertion(TimeStampedModel):
         return "{} {}{} {} ({})".format(self.person,
                                         self.status,
                                         "?" if self.uncertain else "",
-                                        self.print_dates(),
+                                        self.print_date(),
                                         self.secondary_source.abbrev_name)
 
 

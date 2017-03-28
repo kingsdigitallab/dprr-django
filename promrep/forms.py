@@ -3,6 +3,8 @@ from django.utils.safestring import mark_safe
 from haystack.forms import FacetedSearchForm, SearchForm
 from django.core.urlresolvers import reverse
 
+from promrep.models import Person
+
 
 def get_range_parts(value_range):
     """Returns a tuple of start value and end value extracted from
@@ -204,12 +206,17 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     tribe = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'autocomplete', 'title': 'Tribe'}))
 
+    def __init__(self, *args, **kwargs):
+        self.selected_facets = kwargs.pop("selected_facets", [])
+        super(FacetedSearchForm, self).__init__(*args, **kwargs)
+
     def no_query_found(self):
         """Determines the behaviour when no query was found; returns all the
         results."""
         return self.searchqueryset.all()
 
     def search(self):
+
         sqs = super(PromrepFacetedSearchForm, self).search()
 
         if not self.is_valid():
@@ -219,7 +226,6 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
         # Requires, of course, that the form be bound.
         if self.is_bound:
             data = self.cleaned_data
-
             era_from = data.get('era_from', None)
             era_to = data.get('era_to', None)
 
@@ -230,19 +236,65 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
                         data.get('era_to', self.MAX_DATE) or self.MAX_DATE)
                 )
 
+            for field in self.AUTOCOMPLETE_FACETS:
+                if data.get(field):
+                    sqs = sqs.narrow('{}:{}'.format(field, data.get(field)))
+
             date_from = data.get('date_from', None)
             date_to = data.get('date_to', None)
 
             if date_from or date_to:
-                sqs = sqs.narrow(
-                    'date:[{} TO {}]'.format(
-                        data.get('date_from', self.MIN_DATE) or self.MIN_DATE,
-                        data.get('date_to', self.MAX_DATE) or self.MAX_DATE)
-                )
+                # Check if there is an office in selected facets
+                if 'offices' in [
+                        x.split(':')[0]for x in self.selected_facets]:
 
-            for field in self.AUTOCOMPLETE_FACETS:
-                if data.get(field):
-                    sqs = sqs.narrow('{}:{}'.format(field, data.get(field)))
+                    # We have an office - find the selected offices
+                    offices = [x.split(':')[1] for x in self.selected_facets]
+
+                    # Get list of person PKs in the sqs
+                    persons = [x.documents[0].person_id for x in sqs]
+
+                    # Get people with matching offices
+                    if date_from and date_to:
+                        persons = Person.objects.filter(
+                            pk__in=persons).filter(
+                            post_assertions__office__name__in=offices,
+                            post_assertions__date_start__gte=date_from,
+                            post_assertions__date_end__lte=date_to)
+                    elif date_from:
+                        persons = Person.objects.filter(
+                            pk__in=persons).filter(
+                            post_assertions__office__name__in=offices,
+                            post_assertions__date_start__gte=date_from)
+                    else:
+                        persons = Person.objects.filter(
+                            pk__in=persons).filter(
+                            post_assertions__office__name__in=offices,
+                            post_assertions__date_end__lte=date_to)
+
+                    # And let's narrow the search by those ids
+                    if persons.count():
+                        # We have people - get a list of pks
+                        person_ids = [x.pk for x in persons.all()]
+
+                        # and narrow the search!
+                        sqs = sqs.narrow("person_id:%s"
+                                         % ' OR person_id:'.join(
+                                             map(str, person_ids)))
+                    else:
+                        # No results
+                        # sqs = sqs.none()
+                        pks = [x.documents[0].pk for x in sqs]
+                        sqs = sqs.exclude(id__in=pks)
+                else:
+                    # No offices...
+                    sqs = sqs.narrow(
+                        'date:[{} TO {}]'.format(
+                            data.get('date_from',
+                                     self.MIN_DATE) or self.MIN_DATE,
+                            data.get('date_to',
+                                     self.MAX_DATE) or self.MAX_DATE)
+                    )
 
         return sqs
 

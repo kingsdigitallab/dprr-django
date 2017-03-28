@@ -4,6 +4,7 @@ import logging
 from promrep.models import Person, RelationshipAssertion, RelationshipType
 from promrep.models import SecondarySource, RelationshipInverse
 import csv
+from django.db.models import Q
 import datetime
 
 # Populate inferred family relationships based on rules in DPRR-257
@@ -48,9 +49,16 @@ class Command(BaseCommand):
         return relationships
 
     def reset_assertions(self):
-        RelationshipAssertion.objects.filter(extra_info="Inferred").delete()
         RelationshipAssertion.objects.filter(
-            extra_info="Inferred Inverse").delete()
+            extra_info="Inferred", is_verified=False).delete()
+        RelationshipAssertion.objects.filter(
+            extra_info="Inferred Inverse", is_verified=False).delete()
+        RelationshipAssertion.objects.filter(
+            extra_info="Inferred Inverse 1", is_verified=False).delete()
+        RelationshipAssertion.objects.filter(
+            extra_info="Inferred Inverse 2", is_verified=False).delete()
+        RelationshipAssertion.objects.filter(
+            extra_info="Inferred Inverse 3", is_verified=False).delete()
 
     def writeassetion(self, new_assert, source_assert):
         print new_assert
@@ -60,7 +68,7 @@ class Command(BaseCommand):
            person=new_assert.person,
            related_person=new_assert.related_person,
            relationship=new_assert.relationship).count() == 0):
-            new_assert.uncertain = source_assert.uncertain
+            new_assert.uncertain = True
             new_assert.save()
             self.csv_log.writerow({
                 "inferred_person_id": new_assert.person.id,
@@ -88,6 +96,7 @@ class Command(BaseCommand):
                     extra_info="Inferred Inverse",
                     person=new_assert.related_person,
                     related_person=new_assert.person,
+                    uncertain=True,
                     secondary_source=dprr_source,
                     relationship=inv_type.inverse_relationship)
                 new_inv.save()
@@ -163,6 +172,27 @@ class Command(BaseCommand):
                         relationship=type_father)
                     new_rels.append(new_assert)
                     self.writeassetion(new_assert, sib)
+                # check the siblings' siblings
+                related_siblings = RelationshipAssertion.objects.filter(
+                    Q(person=sib.related_person),
+                    Q(relationship__name="brother of") |
+                    Q(relationship__name="sister of"))
+                for related_sibling in related_siblings:
+                    if related_sibling.related_person != person:
+                        if related_sibling.related_person.sex.name == "Male":
+                            sib_relationship = RelationshipType.objects.get(
+                                name="brother of")
+                        else:
+                            sib_relationship = RelationshipType.objects.get(
+                                name="sister of")
+                        new_sibling = RelationshipAssertion(
+                            extra_info="Inferred",
+                            secondary_source=dprr_source,
+                            person=related_sibling.related_person,
+                            related_person=person,
+                            relationship=sib_relationship)
+                        self.writeassetion(new_sibling, related_sibling)
+
             # Verify children
             if spouse is not None:
                 for kid in children:
@@ -174,7 +204,7 @@ class Command(BaseCommand):
                             relationship__name="father of",
                             sex=kid.related_person.sex)
                         new_assert = RelationshipAssertion(
-                            extra_info="Inferred Inverse 2",
+                            extra_info="Inferred Inverse",
                             related_person=spouse.related_person,
                             person=kid.related_person,
                             secondary_source=dprr_source,
@@ -197,6 +227,59 @@ class Command(BaseCommand):
                             relationship=new_type.inverse_relationship)
                         new_rels.append(new_assert)
                         self.writeassetion(new_assert, spouse)
+
+            # Make sure children are listed as siblings of one another
+            for kid in children:
+                if kid.related_person.sex.name == "Male":
+                    sib_relationship = RelationshipType.objects.get(
+                        name="brother of")
+                else:
+                    sib_relationship = RelationshipType.objects.get(
+                        name="sister of")
+                for sib in children:
+                    # check they have two parents in common
+                    same = False
+                    if person.sex.name == "Male":
+                        kid_mother = RelationshipAssertion.objects.filter(
+                            related_person=kid.related_person,
+                            relationship__name="mother of"
+                        )
+                        if kid_mother.exists():
+                            if (RelationshipAssertion.objects.filter(
+                                person=kid_mother[0].person,
+                                relationship__name="mother of",
+                                related_person=sib.related_person,
+                            ).exists()):
+                                # Same Parents
+                                same = True
+                    else:
+                        kid_father = RelationshipAssertion.objects.filter(
+                            related_person=kid.related_person,
+                            relationship__name="father of"
+                        )
+                        if kid_father.exists():
+                            if (RelationshipAssertion.objects.filter(
+                                person=kid_father[0].person,
+                                relationship__name="father of",
+                                related_person=sib.related_person,
+                            ).exists()):
+                                # Same Parents
+                                same = True
+                    if same:
+                        if sib != kid and RelationshipAssertion.objects.filter(
+                            Q(person=kid.related_person),
+                            Q(related_person=sib.related_person),
+                            Q(relationship__name="brother of") |
+                            Q(relationship__name="sister of")
+                        ).count() == 0:
+                            new_sib = RelationshipAssertion(
+                                person=kid.related_person,
+                                related_person=sib.related_person,
+                                relationship=sib_relationship,
+                                extra_info="Inferred",
+                                secondary_source=dprr_source,
+                            )
+                            self.writeassetion(new_sib, sib)
 
         return new_rels
 

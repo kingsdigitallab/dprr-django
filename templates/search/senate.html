@@ -34,6 +34,22 @@ Senate
                 <button type="submit" class="small button secondary expand less-padding">Apply</button>
             </div>
     </div>
+    <div class="row">
+    <div class="large-12 columns">
+    <h2>Dating Certainty</h2>
+    <p class="info">
+        <i class="fa fa-info-circle"></i> 
+        Explanation here.
+        </p>
+<div class="button-group">
+<ul>
+{% for radio in form.dating_certainty %}
+  <li>{{radio}}</li>
+  {%endfor%}  
+  </ul>
+</div>
+</div>
+</div>
 </form>
 
 <div class="row">

@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from django.conf import settings as s
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+
 from django.http import JsonResponse
 from django.views.generic.detail import DetailView
 from haystack.generic_views import FacetedSearchView, SearchView
@@ -295,30 +295,10 @@ class SenateSearchView(SearchView):
             'date_start_uncertain').order_by(
                 'date_start').order_by('date_end')
 
-    def get_uncertain_queryset(self):
-        queryset = super(SenateSearchView, self).get_queryset()
-
-        if 'senate_date' in self.request.GET:
-            date = self.request.GET('senate_date')
-            queryset = GroupedSearchQuerySet().models(
-                StatusAssertion).narrow('senator:true').group_by('person_id')
-            queryset = queryset.filter(
-                Q(uncertain=True, date_start__lte=date, date_end__gte=date) |
-                Q(date_start__lte=date, date_end__lte=date,
-                    date_end_uncertain=True))
-        else:
-            queryset = queryset.narrow('date:[{0} TO {0}]'.format(
-                SenateSearchForm.INITIAL_DATE))
-        queryset = queryset.narrow('uncertain:true')
-        return queryset.order_by(
-            'date_start_uncertain').order_by(
-                'date_start').order_by('date_end')
-
     def get_context_data(self, **kwargs):  # noqa
         context = super(SenateSearchView, self).get_context_data(**kwargs)
         qs = self.request.GET.copy()
         senate_date = SenateSearchForm.INITIAL_DATE_DISPLAY
-        context['uncertain'] = self.get_uncertain_queryset()
 
         context['querydict'] = qs.copy()
 

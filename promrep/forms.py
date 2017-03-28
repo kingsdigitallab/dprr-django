@@ -331,6 +331,13 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
         return date_to
 
 
+DATING_CERTAINTY_CHOICES = (
+    ('1', 'Certain'),
+    ('2', 'Uncertain'),
+    ('3', 'Uncertain end'),
+)
+
+
 class SenateSearchForm(SearchForm):
     INITIAL_DATE = -180
     INITIAL_DATE_DISPLAY = -1 * INITIAL_DATE
@@ -339,6 +346,12 @@ class SenateSearchForm(SearchForm):
         required=True, initial=INITIAL_DATE_DISPLAY,
         max_value=INITIAL_DATE_DISPLAY,
         min_value=PromrepFacetedSearchForm.MIN_DATE_FORM)
+
+    dating_certainty = forms.ChoiceField(
+        required=True,
+        widget=forms.RadioSelect,
+        initial='1',
+        choices=DATING_CERTAINTY_CHOICES)
 
     def no_query_found(self):
         return self.searchqueryset.all()
@@ -353,10 +366,15 @@ class SenateSearchForm(SearchForm):
             data = self.cleaned_data
 
             senate_date = data.get('senate_date', None)
+            dating_certainty = data.get('dating_certainty', '1')
 
             if senate_date:
                 sqs = sqs.narrow('date:[{0} TO {0}]'.format(
                     data.get('senate_date')))
+                if dating_certainty == '1':
+                    sqs = sqs.narrow('uncertain:false')
+                elif dating_certainty == '2':
+                    sqs = sqs.narrow('uncertain:true')
 
         return sqs
 

@@ -110,7 +110,10 @@ class Command(BaseCommand):
                     off = sas.first().status.get_display_name()
                     date = sas.first().date_start
 
-                    if date is not None:
+                    # See DPRR-385
+                    if off == "eq. R.":
+                        date = "?"
+                    elif date is not None:
                         date = abs(date)
                     else:
                         date = "uncertain date"

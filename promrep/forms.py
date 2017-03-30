@@ -369,12 +369,21 @@ class SenateSearchForm(SearchForm):
             dating_certainty = data.get('dating_certainty', '1')
 
             if senate_date:
-                sqs = sqs.narrow('date:[{0} TO {0}]'.format(
-                    data.get('senate_date')))
                 if dating_certainty == '1':
+                    # Certain they are a senator
+                    sqs = sqs.narrow('date:[{0} TO {0}]'.format(
+                        data.get('senate_date')))
                     sqs = sqs.narrow('uncertain:false')
                 elif dating_certainty == '2':
+                    # Uncertain
+                    sqs = sqs.narrow('date:[{0} TO {0}]'.format(
+                        data.get('senate_date')))
                     sqs = sqs.narrow('uncertain:true')
+                elif dating_certainty == '3':
+                    # Dating is unreliable, may have been senator at that time.
+                    sqs = sqs.narrow('date:[{0} TO {0}]'.format(
+                        data.get('senate_date')))
+                    sqs = sqs.narrow('date_end_uncertain:true')
 
         return sqs
 

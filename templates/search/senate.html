@@ -2,24 +2,26 @@
 {% load ddh_utils_tags wagtailbase_tags %}
 
 {% block meta_title %}
-Senate
+    Senate
 {% endblock %}
 
 {% block main %}
 
-<div class="row">
-    <div class="large-12 columns">
-        <h1><span class="senators"><strong>{{ paginator.count }}</strong></span> 
-        Senators for the year <strong>{{ senate_date }}</strong> <small>B.C.</small></h1>
-        <p class="info">
-        <i class="fa fa-info-circle"></i> 
-        Drag the slider or input an number within the range from 180 B.C. to 31 B.C.
-        </p>
+    <div class="row">
+        <div class="large-12 columns">
+            <h1><span class="senators"><strong>{{ paginator.count }}</strong></span>
+                Senators for the year <strong>{{ senate_date }}</strong>
+                <small>B.C.</small>
+            </h1>
+            <p class="info">
+                <i class="fa fa-info-circle"></i>
+                Drag the slider or input an number within the range from 180 B.C. to 31 B.C.
+            </p>
+        </div>
     </div>
-</div>
 
-<form method="get" action=".">
-    <div class="row small-collapse medium-uncollapse">
+    <form method="get" action=".">
+        <div class="row small-collapse medium-uncollapse">
             <div class="small-6 columns">
                 <div class="range-slider slider" data-slider
                      data-options="display_selector: #id_senate_date; initial: {{ senate_date }}; start: 180; end: 31;">
@@ -33,44 +35,52 @@ Senate
             <div class="small-3 medium-3 large-2 columns end">
                 <button type="submit" class="small button secondary expand less-padding">Apply</button>
             </div>
-    </div>
-    <div class="row">
-    <div class="large-12 columns">
-    <h2>Dating Certainty</h2>
-    <p class="info">
-        <i class="fa fa-info-circle"></i> 
-        Explanation here.
-        </p>
-<div class="button-group">
-<ul>
-{% for radio in form.dating_certainty %}
-  <li>{{radio}}</li>
-  {%endfor%}  
-  </ul>
-</div>
-</div>
-</div>
-</form>
+        </div>
+        <div class="row">
+            <div class="large-12 columns">
+                <h2>Dating Certainty</h2>
+                <p class="info">
+                    <i class="fa fa-info-circle"></i>
+                    Explanation here.
+                </p>
+                <div class="button-group">
+                    {% for radio in form.dating_certainty %}
+                        {{ radio.choice_label }}
+                        <div class="switch">
+                            <input class="switch-input" id="{{ radio.id_for_label }}" type="radio"
+                                   {% if radio.choice_value == form.dating_certainty.value %}checked{% endif %}
+                                   value="{{ radio.choice_value }}"
+                                   name="{{ form.dating_certainty.name }}">
+                            <label class="switch-paddle" for="{{ radio.id_for_label }}">
+                                <span class="show-for-sr">{{ radio.choice_label }}</span>
+                            </label>
+                        </div>
+                    {% endfor %}
 
-<div class="row">
-    <div class="large-9 end columns">
-        <ol start="{{ page_obj.start_index }}" class="search-results senators-in-year">
-            {% for result in object_list %}
-            {% with doc=result.documents.0 %}
-            <li>
-                <div class="ffs">
-                    {% include "search/person.html" with doc=result.documents.0 %}
-                    <span class="details">{{ doc.date_display }}</span>
                 </div>
-            </li>
-            {% endwith %}
-            {% empty %}
-            <li>No results found!</li>
-            {% endfor %}
-        </ol>
+            </div>
+        </div>
+    </form>
 
-        {% display_pagination querydict page_obj %}
+    <div class="row">
+        <div class="large-9 end columns">
+            <ol start="{{ page_obj.start_index }}" class="search-results senators-in-year">
+                {% for result in object_list %}
+                    {% with doc=result.documents.0 %}
+                        <li>
+                            <div class="ffs">
+                                {% include "search/person.html" with doc=result.documents.0 %}
+                                <span class="details">{{ doc.date_display }}</span>
+                            </div>
+                        </li>
+                    {% endwith %}
+                {% empty %}
+                    <li>No results found!</li>
+                {% endfor %}
+            </ol>
+
+            {% display_pagination querydict page_obj %}
+        </div>
     </div>
-</div>
 {% endblock main %}
 

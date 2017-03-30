@@ -205,12 +205,6 @@ class PostAssertionIndex(AssertionIndex):
 
         olist = object.person.post_assertions
 
-        if object.date_start:
-            olist = olist.exclude(date_start__lt=object.date_start)
-
-        if object.date_end:
-            olist = olist.exclude(date_end__gt=object.date_end)
-
         # This is how it was done before... not going to mess with it.
         try:
             senator_offices = Office.objects.get(

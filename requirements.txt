@@ -20,3 +20,4 @@ pysolr
 regex
 sqlparse
 unicodecsv
+pdfkit

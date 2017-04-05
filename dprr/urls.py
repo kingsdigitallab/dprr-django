@@ -6,6 +6,7 @@ from django.contrib import admin
 from promrep import urls as promrep_urls
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtailcore import urls as wagtail_urls
+from promrep.views import get_pdf
 
 ddhldap_register_signal_handlers()
 
@@ -15,6 +16,8 @@ urlpatterns = [
     url(r'^browse/', include(promrep_urls)),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^pdf/', get_pdf, name='pdf_view'),
+
 ]
 
 try:

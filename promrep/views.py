@@ -3,7 +3,7 @@ from collections import OrderedDict
 from django.conf import settings as s
 from django.core.urlresolvers import reverse
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.generic.detail import DetailView
 from haystack.generic_views import FacetedSearchView, SearchView
 from promrep.forms import PromrepFacetedSearchForm, SenateSearchForm
@@ -11,6 +11,8 @@ from promrep.models import (Office, Person, PostAssertion, Province,
                             RelationshipAssertion, StatusAssertion)
 from promrep.solr_backends.solr_backend_field_collapsing import \
     GroupedSearchQuerySet
+
+import pdfkit
 
 
 class PromrepFacetedSearchView(FacetedSearchView):
@@ -22,6 +24,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
     form_class = PromrepFacetedSearchForm
     load_all = True
     print_paginate = 200
+    pdf_paginate = 10000
 
     # Person allows us to search people with no assertions
     queryset = GroupedSearchQuerySet().models(
@@ -36,6 +39,8 @@ class PromrepFacetedSearchView(FacetedSearchView):
         """
         if self.request.GET.get('printme'):
             return self.print_paginate
+        elif self.request.GET.get('pdf_view'):
+            return self.pdf_paginate
         else:
             return self.paginate_by
 
@@ -232,6 +237,22 @@ class PersonDetailView(DetailView):
         context['relationships'] = relationships
 
         return context
+
+
+def get_pdf(request):
+    pdf_url = request.build_absolute_uri()
+    pdf_url = pdf_url.replace('/pdf', '')
+    if '?' in pdf_url:
+        pdf_url = "{}&pdf_view=1".format(pdf_url)
+    else:
+        pdf_url = "{}?pdf_view=1".format(pdf_url)
+
+    pdf = pdfkit.from_url(pdf_url, False)
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment;\
+        filename="dprr_search_results.pdf"'
+
+    return response
 
 
 def get_relationships_network(request, pk):

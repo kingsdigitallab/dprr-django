@@ -5,6 +5,7 @@ Pillow
 Unidecode
 beautifulsoup4
 bleach
+django==1.10
 django-appconf
 django-author
 django-extensions

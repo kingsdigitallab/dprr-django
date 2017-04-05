@@ -1,4 +1,3 @@
-django
 django-compressor
 django-libsass
 django-modelcluster

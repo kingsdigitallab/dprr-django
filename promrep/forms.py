@@ -1,7 +1,7 @@
 from django import forms
+from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from haystack.forms import FacetedSearchForm, SearchForm
-from django.core.urlresolvers import reverse
 
 from promrep.models import Person
 
@@ -17,7 +17,6 @@ def get_range_parts(value_range):
 
 
 class ModelLinkWidget(forms.Widget):
-
     """This widget adds a link, to edit the current inline, after the
     inline form fields.
     """
@@ -32,8 +31,8 @@ class ModelLinkWidget(forms.Widget):
             self.object._meta.model_name),
             args=[self.object.id])
         edit_link = '<a href="%s">Edit %s</a>' % \
-            (edit_url,
-             self.object._meta.verbose_name.lower())
+                    (edit_url,
+                     self.object._meta.verbose_name.lower())
 
         if self.object.pk:
             return mark_safe(u'%s' % (edit_link))
@@ -72,7 +71,6 @@ class StatusProvincesWidget(forms.Widget):
 
 
 class PostInlineForm(forms.ModelForm):
-
     """This form renders a model and adds a link to edit the nested inline
     model. This is useful for inline editing when the nested inline fields are
     not displayed.
@@ -100,7 +98,6 @@ class PostInlineForm(forms.ModelForm):
 
 
 class PersonInlineForm(forms.ModelForm):
-
     """This form renders a model and adds a link to edit the nested inline
     model. This is useful for inline editing when the nested inline fields are
     not displayed."""
@@ -119,7 +116,6 @@ class PersonInlineForm(forms.ModelForm):
 
 
 class RelationshipAssertionInlineForm(forms.ModelForm):
-
     """This form renders a model and adds a link to edit the nested inline
     model. This is useful for inline editing when the nested inline fields are
     not displayed."""
@@ -138,7 +134,6 @@ class RelationshipAssertionInlineForm(forms.ModelForm):
 
 
 class StatusInlineForm(forms.ModelForm):
-
     """This form renders a model and adds a link to edit the nested inline
     model. This is useful for inline editing when the nested inline fields are
     not displayed.
@@ -163,7 +158,6 @@ class StatusInlineForm(forms.ModelForm):
 
 
 class PromrepFacetedSearchForm(FacetedSearchForm):
-
     """Extends FacetedSearchForm, as we have special requirements in terms of
     facet handling and date filtering."""
 
@@ -246,7 +240,7 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
             if date_from or date_to:
                 # Check if there is an office in selected facets
                 if 'offices' in [
-                        x.split(':')[0]for x in self.selected_facets]:
+                        x.split(':')[0] for x in self.selected_facets]:
 
                     # We have an office - find the selected offices
                     offices = [x.split(':')[1] for x in self.selected_facets]
@@ -381,7 +375,7 @@ class SenateSearchForm(SearchForm):
                     sqs = sqs.narrow('uncertain:true')
                 elif dating_certainty == '3':
                     # Dating is unreliable, may have been senator at that time.
-                    sqs = sqs.narrow('date:[{0} TO {0}]'.format(
+                    sqs = sqs.narrow('date_end:[* TO {0}]'.format(
                         data.get('senate_date')))
                     sqs = sqs.narrow('date_end_uncertain:true')
 

@@ -2,10 +2,10 @@ from collections import OrderedDict
 
 from django.conf import settings as s
 from django.core.urlresolvers import reverse
-
 from django.http import JsonResponse
 from django.views.generic.detail import DetailView
 from haystack.generic_views import FacetedSearchView, SearchView
+
 from promrep.forms import PromrepFacetedSearchForm, SenateSearchForm
 from promrep.models import (Office, Person, PostAssertion, Province,
                             RelationshipAssertion, StatusAssertion)
@@ -291,8 +291,12 @@ class SenateSearchView(SearchView):
             queryset = queryset.narrow('date:[{0} TO {0}]'.format(
                 SenateSearchForm.INITIAL_DATE))
         # queryset = queryset.narrow('uncertain:false')
-        return queryset.order_by(
-            'date_start_uncertain').order_by(
+        certainty = self.request.GET.get('dating_certainty')
+        if certainty is not None and certainty == '3':
+            return queryset.order_by('-date_end')
+        else:
+            return queryset.order_by(
+                'date_start_uncertain').order_by(
                 'date_start').order_by('date_end')
 
     def get_context_data(self, **kwargs):  # noqa

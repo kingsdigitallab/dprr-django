@@ -260,10 +260,8 @@ class StatusAssertionIndex(AssertionIndex):
     rank = indexes.CharField(model_attr='status__name', faceted=True)
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
     date = MultiValueIntegerField(faceted=True)
-    date_start = indexes.IntegerField(model_attr='date_start', null=True)
     date_start_uncertain = indexes.BooleanField(
         model_attr='date_start_uncertain', default=False)
-    date_end = indexes.IntegerField(model_attr='date_end', null=True)
     date_end_uncertain = indexes.BooleanField(
         model_attr='date_end_uncertain', default=False)
     date_display = indexes.CharField()
@@ -294,6 +292,12 @@ class StatusAssertionIndex(AssertionIndex):
         res = range(start, end + 1, 1)
 
         return res
+
+    def prepare_date_start(self, object):
+        return object.date_start
+
+    def prepare_date_end(self, object):
+        return object.date_end
 
     def prepare_senator(self, object):
         return object.status.name.lower() == s.LOOKUPS['status']['senator']

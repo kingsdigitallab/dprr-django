@@ -13,6 +13,8 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey
 
+from django.db.models import Q
+
 
 def date_to_string(date_int, date_uncertain, date_suffix=True):
     date_str = ""
@@ -393,6 +395,91 @@ class Person(TimeStampedModel):
     @property
     def f(self):
         return self._get_ancestor_praenomens(r'([^-].*?) f\..*')
+
+    # Returns either the persons true highest Office
+    # or false if no highest office existed.
+    def get_real_highest_office(self):
+
+        cos_list = [o.name for o in Office.objects.get(
+            name="consul").get_descendants(include_self=True)]
+
+        pra_list = [o.name for o in Office.objects.get(
+            name="praetor").get_descendants(include_self=True)]
+
+        aed_list = [o.name for o in Office.objects.get(
+            name="aedilis").get_descendants(include_self=True)]
+
+        tri_list = [o.name for o in Office.objects.get(
+            name="tribunus plebis").get_descendants(include_self=True)]
+
+        qua_list = [o.name for o in Office.objects.get(
+            name="quaestor").get_descendants(include_self=True)]
+
+        cos_Q = Q(office__name__in=cos_list)
+        pra_Q = Q(office__name__in=pra_list)
+        aed_Q = Q(office__name__in=aed_list)
+        tri_Q = Q(office__name__in=tri_list)
+        qua_Q = Q(office__name__in=qua_list)
+
+        pas = self.post_assertions.filter(
+            cos_Q | pra_Q | aed_Q | tri_Q | qua_Q).order_by(
+            'date_start')
+
+        sas = self.statusassertion_set.all().order_by('date_start')
+
+        if self.highest_office_edited:
+            return self.highest_office
+        elif pas.exists():
+            cos = pas.filter(cos_Q)
+            pra = pas.filter(pra_Q)
+            aed = pas.filter(aed_Q)
+            tri = pas.filter(tri_Q)
+            qua = pas.filter(qua_Q)
+
+            # TODO: test if any of these exist!!!
+            if cos.exists():
+                off = cos.first().office_str()
+                date = cos.first().print_date()
+            elif pra.exists():
+                off = pra.first().office_str()
+                date = pra.first().print_date()
+            elif aed.exists():
+                off = aed.first().office_str()
+                date = aed.first().print_date()
+            elif tri.exists():
+                off = tri.first().office_str()
+                date = tri.first().print_date()
+            elif qua.exists():
+                off = qua.first().office_str()
+                date = qua.first().print_date()
+
+            if not date:
+                date = "uncertain date"
+
+            if off and date:
+                return "{} {}".format(off, date)
+            else:
+                return False
+
+        elif sas.exists():
+            off = sas.first().status.get_display_name()
+            date = sas.first().date_start
+
+            # See DPRR-385
+            if off == "eq. R.":
+                date = "?"
+            elif date is not None:
+                date = abs(date)
+            else:
+                date = "uncertain date"
+
+            if off and date:
+                return "{} {}".format(off, date)
+            else:
+                return False
+
+        else:
+            return False
 
     def _get_ancestor_praenomens(self, pattern):
         if not self.filiation:

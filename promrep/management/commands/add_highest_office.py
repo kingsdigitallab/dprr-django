@@ -169,7 +169,15 @@ class Command(BaseCommand):
                         unc_str = ""
 
                     if rel_per and rel_str:
-                        hoffice = "{}{} {}".format(rel_str, unc_str, rel_per)
+                        # Get the related person's highest office:
+                        rel_per_ho = rel_per.get_real_highest_office()
+                        if rel_per_ho:
+                            hoffice = "{}{} {} ({})".format(rel_str, unc_str,
+                                                            rel_per,
+                                                            rel_per_ho)
+                        else:
+                            hoffice = "{}{} {}".format(rel_str, unc_str,
+                                                       rel_per)
 
                 # default case, print the last office the person had
                 if hoffice == "":

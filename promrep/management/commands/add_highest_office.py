@@ -124,7 +124,8 @@ class Command(BaseCommand):
                 # TODO: we're only checking direct, because we expect to calc
                 #     the inverse relationships - see DPRR-257
                 # Highest relationship
-                elif p.relationships_as_subject.exists():
+                elif p.relationships_as_subject.exists() or\
+                        p.relationships_as_object.exists():
 
                     rel_per = None
                     rel_str = ""
@@ -132,8 +133,11 @@ class Command(BaseCommand):
 
                     son_q = Q(relationship__name="son of")
                     dau_q = Q(relationship__name="daughter of")
+                    wife_q = Q(relationship__name="married to")
+                    father_q = Q(relationship__name="father of")
 
                     rel_is_male_q = Q(related_person__sex__name="Male")
+                    pers_is_male_q = Q(person__sex__name="Male")
 
                     # son of male
                     ra_son = p.relationships_as_subject.filter(
@@ -143,6 +147,14 @@ class Command(BaseCommand):
                     ra_dau = p.relationships_as_subject.filter(
                         dau_q, rel_is_male_q)
 
+                    # Inverse "father of":
+                    ra_father = p.relationships_as_object.filter(
+                        father_q, pers_is_male_q)
+
+                    # wife of male
+                    ra_wife = p.relationships_as_subject.filter(
+                        wife_q, rel_is_male_q)
+
                     ra_any = p.relationships_as_subject.all()
 
                     # son of (male) display as (s.), otherwise
@@ -151,11 +163,26 @@ class Command(BaseCommand):
                         rel_per = ra_son.first().related_person
                         rel_unc = ra_son.first().uncertain
 
+                    # son/daughter of (male) display as (s.), otherwise
+                    elif ra_father.exists():
+                        if p.sex.name == "Male":
+                            rel_str = "son of"
+                        else:
+                            rel_str = "daughter of"
+                        rel_per = ra_father.first().person
+                        rel_unc = ra_father.first().uncertain
+
                     # daughter of (male) display as (d.), otherwise
                     elif ra_dau.exists():
                         rel_str = ra_dau.first().relationship.name
                         rel_per = ra_dau.first().related_person
                         rel_unc = ra_dau.first().uncertain
+
+                    # wife of (male) display as (w.), otherwise
+                    elif ra_wife.exists():
+                        rel_str = ra_wife.first().relationship.name
+                        rel_per = ra_wife.first().related_person
+                        rel_unc = ra_wife.first().uncertain
 
                     # any other relationship else
                     elif ra_any.exists():

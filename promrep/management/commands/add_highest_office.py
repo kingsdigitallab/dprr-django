@@ -123,6 +123,7 @@ class Command(BaseCommand):
 
                 # TODO: we're only checking direct, because we expect to calc
                 #     the inverse relationships - see DPRR-257
+                # - some inverse relationships checked.
                 # Highest relationship
                 elif p.relationships_as_subject.exists() or\
                         p.relationships_as_object.exists():
@@ -153,6 +154,10 @@ class Command(BaseCommand):
 
                     # wife of male
                     ra_wife = p.relationships_as_subject.filter(
+                        wife_q, pers_is_male_q)
+
+                    # inverse wife of male
+                    ra_wife_inv = p.relationships_as_object.filter(
                         wife_q, rel_is_male_q)
 
                     ra_any = p.relationships_as_subject.all()
@@ -183,6 +188,12 @@ class Command(BaseCommand):
                         rel_str = ra_wife.first().relationship.name
                         rel_per = ra_wife.first().related_person
                         rel_unc = ra_wife.first().uncertain
+
+                    # wife of (male) display as (w.), otherwise
+                    elif ra_wife_inv.exists():
+                        rel_str = ra_wife_inv.first().relationship.name
+                        rel_per = ra_wife_inv.first().person
+                        rel_unc = ra_wife_inv.first().uncertain
 
                     # any other relationship else
                     elif ra_any.exists():

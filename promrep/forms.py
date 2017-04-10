@@ -210,6 +210,18 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
         return self.searchqueryset.all()
 
     def search(self):
+        # Tweak here
+        facet_list = [x.split(':')[0] for x in self.selected_facets]
+        if 'offices' in facet_list:
+            if 'office' not in facet_list:
+                # We search for the first selected facet that is an "offices"
+                # and transform it to an office.
+                for i in range(0, len(self.selected_facets)):
+                    facet_split = self.selected_facets[i].split(':')
+                    if facet_split[0] == 'offices':
+                        self.selected_facets[i] =\
+                            "{}:{}".format("office", facet_split[1])
+                        break
 
         sqs = super(PromrepFacetedSearchForm, self).search()
 

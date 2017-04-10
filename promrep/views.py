@@ -62,6 +62,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
                         self.request.GET['order'] == '-date':
                     queryset = queryset.order_by('-date_start',
                                                  '-date_end')
+                    offices = True
                 else:
                     queryset = queryset.order_by('date_start',
                                                  'date_end')
@@ -87,6 +88,13 @@ class PromrepFacetedSearchView(FacetedSearchView):
             for facet in self.request.GET.getlist('selected_facets'):
                 if 'offices' in facet:
                     office_name = facet.replace('offices:', '')
+                    selected_offices.append(office_name)
+                    # Add Children to the list as well
+                    office = Office.objects.get(name=office_name)
+                    for child_office in office.get_descendants():
+                        selected_offices.append(child_office.name)
+                elif 'office' in facet:
+                    office_name = facet.replace('office:', '')
                     selected_offices.append(office_name)
                     # Add Children to the list as well
                     office = Office.objects.get(name=office_name)

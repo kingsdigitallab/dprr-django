@@ -17,6 +17,13 @@ logger = logging.getLogger(__name__)
 register = template.Library()
 
 
+@register.simple_tag
+def url_replace(request, field, value):
+    dict_ = request.GET.copy()
+    dict_[field] = value
+    return dict_.urlencode()
+
+
 @register.inclusion_tag('wagtailbase/tags/breadcrumbs.html',
                         takes_context=True)
 def breadcrumbs(context, root, current_page, extra=None):

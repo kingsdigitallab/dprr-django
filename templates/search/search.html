@@ -392,6 +392,19 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
             </a>
             <ul class="inline-list right export do-not-print">
                 <li>
+                    {% if "order=-date" in request.get_full_path %}
+                    <a class="right" href="?{% url_replace request 'order' 'date' %}">
+                        <i class="fa fa-arrow-down"></i>
+                        <label id="print">Date Desc.</label>
+                    </a>
+                    {% else %}
+                    <a class="right" href="?{% url_replace request 'order' '-date' %}">
+                        <i class="fa fa-arrow-up"></i>
+                        <label id="print">Date Asc.</label>
+                    </a>
+                    {% endif %}
+                </li>
+                <li>
                     <a class="right" aria-lablledby="#print" id="printme">
                         <i class="fa fa-print"></i>
                         <label id="print">Print</label>

@@ -388,13 +388,15 @@ class SenateSearchForm(SearchForm):
                     sqs = sqs.narrow('uncertain:true')
                 elif dating_certainty == '3':
                     # Attested Before
+                    date = int(data.get('senate_date')) - 1
                     sqs = sqs.narrow('date_end:[* TO {0}]'.format(
-                        data.get('senate_date')))
+                        date))
                     sqs = sqs.narrow('date_end_uncertain:true')
                 elif dating_certainty == '4':
                     # Attested After
+                    date = int(data.get('senate_date')) + 1
                     sqs = sqs.narrow('date_start:[{0} TO *]'.format(
-                        data.get('senate_date')))
+                        date))
                     sqs = sqs.narrow('date_start_uncertain:true')
 
         return sqs

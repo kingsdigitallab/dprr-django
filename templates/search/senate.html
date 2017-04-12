@@ -71,7 +71,7 @@
             <ol start="{{ page_obj.start_index }}" class="search-results senators-in-year">
                 {% for result in object_list %}
                     {% with doc=result.documents.0 %}
-                        <li>{{ doc.date_start }}:{{ doc.date_end }}
+                        <li>
                             <div class="ffs">
                                 {% include "search/person.html" with doc=result.documents.0 %}
                                 <span class="details">{{ doc.date_display }}</span>

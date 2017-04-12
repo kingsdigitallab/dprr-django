@@ -36,6 +36,8 @@ def add_facet_link(qd, facet, value):
     """
     qd = qd.copy()
     qd['page'] = 1
+    if 'printme' in qd:
+        del qd['printme']
     facets = qd.getlist('selected_facets', [])
     if len(facet) > 0:
         facet_value = '{0}_exact:{1}'.format(facet, value.encode('utf-8'))

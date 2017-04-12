@@ -316,5 +316,7 @@ def select_facet_link(context, facetname, option):
 
     if 'page' in query:
         del query['page']
+    if 'printme' in query:
+        del query['printme']
 
     return "?" + query.urlencode(safe=":?")

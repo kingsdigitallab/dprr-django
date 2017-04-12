@@ -13,7 +13,7 @@
                 Senators for the year <strong>{{ senate_date }}</strong>
                 <small>B.C.</small>
             </h1>
-            <p class="info">
+            <p class="info do-not-print">
                 <i class="fa fa-info-circle"></i>
                 Drag the slider or input an number within the range from 180 B.C. to 31 B.C.
             </p>
@@ -21,7 +21,7 @@
     </div>
 
     <form method="get" action=".">
-        <div class="row small-collapse medium-uncollapse">
+        <div class="row small-collapse medium-uncollapse do-not-print">
             <div class="small-6 columns">
                 <div class="range-slider slider" data-slider
                      data-options="display_selector: #id_senate_date; initial: {{ senate_date }}; start: 180; end: 31;">
@@ -32,11 +32,17 @@
             <div class="small-3 medium-2 large-1 columns">
                 {{ form.senate_date }}
             </div>
-            <div class="small-3 medium-3 large-2 columns end">
+            <div class="small-3 medium-3 large-2 columns">
                 <button type="submit" class="small button secondary expand less-padding">Apply</button>
             </div>
+            <div class="small-3 medium-2 large-1 columns end">
+            <a class="right" aria-lablledby="#print" id="printme">
+                        <i class="fa fa-print"></i>
+                        <label id="print">Print</label>
+                    </a>
+            </div>
         </div>
-        <div class="row">
+        <div class="row do-not-print">
             <div class="large-12 columns">
                 <h2>Dating Certainty</h2>
                 <p class="info">

@@ -26,7 +26,8 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                 </span>
             </a>
         </header>
-        <form method="get" action=".">
+        <form method="get" action="." id="search_form">
+
           {% for facet_value in selected_facets %}
             <input class="selected_facets_input" type="hidden" name="selected_facets" value="{{ facet_value }}">
           {% endfor %}

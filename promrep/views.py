@@ -335,8 +335,7 @@ class SenateSearchView(SearchView):
             return queryset.order_by('-date_end')
         else:
             return queryset.order_by(
-                'date_start_uncertain').order_by(
-                'date_start').order_by('date_end')
+                'date_start')
 
     def get_context_data(self, **kwargs):  # noqa
         context = super(SenateSearchView, self).get_context_data(**kwargs)

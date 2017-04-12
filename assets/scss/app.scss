@@ -582,6 +582,22 @@ h3.quick-home {
         padding-left: .5rem;
     }
 }
+
+/* Senate View */
+.certainty_switch{
+    ul {
+        list-style-type: none;
+        margin-left: 0;
+    }
+    li{
+        float:left;
+        padding-left: 1%;
+    }
+    li.alpha {
+        padding-left: 0;
+    }
+}
+
 /* Auto-complete */
 .easy-autocomplete-container {
     ul {

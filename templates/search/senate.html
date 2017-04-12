@@ -43,8 +43,11 @@
                     <i class="fa fa-info-circle"></i>
                     Explanation here.
                 </p>
-                <div class="button-group">
+                <div class="button-group certainty_switch">
+                <ul>
+
                     {% for radio in form.dating_certainty %}
+                        <li {% if forloop.first %}class="alpha"{% endif %}>
                         {{ radio.choice_label }}
                         <div class="switch">
                             <input class="switch-input" id="{{ radio.id_for_label }}" type="radio"
@@ -55,8 +58,9 @@
                                 <span class="show-for-sr">{{ radio.choice_label }}</span>
                             </label>
                         </div>
+                        </li>
                     {% endfor %}
-
+                </ul>
                 </div>
             </div>
         </div>
@@ -67,7 +71,7 @@
             <ol start="{{ page_obj.start_index }}" class="search-results senators-in-year">
                 {% for result in object_list %}
                     {% with doc=result.documents.0 %}
-                        <li>
+                        <li>{{ doc.date_start }}:{{ doc.date_end }}
                             <div class="ffs">
                                 {% include "search/person.html" with doc=result.documents.0 %}
                                 <span class="details">{{ doc.date_display }}</span>

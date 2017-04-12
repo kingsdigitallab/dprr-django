@@ -141,7 +141,6 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
 
 class PostAssertionIndex(AssertionIndex):
-    # TODO: remove; deprecated?
     office = indexes.FacetMultiValueField()
     offices = indexes.FacetMultiValueField()
 

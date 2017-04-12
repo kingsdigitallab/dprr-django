@@ -1,11 +1,14 @@
-from django.core.management.base import BaseCommand
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+import csv
+import datetime
 import logging
+
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.core.management.base import BaseCommand
+from django.db.models import Q
+
 from promrep.models import Person, RelationshipAssertion, RelationshipType
 from promrep.models import SecondarySource, RelationshipInverse
-import csv
-from django.db.models import Q
-import datetime
+
 
 # Populate inferred family relationships based on rules in DPRR-257
 # IMPORTANT NOTE: Assumes inverse relationships already populated
@@ -65,9 +68,9 @@ class Command(BaseCommand):
         dprr_source = SecondarySource.objects.get(name='DPRR Team')
         # Final check to weed out duplicates
         if (RelationshipAssertion.objects.filter(
-           person=new_assert.person,
-           related_person=new_assert.related_person,
-           relationship=new_assert.relationship).count() == 0):
+                person=new_assert.person,
+                related_person=new_assert.related_person,
+                relationship=new_assert.relationship).count() == 0):
             new_assert.uncertain = True
             new_assert.save()
             self.csv_log.writerow({
@@ -120,14 +123,14 @@ class Command(BaseCommand):
                         relassert.relationship.name == "mother of"):
                     children.append(relassert)
                 elif (relassert.relationship.name == "son of" or
-                        relassert.relationship.name == "daughter of"):
+                      relassert.relationship.name == "daughter of"):
                     # Son/Daughter
                     if relassert.related_person.sex.name == "Male":
                         father = relassert
                     else:
                         mother = relassert
                 elif (relassert.relationship.name == "brother of" or
-                        relassert.relationship.name == "sister of"):
+                      relassert.relationship.name == "sister of"):
                     sibs.append(relassert)
                 elif relassert.relationship.name == "married to":
                     spouse = relassert
@@ -197,7 +200,7 @@ class Command(BaseCommand):
             if spouse is not None:
                 for kid in children:
                     if (spouse.related_person.sex.name == "Male" and
-                            RelationshipAssertion.objects.filter(
+                        RelationshipAssertion.objects.filter(
                             related_person=kid.related_person,
                             relationship__name="father of").count() == 0):
                         new_type = RelationshipInverse.objects.get(
@@ -213,7 +216,7 @@ class Command(BaseCommand):
                         self.writeassetion(new_assert, spouse)
 
                     if (spouse.related_person.sex.name == "Female" and
-                            RelationshipAssertion.objects.filter(
+                        RelationshipAssertion.objects.filter(
                             related_person=kid.related_person,
                             relationship__name="mother of").count() == 0):
                         new_type = RelationshipInverse.objects.get(
@@ -237,50 +240,20 @@ class Command(BaseCommand):
                     sib_relationship = RelationshipType.objects.get(
                         name="sister of")
                 for sib in children:
-                    # check they have two parents in common
-                    same = False
-                    if person.sex.name == "Male":
-                        kid_mother = RelationshipAssertion.objects.filter(
-                            related_person=kid.related_person,
-                            relationship__name="mother of"
-                        )
-                        if kid_mother.exists():
-                            if (RelationshipAssertion.objects.filter(
-                                person=kid_mother[0].person,
-                                relationship__name="mother of",
-                                related_person=sib.related_person,
-                            ).exists()):
-                                # Same Parents
-                                same = True
-                    else:
-                        kid_father = RelationshipAssertion.objects.filter(
-                            related_person=kid.related_person,
-                            relationship__name="father of"
-                        )
-                        if kid_father.exists():
-                            if (RelationshipAssertion.objects.filter(
-                                person=kid_father[0].person,
-                                relationship__name="father of",
-                                related_person=sib.related_person,
-                            ).exists()):
-                                # Same Parents
-                                same = True
-                    if same:
-                        if sib != kid and RelationshipAssertion.objects.filter(
+                    if sib != kid and RelationshipAssertion.objects.filter(
                             Q(person=kid.related_person),
                             Q(related_person=sib.related_person),
                             Q(relationship__name="brother of") |
                             Q(relationship__name="sister of")
-                        ).count() == 0:
-                            new_sib = RelationshipAssertion(
-                                person=kid.related_person,
-                                related_person=sib.related_person,
-                                relationship=sib_relationship,
-                                extra_info="Inferred",
-                                secondary_source=dprr_source,
-                            )
-                            self.writeassetion(new_sib, sib)
-
+                    ).count() == 0:
+                        new_sib = RelationshipAssertion(
+                            person=kid.related_person,
+                            related_person=sib.related_person,
+                            relationship=sib_relationship,
+                            extra_info="Inferred",
+                            secondary_source=dprr_source,
+                        )
+                        self.writeassetion(new_sib, sib)
         return new_rels
 
     def handle(self, *args, **options):  # noqa

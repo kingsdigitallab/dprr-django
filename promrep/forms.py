@@ -340,7 +340,8 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
 DATING_CERTAINTY_CHOICES = (
     ('1', 'Certain'),
     ('2', 'Uncertain'),
-    ('3', 'Uncertain end'),
+    ('3', 'Attested before'),
+    ('4', 'Attested after'),
 )
 
 
@@ -386,10 +387,15 @@ class SenateSearchForm(SearchForm):
                         data.get('senate_date')))
                     sqs = sqs.narrow('uncertain:true')
                 elif dating_certainty == '3':
-                    # Dating is unreliable, may have been senator at that time.
+                    # Attested Before
                     sqs = sqs.narrow('date_end:[* TO {0}]'.format(
                         data.get('senate_date')))
                     sqs = sqs.narrow('date_end_uncertain:true')
+                elif dating_certainty == '4':
+                    # Attested After
+                    sqs = sqs.narrow('date_start:[{0} TO *]'.format(
+                        data.get('senate_date')))
+                    sqs = sqs.narrow('date_start_uncertain:true')
 
         return sqs
 

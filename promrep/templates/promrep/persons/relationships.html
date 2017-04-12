@@ -14,7 +14,7 @@
         {% if r.uncertain %}?{% endif %}
 
         {% with person=r.related_person %}
-        <a href="{% url 'person-detail' person.id %}">
+        <a href="{% url 'person-detail' person.id %}{{ querystring }}">
             {{ person }}
             {% if person.highest_office %}
             ({{ person.highest_office }})

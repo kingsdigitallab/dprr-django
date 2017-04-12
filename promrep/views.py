@@ -245,6 +245,9 @@ class PersonDetailView(DetailView):
         relationships_qs = RelationshipAssertion.objects.filter(
             person=self.get_object()
         ).order_by('relationship__order', 'relationship_number')
+        querystring = '?{0}'.format(self.request.GET.copy().urlencode())
+        if len(querystring) > 1:
+            context['querystring'] = querystring
 
         for r in relationships_qs:
             if r.relationship not in relationships:

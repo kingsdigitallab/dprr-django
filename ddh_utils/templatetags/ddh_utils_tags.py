@@ -37,10 +37,11 @@ def add_facet_link(qd, facet, value):
     qd = qd.copy()
     qd['page'] = 1
     facets = qd.getlist('selected_facets', [])
-    facet_value = '{0}_exact:{1}'.format(facet, value.encode('utf-8'))
-    if facet_value not in facets:
-        facets.append(facet_value)
-        qd.setlist('selected_facets', facets)
+    if len(facet) > 0:
+        facet_value = '{0}_exact:{1}'.format(facet, value.encode('utf-8'))
+        if facet_value not in facets:
+            facets.append(facet_value)
+            qd.setlist('selected_facets', facets)
     return '?{0}'.format(qd.urlencode())
 
 

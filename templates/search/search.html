@@ -422,7 +422,7 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
         <ol start="{{ page_obj.start_index }}" class="search-results">
             {% for result in object_list %}
             <li>
-                {% include "search/person.html" with doc=result.documents.0 %}
+                {% include "search/person.html" with doc=result.documents.0 querydict=querydict%}
             </li>
             {% empty %}
             <li>No results found!</li>

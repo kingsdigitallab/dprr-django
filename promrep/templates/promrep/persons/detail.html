@@ -5,38 +5,45 @@
 
 {% block main %}
 
-<div class="row">
-    <div class="large-12 columns">
-        <h2>{{ person.dprr_id }} {{ person }}</h2>
+    <div class="row">
+        <div class="large-12 columns">
+            <h2>{{ person.dprr_id }} {{ person }}</h2>
 
-        {% if person.review_flag %}
-        <p><strong>Warning: person under revision</strong></p>
-        {% endif %}
+            {% if person.review_flag %}
+                <p><strong>Warning: person under revision</strong></p>
+            {% endif %}
 
-        {% for note in person.get_reference_notes %}
-        <p class="note">
-        {{ note }} (<em>{{ note.secondary_source.abbrev_name }}</em>)
-        </p>
-        {% endfor %}
+            {% for note in person.get_reference_notes %}
+                <p class="note">
+                    {{ note }} (<em>{{ note.secondary_source.abbrev_name }}</em>)
+                </p>
+            {% endfor %}
 
-        {% if person.has_status_information %}
-        <h3>Status</h3>
-        <ul class="timeline no-bullet">
-            {% include "promrep/persons/status.html" with title="Patrician" status=person.patrician uncertain=person.patrician_uncertain notes=person.patrician_notes %}
-            {% include "promrep/persons/status.html" with title="Nobilis" status=person.nobilis uncertain=person.nobilis_uncertain notes=person.nobilis_notes %}
-            {% include "promrep/persons/status.html" with title="Novus" status=person.novus uncertain=person.novus_uncertain notes=person.novus_notes %}
+            {% if person.has_status_information %}
+                <h3>Status</h3>
+                <ul class="timeline no-bullet">
+                    {% include "promrep/persons/status.html" with title="Patrician" status=person.patrician uncertain=person.patrician_uncertain notes=person.patrician_notes %}
+                    {% include "promrep/persons/status.html" with title="Nobilis" status=person.nobilis uncertain=person.nobilis_uncertain notes=person.nobilis_notes %}
+                    {% include "promrep/persons/status.html" with title="Novus" status=person.novus uncertain=person.novus_uncertain notes=person.novus_notes %}
 
-            {% with eques=person.get_eques_status_assertion %}
-            {% include "promrep/persons/status.html" with title="Eques R" status=eques uncertain=eques.uncertain notes=eques.notes %}
-            {% endwith %}
-        </ul>
-        {% endif %}
+                    {% with eques=person.get_eques_status_assertion %}
+                        {% include "promrep/persons/status.html" with title="Eques R" status=eques uncertain=eques.uncertain notes=eques.notes %}
+                    {% endwith %}
+                </ul>
+            {% endif %}
 
-        {% include "promrep/persons/life_dates.html" %}
+            {% include "promrep/persons/life_dates.html" %}
 
-        {% include "promrep/persons/relationships.html" %}
+            {% include "promrep/persons/relationships.html" with querystring=querystring%}
 
-        {% include "promrep/persons/career.html" %}
+            {% include "promrep/persons/career.html" %}
+        </div>
     </div>
-</div>
+    <div class="row">
+        <div class="large-12 columns">
+            {% if querystring %}
+              <h4>  <a href="{% url 'haystack_search' %}{{ querystring }}">< Back to results</a></h4>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

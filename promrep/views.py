@@ -46,7 +46,10 @@ class PromrepFacetedSearchView(FacetedSearchView):
             return self.paginate_by
 
     def get_queryset(self):
+
+        selected_facets = self.request.GET.getlist('selected_facets')
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
+
         all_facets = self.autocomplete_facets + self.facet_fields
 
         for facet in all_facets:
@@ -54,7 +57,6 @@ class PromrepFacetedSearchView(FacetedSearchView):
             queryset = queryset.facet(
                 facet, sort='index', limit=-1, mincount=1)
 
-        selected_facets = self.request.GET.getlist('selected_facets')
         offices = False
         for facet in selected_facets:
             if 'offices' in facet:

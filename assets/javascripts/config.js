@@ -45,6 +45,20 @@ $(document).ready(function () {
         //Print the reloaded page
         window.print();
 
+        var new_url = document.URL;
+        if (new_url.includes("&printme=1"))
+        {
+            new_url = new_url.replace('&printme=1', '');
+        } else if (new_url.includes("?printme=1&"))
+        {
+            new_url = new_url.replace('?printme=1&', '?');
+        } else if (new_url.includes("?printme=1"))
+        {
+            new_url = new_url.replace('?printme=1', '');
+        }
+
+        window.location.href=new_url;
+
 
     }
 

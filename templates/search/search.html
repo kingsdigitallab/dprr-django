@@ -2,7 +2,7 @@
 {% load ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags %}
 
 {% block meta_title %}
-Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcomment %}
+Search Results - page {{ page_obj.number }}
 {% endblock %}
 
 {% block headercss %}
@@ -408,13 +408,13 @@ Search Results{% comment %}{% if query %} for {{ query }}{% endif %}{% endcommen
                 <li>
                     <a class="right" aria-lablledby="#print" id="printme">
                         <i class="fa fa-print"></i>
-                        <label id="print">Print</label>
+                        <label id="print">Print<br>(Current page)</label>
                     </a>
                 </li>
                 <li>
                     <a class="right" aria-lablledby="#pdf" href="/pdf{{request.get_full_path}}">
                         <i class="fa fa-file-pdf-o"></i>
-                        <label id="pdf">PDF</label>
+                        <label id="pdf">Save PDF<br>(All results)</label>
                     </a>
                 </li>
             </ul>

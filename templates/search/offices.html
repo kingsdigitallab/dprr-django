@@ -27,7 +27,7 @@
         </li>
         {% else %}
         {% comment %} no children {% endcomment %}
-        <li><a href="{% select_facet_link 'office' node.name %}"><span class="label radius pull-right">{{num}}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
+        <li><a href="{% select_facet_link 'office' node.name %}"><span class="label radius pull-right">{{ num }}</span>&nbsp;&nbsp;{{ node.name }}</a></li>
         {% endif %}
         {% endif %}
         {% endwith %}

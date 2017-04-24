@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import csv
+
 from os import path
 
 from promrep.models import (
@@ -11,7 +12,7 @@ from promrep.models import (
 ICSV_COLUMNS = [
     "person_id",
     "secondary_source",  # can be ignored
-    "gender",
+    "sex",
     "praenomen",
     "nomen",
     "filiation",
@@ -110,7 +111,6 @@ def create_person(row_dict):
 
 
 def get_sec_source_from_abbrev_str(ssource_str):
-
     sec_source = None
     # tests if sec_source already exists
     slist = SecondarySource.objects.filter(abbrev_name=ssource_str)
@@ -133,9 +133,9 @@ def read_input_file(ifname):  # noqa
 
     log_fname = file_basename + "_import-log.csv"
 
-#    sec_source, created = SecondarySource.objects.get_or_create(
-#        name="Nicolet Equites Data", biblio="Nicolet Biblio Entry",
-#        abbrev_name="Nicolet")
+    #    sec_source, created = SecondarySource.objects.get_or_create(
+    #        name="Nicolet Equites Data", biblio="Nicolet Biblio Entry",
+    #        abbrev_name="Nicolet")
 
     # log file with the ids of the objects created in the database
     csv_log = csv.DictWriter(open(log_fname, 'wb'),
@@ -182,7 +182,7 @@ def read_input_file(ifname):  # noqa
 
                 person = Person.objects.get(id=person_id)
 
-                if 'sex' in row_dict and row_dict['sex'].strip() == "F":
+                if "F" in row_dict['sex']:
                     person.sex = Sex.objects.get(name="Female")
 
                 # updates praenomen
@@ -232,7 +232,7 @@ def read_input_file(ifname):  # noqa
 
                             tribes = Tribe.objects.filter(
                                 name__iexact=tribe_str)
-    #
+                            #
                             if tribes.count() == 0:
                                 tribe_obj = Tribe.objects.create(
                                     name=tribe_str, abbrev=tribe_str)
@@ -267,9 +267,9 @@ def read_input_file(ifname):  # noqa
 
                 if row_dict['person_note']:
                     person_note = row_dict['person_note']
-		    if (Person.objects.filter(
-			person_id=person.id,
-			notes__text=person_note).count() == 0):
+                    if (Person.objects.filter(
+                            id=person.id,
+                            notes__text=person_note).count() == 0):
                         pn = PersonNote()
                         pn.text = person_note
                         pn.note_type = reference_note_type
@@ -281,15 +281,12 @@ def read_input_file(ifname):  # noqa
                         pn.save()
                         if person:
                             person.notes.add(pn)
-
                 row_dict.update({
                     'person_id_new': person_id
                 })
                 csv_log.writerow(row_dict)
-
             except Exception as e:
                 print("ERROR: {}".format(e))
-
     print("Wrote log file \"{}\"".format(log_fname))
 
 

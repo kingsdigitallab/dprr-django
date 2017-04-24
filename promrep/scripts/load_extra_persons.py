@@ -4,7 +4,8 @@ import csv
 from os import path
 
 from promrep.models import (
-    Person, Praenomen, SecondarySource, Sex, Tribe, TribeAssertion
+    Person, Praenomen, SecondarySource, Sex,
+    Tribe, TribeAssertion, PersonNote, NoteType
 )
 
 ICSV_COLUMNS = [
@@ -143,6 +144,7 @@ def read_input_file(ifname):  # noqa
                              # delimiter=";",
                              extrasaction='ignore')
     csv_log.writeheader()
+    reference_note_type = NoteType.objects.get(name='Reference Note')
 
     with open(ifname, 'rU') as csvfile:
         csvDict = csv.DictReader(csvfile, fieldnames=ICSV_COLUMNS)
@@ -179,6 +181,9 @@ def read_input_file(ifname):  # noqa
                     print("Found Person: id={}".format(person_id))
 
                 person = Person.objects.get(id=person_id)
+
+                if 'sex' in row_dict and row_dict['sex'].strip() == "F":
+                    person.sex = Sex.objects.get(name="Female")
 
                 # updates praenomen
                 praenomen_str = row_dict["praenomen"]
@@ -259,6 +264,20 @@ def read_input_file(ifname):  # noqa
                             if not tr_assert.uncertain:
                                 tr_assert.uncertain = tribe_uncertain
                                 tr_assert.save()
+
+                if row_dict['person_note']:
+                    person_note = row_dict['person_note']
+                    pn = PersonNote()
+                    pn.text = person_note
+                    pn.note_type = reference_note_type
+                    ssource_str = row_dict[
+                        "tribe_secondary_source"]
+                    secondary_source = get_sec_source_from_abbrev_str(
+                        ssource_str)
+                    pn.secondary_source = secondary_source
+                    pn.save()
+                    if person:
+                        person.notes.add(pn)
 
                 row_dict.update({
                     'person_id_new': person_id

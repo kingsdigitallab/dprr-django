@@ -119,7 +119,10 @@ class Command(BaseCommand):
                         date = "uncertain date"
 
                     if off and date:
-                        hoffice = "{} {}".format(off, date)
+                        if date == "?":
+                            hoffice = "{}?".format(off)
+                        else:
+                            hoffice = "{} {}".format(off, date)
 
                 # TODO: we're only checking direct, because we expect to calc
                 #     the inverse relationships - see DPRR-257

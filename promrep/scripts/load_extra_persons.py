@@ -78,7 +78,7 @@ def create_person(row_dict):
     person_dict = {}
     person_dict['sex'] = Sex.objects.get(name="Male")
 
-    if 'sex' in row_dict and row_dict['sex'].strip() == "F":
+    if 'sex' in row_dict and "F" in row_dict['sex'].strip():
         person_dict['sex'] = Sex.objects.get(name="Female")
 
     praenomen_dict = get_praenomen_dict(row_dict.get('praenomen'))
@@ -267,17 +267,20 @@ def read_input_file(ifname):  # noqa
 
                 if row_dict['person_note']:
                     person_note = row_dict['person_note']
-                    pn = PersonNote()
-                    pn.text = person_note
-                    pn.note_type = reference_note_type
-                    ssource_str = row_dict[
-                        "tribe_secondary_source"]
-                    secondary_source = get_sec_source_from_abbrev_str(
-                        ssource_str)
-                    pn.secondary_source = secondary_source
-                    pn.save()
-                    if person:
-                        person.notes.add(pn)
+		    if (Person.objects.filter(
+			person_id=person.id,
+			notes__text=person_note).count() == 0):
+                        pn = PersonNote()
+                        pn.text = person_note
+                        pn.note_type = reference_note_type
+                        ssource_str = row_dict[
+                            "tribe_secondary_source"]
+                        secondary_source = get_sec_source_from_abbrev_str(
+                            ssource_str)
+                        pn.secondary_source = secondary_source
+                        pn.save()
+                        if person:
+                            person.notes.add(pn)
 
                 row_dict.update({
                     'person_id_new': person_id

@@ -319,7 +319,6 @@ def _get_relationships_network(person):
 
 
 class SenateSearchView(SearchView):
-    load_all = True
     form_class = SenateSearchForm
     queryset = GroupedSearchQuerySet().models(
         StatusAssertion).narrow('senator:true').group_by('person_id')

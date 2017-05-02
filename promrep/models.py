@@ -45,7 +45,7 @@ class SecondarySource(TimeStampedModel):
     biblio = models.CharField(max_length=512, unique=True, blank=True)
 
     def __unicode__(self):
-        return self.abbrev_name.decode('utf-8')
+        return u"".format(self.abbrev_name)
 
     @staticmethod
     def autocomplete_search_fields():
@@ -58,7 +58,7 @@ class PrimarySource(models.Model):
     biblio = models.CharField(max_length=512, unique=True, blank=True)
 
     def __unicode__(self):
-        return self.abbrev_name
+        return u"".format(self.abbrev_name)
 
 
 @with_author

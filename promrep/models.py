@@ -45,7 +45,7 @@ class SecondarySource(TimeStampedModel):
     biblio = models.CharField(max_length=512, unique=True, blank=True)
 
     def __unicode__(self):
-        return u"".format(self.abbrev_name)
+        return self.abbrev_name.encode('ascii', 'replace')
 
     @staticmethod
     def autocomplete_search_fields():
@@ -58,7 +58,7 @@ class PrimarySource(models.Model):
     biblio = models.CharField(max_length=512, unique=True, blank=True)
 
     def __unicode__(self):
-        return u"".format(self.abbrev_name)
+        return self.abbrev_name.encode('ascii', 'replace')
 
 
 @with_author
@@ -678,7 +678,7 @@ class DateInformation(TimeStampedModel):
         di_str = '{} {}, {}'.format(label, date_str, self.date_type)
 
         if self.secondary_source:
-            di_str += ' ({})'.format(self.secondary_source.abbrev_name)
+            di_str += ' ({})'.format(self.secondary_source)
 
         return di_str
 

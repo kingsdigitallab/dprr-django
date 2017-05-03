@@ -45,7 +45,7 @@ class SecondarySource(TimeStampedModel):
     biblio = models.CharField(max_length=512, unique=True, blank=True)
 
     def __unicode__(self):
-        return self.abbrev_name.encode('ascii', 'replace')
+        return self.abbrev_name
 
     @staticmethod
     def autocomplete_search_fields():
@@ -58,7 +58,7 @@ class PrimarySource(models.Model):
     biblio = models.CharField(max_length=512, unique=True, blank=True)
 
     def __unicode__(self):
-        return self.abbrev_name.encode('ascii', 'replace')
+        return self.abbrev_name
 
 
 @with_author
@@ -675,10 +675,10 @@ class DateInformation(TimeStampedModel):
         label = self.get_date_interval_display()
         label = label if label != self.INTERVAL_CHOICES[0][1] else ''
 
-        di_str = '{} {}, {}'.format(label, date_str, self.date_type)
+        di_str = u'{} {}, {}'.format(label, date_str, self.date_type)
 
         if self.secondary_source:
-            di_str += ' ({})'.format(self.secondary_source)
+            di_str += u' ({})'.format(self.secondary_source)
 
         return di_str
 

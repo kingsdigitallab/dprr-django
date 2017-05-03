@@ -215,6 +215,10 @@ def read_input_file(ifname):  # noqa
                     if re_str != "":
                         person.re_number = re_str
 
+                # Add DPRR_ID if not present
+                if person.dprr_id is None:
+                    person.dprr_id = person.generate_dprr_id()
+
                 person.save()
 
                 # Tribe info

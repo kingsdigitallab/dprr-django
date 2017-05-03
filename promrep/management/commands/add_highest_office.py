@@ -112,7 +112,10 @@ class Command(BaseCommand):
 
                     # See DPRR-385
                     if off == "eq. R.":
-                        date = "?"
+                        if not date:
+                            date = "?"
+                        else:
+                            date = ""
                     elif date is not None:
                         date = abs(date)
                     else:
@@ -123,6 +126,8 @@ class Command(BaseCommand):
                             hoffice = "{}?".format(off)
                         else:
                             hoffice = "{} {}".format(off, date)
+                    elif off:
+                        hoffice = "{}".format(off)
 
                 # TODO: we're only checking direct, because we expect to calc
                 #     the inverse relationships - see DPRR-257

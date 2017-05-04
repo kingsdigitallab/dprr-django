@@ -28,8 +28,8 @@ def remove_duplicates(apps, schema_editor):
     remove_relationshiptype(apps, 'great nephew', 'great nephew of')
     remove_relationshiptype(apps, 'adopted grandfather', 'adopted grandfather of')
     remove_relationshiptype(apps, 'adopted son of', 'adoptive son of')
-    remove_relationshiptype(apps, 'adoptive father of', 'adoptive father of')
-    remove_relationshiptype(apps, 'adoptive mother of', 'adtoped mother of')
+    remove_relationshiptype(apps, 'adopted father of', 'adoptive father of')
+    remove_relationshiptype(apps, 'adopted mother of', 'adoptive mother of')
     remove_relationshiptype(apps, 'adopted daughter of', 'adoptive daughter of')
 
 

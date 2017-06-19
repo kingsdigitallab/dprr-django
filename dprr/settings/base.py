@@ -108,7 +108,7 @@ LOGGING = {
     'handlers': {
         'file': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOGGING_ROOT, 'django.log'),
             'formatter': 'verbose',
             'maxBytes': 1024 * 1024 * 5,

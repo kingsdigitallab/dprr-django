@@ -86,4 +86,4 @@ def facet_pretty_print(value):
 
     value = value.replace(':', ': ')
 
-    return value.title()
+    return value.capitalize()

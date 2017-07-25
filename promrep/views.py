@@ -11,8 +11,6 @@ from haystack.query import SearchQuerySet
 from promrep.forms import PromrepFacetedSearchForm, SenateSearchForm
 from promrep.models import (Office, Person, Province,  # PostAssertion
                             RelationshipAssertion, StatusAssertion)
-from promrep.solr_backends.solr_backend_field_collapsing import \
-    GroupedSearchQuerySet
 
 import pdfkit
 
@@ -306,8 +304,7 @@ class SenateSearchView(SearchView):
         queryset = super(SenateSearchView, self).get_queryset()
 
         if 'senate_date' in self.request.GET:
-            queryset = GroupedSearchQuerySet().models(
-                StatusAssertion).narrow('senator:true').group_by('person_id')
+            queryset = SearchQuerySet().models(StatusAssertion)
         else:
             queryset = queryset.narrow('date:[{0} TO {0}]'.format(
                 SenateSearchForm.INITIAL_DATE))

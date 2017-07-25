@@ -7,7 +7,18 @@
 
     <div class="row">
         <div class="large-12 columns">
-            <h2>{{ person.dprr_id }} {{ person }}</h2>
+            <h2>{{ person.dprr_id }} {{ person }}
+
+            <ul class="inline-list right export do-not-print">
+                <li>
+                    <a class="right" aria-lablledby="#print" id="printme">
+                        <i class="fa fa-print"></i>
+                        <label id="print">Print</label>
+                    </a>
+                </li>
+            </ul>
+
+            </h2>
 
             {% if person.review_flag %}
                 <p><strong>Warning: person under revision</strong></p>

@@ -6,9 +6,10 @@ from django.core.urlresolvers import reverse
 from django.http import JsonResponse, HttpResponse
 from django.views.generic.detail import DetailView
 from haystack.generic_views import FacetedSearchView, SearchView
+from haystack.query import SearchQuerySet
 
 from promrep.forms import PromrepFacetedSearchForm, SenateSearchForm
-from promrep.models import (Office, Person, PostAssertion, Province,
+from promrep.models import (Office, Person, Province,  # PostAssertion
                             RelationshipAssertion, StatusAssertion)
 from promrep.solr_backends.solr_backend_field_collapsing import \
     GroupedSearchQuerySet
@@ -28,11 +29,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
     pdf_paginate = 10000
 
     # Person allows us to search people with no assertions
-    queryset = GroupedSearchQuerySet().models(
-        PostAssertion,
-        StatusAssertion,
-        Person,
-        RelationshipAssertion).group_by('person_id')
+    queryset = SearchQuerySet().models(Person)
 
     def get_paginate_by(self, queryset):
         """
@@ -47,7 +44,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
     def get_queryset(self):
 
-        selected_facets = self.request.GET.getlist('selected_facets')
+        # selected_facets = self.request.GET.getlist('selected_facets')
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
 
         all_facets = self.autocomplete_facets + self.facet_fields
@@ -57,21 +54,6 @@ class PromrepFacetedSearchView(FacetedSearchView):
             queryset = queryset.facet(
                 facet, sort='index', limit=-1, mincount=1)
 
-        offices = False
-        for facet in selected_facets:
-            if 'offices' in facet:
-                if 'order' in self.request.GET and\
-                        self.request.GET['order'] == '-date':
-                    queryset = queryset.order_by('-date_start',
-                                                 '-date_end')
-                    offices = True
-                else:
-                    queryset = queryset.order_by('date_start',
-                                                 'date_end')
-                    offices = True
-                break
-        if offices:
-            return queryset
         if 'order' in self.request.GET and\
                 self.request.GET['order'] == '-date':
             return queryset.order_by('-era_order')
@@ -124,9 +106,6 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
         context['era_filter'] = self._get_date_url_and_filter(
             'era_from', 'era_to')
-
-        context['date_filter'] = self._get_date_url_and_filter(
-            'date_from', 'date_to')
 
         # used to generate the lists for the autocomplete dictionary
         context['autocomplete_facets'] = self.autocomplete_facets
@@ -320,8 +299,7 @@ def _get_relationships_network(person):
 
 class SenateSearchView(SearchView):
     form_class = SenateSearchForm
-    queryset = GroupedSearchQuerySet().models(
-        StatusAssertion).narrow('senator:true').group_by('person_id')
+    queryset = SearchQuerySet().models(StatusAssertion).narrow('senator:true')
     template_name = 'search/senate.html'
 
     def get_queryset(self):

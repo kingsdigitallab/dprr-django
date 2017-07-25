@@ -173,11 +173,6 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
     era_to = forms.IntegerField(
         required=False, max_value=MAX_DATE_FORM, min_value=MIN_DATE_FORM)
 
-    date_from = forms.IntegerField(
-        required=False, max_value=MAX_DATE_FORM, min_value=MIN_DATE_FORM)
-    date_to = forms.IntegerField(
-        required=False, max_value=MAX_DATE_FORM, min_value=MIN_DATE_FORM)
-
     # class autocomplete is used by the search.js script to select the fields
     # the name of the fields has to match the facet names defined in
     #  views.py
@@ -231,8 +226,6 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
             data = self.cleaned_data
             era_from = data.get('era_from', None)
             era_to = data.get('era_to', None)
-            date_from = data.get('date_from', None)
-            date_to = data.get('date_to', None)
 
             if era_from or era_to:
                 sqs = sqs.narrow(
@@ -241,48 +234,16 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
                         data.get('era_to', self.MAX_DATE) or self.MAX_DATE)
                 )
 
-            if date_from or date_to:
-                first_office = True
-                for facet in office_facets:
-                    if first_office:
-                        sqs = sqs.narrow(
-                            '(office:{} AND date:[{} TO {}])'.format(
-                                facet.split(':')[1],
-                                data.get('date_from', self.MIN_DATE) or
-                                self.MIN_DATE,
-                                data.get('date_to', self.MAX_DATE) or
-                                self.MAX_DATE)
-                        )
-                        first_office = False
-                    else:
-                        sqs = sqs.narrow(
-                            'offices:{}'.format(facet.split(':')[1])
-                        )
+        for facet in office_facets:
+            sqs = sqs.narrow(
+                'offices:"{}"'.format(facet.split(':')[1])
+            )
+            self.selected_facets.append(facet)
 
-                    self.selected_facets.append(facet)
-
-                for field in self.AUTOCOMPLETE_FACETS:
-                    if data.get(field):
-                        sqs = sqs.narrow('{}:{}'.format(field,
-                                         data.get(field)))
-            else:
-                first_office = True
-                for facet in office_facets:
-                    if first_office:
-                        sqs = sqs.narrow(
-                            'office:{}'.format(facet.split(':')[1])
-                        )
-                        first_office = False
-                    else:
-                        sqs = sqs.narrow(
-                            'offices:{}'.format(facet.split(':')[1])
-                        )
-
-                    self.selected_facets.append(facet)
-                for field in self.AUTOCOMPLETE_FACETS:
-                    if data.get(field):
-                        sqs = sqs.narrow('{}:{}'.format(
-                                         field, data.get(field)))
+        for field in self.AUTOCOMPLETE_FACETS:
+            if data.get(field):
+                sqs = sqs.narrow('{}:{}'.format(
+                                 field, data.get(field)))
 
         return sqs
 

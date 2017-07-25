@@ -3,9 +3,9 @@ import re
 from django.conf import settings as s
 from django.db.models import Q
 from haystack import indexes
-from promrep.forms import PromrepFacetedSearchForm, SenateSearchForm
+from promrep.forms import PromrepFacetedSearchForm  # , SenateSearchForm
 from promrep.models import (
-    Office, PostAssertion, RelationshipAssertion, StatusAssertion, Person
+    Office, PostAssertion, StatusAssertion, Person  # ,RelationshipAssertion
 )
 
 
@@ -18,6 +18,7 @@ class MultiValueIntegerField(indexes.MultiValueField):
         return list([int(x) for x in value])
 
 
+'''
 class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
     # generic class for shared functions
     text = indexes.CharField(document=True, use_template=True)
@@ -142,11 +143,11 @@ class AssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
 class PostAssertionIndex(AssertionIndex):
     office = indexes.FacetMultiValueField()
-    offices = indexes.FacetMultiValueField()
 
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
 
-    province = indexes.MultiValueField(faceted=True)
+    offices = indexes.FacetMultiValueField()
+    province = indexes.FacetMultiValueField()
     date = MultiValueIntegerField(faceted=True)
     # date_start = indexes.IntegerField(model_attr='date_start', null=True)
     # date_end = indexes.IntegerField(model_attr='date_end', null=True)
@@ -224,6 +225,14 @@ class PostAssertionIndex(AssertionIndex):
                 for off in olist
                 for o in off.get_ancestors(include_self=True)]
 
+    def prepare_province(self, object):
+        # hierarchical facet
+
+        return [pp.name
+                for p in object.provinces.all()
+                for pp in p.get_ancestors(include_self=True)
+                ]
+
     def prepare_life_date_types(self, object):
         date_types = ['birth', 'exiled', 'restored', 'proscribed',
                       'expelled from Senate']
@@ -253,6 +262,7 @@ class PostAssertionIndex(AssertionIndex):
                 life_dates.append(relationship_types[relationship])
 
         return life_dates
+
 
 
 class StatusAssertionIndex(AssertionIndex):
@@ -317,6 +327,8 @@ class RelationshipAssertionIndex(AssertionIndex):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
 
+'''
+
 
 class PersonIndex(indexes.SearchIndex, indexes.Indexable):
 
@@ -353,6 +365,19 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
 
     era = MultiValueIntegerField(faceted=True)
     era_order = indexes.IntegerField()
+
+    offices = indexes.FacetMultiValueField()
+    province = indexes.FacetMultiValueField()
+    highest_office = indexes.CharField(faceted=False)
+    life_date_types = indexes.MultiValueField(faceted=True)
+    eques = indexes.BooleanField(faceted=True, default=False)
+
+    def prepare_eques(self, object):
+        sa_list = StatusAssertion.objects.filter(person=object)
+        for sa in sa_list.all():
+            if sa.status.name.lower() == s.LOOKUPS['status']['eques']:
+                return True
+        return False
 
     def get_model(self):
         return Person
@@ -411,6 +436,33 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
 
         return res
 
+    def prepare_offices(self, object):
+        # we don't want any senator post assertions
+        # these should all be recorded as Status assertions instead
+        # see: https://jira.dighum.kcl.ac.uk/browse/DPRR-256
+
+        olist = object.post_assertions
+
+        # This is how it was done before... not going to mess with it.
+        try:
+            senator_offices = Office.objects.get(
+                name='senator').get_descendants(include_self=True)
+            sen_q = Q(office__in=senator_offices)
+
+            if sen_q:
+                olist = olist.exclude(sen_q)
+        except:
+            pass
+
+        olist = olist.values_list('office__id', flat=True)
+
+        # list of Office objects
+        olist = [Office.objects.get(id=o) for o in list(set(olist))]
+
+        return [o.name
+                for off in olist
+                for o in off.get_ancestors(include_self=True)]
+
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
@@ -423,3 +475,44 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
             start = person.era_from
 
         return start
+
+    def prepare_province(self, object):
+        # hierarchical facet
+
+        post_assertion_list = PostAssertion.objects.filter(person=object)
+
+        return [pp.name
+                for pa in post_assertion_list.all()
+                for p in pa.provinces.all()
+                for pp in p.get_ancestors(include_self=True)
+                ]
+
+    def prepare_life_date_types(self, object):
+        date_types = ['birth', 'exiled', 'restored', 'proscribed',
+                      'expelled from Senate']
+        relationship_types = {'adopted son of': 'adopted'}
+
+        life_dates = list(set(
+            object.dateinformation_set.filter(
+                date_type__name__in=date_types).values_list(
+                    'date_type__name', flat=True)
+        ))
+
+        if object.dateinformation_set.filter(
+            date_type__name='death').exclude(
+                date_type__name='death - violent').count() > 0:
+            life_dates.append('death')
+            life_dates.append('death - other')
+
+        if object.dateinformation_set.filter(
+                date_type__name='death - violent').count() > 0:
+            life_dates.append('death')
+            life_dates.append('death - violent')
+
+        for relationship in relationship_types.keys():
+            relationships = object.relationships_as_subject.filter(
+                relationship__name=relationship).count()
+            if relationships > 0:
+                life_dates.append(relationship_types[relationship])
+
+        return life_dates

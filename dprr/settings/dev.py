@@ -33,9 +33,7 @@ LOGGING['loggers']['promrep']['level'] = LOGGING_LEVEL  # noqa
 
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE':
-        ('promrep.'
-         'solr_backends.solr_backend_field_collapsing.GroupedSolrEngine'),
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
         'URL': 'http://127.0.0.1:8182/solr'
     },
 }

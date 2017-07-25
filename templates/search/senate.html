@@ -77,9 +77,8 @@
             <ol start="{{ page_obj.start_index }}" class="search-results senators-in-year">
                 {% for result in object_list %}
                     <li>
-                        <div class="ffs">
                             {% include "search/person-senate.html" with doc=result querydict=querydict %}
-                        </div>
+
                     </li>
                 {% empty %}
                     <li>No results found!</li>

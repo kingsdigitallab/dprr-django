@@ -47,6 +47,23 @@ var autocomplete = {
 };
 
 $(document).ready(function() {
-  autocomplete.init();
+  if(autocomplete !== undefined)
+  {
+    autocomplete.init();
+  }
+
+  $('body').on('change', '.switch', function()
+  {
+    // 150ms delay - this should match foundation's transition speed
+    var timer = window.setTimeout(function() { $('form').submit(); }, 150);
+  });
+
+   var href = window.location.href;
+
+    if (href.indexOf('page=') > 0) {
+        var top = $('#search-results-box').offset().top;
+        $('html, body').scrollTop(top);
+    }
+
 });
 

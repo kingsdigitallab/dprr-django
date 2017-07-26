@@ -426,14 +426,5 @@ Search Results - page {{ page_obj.number }}
 <!-- EasyAutocomplete -->
 <script src="{% static 'vendor/EasyAutocomplete/dist/jquery.easy-autocomplete.js' %}"></script>
 <script src="{% static 'javascripts/search.js' %}"></script>
-<script type="text/javascript">
-$(document).ready(function() {
-    var href = window.location.href;
 
-    if (href.indexOf('page=') > 0) {
-        var top = $('#search-results-box').offset().top;
-        $('html, body').scrollTop(top);
-    }
-});
-</script>
 {% endblock %}

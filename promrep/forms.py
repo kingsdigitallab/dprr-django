@@ -307,6 +307,7 @@ class SenateSearchForm(SearchForm):
         return self.searchqueryset.all()
 
     def search(self):
+
         sqs = super(SenateSearchForm, self).search()
 
         if not self.is_valid():

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load ddh_utils_tags wagtailbase_tags %}
+{% load ddh_utils_tags wagtailbase_tags staticfiles %}
 
 {% block meta_title %}
     Senate
@@ -89,4 +89,9 @@
         </div>
     </div>
 {% endblock main %}
+
+{% block footerscripts %}
+{{ block.super }}
+<script src="{% static 'javascripts/search.js' %}"></script>
+{% endblock %}
 

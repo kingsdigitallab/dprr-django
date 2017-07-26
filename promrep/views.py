@@ -297,7 +297,7 @@ def _get_relationships_network(person):
 
 class SenateSearchView(SearchView):
     form_class = SenateSearchForm
-    queryset = SearchQuerySet().models(StatusAssertion).narrow('senator:true')
+    queryset = SearchQuerySet().models(StatusAssertion)
     template_name = 'search/senate.html'
 
     def get_queryset(self):
@@ -310,6 +310,7 @@ class SenateSearchView(SearchView):
                 SenateSearchForm.INITIAL_DATE))
         # queryset = queryset.narrow('uncertain:false')
         certainty = self.request.GET.get('dating_certainty')
+
         if certainty is not None and certainty == '3':
             return queryset.order_by('-date_end')
         else:

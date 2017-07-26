@@ -2,7 +2,6 @@ from django import forms
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from haystack.forms import FacetedSearchForm, SearchForm
-from haystack.inputs import Exact
 
 
 def get_range_parts(value_range):
@@ -376,11 +375,9 @@ class FastiSearchForm(SearchForm):
     def no_query_found(self):
         """Determines the behaviour when no query was found; returns all the
         results."""
-        print('n')
         return self.searchqueryset.all()
 
     def search(self):
-        print('s')
         sqs = super(FastiSearchForm, self).search()
 
         if not self.is_valid():
@@ -400,9 +397,15 @@ class FastiSearchForm(SearchForm):
                         data.get('date_to', self.MAX_DATE) or self.MAX_DATE)
                 )
 
+        query_string = None
         for facet in self.selected_facets:
-            parts = facet.split(':')
-            sqs = sqs.filter_or(office=Exact('{}'.format(parts[1])))
+            facet_parts = facet.split(':')
+            facet_string = '{}:"{}"'.format(facet_parts[0], facet_parts[1])
+            if query_string:
+                query_string = '{} OR {}'.format(query_string, facet_string)
+            else:
+                query_string = facet_string
+        sqs = sqs.narrow(query_string)
 
         return sqs
 

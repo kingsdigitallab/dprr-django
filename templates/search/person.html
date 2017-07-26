@@ -2,11 +2,12 @@
 <h4>
     <a href="{% url 'person-detail' doc.person_id %}{% add_facet_link querydict "" "" %}">
         {{ doc.dprr_id }}
-        {{ doc.person }}
+        {{ doc.object }}
 
-        {% if doc.highest_office %}
-        ({{ doc.highest_office }})
+        {% if doc.object.highest_office %}
+        ({{ doc.object.highest_office }})
         {% endif %}
+        
         {% get_office_badges doc.person_id%}
     </a>
 </h4>

@@ -1,0 +1,13 @@
+{% load promrep_tags ddh_utils_tags%}
+<h4>
+    <a href="{% url 'person-detail' doc.object.person_id %}{% add_facet_link querydict "" "" %}">
+        {{ doc.object.person.dprr_id }}
+        {{ doc.object.person }}
+
+        {% if doc.object.person.highest_office %}
+        ({{ doc.object.person.highest_office }})
+        {% endif %}
+        
+        {% get_office_badges doc.object.person%}
+    </a>
+</h4>

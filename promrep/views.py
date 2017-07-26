@@ -1,18 +1,16 @@
 from collections import OrderedDict
 
+import pdfkit
 from django.conf import settings as s
 from django.core.urlresolvers import reverse
-
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.generic.detail import DetailView
 from haystack.generic_views import FacetedSearchView, SearchView
 from haystack.query import SearchQuerySet
-
-from promrep.forms import PromrepFacetedSearchForm, SenateSearchForm
-from promrep.models import (Office, Person, Province,  # PostAssertion
+from promrep.forms import (FastiSearchForm, PromrepFacetedSearchForm,
+                           SenateSearchForm)
+from promrep.models import (Office, Person, PostAssertion, Province,
                             RelationshipAssertion, StatusAssertion)
-
-import pdfkit
 
 
 class PromrepFacetedSearchView(FacetedSearchView):
@@ -308,7 +306,7 @@ class SenateSearchView(SearchView):
         else:
             queryset = queryset.narrow('date:[{0} TO {0}]'.format(
                 SenateSearchForm.INITIAL_DATE))
-        # queryset = queryset.narrow('uncertain:false')
+
         certainty = self.request.GET.get('dating_certainty')
 
         if certainty is not None and certainty == '3':
@@ -328,5 +326,101 @@ class SenateSearchView(SearchView):
             senate_date = qs.pop('senate_date')[0]
 
         context['senate_date'] = senate_date
+
+        return context
+
+
+class FastiSearchView(FacetedSearchView):
+    facet_fields = ['office', 'province']
+    form_class = FastiSearchForm
+    queryset = SearchQuerySet().models(PostAssertion)
+    template_name = 'search/fasti.html'
+
+    def get_queryset(self):
+        queryset = super(FastiSearchView, self).get_queryset()
+
+        for facet in self.facet_fields:
+            queryset = queryset.facet(
+                facet, sort='index', limit=-1, mincount=1)
+
+        # return queryset.order_by('-date')
+        return queryset
+
+    def get_facet_counts(self):
+        queryset = SearchQuerySet().models(PostAssertion)
+        for facet in self.facet_fields:
+            queryset = queryset.facet(
+                facet, sort='index', limit=-1, mincount=1)
+
+        return queryset.facet_counts()
+
+    def get_context_data(self, **kwargs):
+        print('c')
+        context = super(FastiSearchView, self).get_context_data(**kwargs)
+        qs = self.request.GET.copy()
+
+        if self.request.GET.getlist('selected_facets'):
+            context['selected_facets'] = qs.getlist('selected_facets')
+
+        context['querydict'] = qs.copy()
+
+        office_lookups = s.LOOKUPS['offices']
+
+        # hierarchical facets data
+        try:
+            magisterial = Office.objects.get(id=office_lookups['magisterial'])
+            if magisterial:
+                context[
+                    'magisterial_office_list'
+                ] = magisterial.get_descendants()
+        except:
+            pass
+
+        try:
+            promagistracies = Office.objects.get(
+                id=office_lookups['promagistracies'])
+            if promagistracies:
+                context[
+                    'promagistracies_office_list'
+                ] = promagistracies.get_descendants()
+        except:
+            pass
+
+        try:
+            priesthoods = Office.objects.get(id=office_lookups['priesthoods'])
+            if priesthoods:
+                context[
+                    'priesthoods_office_list'
+                ] = priesthoods.get_descendants()
+        except:
+            pass
+
+        try:
+            non_magisterial = Office.objects.get(
+                id=office_lookups['non_magisterial'])
+            if non_magisterial:
+                context[
+                    'non_magisterial_office_list'
+                ] = non_magisterial.get_descendants()
+        except:
+            pass
+
+        try:
+            distinctions = Office.objects.get(
+                id=office_lookups['distinctions'])
+            if distinctions:
+                context[
+                    'distinctions_office_list'
+                ] = distinctions.get_descendants()
+        except:
+            pass
+
+        context.update({'facets': self.get_facet_counts()})
+
+        context['office_fdict'] = dict(context['facets']['fields']['office'])
+
+        context['province_list'] = Province.objects.all()
+        context['province_fdict'] = dict(
+            context['facets']['fields']['province'])
 
         return context

@@ -80,7 +80,6 @@ class StatusAssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
 # For main Person/Browse search page
 class PersonIndex(indexes.SearchIndex, indexes.Indexable):
-
     text = indexes.CharField(document=True, use_template=False)
 
     person_id = indexes.IntegerField(model_attr='id')
@@ -265,3 +264,54 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
                 life_dates.append(relationship_types[relationship])
 
         return life_dates
+
+
+class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
+    text = indexes.CharField(document=True, use_template=True)
+
+    office = indexes.FacetMultiValueField()
+    uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
+    unknown = indexes.BooleanField(model_attr='unknown', faceted=True)
+
+    province = indexes.MultiValueField(faceted=True)
+    date = MultiValueIntegerField(faceted=True)
+
+    person = indexes.CharField(model_attr='person', faceted=True)
+    person_id = indexes.IntegerField(model_attr='person__id')
+    dprr_id = indexes.CharField(model_attr='person__dprr_id', null=True)
+
+    def get_model(self):
+        return PostAssertion
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all().exclude(
+            office__name='senator').exclude(
+            Q(date_start__isnull=True) & Q(date_end__isnull=True))
+
+    def prepare_office(self, object):
+        # Hierarquical facet
+        return [o.name for o in object.office.get_ancestors(include_self=True)]
+
+    def prepare_province(self, object):
+        # hierarchical facet
+        return [pp.name
+                for p in object.provinces.all()
+                for pp in p.get_ancestors(include_self=True)
+                ]
+
+    def prepare_date(self, object):
+        """range of dates for the post"""
+        start = PromrepFacetedSearchForm.MIN_DATE
+        end = PromrepFacetedSearchForm.MAX_DATE
+
+        if object.date_start:
+            start = object.date_start
+
+        if object.date_end:
+            end = object.date_end
+
+        # need to increment the last point
+        res = range(start, end + 1, 1)
+
+        return res

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load ddh_utils_tags wagtailbase_tags %}
+{% load ddh_utils_tags wagtailbase_tags staticfiles %}
 
 {% block meta_title %}
     Senate
@@ -15,7 +15,7 @@
             </h1>
             <p class="info do-not-print">
                 <i class="fa fa-info-circle"></i>
-                Drag the slider or input an number within the range from 180 B.C. to 31 B.C.
+                Drag the slider or input a number within the range from 180 B.C. to 31 B.C.
             </p>
         </div>
     </div>
@@ -76,13 +76,10 @@
         <div class="large-9 end columns">
             <ol start="{{ page_obj.start_index }}" class="search-results senators-in-year">
                 {% for result in object_list %}
-                    {% with doc=result.documents.0 %}
-                        <li>
-                            <div class="ffs">
-                                {% include "search/person.html" with doc=result.documents.0 %}
-                            </div>
-                        </li>
-                    {% endwith %}
+                    <li>
+                            {% include "search/person-senate.html" with doc=result querydict=querydict %}
+
+                    </li>
                 {% empty %}
                     <li>No results found!</li>
                 {% endfor %}
@@ -92,4 +89,9 @@
         </div>
     </div>
 {% endblock main %}
+
+{% block footerscripts %}
+{{ block.super }}
+<script src="{% static 'javascripts/search.js' %}"></script>
+{% endblock %}
 

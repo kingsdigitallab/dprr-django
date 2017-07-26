@@ -3,7 +3,7 @@
 {%for office in office_badges%}
 <li>
         <span class="label radius">
-        {{ office.office.abbrev_name }}: {{ office.print_date }}
+        {{ office.office.abbrev_name }}{% if office.uncertain %}?{% endif %}: {{ office.print_date }}
         </span>
 </li>
 {%endfor%}

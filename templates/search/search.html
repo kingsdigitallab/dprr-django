@@ -197,35 +197,7 @@ Search Results - page {{ page_obj.number }}
                             <div class="panel callout">
                                 <h3 class="panel-heading">Career</h3>
                                 <p class="info"><i class="fa fa-info-circle"></i> Time frame: 509 B.C. - 31 B.C.</p>
-                                {{ form.date_from.errors }}
-                                {{ form.date_to.errors }}
-                                <div class="row range">
-                                    <div class="medium-2 columns">
-                                        <h4>
-                                            <br>
-                                            Career Dates
-                                            <a data-dropdown="career-dates" aria-controls="career-dates" aria-expanded="false" class="smaller-fontsize">
-                                                <i class="fa fa-info-circle"></i>
-                                            </a>
-                                        </h4>
 
-                                        <div id="career-dates" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-                                            <p>Info about the <strong>Career Dates</strong></p>
-                                        </div>
-                                    </div>
-                                    <div class="medium-4 columns">
-                                        <label>After</label>
-                                        {{ form.date_from }}
-                                    </div>
-                                    <div class="medium-4 columns">
-                                        <label>Before</label>
-                                        {{ form.date_to }}
-                                    </div>
-                                    <div class="medium-2 columns">
-                                        <label>&nbsp;</label>
-                                        <button type="submit" class="less-padding expand secondary">Apply</button>
-                                    </div>
-                                </div>
                                 <div class="row">
                                     <div class="medium-6 large-3 columns">
                                         <h4>Magistracies
@@ -423,7 +395,7 @@ Search Results - page {{ page_obj.number }}
         <ol start="{{ page_obj.start_index }}" class="search-results">
             {% for result in object_list %}
             <li>
-                {% include "search/person.html" with doc=result.documents.0 querydict=querydict%}
+                {% include "search/person.html" with doc=result querydict=querydict%}
             </li>
             {% empty %}
             <li>No results found!</li>

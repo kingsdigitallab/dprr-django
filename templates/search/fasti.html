@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% load ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags %}
+
+{% block meta_title %}Fasti{% endblock %}
+
+{% block main %}
+<div class="row">
+    <div class="large-12 columns" id="search">
+        <header class="top-search">
+            <h1 id="search-box">Fasti</h1>
+        </header>
+        <form method="get" action="." id="search_form">
+          {% for facet_value in selected_facets %}
+            <input class="selected_facets_input" type="hidden" name="selected_facets" value="{{ facet_value }}">
+          {% endfor %}
+            <div class="search-box">
+                <section data-section="non-expandable" data-expandable-group-member="facets" id="dprr-filter">
+                    <div class="row do-not-print">
+                        <div class="large-12 columns">
+                            <h4>Refine your search</h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <div class="panel results-preview" data-magellan-expedition="fixed">
+                                <h4>Search results
+                                    <a href="#search-results-box" class="less-padding button right do-not-print">
+                                        Show <strong>{{ paginator.count }}</strong> results
+                                    </a>
+                                </h4>
+                                <h4>
+                                    <strong>{{ paginator.count }}</strong>
+                                    records available based on your filters
+                                    <a href="{% url 'fasti_search' %}#search" class="do-not-print">
+                                        <i class="fa fa-trash"></i> Clear all
+                                    </a>
+                                </h4>
+
+                                {% include "search/filters.html" %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row do-not-print">
+                        <div class="large-12 columns">
+                            <div class="panel callout">
+                                <h3 class="panel-heading">Career</h3>
+                                <p class="info"><i class="fa fa-info-circle"></i> Time frame: 509 B.C. - 31 B.C.</p>
+
+                                <div class="row">
+                                    <div class="medium-6 large-3 columns">
+                                        <h4>Magistracies
+                                            <a data-dropdown="magistracies-info" aria-controls="magistracies-info" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <div id="magistracies-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about the <strong>Magistracies Offices</strong></p>
+                                        </div>
+
+                                        {% include "search/offices.html" with office_list=magisterial_office_list %}
+                                    </div>
+                                    <div class="medium-6 large-3 columns">
+                                        <h4>Promagistracies
+                                            <a data-dropdown="promagistracies-info" aria-controls="promagistracies-info" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <div id="promagistracies-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about the <strong>Promagistracies Offices</strong></p>
+                                        </div>
+
+                                        {% include "search/offices.html" with office_list=promagistracies_office_list %}
+                                    </div>
+                                    <div class="medium-6 large-3 columns">
+                                        <h4>Priesthoods
+                                            <a data-dropdown="priesthoods-info" aria-controls="priesthoods-info" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <div id="priesthoods-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about the <strong>Priesthoods Offices</strong></p>
+                                        </div>
+
+                                        {% include "search/offices.html" with office_list=priesthoods_office_list %}
+                                    </div>
+                                    <div class="medium-6 large-3 columns">
+                                        <h4>Lower Offices
+                                            <a data-dropdown="lower-info" aria-controls="lower-info" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <div id="lower-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about the <strong>Lower Offices</strong></p>
+                                        </div>
+
+                                        {% include "search/offices.html" with office_list=non_magisterial_office_list %}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="large-6 columns">
+                                        <h4 class="panel-heading">Distinctions
+                                            <a data-dropdown="distinctions" aria-controls="distinctions" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <a href="#" class="expander smaller-fontsize">Expand list of available distinctions <i class="fa fa-caret-right"></i></a>
+
+                                        <div class="collapsible hide">
+                                            {% include "search/offices.html" with office_list=distinctions_office_list %}
+                                        </div>
+
+                                        <div id="distinctions" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about <strong>Distinctions</strong></p>
+                                        </div>
+                                    </div>
+                                    <div class="large-6 columns">
+                                        <h4 class="panel-heading">Location
+                                            <a data-dropdown="location" aria-controls="location" aria-expanded="false" class="smaller-fontsize">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </h4>
+
+                                        <a href="#" class="expander smaller-fontsize">Expand list of available locations <i class="fa fa-caret-right"></i></a>
+
+                                        <div class="panel radius fixed-height collapsible hide">
+                                            <ul class="no-bullet hierarchical-facets">
+                                                {% comment %}
+                                                Add options for the hierarchical facets:
+                                                using the MPTT template tags to rebuild the tree:
+                                                https://django-mptt.github.io/django-mptt/templates.html
+                                                {% endcomment %}
+
+                                                {% with treenodes=province_list %}
+                                                {% recursetree treenodes %}
+
+                                                {% with num=province_fdict|lookup:node.name %}
+
+                                                {% if num %}
+                                                {% comment %} parent node {% endcomment %}
+                                                {% if not node.is_leaf_node %}
+                                                <li><span class="label radius pull-right">{{province_fdict|lookup:node.name}}</span>
+
+                                                    <a href="{% select_facet_link 'province' node.name %}"><span class="label radius secondary pull-right">Add all</a>
+                                                    <a class="show expander" href="#"><i class="fa fa-caret-right"></i> {{ node.name }}</a>
+                                                    <ul class="hide collapsible">
+                                                        {{ children }}
+                                                    </ul>
+                                                </li>
+                                                {% else %}
+                                                {% comment %} no children {% endcomment %}
+                                                <li>
+                                                    <a href="{% select_facet_link 'province' node.name %}">
+                                                        <span class="label radius pull-right">{{num}}</span>
+                                                        &nbsp;&nbsp;{{ node.name }}
+                                                    </a>
+                                                </li>
+                                                {% endif %}
+                                                {% endif %}
+                                                {% endwith %}
+                                                {% endrecursetree %}
+                                                {% endwith %}
+                                                {% comment %} closes the with treenodes {% endcomment %}
+                                            </ul>
+                                        </div>
+
+                                        <div id="location" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                            <p>Info about <strong>Location</strong></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row" id="search-results-box">
+    <div class="large-12 columns">
+        <hr>
+        <h2>Search Results
+            <span class="label radius">{{ paginator.count }}</span>
+            <a href="#search" class="less-padding button right edit-search do-not-print">
+                <i class="fa fa-edit"></i>
+                Edit search
+            </a>
+            <ul class="inline-list right export do-not-print">
+                <li>
+                    {% if "order=-date" in request.get_full_path %}
+                    <a class="right" href="?{% url_replace request 'order' 'date' %}">
+                        <i class="fa fa-arrow-down"></i>
+                        <label id="print">Date Desc.</label>
+                    </a>
+                    {% else %}
+                    <a class="right" href="?{% url_replace request 'order' '-date' %}">
+                        <i class="fa fa-arrow-up"></i>
+                        <label id="print">Date Asc.</label>
+                    </a>
+                    {% endif %}
+                </li>
+                <li>
+                    <a class="right" aria-lablledby="#print" id="printme">
+                        <i class="fa fa-print"></i>
+                        <label id="print">Print<br>(Current page)</label>
+                    </a>
+                </li>
+                <li>
+                    <a class="right" aria-lablledby="#pdf" href="/pdf{{request.get_full_path}}">
+                        <i class="fa fa-file-pdf-o"></i>
+                        <label id="pdf">Save PDF<br>(All results)</label>
+                    </a>
+                </li>
+            </ul>
+        </h2>
+        <hr>
+        <ol start="{{ page_obj.start_index }}" class="search-results">
+            {% for result in object_list %}
+            <li>
+                {% include "search/person.html" with doc=result querydict=querydict%}
+            </li>
+            {% empty %}
+            <li>No results found!</li>
+            {% endfor %}
+        </ol>
+
+        {% display_pagination querydict page_obj %}
+    </div>
+</div>
+{% endblock main %}
+
+{% block footerscripts %}
+<script src="{% static 'javascripts/search.js' %}"></script>
+{% endblock %}

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags %}
+{% load ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags  %}
 
 {% block meta_title %}Fasti{% endblock %}
 
@@ -250,13 +250,32 @@
         </h2>
         <hr>
         <ol start="{{ page_obj.start_index }}" class="search-results">
-            {% for result in object_list %}
-            <li>
-                {% include "search/person.html" with doc=result querydict=querydict%}
-            </li>
-            {% empty %}
-            <li>No results found!</li>
+            
+            {% regroup object_list by date_from as year_list %}
+
+            {% for year in year_list %}
+            <li><h2>{{year.grouper}}</h2></li>
+            
+                {% regroup year.list by office as careers %}
+                
+                {% for career in careers %}
+                {% with career.grouper|last as career_name %}
+                <li><h3>{{career_name}}</h3></li>
+                {% endwith %}
+
+                    {% for result in career.list %}
+
+                    <li>
+                        {% include "search/person.html" with doc=result querydict=querydict%}
+                    </li>
+                    {% empty %}
+                    <li>No results found!</li>
+                    {% endfor %}
+
+                {% endfor %}
+
             {% endfor %}
+          
         </ol>
 
         {% display_pagination querydict page_obj %}

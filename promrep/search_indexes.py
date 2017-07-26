@@ -275,7 +275,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
     province = indexes.MultiValueField(faceted=True)
     date = MultiValueIntegerField(faceted=True)
-
+    date_from = indexes.IntegerField()
     person = indexes.CharField(model_attr='person', faceted=True)
     person_id = indexes.IntegerField(model_attr='person__id')
     dprr_id = indexes.CharField(model_attr='person__dprr_id', null=True)
@@ -315,3 +315,12 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         res = range(start, end + 1, 1)
 
         return res
+
+    def prepare_date_from(self, object):
+        """range of dates for the post"""
+        start = PromrepFacetedSearchForm.MIN_DATE
+
+        if object.date_start:
+            start = object.date_start
+
+        return start

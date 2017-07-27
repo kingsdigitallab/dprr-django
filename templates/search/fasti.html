@@ -57,7 +57,7 @@
                                                  <i class="fa fa-info-circle"></i>
                                              </a>
                                          </h4>
-  
+
                                          <div id="career-dates" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
                                              <p>Info about the <strong>Career Dates</strong></p>
                                          </div>
@@ -250,14 +250,14 @@
         </h2>
         <hr>
         <ol start="{{ page_obj.start_index }}" class="search-results">
-            
-            {% regroup object_list by date_from as year_list %}
+
+            {% regroup object_list by date_sort as year_list %}
 
             {% for year in year_list %}
             <li><h2>{{year.grouper}}</h2></li>
-            
+
                 {% regroup year.list by office as careers %}
-                
+
                 {% for career in careers %}
                 {% with career.grouper|last as career_name %}
                 <li><h3>{{career_name}}</h3></li>
@@ -275,7 +275,7 @@
                 {% endfor %}
 
             {% endfor %}
-          
+
         </ol>
 
         {% display_pagination querydict page_obj %}

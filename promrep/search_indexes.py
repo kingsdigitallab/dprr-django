@@ -281,6 +281,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     person = indexes.CharField(model_attr='person', faceted=True)
     person_id = indexes.IntegerField(model_attr='person__id')
     dprr_id = indexes.CharField(model_attr='person__dprr_id', null=True)
+    person_title = indexes.CharField()
 
     def get_model(self):
         return PostAssertion
@@ -326,3 +327,13 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
             start = object.date_start
 
         return start
+
+    def prepare_person_title(self, object):
+        """returns a string with the highest office/date a specific person
+        archived"""
+
+        person = object.person
+        title = "{} {}".format(person.dprr_id, person)
+        if person.highest_office:
+            title = "{} {}".format(title, person.highest_office)
+        return title

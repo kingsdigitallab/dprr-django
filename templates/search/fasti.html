@@ -2,7 +2,14 @@
 {% load ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags  %}
 
 {% block meta_title %}Fasti{% endblock %}
-
+{% block headercss %}
+<style type="text/css">
+.search-results .year:nth-child(n+10)
+{
+    display: none;
+}
+</style>
+{% endblock %}
 {% block main %}
 <div class="row">
     <div class="large-12 columns" id="search">
@@ -253,6 +260,7 @@
             {% regroup object_list by date_sort as year_list %}
 
             {% for year in year_list %}
+            <div class="year">
             <h3>{{ year.grouper }}</h3>
 
                 {% regroup year.list by office as careers %}
@@ -264,12 +272,14 @@
                     <ol class="search-results">
                     {% for result in career.list %}
                     <li>
-                        {% include "search/person.html" with doc=result querydict=querydict%}
+                        <a href="/browse/person/{{result.person_id}}">{{ result.person_title }}</a>
                     </li>
                     {% endfor %}
                     </ol>
                 {% endfor %}
 
+
+            </div>
             {% endfor %}
         </div>
 

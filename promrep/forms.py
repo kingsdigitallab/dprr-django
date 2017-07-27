@@ -405,7 +405,9 @@ class FastiSearchForm(SearchForm):
                 query_string = '{} OR {}'.format(query_string, facet_string)
             else:
                 query_string = facet_string
-        sqs = sqs.narrow(query_string)
+
+        if query_string:
+            sqs = sqs.narrow(query_string)
 
         return sqs
 

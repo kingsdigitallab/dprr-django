@@ -343,11 +343,12 @@ class FastiSearchView(FacetedSearchView):
             queryset = queryset.facet(
                 facet, sort='index', limit=-1, mincount=1)
 
-        # return queryset.order_by('-date')
-        return queryset
+        return queryset.order_by(
+            'date_sort', 'office_sort', 'office_name', 'unknown')
 
     def get_facet_counts(self):
         queryset = SearchQuerySet().models(PostAssertion)
+
         for facet in self.facet_fields:
             queryset = queryset.facet(
                 facet, sort='index', limit=-1, mincount=1)

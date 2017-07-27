@@ -249,34 +249,29 @@
             </ul>
         </h2>
         <hr>
-        <ol start="{{ page_obj.start_index }}" class="search-results">
-
+        <div class="search-results">
             {% regroup object_list by date_sort as year_list %}
 
             {% for year in year_list %}
-            <li><h2>{{year.grouper}}</h2></li>
+            <h3>{{ year.grouper }}</h3>
 
                 {% regroup year.list by office as careers %}
 
                 {% for career in careers %}
                 {% with career.grouper|last as career_name %}
-                <li><h3>{{career_name}}</h3></li>
+                <h4>{{career_name}}</h4>
                 {% endwith %}
-
+                    <ol class="search-results">
                     {% for result in career.list %}
-
                     <li>
                         {% include "search/person.html" with doc=result querydict=querydict%}
                     </li>
-                    {% empty %}
-                    <li>No results found!</li>
                     {% endfor %}
-
+                    </ol>
                 {% endfor %}
 
             {% endfor %}
-
-        </ol>
+        </div>
 
         {% display_pagination querydict page_obj %}
     </div>

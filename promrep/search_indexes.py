@@ -270,12 +270,14 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
 
     office = indexes.FacetMultiValueField()
+    office_name = indexes.CharField(model_attr='office__name')
+    office_sort = indexes.IntegerField(model_attr='office__tree_id')
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
     unknown = indexes.BooleanField(model_attr='unknown', faceted=True)
 
     province = indexes.MultiValueField(faceted=True)
     date = MultiValueIntegerField(faceted=True)
-    date_from = indexes.IntegerField()
+    date_sort = indexes.IntegerField()
     person = indexes.CharField(model_attr='person', faceted=True)
     person_id = indexes.IntegerField(model_attr='person__id')
     dprr_id = indexes.CharField(model_attr='person__dprr_id', null=True)
@@ -316,7 +318,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
         return res
 
-    def prepare_date_from(self, object):
+    def prepare_date_sort(self, object):
         """range of dates for the post"""
         start = PromrepFacetedSearchForm.MIN_DATE
 

@@ -266,13 +266,16 @@
                 {% regroup year.list by office as careers %}
 
                 {% for career in careers %}
-                {% with career.grouper|last as career_name %}
-                <h4>{{career_name}}</h4>
-                {% endwith %}
+                    {% with career.grouper|last as career_name %}
+                    <h4>{{career_name}}</h4>
+                    {% endwith %}
+
                     <ol class="search-results">
                     {% for result in career.list %}
                     <li>
-                        <a href="/browse/person/{{result.person_id}}">{{ result.person_title }}</a>
+                        <h4>
+                        <a href="/browse/person/{{ result.person_id }}">{{ result.person_title }}</a>
+                        </h4>
                     </li>
                     {% endfor %}
                     </ol>

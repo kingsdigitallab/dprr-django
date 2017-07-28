@@ -331,6 +331,7 @@ class SenateSearchView(SearchView):
 
 
 class FastiSearchView(FacetedSearchView):
+    autocomplete_facets = PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS
     facet_fields = ['office', 'province']
     form_class = FastiSearchForm
     queryset = SearchQuerySet().models(PostAssertion)
@@ -349,7 +350,7 @@ class FastiSearchView(FacetedSearchView):
             'date_sort', 'office_sort', 'office_name', 'unknown')
 
     def _apply_facets_to_queryset(self, queryset):
-        for facet in self.facet_fields:
+        for facet in self.autocomplete_facets + self.facet_fields:
             queryset = queryset.facet(
                 facet, sort='index', limit=-1, mincount=1)
 
@@ -372,6 +373,21 @@ class FastiSearchView(FacetedSearchView):
             context['selected_facets'] = qs.getlist('selected_facets')
 
         context['querydict'] = qs.copy()
+
+        # used to generate the lists for the autocomplete dictionary
+        context['autocomplete_facets'] = self.autocomplete_facets
+
+        for afacet in context['autocomplete_facets']:
+            if self.request.GET.get(afacet):
+                qs = self.request.GET.copy()
+                qs.pop(afacet)
+
+                url = reverse('haystack_search')
+
+                if len(qs):
+                    url = '?{0}'.format(qs.urlencode())
+
+                context[afacet] = (url, self.request.GET.get(afacet))
 
         office_lookups = s.LOOKUPS['offices']
 

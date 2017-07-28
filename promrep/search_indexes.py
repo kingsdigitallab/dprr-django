@@ -283,6 +283,18 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     dprr_id = indexes.CharField(model_attr='person__dprr_id', null=True)
     person_title = indexes.CharField()
 
+    praenomen = indexes.MultiValueField(faceted=True, null=True)
+    nomen = indexes.MultiValueField(faceted=True, null=True)
+    f = indexes.MultiValueField(
+        model_attr='person__f', faceted=True, null=True)
+    n = indexes.MultiValueField(
+        model_attr='person__n', faceted=True, null=True)
+    re_number = indexes.CharField(model_attr='person__re_number',
+                                  faceted=True, null=True)
+    cognomen = indexes.MultiValueField(faceted=True, null=True)
+    other_names = indexes.MultiValueField(faceted=True, null=True)
+    tribe = indexes.MultiValueField(faceted=True)
+
     def get_model(self):
         return PostAssertion
 
@@ -337,3 +349,41 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         if person.highest_office:
             title = "{} {}".format(title, person.highest_office)
         return title
+
+    def prepare_praenomen(self, object):
+        if not object.person.praenomen:
+            return None
+
+        praenomen = object.person.praenomen
+
+        if praenomen.has_alternate_name():
+            return [praenomen.name, praenomen.alternate_name]
+
+        return praenomen.name
+
+    def prepare_nomen(self, object):
+        """The list of nomens to filter on should not show parentheses or
+        brackets."""
+
+        nomen = object.person.nomen.strip()
+        nomen = self._clean_name(nomen)
+
+        return object.person._split_name(nomen)
+
+    def _clean_name(self, value):
+        return re.sub(r'[\?\[\]\(\)]', '', value)
+
+    def prepare_cognomen(self, object):
+        """The list of cognomens to filter on should not show parentheses or
+        brackets."""
+
+        cognomen = object.person.cognomen.strip()
+        cognomen = self._clean_name(cognomen)
+
+        return object.person._split_name(cognomen)
+
+    def prepare_other_names(self, object):
+        return object.person._split_name(object.person.other_names_plain)
+
+    def prepare_tribe(self, object):
+        return list(set(object.person.tribes.values_list('name', flat=True)))

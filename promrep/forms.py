@@ -363,6 +363,26 @@ class FastiSearchForm(SearchForm):
     MIN_DATE_FORM = -1 * MAX_DATE
     MAX_DATE_FORM = -1 * MIN_DATE
 
+    # class autocomplete is used by the search.js script to select the fields
+    # the name of the fields has to match the facet names defined in
+    #  views.py
+    praenomen = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Praenomen'}))
+    nomen = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Nomen'}))
+    cognomen = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Cognomen'}))
+    re_number = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'title': 'RE'}))
+    n = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Grandfather'}))
+    f = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Father'}))
+    other_names = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Additional Cognomina'}))
+    tribe = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Tribe'}))
+
     date_from = forms.IntegerField(
         required=False, max_value=MAX_DATE_FORM, min_value=MIN_DATE_FORM)
     date_to = forms.IntegerField(
@@ -396,6 +416,11 @@ class FastiSearchForm(SearchForm):
                         data.get('date_from', self.MIN_DATE) or self.MIN_DATE,
                         data.get('date_to', self.MAX_DATE) or self.MAX_DATE)
                 )
+
+        for field in PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS:
+            if data.get(field):
+                sqs = sqs.narrow('{}:{}'.format(
+                                 field, data.get(field)))
 
         query_string = None
         for facet in self.selected_facets:

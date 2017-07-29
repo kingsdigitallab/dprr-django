@@ -63,23 +63,17 @@ class PromrepFacetedSearchView(FacetedSearchView):
         if self.request.GET.getlist('selected_facets'):
             context['selected_facets'] = self.request.GET.getlist(
                 'selected_facets')
-            # Find all selected offices for later use in search results
+
+            # stores all selected offices for later use in search results
             selected_offices = []
-            for facet in self.request.GET.getlist('selected_facets'):
-                if 'offices' in facet:
-                    office_name = facet.replace('offices:', '')
+            for facet in context['selected_facets']:
+                if 'office' in facet:
+                    office_name = facet.split(':')[1]
                     selected_offices.append(office_name)
-                    # Add Children to the list as well
                     office = Office.objects.get(name=office_name)
-                    for child_office in office.get_descendants():
-                        selected_offices.append(child_office.name)
-                elif 'office' in facet:
-                    office_name = facet.replace('office:', '')
-                    selected_offices.append(office_name)
-                    # Add Children to the list as well
-                    office = Office.objects.get(name=office_name)
-                    for child_office in office.get_descendants():
-                        selected_offices.append(child_office.name)
+                    selected_offices.extend(
+                        [o.name for o in office.get_descendants()])
+
             context['selected_offices'] = selected_offices
 
         qs = self.request.GET.copy()
@@ -440,7 +434,9 @@ class FastiSearchView(FacetedSearchView):
         except:
             pass
 
-        context.update({'facets': self.get_facet_counts()})
+        # context.update({'facets': self.get_facet_counts()})
+        if 'offices' not in context['facets']['fields']:
+            context.update({'facets': self.get_queryset().facet_counts()})
 
         context['office_fdict'] = dict(context['facets']['fields']['office'])
 

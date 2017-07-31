@@ -226,11 +226,8 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_province(self, object):
         # hierarchical facet
-
-        post_assertion_list = PostAssertion.objects.filter(person=object)
-
         return [pp.name
-                for pa in post_assertion_list.all()
+                for pa in object.post_assertions.all()
                 for p in pa.provinces.all()
                 for pp in p.get_ancestors(include_self=True)
                 ]

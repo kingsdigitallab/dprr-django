@@ -279,27 +279,27 @@
 
             {% for year in year_list %}
             <div class="year">
-                <h3>{{ year.grouper }}</h3>
+                <h3><i class="fa fa-calendar grayed-out"></i> <strong>{{ year.grouper }}</strong></h3>
 
-                {% regroup year.list by office as careers %}
+                <div class="group">
+                    {% regroup year.list by office as careers %}
 
-                {% for career in careers %}
-                {% with career.grouper|last as career_name %}
-                <h4>{{career_name}}</h4>
-                {% endwith %}
+                    {% for career in careers %}
+                    {% with career.grouper|last as career_name %}
+                    <h4>{{career_name}}</h4>
+                    {% endwith %}
 
-                <ol class="search-results">
-                    {% for result in career.list %}
-                    <li>
-                        <h4>
-                            <a href="/browse/person/{{ result.person_id }}">{{ result.person_title }}</a>
-                        </h4>
-                    </li>
+                    <ol class="search-results">
+                        {% for result in career.list %}
+                        <li>
+                            <h4>
+                                <a href="/browse/person/{{ result.person_id }}">{{ result.person_title }}</a>
+                            </h4>
+                        </li>
+                        {% endfor %}
+                    </ol>
                     {% endfor %}
-                </ol>
-                {% endfor %}
-
-
+                </div>
             </div>
             {% endfor %}
         </div>

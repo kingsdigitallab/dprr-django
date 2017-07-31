@@ -101,6 +101,12 @@ ul {
     }
 }
 
+.group {
+    border-left: 1px dotted $jumbo;
+    margin-left: rem-calc(8);
+    padding-left: rem-calc(16);
+}
+
 .hierarchical-facets {
     a {
         margin: 0;

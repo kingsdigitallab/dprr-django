@@ -187,6 +187,12 @@ ul {
     font-style: italic;
 }
 
+.year {
+    h3 i {
+        color: scale-color($jumbo, $lightness: 30%);
+    }
+}
+
 /* Colours */
 
 .gray {

@@ -332,6 +332,8 @@ class Person(TimeStampedModel):
     highest_office = models.CharField(max_length=1024, blank=True, null=True)
     highest_office_edited = models.BooleanField(default=False)
 
+    uncertain = models.BooleanField(default=False)
+
     class Meta:
         ordering = ['id', ]
 

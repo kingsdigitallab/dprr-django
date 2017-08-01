@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
 class IndexPage(BaseIndexPage):
     search_name = 'Index Page'
     subpage_types = ['IndexPage', 'RichTextPage', 'BlogIndexPage']
+    icon = models.CharField(max_length=24, help_text='Icon', null=True)
 
 
 class LandingPage(BaseIndexPage):
@@ -44,6 +45,7 @@ class IndexPageAttachment(Orderable, AbstractAttachment):
 
 IndexPage.content_panels = [
     FieldPanel('title', classname='full title'),
+    FieldPanel('icon', classname='full'),
     FieldPanel('introduction', classname='full'),
     InlinePanel('related_links', label='Related links'),
     InlinePanel('attachments', label='Attachments')

@@ -1,23 +1,22 @@
-#!/usr/bin/env python
+#!/usr / bin / env python
 # -*- coding: utf-8 -*-
 
-from fabric.api import local, task, prefix, run, sudo, env, require, cd, quiet
-from fabric.colors import green, yellow
-from fabric.contrib import django
-from functools import wraps
-import sys
 import os.path
-
+import sys
+from functools import wraps
 from getpass import getuser
 from socket import gethostname
 
+from django.conf import settings  # noqa
+from fabric.api import cd, env, local, prefix, quiet, require, run, sudo, task
+from fabric.colors import green, yellow
+from fabric.contrib import django
 
 # put project directory in path
 project_root = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(project_root)
 
 django.project('dprr')
-from django.conf import settings  # noqa
 
 REPOSITORY = 'git@github.com:kingsdigitallab/dprr-django.git'
 
@@ -150,6 +149,7 @@ def setup_environment():
 def deploy(branch=None, index='yes'):
     update(branch)
     install_requirements()
+    # migrate also creates the cache table
     migrate()
     own_django_log()
     collect_static()
@@ -197,6 +197,7 @@ def migrate(app=None):
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 
     with cd(env.path), prefix(env.within_virtualenv):
+        run('./manage.py createcachetable')
         run('./manage.py migrate {}'.format(app if app else ''))
 
 

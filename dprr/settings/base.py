@@ -34,18 +34,10 @@ ALLOWED_HOSTS = []
 
 # https://docs.djangoproject.com/en/1.6/ref/settings/#caches
 # https://docs.djangoproject.com/en/dev/topics/cache/
-# http://redis.io/topics/lru-cache
-# http://niwibe.github.io/django-redis/
-CACHE_REDIS_DATABASE = '0'
-
 CACHES = {
     'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/' + CACHE_REDIS_DATABASE,
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'IGNORE_EXCEPTIONS': True
-        }
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'dprr_cache',
     }
 }
 
@@ -140,7 +132,9 @@ LOGGING = {
 }
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

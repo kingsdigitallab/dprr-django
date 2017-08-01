@@ -112,7 +112,7 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     life_date_types = indexes.MultiValueField(faceted=True)
 
     offices = indexes.FacetMultiValueField()
-    province = indexes.FacetMultiValueField()
+    province = indexes.MultiValueField(faceted=True)
     highest_office = indexes.CharField(faceted=False)
 
     def get_model(self):

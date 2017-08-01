@@ -1,5 +1,4 @@
 from django.conf.urls import url
-from django.views.decorators.cache import cache_page
 from promrep.views import (FastiSearchView, PersonDetailView,
                            PromrepFacetedSearchView, SenateSearchView,
                            get_relationships_network)
@@ -11,6 +10,5 @@ urlpatterns = [
     url(r'^person/(?P<pk>\d+)/network/$', get_relationships_network,
         name='person-network'),
     url(r'^senate/$', SenateSearchView.as_view(), name='senate_search'),
-    url(r'^fasti/$', cache_page(60 * 15)
-        (FastiSearchView.as_view()), name='fasti_search')
+    url(r'^fasti/$', FastiSearchView.as_view(), name='fasti_search')
 ]

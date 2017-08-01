@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags  %}
+{% load cache ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags  %}
 
 {% block meta_title %}Fasti{% endblock %}
 
@@ -270,6 +270,7 @@
             </ul>
         </h2>
         <hr>
+        {% cache 60 * 15 fasti_search_results querydict %}
         <div class="search-results">
             {% regroup object_list by date_sort as year_list %}
 
@@ -299,6 +300,7 @@
             </div>
             {% endfor %}
         </div>
+        {% endcache %}
 
         <div class="jplist-panel pagination-centred">
           <!-- pagination control -->

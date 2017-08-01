@@ -54,6 +54,18 @@ ul {
     text-transform: capitalize; 
 }
 
+.choices {
+    background: scale-color($sand, $lightness: 30%);
+    
+    .icon {
+        font-size: 3rem;
+    }
+
+    .text {
+        font-size: 1.5rem;
+    }
+}
+
 .content-area {
     background: $white;
     padding-top: 1rem;

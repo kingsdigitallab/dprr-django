@@ -5,16 +5,19 @@
 <section class="main">
     <div class="row">
         <div class="large-12 columns">
-            <header><h1>{{self.title}}</h1></header>
+            <header><h1>{{ self.title }}</h1></header>
         </div>
     </div>
 
     <div class="row">
         {% for page in self.get_children %}
-        <div class="large-4 columns">
+        <div class="medium-4 columns" data-equalizer>
         <!-- These will hopefully be pretty blocks! We expect
              3 in total "Search People", "Search Senates" and "Fasti" -->
-            <a href="{% pageurl page %}">{{page.title}}</a>
+            <div class="panel choices" data-equlizer-watch>
+                <a href="{% pageurl page %}" class="icon">{{ page.icon }}</a>
+                <a href="{% pageurl page %}" class="text">{{ page.title }}</a>
+            </div>
         </div>
         {% endfor %}
     </div>

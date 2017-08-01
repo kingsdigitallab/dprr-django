@@ -270,7 +270,7 @@
             </ul>
         </h2>
         <hr>
-        {% cache 60 * 15 fasti_search_results querydict %}
+        {% cache 600 * 600 fasti_search_results querydict %}
         <div class="search-results">
             {% regroup object_list by date_sort as year_list %}
 
@@ -304,7 +304,7 @@
 
         <div class="jplist-panel pagination-centred">
           <!-- pagination control -->
-          <div class="jplist-pagination pagination" data-control-type="pagination" data-control-name="paging" data-control-action="paging" data-items-per-page="10" data-control-animate-to-top="true" data-jump-to-start="true" data-mode="google-like"></div>
+          <div class="jplist-pagination pagination" data-control-type="pagination" data-control-name="paging" data-control-action="paging" data-items-per-page="10" data-control-animate-to-top="true" data-jump-to-start="true" data-control-storage="false" data-mode="google-like"></div>
       </div>
   </div>
 </div>
@@ -338,8 +338,6 @@
         itemPath: '.year',
         panelPath: '.jplist-panel',
         animateToTop: '#search-results-box',
-        storage: 'localstorage',
-        storageName: 'dppr-storage'
   });
  });
 </script>

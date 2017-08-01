@@ -326,6 +326,8 @@ class PostAssertionAdmin(admin.ModelAdmin):
     list_display = ('id',
                     'person',
                     'office',
+                    'uncertain',
+                    'unknown',
                     'date_start',
                     'print_provinces',
                     'date_end',
@@ -335,7 +337,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
                     'created',
                     'modified')
 
-    list_filter = ('office', 'secondary_source', )
+    list_filter = ('office', 'secondary_source', 'uncertain', 'unknown',)
 
     readonly_fields = ('id', )
 
@@ -347,7 +349,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
                   'person',
                   'office',
                   'secondary_source',
-                  ('uncertain'),
+                  ('uncertain', 'unknown',),
                   ('original_text', 'office_xref'),
               ),
               }
@@ -445,7 +447,7 @@ class PostAssertionInline(admin.StackedInline):
 
     fields = (('id', 'review_flag', ),
               ('office',),
-              ('uncertain', ),
+              ('uncertain', 'unknown',),
               ('secondary_source', ),
               ('original_text', 'office_xref'),
               ('date_display_text',),

@@ -549,6 +549,7 @@ class PersonAdmin(admin.ModelAdmin):
          {
              'classes': ('grp-collapse grp-open',),
              'fields': (
+                 ('uncertain',),
                  ('sex',),
                  ('praenomen', 'praenomen_uncertain'),
                  'alt_praenomen',
@@ -598,6 +599,7 @@ class PersonAdmin(admin.ModelAdmin):
         'id',
         'dprr_id',
         'url_to_edit_person',
+        'uncertain',
         'review_flag',
         'updated_by',
         'modified',
@@ -610,8 +612,8 @@ class PersonAdmin(admin.ModelAdmin):
                      'alt_praenomen__abbrev', 'alt_praenomen__name',
                      'other_names', 're_number', ]
 
-    list_filter = ('nomen', 'review_flag', REUpdatedListFilter, 'patrician',
-                   'novus', 'nobilis', )
+    list_filter = ('nomen', 'uncertain', 'review_flag', REUpdatedListFilter,
+                   'patrician', 'novus', 'nobilis', )
 
     inlines = (
         DateInformationInline, GensAssertionInline, TribeAssertionInline,

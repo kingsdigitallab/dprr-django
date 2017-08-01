@@ -1,0 +1,31 @@
+{% extends "wagtailbase/base.html" %}
+{% load wagtailcore_tags wagtailbase_tags %}
+
+{% block main %}
+<section class="main">
+    <div class="row">
+        <div class="large-12 columns">
+            <header><h1>{{self.title}}</h1></header>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for page in self.get_children %}
+        <div class="large-4 columns">
+        <!-- These will hopefully be pretty blocks! We expect
+             3 in total "Search People", "Search Senates" and "Fasti" -->
+            <a href="{% pageurl page %}">{{page.title}}</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% block related_links %}
+{% include "wagtailbase/includes/related_links.html" with related_links=self.related_links.all title="Related links" %}
+{% endblock %}
+
+{% block attachments %}
+{% include "wagtailbase/includes/attachments.html" with attachments=self.attachments.all title="Attachments" %}
+{% endblock %}
+
+{% endblock %}

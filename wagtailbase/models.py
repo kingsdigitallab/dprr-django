@@ -27,6 +27,11 @@ class IndexPage(BaseIndexPage):
     subpage_types = ['IndexPage', 'RichTextPage', 'BlogIndexPage']
 
 
+class LandingPage(BaseIndexPage):
+    search_name = 'Landing Page'
+    subpage_types = ['IndexPage']
+
+
 class IndexPageRelatedLink(Orderable, AbstractRelatedLink):
     page = ParentalKey('wagtailbase.IndexPage',
                        related_name='related_links')
@@ -79,7 +84,8 @@ RichTextPage.promote_panels = [
 
 class HomePage(BaseRichTextPage):
     search_name = 'Home Page'
-    subpage_types = ['IndexPage', 'RichTextPage', 'BlogIndexPage']
+    subpage_types = ['IndexPage', 'RichTextPage', 'BlogIndexPage',
+                     'LandingPage']
 
     class Meta:
         verbose_name = 'Homepage'

@@ -4,9 +4,7 @@ from django.conf import settings as s
 from django.db.models import Q
 from haystack import indexes
 from promrep.forms import PromrepFacetedSearchForm, SenateSearchForm
-from promrep.models import (
-    Office, PostAssertion, StatusAssertion, Person  # ,RelationshipAssertion
-)
+from promrep.models import Office, Person, PostAssertion, StatusAssertion
 
 
 class MultiValueIntegerField(indexes.MultiValueField):
@@ -87,48 +85,42 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
 
     praenomen = indexes.MultiValueField(faceted=True, null=True)
     nomen = indexes.MultiValueField(faceted=True, null=True)
-
+    re_number = indexes.CharField(model_attr='re_number',
+                                  faceted=True, null=True)
     f = indexes.MultiValueField(model_attr='f',
                                 faceted=True, null=True)
     n = indexes.MultiValueField(model_attr='n',
                                 faceted=True, null=True)
-
-    re_number = indexes.CharField(model_attr='re_number',
-                                  faceted=True, null=True)
-
+    tribe = indexes.MultiValueField(faceted=True)
     cognomen = indexes.MultiValueField(faceted=True, null=True)
-
     other_names = indexes.MultiValueField(faceted=True, null=True)
+
+    era = MultiValueIntegerField(faceted=True)
+    era_order = indexes.IntegerField()
 
     gender = indexes.CharField(
         model_attr='sex__name', faceted=True, null=True)
+
     patrician = indexes.BooleanField(
         model_attr='patrician', default=False, faceted=True)
     novus = indexes.BooleanField(
         model_attr='novus', default=False, faceted=True)
     nobilis = indexes.BooleanField(
         model_attr='nobilis', default=False, faceted=True)
+    eques = indexes.BooleanField(faceted=True, default=False)
 
-    tribe = indexes.MultiValueField(faceted=True)
-
-    era = MultiValueIntegerField(faceted=True)
-    era_order = indexes.IntegerField()
+    life_date_types = indexes.MultiValueField(faceted=True)
 
     offices = indexes.FacetMultiValueField()
     province = indexes.FacetMultiValueField()
     highest_office = indexes.CharField(faceted=False)
-    life_date_types = indexes.MultiValueField(faceted=True)
-    eques = indexes.BooleanField(faceted=True, default=False)
-
-    def prepare_eques(self, object):
-        sa_list = StatusAssertion.objects.filter(person=object)
-        for sa in sa_list.all():
-            if sa.status.name.lower() == s.LOOKUPS['status']['eques']:
-                return True
-        return False
 
     def get_model(self):
         return Person
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()
 
     def prepare_praenomen(self, object):
         if not object.praenomen:
@@ -144,7 +136,6 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare_nomen(self, object):
         """The list of nomens to filter on should not show parentheses or
         brackets."""
-
         nomen = object.nomen.strip()
         nomen = self._clean_name(nomen)
 
@@ -152,6 +143,9 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
 
     def _clean_name(self, value):
         return re.sub(r'[\?\[\]\(\)]', '', value)
+
+    def prepare_tribe(self, object):
+        return list(set(object.tribes.values_list('name', flat=True)))
 
     def prepare_cognomen(self, object):
         """The list of cognomens to filter on should not show parentheses or
@@ -164,9 +158,6 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_other_names(self, object):
         return object._split_name(object.other_names_plain)
-
-    def prepare_tribe(self, object):
-        return list(set(object.tribes.values_list('name', flat=True)))
 
     def prepare_era(self, object):
         """range of dates for the era"""
@@ -184,37 +175,6 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
 
         return res
 
-    def prepare_offices(self, object):
-        # we don't want any senator post assertions
-        # these should all be recorded as Status assertions instead
-        # see: https://jira.dighum.kcl.ac.uk/browse/DPRR-256
-
-        olist = object.post_assertions
-
-        # This is how it was done before... not going to mess with it.
-        try:
-            senator_offices = Office.objects.get(
-                name='senator').get_descendants(include_self=True)
-            sen_q = Q(office__in=senator_offices)
-
-            if sen_q:
-                olist = olist.exclude(sen_q)
-        except:
-            pass
-
-        olist = olist.values_list('office__id', flat=True)
-
-        # list of Office objects
-        olist = [Office.objects.get(id=o) for o in list(set(olist))]
-
-        return [o.name
-                for off in olist
-                for o in off.get_ancestors(include_self=True)]
-
-    def index_queryset(self, using=None):
-        """Used when the entire index for model is updated."""
-        return self.get_model().objects.all()
-
     def prepare_era_order(self, object):
         person = object
         start = PromrepFacetedSearchForm.MIN_DATE
@@ -224,13 +184,12 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
 
         return start
 
-    def prepare_province(self, object):
-        # hierarchical facet
-        return [pp.name
-                for pa in object.post_assertions.all()
-                for p in pa.provinces.all()
-                for pp in p.get_ancestors(include_self=True)
-                ]
+    def prepare_eques(self, object):
+        sa_list = StatusAssertion.objects.filter(person=object)
+        for sa in sa_list.all():
+            if sa.status.name.lower() == s.LOOKUPS['status']['eques']:
+                return True
+        return False
 
     def prepare_life_date_types(self, object):
         date_types = ['birth', 'exiled', 'restored', 'proscribed',
@@ -261,6 +220,40 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
                 life_dates.append(relationship_types[relationship])
 
         return life_dates
+
+    def prepare_offices(self, object):
+        # we don't want any senator post assertions
+        # these should all be recorded as Status assertions instead
+        # see: https://jira.dighum.kcl.ac.uk/browse/DPRR-256
+        olist = object.post_assertions
+
+        # This is how it was done before... not going to mess with it.
+        try:
+            senator_offices = Office.objects.get(
+                name='senator').get_descendants(include_self=True)
+            sen_q = Q(office__in=senator_offices)
+
+            if sen_q:
+                olist = olist.exclude(sen_q)
+        except:
+            pass
+
+        olist = olist.values_list('office__id', flat=True)
+
+        # list of Office objects
+        olist = [Office.objects.get(id=o) for o in list(set(olist))]
+
+        return [o.name
+                for off in olist
+                for o in off.get_ancestors(include_self=True)]
+
+    def prepare_province(self, object):
+        # hierarchical facet
+        return [pp.name
+                for pa in object.post_assertions.all()
+                for p in pa.provinces.all()
+                for pp in p.get_ancestors(include_self=True)
+                ]
 
 
 class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):

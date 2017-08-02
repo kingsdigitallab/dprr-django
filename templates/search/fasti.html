@@ -5,8 +5,8 @@
 
 {% block headercss %}
 <link rel="stylesheet" href="{% static 'vendor/EasyAutocomplete/dist/easy-autocomplete.min.css' %}">
-<link href="{% static 'vendor/jplist/dist/css/jplist.core.min.css' %}" rel="stylesheet" type="text/css" />
-<link href="{% static 'vendor/jplist/dist/css/jplist.pagination-bundle.min.css' %}" rel="stylesheet" type="text/css" />
+<link href="{% static 'vendor/jplist/dist/css/jplist.core.min.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'vendor/jplist/dist/css/jplist.pagination-bundle.min.css' %}" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block main %}
@@ -301,11 +301,10 @@
             {% endfor %}
         </div>
         {% endcache %}
-
         <div class="jplist-panel pagination-centred">
           <!-- pagination control -->
           <div class="jplist-pagination pagination" data-control-type="pagination" data-control-name="paging" data-control-action="paging" data-items-per-page="10" data-control-animate-to-top="true" data-jump-to-start="true" data-control-storage="false" data-mode="google-like"></div>
-      </div>
+        </div>
   </div>
 </div>
 {% endblock main %}

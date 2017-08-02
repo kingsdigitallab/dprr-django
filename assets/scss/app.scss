@@ -551,6 +551,17 @@ h3.quick-home {
     margin-bottom: 0 !important;
 }
 
+// Pagination (Fasti)
+
+.pagination-fasti {
+    .jplist-current {
+        background: #607a7a;
+        color: #fff;
+        cursor: default;
+        font-weight: bold;
+    }
+}
+
 .search-box {
     background: $secondary-color;
     border: 1px solid scale-color($primary-color, $lightness: 70%);

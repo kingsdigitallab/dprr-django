@@ -554,11 +554,29 @@ h3.quick-home {
 // Pagination (Fasti)
 
 .pagination-fasti {
+    margin-bottom: 1rem;
+
+    button {
+        color: #999 !important;
+        font-size: 0.75rem !important;
+        height: 1.5rem !important;
+        margin-left: 0.3125rem !important;
+        border-radius: 3px !important;
+        border: none !important;
+        transition: background-color 300ms ease-out !important;
+        background: $white !important;
+        display: block !important;
+        font-size: 1em !important;
+        padding: 0.0625rem 0.625rem 0.0625rem !important;
+        line-height: 1rem !important;
+    }
+
     .jplist-current {
-        background: #607a7a;
-        color: #fff;
+        background: $primary-color !important;
+        color: #fff !important;
         cursor: default;
         font-weight: bold;
+        text-shadow: none;
     }
 }
 

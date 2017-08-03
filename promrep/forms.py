@@ -417,10 +417,10 @@ class FastiSearchForm(SearchForm):
                         data.get('date_to', self.MAX_DATE) or self.MAX_DATE)
                 )
 
-        for field in PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS:
-            if data.get(field):
-                sqs = sqs.narrow('{}:{}'.format(
-                                 field, data.get(field)))
+            for field in PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS:
+                if data.get(field):
+                    sqs = sqs.narrow('{}:{}'.format(
+                                     field, data.get(field)))
 
         query_string = None
         for facet in self.selected_facets:

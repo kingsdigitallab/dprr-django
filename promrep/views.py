@@ -39,8 +39,6 @@ class PromrepFacetedSearchView(FacetedSearchView):
             return self.paginate_by
 
     def get_queryset(self):
-
-        # selected_facets = self.request.GET.getlist('selected_facets')
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
 
         all_facets = self.autocomplete_facets + self.facet_fields
@@ -354,6 +352,24 @@ class FastiSearchView(FacetedSearchView):
         queryset = SearchQuerySet().models(PostAssertion)
         queryset = self._apply_facets_to_queryset(queryset)
 
+        params = self.request.GET
+
+        if 'date_from' in params or 'date_to' in params:
+            queryset = queryset.narrow(
+                'date:[{} TO {}]'.format(
+                    params['date_from']
+                    if 'date_from' in params
+                    else PromrepFacetedSearchForm.MIN_DATE,
+                    params['date_to']
+                    if 'date_to' in params
+                    else PromrepFacetedSearchForm.MAX_DATE
+                ))
+
+        for field in PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS:
+            if field in params:
+                queryset = queryset.narrow(
+                    '{}:{}'.format(field, params[field]))
+
         return queryset.facet_counts()
 
     def get_paginate_by(self, queryset):
@@ -434,9 +450,7 @@ class FastiSearchView(FacetedSearchView):
         except:
             pass
 
-        # context.update({'facets': self.get_facet_counts()})
-        if 'offices' not in context['facets']['fields']:
-            context.update({'facets': self.get_queryset().facet_counts()})
+        context.update({'facets': self.get_facet_counts()})
 
         context['office_fdict'] = dict(context['facets']['fields']['office'])
 

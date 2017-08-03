@@ -13,7 +13,6 @@ ddhldap_register_signal_handlers()
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^browse/$', include(wagtail_urls)),
     url(r'^browse/', include(promrep_urls)),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', include(admin.site.urls)),

@@ -354,3 +354,100 @@ class SenateSearchForm(SearchForm):
             senate_date = self.INITIAL_DATE
 
         return senate_date
+
+
+class FastiSearchForm(SearchForm):
+    MIN_DATE = -509
+    MAX_DATE = -31
+
+    MIN_DATE_FORM = -1 * MAX_DATE
+    MAX_DATE_FORM = -1 * MIN_DATE
+
+    # class autocomplete is used by the search.js script to select the fields
+    # the name of the fields has to match the facet names defined in
+    #  views.py
+    praenomen = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Praenomen'}))
+    nomen = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Nomen'}))
+    cognomen = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Cognomen'}))
+    re_number = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'title': 'RE'}))
+    n = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Grandfather'}))
+    f = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Father'}))
+    other_names = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Additional Cognomina'}))
+    tribe = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'autocomplete', 'title': 'Tribe'}))
+
+    date_from = forms.IntegerField(
+        required=False, max_value=MAX_DATE_FORM, min_value=MIN_DATE_FORM)
+    date_to = forms.IntegerField(
+        required=False, max_value=MAX_DATE_FORM, min_value=MIN_DATE_FORM)
+
+    def __init__(self, *args, **kwargs):
+        self.selected_facets = kwargs.pop("selected_facets", [])
+        super(FastiSearchForm, self).__init__(*args, **kwargs)
+
+    def no_query_found(self):
+        """Determines the behaviour when no query was found; returns all the
+        results."""
+        return self.searchqueryset.all()
+
+    def search(self):
+        sqs = super(FastiSearchForm, self).search()
+
+        if not self.is_valid():
+            return self.no_query_found()
+
+        # Narrow the search by the ranges of dates
+        # Requires, of course, that the form be bound.
+        if self.is_bound:
+            data = self.cleaned_data
+            date_from = data.get('date_from', None)
+            date_to = data.get('date_to', None)
+
+            if date_from or date_to:
+                sqs = sqs.narrow(
+                    'date:[{} TO {}]'.format(
+                        data.get('date_from', self.MIN_DATE) or self.MIN_DATE,
+                        data.get('date_to', self.MAX_DATE) or self.MAX_DATE)
+                )
+
+            for field in PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS:
+                if data.get(field):
+                    sqs = sqs.narrow('{}:{}'.format(
+                                     field, data.get(field)))
+
+        query_string = None
+        for facet in self.selected_facets:
+            facet_parts = facet.split(':')
+            facet_string = '{}:"{}"'.format(facet_parts[0], facet_parts[1])
+            if query_string:
+                query_string = '{} OR {}'.format(query_string, facet_string)
+            else:
+                query_string = facet_string
+
+        if query_string:
+            sqs = sqs.narrow(query_string)
+
+        return sqs
+
+    def clean_date_from(self):
+        date_from = self.cleaned_data['date_from']
+
+        if date_from:
+            date_from = -1 * date_from
+
+        return date_from
+
+    def clean_date_to(self):
+        date_to = self.cleaned_data['date_to']
+
+        if date_to:
+            date_to = -1 * date_to
+
+        return date_to

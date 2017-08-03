@@ -774,6 +774,7 @@ class PostAssertion(TimeStampedModel):
     office_xref = models.CharField(max_length=1024, blank=True)
 
     uncertain = models.BooleanField(verbose_name='Uncertain', default=False)
+    unknown = models.BooleanField(default=False)
 
     notes = models.ManyToManyField(PostAssertionNote, blank=True)
 

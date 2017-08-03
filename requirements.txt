@@ -13,7 +13,6 @@ django-grappelli
 django-model-utils
 django-mptt
 django-mptt-admin
-django-redis
 git+git://github.com/kingsdigitallab/django-haystack.git
 lxml
 psycopg2

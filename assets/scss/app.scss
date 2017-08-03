@@ -113,6 +113,12 @@ ul {
     }
 }
 
+.group {
+    border-left: 1px dotted $jumbo;
+    margin-left: rem-calc(8);
+    padding-left: rem-calc(16);
+}
+
 .hierarchical-facets {
     a {
         margin: 0;
@@ -191,6 +197,12 @@ ul {
 .uncertain {
     color: $jumbo;
     font-style: italic;
+}
+
+.year {
+    h3 i {
+        color: scale-color($jumbo, $lightness: 30%);
+    }
 }
 
 /* Colours */
@@ -537,6 +549,35 @@ h3.quick-home {
     border: 1px solid scale-color($primary-color, $lightness: 70%) !important;
     border-bottom: none !important;
     margin-bottom: 0 !important;
+}
+
+// Pagination (Fasti)
+
+.pagination-fasti {
+    margin-bottom: 1rem;
+
+    button {
+        color: #999 !important;
+        font-size: 0.75rem !important;
+        height: 1.5rem !important;
+        margin-left: 0.3125rem !important;
+        border-radius: 3px !important;
+        border: none !important;
+        transition: background-color 300ms ease-out !important;
+        background: $white !important;
+        display: block !important;
+        font-size: 1em !important;
+        padding: 0.0625rem 0.625rem 0.0625rem !important;
+        line-height: 1rem !important;
+    }
+
+    .jplist-current {
+        background: $primary-color !important;
+        color: #fff !important;
+        cursor: default;
+        font-weight: bold;
+        text-shadow: none;
+    }
 }
 
 .search-box {

@@ -1,18 +1,16 @@
 from collections import OrderedDict
 
+import pdfkit
 from django.conf import settings as s
 from django.core.urlresolvers import reverse
-
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.generic.detail import DetailView
 from haystack.generic_views import FacetedSearchView, SearchView
 from haystack.query import SearchQuerySet
-
-from promrep.forms import PromrepFacetedSearchForm, SenateSearchForm
-from promrep.models import (Office, Person, Province,  # PostAssertion
+from promrep.forms import (FastiSearchForm, PromrepFacetedSearchForm,
+                           SenateSearchForm)
+from promrep.models import (Office, Person, PostAssertion, Province,
                             RelationshipAssertion, StatusAssertion)
-
-import pdfkit
 
 
 class PromrepFacetedSearchView(FacetedSearchView):
@@ -41,8 +39,6 @@ class PromrepFacetedSearchView(FacetedSearchView):
             return self.paginate_by
 
     def get_queryset(self):
-
-        # selected_facets = self.request.GET.getlist('selected_facets')
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
 
         all_facets = self.autocomplete_facets + self.facet_fields
@@ -65,23 +61,17 @@ class PromrepFacetedSearchView(FacetedSearchView):
         if self.request.GET.getlist('selected_facets'):
             context['selected_facets'] = self.request.GET.getlist(
                 'selected_facets')
-            # Find all selected offices for later use in search results
+
+            # stores all selected offices for later use in search results
             selected_offices = []
-            for facet in self.request.GET.getlist('selected_facets'):
-                if 'offices' in facet:
-                    office_name = facet.replace('offices:', '')
+            for facet in context['selected_facets']:
+                if 'office' in facet:
+                    office_name = facet.split(':')[1]
                     selected_offices.append(office_name)
-                    # Add Children to the list as well
                     office = Office.objects.get(name=office_name)
-                    for child_office in office.get_descendants():
-                        selected_offices.append(child_office.name)
-                elif 'office' in facet:
-                    office_name = facet.replace('office:', '')
-                    selected_offices.append(office_name)
-                    # Add Children to the list as well
-                    office = Office.objects.get(name=office_name)
-                    for child_office in office.get_descendants():
-                        selected_offices.append(child_office.name)
+                    selected_offices.extend(
+                        [o.name for o in office.get_descendants()])
+
             context['selected_offices'] = selected_offices
 
         qs = self.request.GET.copy()
@@ -308,7 +298,7 @@ class SenateSearchView(SearchView):
         else:
             queryset = queryset.narrow('date:[{0} TO {0}]'.format(
                 SenateSearchForm.INITIAL_DATE))
-        # queryset = queryset.narrow('uncertain:false')
+
         certainty = self.request.GET.get('dating_certainty')
 
         if certainty is not None and certainty == '3':
@@ -328,5 +318,146 @@ class SenateSearchView(SearchView):
             senate_date = qs.pop('senate_date')[0]
 
         context['senate_date'] = senate_date
+
+        return context
+
+
+class FastiSearchView(FacetedSearchView):
+    autocomplete_facets = PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS
+    facet_fields = ['office', 'province']
+    form_class = FastiSearchForm
+    queryset = SearchQuerySet().models(PostAssertion)
+    template_name = 'search/fasti.html'
+
+    def get_queryset(self):
+        queryset = super(FastiSearchView, self).get_queryset()
+        queryset = self._apply_facets_to_queryset(queryset)
+
+        if 'order' in self.request.GET and self.request.GET[
+                'order'] == '-date':
+            return queryset.order_by(
+                '-date_sort', 'office_sort', 'office_name', 'unknown')
+
+        return queryset.order_by(
+            'date_sort', 'office_sort', 'office_name', 'unknown')
+
+    def _apply_facets_to_queryset(self, queryset):
+        for facet in self.autocomplete_facets + self.facet_fields:
+            queryset = queryset.facet(
+                facet, sort='index', limit=-1, mincount=1)
+
+        return queryset
+
+    def get_facet_counts(self):
+        queryset = SearchQuerySet().models(PostAssertion)
+        queryset = self._apply_facets_to_queryset(queryset)
+
+        params = self.request.GET
+
+        if ('date_from' in params and params['date_from']) or \
+                ('date_to' in params and params['date_to']):
+            queryset = queryset.narrow(
+                'date:[{} TO {}]'.format(
+                    params['date_from']
+                    if 'date_from' in params and params['date_from']
+                    else PromrepFacetedSearchForm.MIN_DATE,
+                    params['date_to']
+                    if 'date_to' in params and params['date_to']
+                    else PromrepFacetedSearchForm.MAX_DATE
+                ))
+
+        for field in PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS:
+            if field in params and params[field]:
+                queryset = queryset.narrow(
+                    '{}:{}'.format(field, params[field]))
+
+        return queryset.facet_counts()
+
+    def get_paginate_by(self, queryset):
+        return 100000
+
+    def get_context_data(self, **kwargs):
+        context = super(FastiSearchView, self).get_context_data(**kwargs)
+        qs = self.request.GET.copy()
+
+        if self.request.GET.getlist('selected_facets'):
+            context['selected_facets'] = qs.getlist('selected_facets')
+
+        context['querydict'] = qs.copy()
+
+        # used to generate the lists for the autocomplete dictionary
+        context['autocomplete_facets'] = self.autocomplete_facets
+
+        for afacet in context['autocomplete_facets']:
+            if self.request.GET.get(afacet):
+                qs = self.request.GET.copy()
+                qs.pop(afacet)
+
+                url = reverse('haystack_search')
+
+                if len(qs):
+                    url = '?{0}'.format(qs.urlencode())
+
+                context[afacet] = (url, self.request.GET.get(afacet))
+
+        office_lookups = s.LOOKUPS['offices']
+
+        # hierarchical facets data
+        try:
+            magisterial = Office.objects.get(id=office_lookups['magisterial'])
+            if magisterial:
+                context[
+                    'magisterial_office_list'
+                ] = magisterial.get_descendants()
+        except:
+            pass
+
+        try:
+            promagistracies = Office.objects.get(
+                id=office_lookups['promagistracies'])
+            if promagistracies:
+                context[
+                    'promagistracies_office_list'
+                ] = promagistracies.get_descendants()
+        except:
+            pass
+
+        try:
+            priesthoods = Office.objects.get(id=office_lookups['priesthoods'])
+            if priesthoods:
+                context[
+                    'priesthoods_office_list'
+                ] = priesthoods.get_descendants()
+        except:
+            pass
+
+        try:
+            non_magisterial = Office.objects.get(
+                id=office_lookups['non_magisterial'])
+            if non_magisterial:
+                context[
+                    'non_magisterial_office_list'
+                ] = non_magisterial.get_descendants()
+        except:
+            pass
+
+        try:
+            distinctions = Office.objects.get(
+                id=office_lookups['distinctions'])
+            if distinctions:
+                context[
+                    'distinctions_office_list'
+                ] = distinctions.get_descendants()
+        except:
+            pass
+
+        context.update({'facets': self.get_queryset().facet_counts()})
+
+        context['office_fdict'] = dict(
+            self.get_facet_counts()['fields']['office'])
+
+        context['province_list'] = Province.objects.all()
+        context['province_fdict'] = dict(
+            context['facets']['fields']['province'])
 
         return context

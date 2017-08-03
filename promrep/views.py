@@ -354,19 +354,20 @@ class FastiSearchView(FacetedSearchView):
 
         params = self.request.GET
 
-        if 'date_from' in params or 'date_to' in params:
+        if ('date_from' in params and params['date_from']) or \
+                ('date_to' in params and params['date_to']):
             queryset = queryset.narrow(
                 'date:[{} TO {}]'.format(
                     params['date_from']
-                    if 'date_from' in params
+                    if 'date_from' in params and params['date_from']
                     else PromrepFacetedSearchForm.MIN_DATE,
                     params['date_to']
-                    if 'date_to' in params
+                    if 'date_to' in params and params['date_to']
                     else PromrepFacetedSearchForm.MAX_DATE
                 ))
 
         for field in PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS:
-            if field in params:
+            if field in params and params[field]:
                 queryset = queryset.narrow(
                     '{}:{}'.format(field, params[field]))
 
@@ -450,9 +451,11 @@ class FastiSearchView(FacetedSearchView):
         except:
             pass
 
-        context.update({'facets': self.get_facet_counts()})
+        context.update({'facets': self.get_queryset().facet_counts()})
 
-        context['office_fdict'] = dict(context['facets']['fields']['office'])
+        print(self.get_facet_counts())
+        context['office_fdict'] = dict(
+            self.get_facet_counts()['fields']['office'])
 
         context['province_list'] = Province.objects.all()
         context['province_fdict'] = dict(

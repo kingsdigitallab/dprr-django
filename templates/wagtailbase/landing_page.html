@@ -1,0 +1,34 @@
+{% extends "wagtailbase/base.html" %}
+{% load wagtailcore_tags wagtailbase_tags %}
+
+{% block main %}
+<section class="main">
+    <div class="row">
+        <div class="large-12 columns">
+            <header><h1>{{ self.title }}</h1></header>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for page in self.get_children %}
+        <div class="medium-4 columns" data-equalizer>
+        <!-- These will hopefully be pretty blocks! We expect
+             3 in total "Search People", "Search Senates" and "Fasti" -->
+            <div class="panel choices" data-equlizer-watch>
+                <a href="{% pageurl page %}" class="icon"><i class="fa fa-{{page.icon}}"></i></a>
+                <a href="{% pageurl page %}" class="text">{{ page.title }}</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% block related_links %}
+{% include "wagtailbase/includes/related_links.html" with related_links=self.related_links.all title="Related links" %}
+{% endblock %}
+
+{% block attachments %}
+{% include "wagtailbase/includes/attachments.html" with attachments=self.attachments.all title="Attachments" %}
+{% endblock %}
+
+{% endblock %}

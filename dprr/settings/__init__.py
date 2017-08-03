@@ -6,4 +6,12 @@
 # imported here. Use it for settings specific to the installation and do not
 # commit to version control.
 # -----------------------------------------------------------------------------
-from dev import *  # noqa
+import os
+path = os.getcwd()
+
+if '/dev/' in path or '/vagrant' in path:
+    from dev import *  # noqa
+elif 'stg' in path:
+    from stg import *  # noqa
+else:
+    from liv import *  # noqa

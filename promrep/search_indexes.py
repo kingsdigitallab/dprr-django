@@ -302,8 +302,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         # hierarchical facet
         return [pp.name
                 for p in object.provinces.all()
-                for pp in p.get_ancestors(include_self=True)
-                ]
+                for pp in p.get_ancestors(include_self=True)]
 
     def prepare_date(self, object):
         """range of dates for the post"""

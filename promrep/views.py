@@ -453,7 +453,6 @@ class FastiSearchView(FacetedSearchView):
 
         context.update({'facets': self.get_queryset().facet_counts()})
 
-        print(self.get_facet_counts())
         context['office_fdict'] = dict(
             self.get_facet_counts()['fields']['office'])
 

@@ -302,9 +302,8 @@ class SenateSearchView(SearchView):
 
         if certainty is not None and certainty == '3':
             return queryset.order_by('-date_end')
-        else:
-            return queryset.order_by(
-                'date_start')
+
+        return queryset.order_by('date_start')
 
     def get_context_data(self, **kwargs):  # noqa
         context = super(SenateSearchView, self).get_context_data(**kwargs)

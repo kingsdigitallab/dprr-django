@@ -88,12 +88,12 @@ class PromrepFacetedSearchView(FacetedSearchView):
             if len(qs):
                 url = '?{0}'.format(qs.urlencode())
             else:
-                url = reverse('haystack_search')
+                url = reverse('person_search')
 
             context['remove_text_filter'] = url
 
-        context['era_filter'] = self._get_date_url_and_filter(
-            'era_from', 'era_to')
+        context['era_filter'] = _get_date_url_and_filter(
+            qs, 'person_search', 'era_from', 'era_to')
 
         # used to generate the lists for the autocomplete dictionary
         context['autocomplete_facets'] = self.autocomplete_facets
@@ -104,7 +104,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 qs = self.request.GET.copy()
                 qs.pop(afacet)
 
-                url = reverse('haystack_search')
+                url = reverse('person_search')
 
                 if len(qs):
                     url = '?{0}'.format(qs.urlencode())
@@ -173,32 +173,31 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
         return context
 
-    def _get_date_url_and_filter(self, field_from, field_to):
-        if (field_from or field_to) in self.request.GET:
-            field_text = None
 
-            qs = self.request.GET.copy()
+def _get_date_url_and_filter(qs, view_name, field_from, field_to):
+    if (field_from or field_to) in qs:
+        field_text = None
 
-            if qs.get(field_from) and qs.get(field_to):
-                field_text = '{} to {}'.format(
-                    qs.pop(field_from)[0], qs.pop(field_to)[0])
-            elif qs.get(field_to):
-                field_text = 'Before {}'.format(qs.pop(field_to)[0])
-            elif qs.get(field_from):
-                field_text = 'After {}'.format(qs.pop(field_from)[0])
+        if qs.get(field_from) and qs.get(field_to):
+            field_text = '{} to {}'.format(
+                qs.pop(field_from)[0], qs.pop(field_to)[0])
+        elif qs.get(field_to):
+            field_text = 'Before {}'.format(qs.pop(field_to)[0])
+        elif qs.get(field_from):
+            field_text = 'After {}'.format(qs.pop(field_from)[0])
 
-            # always remove the page number
-            if 'page' in qs:
-                qs.pop('page')
+        # always remove the page number
+        if 'page' in qs:
+            qs.pop('page')
 
-            url = reverse('haystack_search')
-            if len(qs):
-                url = '?{}'.format(qs.urlencode())
+        url = reverse(view_name)
+        if len(qs):
+            url = '?{}'.format(qs.urlencode())
 
-            if field_text:
-                return (url, field_text)
+        if field_text:
+            return (url, field_text)
 
-        return None
+    return None
 
 
 class PersonDetailView(DetailView):
@@ -356,15 +355,15 @@ class FastiSearchView(FacetedSearchView):
 
         if ('date_from' in params and params['date_from']) or \
                 ('date_to' in params and params['date_to']):
-            queryset = queryset.narrow(
-                'date:[{} TO {}]'.format(
-                    params['date_from']
-                    if 'date_from' in params and params['date_from']
-                    else PromrepFacetedSearchForm.MIN_DATE,
-                    params['date_to']
-                    if 'date_to' in params and params['date_to']
-                    else PromrepFacetedSearchForm.MAX_DATE
-                ))
+            query = 'date:[{} TO {}]'.format(
+                -1 * int(params['date_from'])
+                if 'date_from' in params and params['date_from']
+                else PromrepFacetedSearchForm.MIN_DATE,
+                -1 * int(params['date_to'])
+                if 'date_to' in params and params['date_to']
+                else PromrepFacetedSearchForm.MAX_DATE
+            )
+            queryset = queryset.narrow(query)
 
         for field in PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS:
             if field in params and params[field]:
@@ -385,6 +384,9 @@ class FastiSearchView(FacetedSearchView):
 
         context['querydict'] = qs.copy()
 
+        context['date_filter'] = _get_date_url_and_filter(
+            qs, 'fasti_search', 'date_from', 'date_to')
+
         # used to generate the lists for the autocomplete dictionary
         context['autocomplete_facets'] = self.autocomplete_facets
 
@@ -393,7 +395,7 @@ class FastiSearchView(FacetedSearchView):
                 qs = self.request.GET.copy()
                 qs.pop(afacet)
 
-                url = reverse('haystack_search')
+                url = reverse('person_search')
 
                 if len(qs):
                     url = '?{0}'.format(qs.urlencode())

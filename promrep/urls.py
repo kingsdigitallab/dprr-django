@@ -12,6 +12,6 @@ urlpatterns = [
     url(r'^person/(?P<pk>\d+)/network/$', get_relationships_network,
         name='person-network'),
     url(r'^senate/$', SenateSearchView.as_view(), name='senate_search'),
-    url(r'^fasti/$', cache_page(600 * 600)(FastiSearchView.as_view()),
+    url(r'^fasti/$', cache_page(60 * 60 * 24)(FastiSearchView.as_view()),
         name='fasti_search')
 ]

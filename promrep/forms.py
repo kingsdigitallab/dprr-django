@@ -194,7 +194,7 @@ class PromrepFacetedSearchForm(FacetedSearchForm):
         attrs={'class': 'autocomplete', 'title': 'Tribe'}))
 
     def __init__(self, *args, **kwargs):
-        self.selected_facets = kwargs.pop("selected_facets", [])
+        self.selected_facets = kwargs.pop('selected_facets', [])
         super(FacetedSearchForm, self).__init__(*args, **kwargs)
 
     def no_query_found(self):

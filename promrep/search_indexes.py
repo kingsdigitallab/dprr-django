@@ -115,6 +115,8 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     province = indexes.MultiValueField(faceted=True)
     highest_office = indexes.CharField(faceted=False)
 
+    uncertain = indexes.CharField(model_attr='uncertain', null=True)
+
     def get_model(self):
         return Person
 

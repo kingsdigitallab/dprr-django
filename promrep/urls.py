@@ -6,7 +6,7 @@ from django.views.decorators.cache import cache_page
 
 urlpatterns = [
     url(r'^person/$', PromrepFacetedSearchView.as_view(),
-        name='haystack_search'),
+        name='person_search'),
     url(r'^person/(?P<pk>\d+)/$', PersonDetailView.as_view(),
         name='person-detail'),
     url(r'^person/(?P<pk>\d+)/network/$', get_relationships_network,

@@ -50,9 +50,9 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
         if 'order' in self.request.GET and\
                 self.request.GET['order'] == '-date':
-            return queryset.order_by('-era_order', 'uncertain')
+            return queryset.order_by('uncertain', '-era_order')
 
-        return queryset.order_by('era_order', 'uncertain')
+        return queryset.order_by('uncertain', 'era_order')
 
     def get_context_data(self, **kwargs):  # noqa
         context = super(

@@ -7,7 +7,7 @@
 # commit to version control.
 # -----------------------------------------------------------------------------
 import os
-path = os.path.abspath(os.path.curdir)
+path = os.path.abspath(__name__)
 
 if '/dev/' in path or '/vagrant' in path:
     from dev import *  # noqa

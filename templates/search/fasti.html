@@ -270,7 +270,7 @@
             </ul>
         </h2>
         <hr>
-        {% cache 600 * 600 fasti_search_results querydict %}
+        {% cache 3600 * 24 fasti_search_results querydict %}
         <div class="search-results">
             {% regroup object_list by date_sort as year_list %}
 

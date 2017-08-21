@@ -320,8 +320,8 @@ class Person(TimeStampedModel):
     date_display_text = models.CharField(
         max_length=1024, blank=True, null=True)
 
-    era_from = models.IntegerField(blank=True, null=True)
-    era_to = models.IntegerField(blank=True, null=True)
+    era_from = models.IntegerField(blank=False, null=False, default=0)
+    era_to = models.IntegerField(blank=False, null=False, default=0)
 
     review_flag = models.BooleanField(
         verbose_name="Review needed", default=False)

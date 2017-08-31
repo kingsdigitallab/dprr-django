@@ -87,6 +87,7 @@ class Command(BaseCommand):
                     if cos.exists():
                         off = cos.first().office_str()
                         date = cos.first().print_date()
+
                     elif pra.exists():
                         off = pra.first().office_str()
                         date = pra.first().print_date()
@@ -109,10 +110,13 @@ class Command(BaseCommand):
                 elif sas.exists():
                     off = sas.first().status.get_display_name()
                     date = sas.first().date_start
+                    uncertain = sas.first().uncertain
 
                     # See DPRR-385
                     if off == "eq. R.":
                         if not date:
+                            date = "?"
+                        elif uncertain:
                             date = "?"
                         else:
                             date = ""

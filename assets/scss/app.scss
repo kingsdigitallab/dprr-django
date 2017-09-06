@@ -79,13 +79,33 @@ ul {
     text-align: center;
     width: 100%;
 
+    a {
+        &.button {
+            text-decoration: underline;
+        }
+    }
+
+    a,
     button,
     .button {
-        font-weight: 700;
+        border: 0;
+        color: $white !important;
+        height: 3rem;
+        line-height: 1rem;
+    }
+    
+    button {
+        &:hover {
+            background: #444;
+        }
+    }
+
+    .closeme {
+        margin-left: 1rem;
     }
 
     p {
-        margin-bottom: rem-calc(16);
+        margin: 1rem;
     }
 }
 

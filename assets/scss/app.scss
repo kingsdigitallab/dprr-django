@@ -66,6 +66,29 @@ ul {
     }
 }
 
+// Cookies
+
+.cookies-box {
+    background: $primary-color;
+    bottom: 0;
+    color: $white;
+    left: 0;
+    margin: 0;
+    opacity: 0.95;
+    position: fixed;
+    text-align: center;
+    width: 100%;
+
+    button,
+    .button {
+        font-weight: 700;
+    }
+
+    p {
+        margin-bottom: rem-calc(16);
+    }
+}
+
 .content-area {
     background: $white;
     padding-top: 1rem;

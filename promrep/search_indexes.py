@@ -263,7 +263,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
     office = indexes.FacetMultiValueField()
     office_name = indexes.CharField(model_attr='office__name')
-    office_sort = indexes.IntegerField(model_attr='office__tree_id')
+    office_sort = indexes.IntegerField()
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
     unknown = indexes.BooleanField(model_attr='unknown', faceted=True)
 
@@ -299,6 +299,23 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare_office(self, object):
         # Hierarquical facet
         return [o.name for o in object.office.get_ancestors(include_self=True)]
+
+    # Make a single order integer out of the career tree
+    # using tree order (Broughton) + lft
+    def prepare_office_sort(self, object):
+        # Right now unindexed lists come at the end
+        parent_tree_name = object.office.get_root().name
+        office_sort = 10000
+        if 'Magistracies' in parent_tree_name:
+            office_sort = 1000
+        elif 'Promagistracies' in parent_tree_name:
+            office_sort = 2000
+        elif 'Priesthoods' in parent_tree_name:
+            office_sort = 3000
+        elif 'Lower Offices' in parent_tree_name:
+            office_sort = 4000
+        office_sort += object.office.lft
+        return office_sort
 
     def prepare_province(self, object):
         # hierarchical facet

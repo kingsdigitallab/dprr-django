@@ -363,7 +363,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         person = object.person
         title = "{} {}".format(person.dprr_id, person)
         if person.highest_office:
-            title = "{} {}".format(title, person.highest_office)
+            title = "{} ({})".format(title, person.highest_office)
         return title
 
     def prepare_praenomen(self, object):

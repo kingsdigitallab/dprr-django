@@ -314,13 +314,13 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         # Right now unindexed lists come at the end
         parent_tree_name = object.office.get_root().name
         office_sort = 10000
-        if 'Magistracies' in parent_tree_name:
+        if 'Magisterial Posts' in parent_tree_name:
             office_sort = 1000
-        elif 'Promagistracies' in parent_tree_name:
+        elif 'Promagisterial Posts' in parent_tree_name:
             office_sort = 2000
         elif 'Priesthoods' in parent_tree_name:
             office_sort = 3000
-        elif 'Lower Offices' in parent_tree_name:
+        elif 'Non-magisterial Posts' in parent_tree_name:
             office_sort = 4000
         office_sort += object.office.lft
         return office_sort

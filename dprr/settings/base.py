@@ -63,7 +63,6 @@ INSTALLED_APPS = (
     'mptt',
     'django_mptt_admin',
     'author',
-    'django_extensions',
 )
 
 INSTALLED_APPS += ws.INSTALLED_APPS

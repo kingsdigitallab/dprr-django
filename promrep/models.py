@@ -732,7 +732,7 @@ class Office(MPTTModel, TimeStampedModel):
 class RelationshipType(TimeStampedModel):
     name = models.CharField(max_length=256, unique=True)
     order = models.PositiveSmallIntegerField(default=0)
-    description = models.CharField(max_length=1024, blank=True)
+    description = models.CharField(max_length=1024, blank=True, null=True)
 
     def __unicode__(self):
         return self.name

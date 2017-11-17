@@ -9,7 +9,7 @@ def add_type(apps,name):
     try:
         RelationshipType.objects.get(name=name)
     except ObjectDoesNotExist:
-        RelationshipType(name=name).save()
+        RelationshipType(name=name, description=name).save()
 
 #Add some missing relationship types so that inverse function works properly
 def add_relationship_types(apps,schema_editor):

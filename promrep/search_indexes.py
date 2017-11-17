@@ -266,6 +266,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     office_sort = indexes.IntegerField()
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
     unknown = indexes.BooleanField(model_attr='unknown', faceted=True)
+    unknown_sort = indexes.IntegerField()
 
     province = indexes.MultiValueField(faceted=True)
     date = MultiValueIntegerField(faceted=True)
@@ -299,6 +300,13 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare_office(self, object):
         # Hierarquical facet
         return [o.name for o in object.office.get_ancestors(include_self=True)]
+
+    # Added this as an integer to sort properly
+    def prepare_unknown_sort(self, object):
+        if object.unknown:
+            return 1
+        else:
+            return 0
 
     # Make a single order integer out of the career tree
     # using tree order (Broughton) + lft

@@ -18,6 +18,17 @@
                 <i class="fa fa-info-circle"></i>
                 Career search, ordered by year and office.
             </p>
+            <button class="small button secondary options">
+                <i class="fa fa-cog"></i>
+                <span id="showhide">Hide</span>
+                search settings
+            </button>
+            <a href="{% url 'fasti_search' %}" class="right options">
+                <span class="small button">
+                    <i class="fa fa-refresh"></i>
+                    Start new search
+                </span>
+            </a>
         </header>
         <form method="get" action="." id="search_form">
           {% for facet_value in selected_facets %}

@@ -276,7 +276,7 @@
 
             {% for year in year_list %}
             <div class="year">
-                <h3><i class="fa fa-calendar"></i> <strong>{{ year.grouper }}</strong></h3>
+                <h3><i class="fa fa-calendar"></i> <strong>{{ year.grouper|cut:"-" }} B.C.</strong></h3>
 
                 <div class="group">
                     {% regroup year.list by office as careers %}

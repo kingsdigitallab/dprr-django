@@ -301,7 +301,7 @@
                         {% for result in career.list %}
                         <li>
                             <h4>
-                                <a href="/browse/person/{{ result.person_id }}">{{ result.person_title }} </a>
+                                <a href="/browse/person/{{ result.person_id }}">{% if result.uncertain %}? {% endif %}{{ result.person_title }} </a>
                             </h4>
                         </li>
                         {% endfor %}

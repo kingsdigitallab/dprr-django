@@ -316,12 +316,14 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         office_sort = 10000
         if 'Magisterial Posts' in parent_tree_name:
             office_sort = 1000
-        elif 'Promagisterial Posts' in parent_tree_name:
+        elif 'Distinctions' in parent_tree_name:
             office_sort = 2000
-        elif 'Priesthoods' in parent_tree_name:
+        elif 'Promagisterial Posts' in parent_tree_name:
             office_sort = 3000
-        elif 'Non-magisterial Posts' in parent_tree_name:
+        elif 'Priesthoods' in parent_tree_name:
             office_sort = 4000
+        elif 'Non-magisterial Posts' in parent_tree_name:
+            office_sort = 5000
         office_sort += object.office.lft
         return office_sort
 

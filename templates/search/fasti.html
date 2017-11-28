@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load cache ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags  %}
+{% load cache ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags promrep_tags %}
 
 {% block meta_title %}Fasti{% endblock %}
 
@@ -284,13 +284,14 @@
         {% cache 3600 * 24 fasti_search_results querydict %}
         <div class="search-results">
             {% regroup object_list by date_sort as year_list %}
+            {% merge_out_of_year_range year_list as new_years %}
 
-            {% for year in year_list %}
+            {% for year in new_years %}
             <div class="year">
                 <h3><i class="fa fa-calendar"></i> <strong>{{ year.grouper|cut:"-" }}</strong></h3>
 
                 <div class="group">
-                    {% regroup year.list by office as careers %}
+                    {% regroup year.list|dictsort:"office_sort" by office as careers %}
 
                     {% for career in careers %}
                     {% with career.grouper|last as career_name %}

@@ -295,6 +295,8 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all().exclude(
             office__name='senator').exclude(
+            office__name='senator - office unknown').exclude(
+            unknown=True).exclude(
             Q(date_start__isnull=True) & Q(date_end__isnull=True))
 
     def prepare_office(self, object):

@@ -166,20 +166,20 @@ Search Results - page {{ page_obj.number }}
                                         </ul>
                                     </div>
                                     <div class="medium-8 columns datetypes">
-                                        <h4>Date Types
+                                        <h4>Life Events
                                             <a data-dropdown="date-types" aria-controls="date-types" aria-expanded="false" class="smaller-fontsize">
                                                 <i class="fa fa-info-circle"></i>
                                             </a>
                                         </h4>
 
                                         <div id="date-types" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-                                            <p>Info about the <strong>Date Types</strong></p>
+                                            <p>Info about the <strong>Life Events</strong></p>
                                         </div>
                                         <ul class="stack button-group two-columns">
-                                            {% for term in facets.fields|get_item:"life_date_types" %}
+                                            {% for term in facets.fields|get_item:"life_events" %}
                                             {% with value=term.0 count=term.1 %}
                                             <li>
-                                                <a href="{% add_facet_link querydict "life_date_types" value %}#search"
+                                                <a href="{% add_facet_link querydict "life_events" value %}#search"
                                                    class="button secondary less-padding smaller-fontsize text-left">
                                                     <span class="label radius right">{{ count }}</span>{{ value|title }}
                                                 </a>

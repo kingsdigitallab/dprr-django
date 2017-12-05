@@ -15,7 +15,7 @@ from promrep.models import (Office, Person, PostAssertion, Province,
 
 class PromrepFacetedSearchView(FacetedSearchView):
     facet_fields = ['gender', 'nobilis', 'novus', 'tribe',
-                    'patrician', 'province', 'offices', 'life_date_types',
+                    'patrician', 'location', 'offices', 'life_events',
                     'eques']
 
     autocomplete_facets = PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS
@@ -169,7 +169,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
 
         context['province_list'] = Province.objects.all()
         context['province_fdict'] = dict(
-            context['facets']['fields']['province'])
+            context['facets']['fields']['location'])
 
         return context
 
@@ -216,6 +216,11 @@ class PersonDetailView(DetailView):
         querystring = '?{0}'.format(self.request.GET.copy().urlencode())
         if len(querystring) > 1:
             context['querystring'] = querystring
+
+        if 'facet_view' in self.request.GET:
+            context['facet_view'] = self.request.GET['facet_view']
+        else:
+            context['facet_view'] = 'person_search'
 
         for r in relationships_qs:
             if r.relationship not in relationships:

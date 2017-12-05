@@ -108,10 +108,10 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
         model_attr='nobilis', default=False, faceted=True)
     eques = indexes.BooleanField(faceted=True, default=False)
 
-    life_date_types = indexes.MultiValueField(faceted=True)
+    life_events = indexes.MultiValueField(faceted=True)
 
     offices = indexes.FacetMultiValueField()
-    province = indexes.MultiValueField(faceted=True)
+    location = indexes.MultiValueField(faceted=True)
     highest_office = indexes.CharField(faceted=False)
 
     uncertain = indexes.CharField(model_attr='uncertain', null=True)
@@ -192,7 +192,7 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
                 return True
         return False
 
-    def prepare_life_date_types(self, object):
+    def prepare_life_events(self, object):
         date_types = ['birth', 'exiled', 'restored', 'proscribed',
                       'expelled from Senate']
         relationship_types = {'adopted son of': 'adopted'}
@@ -248,7 +248,7 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
                 for off in olist
                 for o in off.get_ancestors(include_self=True)]
 
-    def prepare_province(self, object):
+    def prepare_location(self, object):
         # hierarchical facet
         return [pp.name
                 for pa in object.post_assertions.all()

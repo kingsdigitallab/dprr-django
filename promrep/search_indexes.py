@@ -270,7 +270,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     office_sort = indexes.IntegerField()
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
     unknown = indexes.BooleanField(model_attr='unknown', faceted=True)
-    province = indexes.MultiValueField(faceted=True)
+    location = indexes.MultiValueField(faceted=True)
     date = MultiValueIntegerField(faceted=True)
     date_sort = indexes.IntegerField()
     person = indexes.CharField(model_attr='person', faceted=True)
@@ -328,7 +328,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         office_sort += object.office.lft
         return office_sort
 
-    def prepare_province(self, object):
+    def prepare_location(self, object):
         # hierarchical facet
         return [pp.name
                 for p in object.provinces.all()

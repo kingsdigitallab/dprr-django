@@ -464,6 +464,6 @@ class FastiSearchView(FacetedSearchView):
 
         context['province_list'] = Province.objects.all()
         context['province_fdict'] = dict(
-            context['facets']['fields']['province'])
+            context['facets']['fields']['location'])
 
         return context

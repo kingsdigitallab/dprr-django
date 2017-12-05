@@ -1,5 +1,4 @@
 import re
-
 from django.conf import settings as s
 from django.db.models import Q
 from haystack import indexes
@@ -260,14 +259,17 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
 
 class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
-
+    # These offices will be excluded from the queryset
+    exclude_offices = [
+        'senator',
+        'senator - office unknown',
+        'princeps senatus'
+    ]
     office = indexes.FacetMultiValueField()
     office_name = indexes.CharField(model_attr='office__name')
     office_sort = indexes.IntegerField()
     uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
     unknown = indexes.BooleanField(model_attr='unknown', faceted=True)
-    unknown_sort = indexes.IntegerField()
-
     province = indexes.MultiValueField(faceted=True)
     date = MultiValueIntegerField(faceted=True)
     date_sort = indexes.IntegerField()
@@ -293,22 +295,19 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
 
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
+        # Exclude all priesthoods as well
+        exclude_offices = self.exclude_offices
+        for office in Office.objects.get(
+                name='Priesthoods').get_descendants(include_self=True):
+            exclude_offices.append(office.name)
         return self.get_model().objects.all().exclude(
-            office__name='senator').exclude(
-            office__name='senator - office unknown').exclude(
+            office__name__in=exclude_offices).exclude(
             unknown=True).exclude(
             Q(date_start__isnull=True) & Q(date_end__isnull=True))
 
     def prepare_office(self, object):
         # Hierarquical facet
         return [o.name for o in object.office.get_ancestors(include_self=True)]
-
-    # Added this as an integer to sort properly
-    def prepare_unknown_sort(self, object):
-        if object.unknown:
-            return 1
-        else:
-            return 0
 
     # Make a single order integer out of the career tree
     # using tree order (Broughton) + lft

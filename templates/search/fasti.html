@@ -135,18 +135,22 @@
 
                                 {% include "search/offices.html" with office_list=promagistracies_office_list %}
                             </div>
-                            <div class="medium-6 large-3 columns">
-                                <h4>Priesthoods
-                                    <a data-dropdown="priesthoods-info" aria-controls="priesthoods-info" aria-expanded="false" class="smaller-fontsize">
+                            <div class="large-3 columns">
+                                <h4 class="panel-heading">Triumphs
+                                    <a data-dropdown="distinctions" aria-controls="distinctions" aria-expanded="false" class="smaller-fontsize">
                                         <i class="fa fa-info-circle"></i>
                                     </a>
                                 </h4>
 
-                                <div id="priesthoods-info" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-                                    <p>Info about the <strong>Priesthoods Offices</strong></p>
-                                </div>
 
-                                {% include "search/offices.html" with office_list=priesthoods_office_list %}
+
+
+                                    {% include "search/offices.html" with office_list=distinctions_office_list %}
+
+
+                                <div id="distinctions" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+                                    <p>Info about <strong>Distinctions</strong></p>
+                                </div>
                             </div>
                             <div class="medium-6 large-3 columns">
                                 <h4>Lower Offices
@@ -163,23 +167,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="large-6 columns">
-                                <h4 class="panel-heading">Distinctions
-                                    <a data-dropdown="distinctions" aria-controls="distinctions" aria-expanded="false" class="smaller-fontsize">
-                                        <i class="fa fa-info-circle"></i>
-                                    </a>
-                                </h4>
 
-                                <a href="#" class="expander smaller-fontsize">Expand list of available distinctions <i class="fa fa-caret-right"></i></a>
-
-                                <div class="collapsible hide">
-                                    {% include "search/offices.html" with office_list=distinctions_office_list %}
-                                </div>
-
-                                <div id="distinctions" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-                                    <p>Info about <strong>Distinctions</strong></p>
-                                </div>
-                            </div>
                             <div class="large-6 columns">
                                 <h4 class="panel-heading">Location
                                     <a data-dropdown="location" aria-controls="location" aria-expanded="false" class="smaller-fontsize">
@@ -284,14 +272,14 @@
         {% cache 3600 * 24 fasti_search_results querydict %}
         <div class="search-results">
             {% regroup object_list by date_sort as year_list %}
-            {% merge_out_of_year_range year_list as new_years %}
 
-            {% for year in new_years %}
+
+            {% for year in year_list %}
             <div class="year">
-                <h3><i class="fa fa-calendar"></i> <strong>{{ year.grouper|cut:"-" }}</strong></h3>
+                <h3><strong>{{ year.grouper|cut:"-" }}</strong></h3>
 
                 <div class="group">
-                    {% regroup year.list|dictsort:"office_sort" by office as careers %}
+                    {% regroup year.list by office as careers %}
 
                     {% for career in careers %}
                     {% with career.grouper|last as career_name %}
@@ -302,7 +290,7 @@
                         {% for result in career.list %}
                         <li>
                             <h4>
-                                <a href="/browse/person/{{ result.person_id }}"> {% if result.uncertain_exact %}<span class="uncertain">{{ result.person_title }}</span>{% else %}{{ result.person_title }}{% endif %} </a>
+                                <a href="/browse/person/{{ result.person_id }}"> {% if result.uncertain_exact %}<span class="uncertain">{{ result.person_title }}</span>{% else %}{{ result.person_title }}{% endif %}</a>
                             </h4>
                         </li>
                         {% endfor %}

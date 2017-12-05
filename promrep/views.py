@@ -334,10 +334,10 @@ class FastiSearchView(FacetedSearchView):
         if 'order' in self.request.GET and self.request.GET[
                 'order'] == '-date':
             return queryset.order_by(
-                'unknown_sort', '-date_sort', 'office_sort', 'office_name', )
+                'unknown_exact', '-date_sort', 'office_sort', 'office_name', )
 
         return queryset.order_by(
-            'unknown_sort', 'date_sort', 'office_sort', 'office_name')
+            'unknown_exact', 'date_sort', 'office_sort', 'office_name')
 
     def _apply_facets_to_queryset(self, queryset):
         for facet in self.autocomplete_facets + self.facet_fields:

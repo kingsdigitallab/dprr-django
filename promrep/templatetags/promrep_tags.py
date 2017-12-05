@@ -24,6 +24,7 @@ def find_date(year_list, search_year):
     return None
 
 
+# Deprecated, but left in for now.
 @register.simple_tag(takes_context=True)
 def merge_out_of_year_range(context, year_list):
     """ Add multi-year offices that begin before a search range to the first/last

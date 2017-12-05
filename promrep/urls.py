@@ -1,17 +1,4 @@
-from django.conf.urls import url
-from promrep.views import (FastiSearchView, PersonDetailView,
-                           PromrepFacetedSearchView, SenateSearchView,
-                           get_relationships_network)
-from django.views.decorators.cache import cache_page
-
+# moved to dprr/urls to match urls with wagtail
 urlpatterns = [
-    url(r'^person/$', PromrepFacetedSearchView.as_view(),
-        name='person_search'),
-    url(r'^person/(?P<pk>\d+)/$', PersonDetailView.as_view(),
-        name='person-detail'),
-    url(r'^person/(?P<pk>\d+)/network/$', get_relationships_network,
-        name='person-network'),
-    url(r'^senate/$', SenateSearchView.as_view(), name='senate_search'),
-    url(r'^fasti/$', cache_page(60 * 60 * 24)(FastiSearchView.as_view()),
-        name='fasti_search')
+
 ]

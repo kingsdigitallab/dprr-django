@@ -1,11 +1,16 @@
-from ddhldap.signal_handlers import \
-    register_signal_handlers as ddhldap_register_signal_handlers
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
-from promrep import urls as promrep_urls
+from django.views.decorators.cache import cache_page
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtailcore import urls as wagtail_urls
+
+from ddhldap.signal_handlers import \
+    register_signal_handlers as ddhldap_register_signal_handlers
+from promrep import urls as promrep_urls
+from promrep.views import (FastiSearchView, PersonDetailView,
+                           PromrepFacetedSearchView, SenateSearchView,
+                           get_relationships_network)
 from promrep.views import get_pdf
 
 ddhldap_register_signal_handlers()
@@ -17,12 +22,22 @@ urlpatterns = [
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^pdf/', get_pdf, name='pdf_view'),
+    url(r'^senate/$', SenateSearchView.as_view(), name='senate_search'),
+    url(r'^fasti/$', cache_page(60 * 60 * 24)(FastiSearchView.as_view()),
+        name='fasti_search'),
+    url(r'^person/$', PromrepFacetedSearchView.as_view(),
+        name='person_search'),
+    url(r'^person/(?P<pk>\d+)/$', PersonDetailView.as_view(),
+        name='person-detail'),
+    url(r'^person/(?P<pk>\d+)/network/$', get_relationships_network,
+        name='person-network'),
 
 ]
 
 try:
     if settings.DEBUG:
         import debug_toolbar
+
         urlpatterns += [
             url(r'^__debug__/', include(debug_toolbar.urls)),
         ]

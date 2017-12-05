@@ -327,7 +327,7 @@ class SenateSearchView(SearchView):
 
 class FastiSearchView(FacetedSearchView):
     autocomplete_facets = PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS
-    facet_fields = ['office', 'province']
+    facet_fields = ['office', 'location']
     form_class = FastiSearchForm
     queryset = SearchQuerySet().models(PostAssertion)
     template_name = 'search/fasti.html'

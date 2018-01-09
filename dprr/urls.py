@@ -7,6 +7,7 @@ from wagtail.wagtailcore import urls as wagtail_urls
 
 from ddhldap.signal_handlers import \
     register_signal_handlers as ddhldap_register_signal_handlers
+from promrep import urls as promrep_urls
 from promrep.views import (FastiSearchView, PersonDetailView,
                            PromrepFacetedSearchView, SenateSearchView,
                            get_relationships_network)
@@ -17,18 +18,18 @@ ddhldap_register_signal_handlers()
 admin.autodiscover()
 
 urlpatterns = [
+    url(r'^browse/', include(promrep_urls)),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^pdf/', get_pdf, name='pdf_view'),
-    url(r'^browse/senate/$', SenateSearchView.as_view(), name='senate_search'),
-    url(r'^browse/fasti/$',
-        cache_page(60 * 60 * 24)(FastiSearchView.as_view()),
+    url(r'^senate/$', SenateSearchView.as_view(), name='senate_search'),
+    url(r'^fasti/$', cache_page(60 * 60 * 24)(FastiSearchView.as_view()),
         name='fasti_search'),
-    url(r'^browse/person/$', PromrepFacetedSearchView.as_view(),
+    url(r'^person/$', PromrepFacetedSearchView.as_view(),
         name='person_search'),
-    url(r'^browse/person/(?P<pk>\d+)/$', PersonDetailView.as_view(),
+    url(r'^person/(?P<pk>\d+)/$', PersonDetailView.as_view(),
         name='person-detail'),
-    url(r'^browse/person/(?P<pk>\d+)/network/$', get_relationships_network,
+    url(r'^person/(?P<pk>\d+)/network/$', get_relationships_network,
         name='person-network'),
 
 ]

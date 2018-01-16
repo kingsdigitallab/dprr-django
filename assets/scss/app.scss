@@ -1174,6 +1174,17 @@ svg {
         margin: 1.5cm 1.25cm 3cm 1.25cm;
     }
 
+    a,
+    a:active,
+    a:visited {
+        text-decoration: none;
+    }
+
+    a:link:after,
+    a:visited:after {
+        content: "";
+    }
+
     .extra-margin {
         padding-top: 0;
     }

@@ -241,7 +241,7 @@ def get_pdf(request):
     else:
         pdf_url = "{}?pdf_view=1".format(pdf_url)
 
-    pdf = pdfkit.from_url(pdf_url, False)
+    pdf = pdfkit.from_url(pdf_url, False, options=s.PDFKIT_OPTIONS)
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment;\
         filename="dprr_search_results.pdf"'

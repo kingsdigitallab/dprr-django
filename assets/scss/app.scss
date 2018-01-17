@@ -1092,7 +1092,6 @@ svg {
     margin-left: -10px;
 }
 
-
 /*** Typography ***/
 
 @font-face {
@@ -1170,8 +1169,23 @@ svg {
 
 @media print {
 
+    body .search-results {
+        font-family: 'Open Sans Condensed Light', sans-serif;
+        font-size: 16px !important;
+
+        .free-filters .label {
+            font-size: 13px !important;
+        }
+
+        h4 {
+            font-size: 16px !important;
+        }
+    }
+
     @page {
-        margin: 1.5cm 1.25cm 3cm 1.25cm;
+        font-size: 16px !important;
+        line-height: 1 !important;
+        margin: 2cm;
     }
 
     a,
@@ -1182,7 +1196,7 @@ svg {
 
     a:link:after,
     a:visited:after {
-        content: "";
+        content: "" !important;
     }
 
     .extra-margin {

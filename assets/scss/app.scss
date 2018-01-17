@@ -1170,7 +1170,7 @@ svg {
 @media print {
 
     body .search-results {
-        font-family: 'Open Sans Condensed Light', sans-serif;
+        font-family: 'Open Sans Condensed Light', sans-serif !important;
         font-size: 16px !important;
 
         .free-filters .label {
@@ -1183,6 +1183,7 @@ svg {
     }
 
     @page {
+        font-family: 'Open Sans Condensed Light', sans-serif !important;
         font-size: 16px !important;
         line-height: 1 !important;
         margin: 2cm;
@@ -1214,8 +1215,11 @@ svg {
     .expander,
     .do-not-print,
     .pagination-centred,
-    .result-preview,
     .results-preview.fixed {
         display: none;
+    }
+
+    .results-preview {
+        border: none;
     }
 }

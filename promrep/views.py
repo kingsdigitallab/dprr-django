@@ -395,6 +395,11 @@ class FastiSearchView(FacetedSearchView):
 
         context['querydict'] = qs.copy()
 
+        if self.request.GET.get('pdf_view'):
+            context[
+                'pdf_view'
+            ] = 1
+
         context['date_filter'] = _get_date_url_and_filter(
             qs, 'fasti_search', 'date_from', 'date_to')
 

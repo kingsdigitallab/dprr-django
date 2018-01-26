@@ -285,44 +285,12 @@
                 </ul>
             </h2>
             <hr>
+
+            {% if pdf_view %}
+                {% include "search/fasti-results.html" %}
+            {% else %}
             {% cache 3600 * 24 fasti_search_results querydict %}
-                <div class="search-results">
-                    {% regroup object_list by date_sort as year_list %}
-
-
-                    {% for year in year_list %}
-                        <div class="year">
-                            <h3><strong>{{ year.grouper|cut:"-" }}</strong></h3>
-
-                            <div class="group">
-                                {% regroup year.list by office as careers %}
-
-                                {% for career in careers %}
-                                    {% with career.grouper|last as career_name %}
-                                    <h4>{{ career_name }}</h4>
-                                    {% endwith %}
-
-                                    <ol class="search-results">
-                                        {% for result in career.list %}
-                                            <li>
-                                                <h4>
-                                                    <a class="person_detail_link"
-                                                       href="{% url 'person-detail' result.person_id %}?facet_view=fasti_search&{% get_request_parameters 'facet_view' %}">
-                                                        {% if result.uncertain_exact %}
-                                                        <span class="uncertain">{{ result.person_title }}</span>
-                                                        {% else %}
-                                                        {{ result.person_title }}
-                                                        {% endif %}
-                                                    </a>
-                                                </h4>
-                                            </li>
-                                        {% endfor %}
-                                    </ol>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
+                {% include "search/fasti-results.html" %}
             {% endcache %}
             <div class="jplist-panel do-not-print">
                 <!-- pagination control -->
@@ -331,6 +299,7 @@
                      data-control-animate-to-top="true" data-jump-to-start="true" data-control-storage="false"
                      data-mode="google-like"></div>
             </div>
+        {% endif %}
         </div>
     </div>
 {% endblock main %}

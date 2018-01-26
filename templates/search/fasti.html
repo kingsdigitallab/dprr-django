@@ -94,7 +94,7 @@
 
                                             <div id="career-dates" data-dropdown-content class="f-dropdown content"
                                                  aria-hidden="true" tabindex="-1">
-                                                <p>Info about the <strong>Career Dates</strong></p>
+                                                <p>To search for a single year enter the same number in both boxes. </p>
                                             </div>
                                         </div>
                                         <div class="medium-4 columns">
@@ -114,63 +114,34 @@
                                     <div class="row">
                                         <div class="medium-6 large-3 columns">
                                             <h4>Magistracies
-                                                <a data-dropdown="magistracies-info" aria-controls="magistracies-info"
-                                                   aria-expanded="false" class="smaller-fontsize">
-                                                    <i class="fa fa-info-circle"></i>
-                                                </a>
+
                                             </h4>
 
-                                            <div id="magistracies-info" data-dropdown-content class="f-dropdown content"
-                                                 aria-hidden="true" tabindex="-1">
-                                                <p>Info about the <strong>Magistracies Offices</strong></p>
-                                            </div>
 
                                             {% include "search/offices.html" with office_list=magisterial_office_list %}
                                         </div>
                                         <div class="medium-6 large-3 columns">
                                             <h4>Promagistracies
-                                                <a data-dropdown="promagistracies-info"
-                                                   aria-controls="promagistracies-info" aria-expanded="false"
-                                                   class="smaller-fontsize">
-                                                    <i class="fa fa-info-circle"></i>
-                                                </a>
+
                                             </h4>
 
-                                            <div id="promagistracies-info" data-dropdown-content
-                                                 class="f-dropdown content" aria-hidden="true" tabindex="-1">
-                                                <p>Info about the <strong>Promagistracies Offices</strong></p>
-                                            </div>
 
                                             {% include "search/offices.html" with office_list=promagistracies_office_list %}
                                         </div>
                                         <div class="large-3 columns">
                                             <h4>Triumphs
-                                                <a data-dropdown="distinctions" aria-controls="distinctions"
-                                                   aria-expanded="false" class="smaller-fontsize">
-                                                    <i class="fa fa-info-circle"></i>
-                                                </a>
+
                                             </h4>
 
                                             {% include "search/offices.html" with office_list=distinctions_office_list %}
 
 
-                                            <div id="distinctions" data-dropdown-content class="f-dropdown content"
-                                                 aria-hidden="true" tabindex="-1">
-                                                <p>Info about <strong>Distinctions</strong></p>
-                                            </div>
                                         </div>
                                         <div class="medium-6 large-3 columns">
                                             <h4>Lower Offices
-                                                <a data-dropdown="lower-info" aria-controls="lower-info"
-                                                   aria-expanded="false" class="smaller-fontsize">
-                                                    <i class="fa fa-info-circle"></i>
-                                                </a>
+
                                             </h4>
 
-                                            <div id="lower-info" data-dropdown-content class="f-dropdown content"
-                                                 aria-hidden="true" tabindex="-1">
-                                                <p>Info about the <strong>Lower Offices</strong></p>
-                                            </div>
 
                                             {% include "search/offices.html" with office_list=non_magisterial_office_list %}
                                         </div>
@@ -235,7 +206,7 @@
 
                                             <div id="location" data-dropdown-content class="f-dropdown content"
                                                  aria-hidden="true" tabindex="-1">
-                                                <p>Info about <strong>Location</strong></p>
+                                                <p>Documented provinces or geographic locations associated with magistracies or posts.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -289,17 +260,17 @@
             {% if pdf_view %}
                 {% include "search/fasti-results.html" %}
             {% else %}
-            {% cache 3600 * 24 fasti_search_results querydict %}
-                {% include "search/fasti-results.html" %}
-            {% endcache %}
-            <div class="jplist-panel do-not-print">
-                <!-- pagination control -->
-                <div class="jplist-pagination pagination pagination-fasti" data-control-type="pagination"
-                     data-control-name="paging" data-control-action="paging" data-items-per-page="10"
-                     data-control-animate-to-top="true" data-jump-to-start="true" data-control-storage="false"
-                     data-mode="google-like"></div>
-            </div>
-        {% endif %}
+                {% cache 3600 * 24 fasti_search_results querydict %}
+                    {% include "search/fasti-results.html" %}
+                {% endcache %}
+                <div class="jplist-panel do-not-print">
+                    <!-- pagination control -->
+                    <div class="jplist-pagination pagination pagination-fasti" data-control-type="pagination"
+                         data-control-name="paging" data-control-action="paging" data-items-per-page="10"
+                         data-control-animate-to-top="true" data-jump-to-start="true" data-control-storage="false"
+                         data-mode="google-like"></div>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock main %}
@@ -341,12 +312,12 @@
         $('a.person_detail_link').click(function () {
             var jp_page = getUrlParameter('jp_page');
             var selected_page = $('button.jplist-current').attr('data-number');
-            if (selected_page > 0){
+            if (selected_page > 0) {
                 $(this).attr('href', $(this).attr('href') + '&jp_page=' + selected_page)
-            }else if (jp_page) {
+            } else if (jp_page) {
                 if ($(this).attr('href').indexOf('jp_page') > -1) {
                     $(this).attr('href', $(this).attr('href').re + '&jp_page=' + jp_page)
-                }else{
+                } else {
                     $(this).attr('href', $(this).attr('href') + '&jp_page=' + jp_page)
                 }
             }

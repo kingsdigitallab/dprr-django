@@ -44,7 +44,7 @@
                         </a>
                     </li>
                     <li>
-                        <a aria-lablledby="#pdf" href="/pdf{{request.get_full_path}}">
+                        <a aria-lablledby="#pdf" href="/pdf{{ request.get_full_path }}">
                             <i class="fa fa-file-pdf-o"></i>
                             <label id="pdf">Save PDF</label>
                         </a>
@@ -54,29 +54,43 @@
         </div>
         <div class="row do-not-print">
             <div class="large-12 columns">
-                <h2>Dating Certainty</h2>
-                <p class="info">
-                    <i class="fa fa-info-circle"></i>
-                    Explanation here.
-                </p>
-                <div class="button-group certainty_switch">
-                <ul>
+                <h2>Dating Certainty
+                <a data-dropdown="dating-certainty" aria-controls="dating-certainty"
+                                                   aria-expanded="false" class="smaller-fontsize">
+                                                    <i class="fa fa-info-circle"></i>
+                                                </a>
+                </h2>
 
-                    {% for radio in form.dating_certainty %}
-                        <li {% if forloop.first %}class="alpha"{% endif %}>
-                        {{ radio.choice_label }}
-                        <div class="switch">
-                            <input class="switch-input" id="{{ radio.id_for_label }}" type="radio"
-                                   {% if radio.choice_value == form.dating_certainty.value %}checked{% endif %}
-                                   value="{{ radio.choice_value }}"
-                                   name="{{ form.dating_certainty.name }}">
-                            <label class="switch-paddle" for="{{ radio.id_for_label }}">
-                                <span class="show-for-sr">{{ radio.choice_label }}</span>
-                            </label>
-                        </div>
-                        </li>
-                    {% endfor %}
-                </ul>
+                <div id="dating-certainty" data-dropdown-content class="f-dropdown content"
+                     aria-hidden="true" tabindex="-1">
+                    <p><strong>Certain</strong> - persons documented as a senator in the chosen year. Sorted on estimated date of
+                        entering the senate.</p>
+                    <p><strong>Uncertain</strong> - persons possibly a senator in the chosen year. Sorted on estimated date of entering
+                        the senate. </p>
+                    <p><strong>Attested before</strong> - persons documented in or possibly in a senatorial post before the chosen year.
+                        Those closest to the chosen date listed first.</p>
+                    <p><strong>Attested after</strong> - persons documented in or possibly in a senatorial post after the chosen year.
+                        Those closest to the chosen date listed first.</p>
+
+                </div>
+                <div class="button-group certainty_switch">
+                    <ul>
+
+                        {% for radio in form.dating_certainty %}
+                            <li {% if forloop.first %}class="alpha"{% endif %}>
+                                {{ radio.choice_label }}
+                                <div class="switch">
+                                    <input class="switch-input" id="{{ radio.id_for_label }}" type="radio"
+                                           {% if radio.choice_value == form.dating_certainty.value %}checked{% endif %}
+                                           value="{{ radio.choice_value }}"
+                                           name="{{ form.dating_certainty.name }}">
+                                    <label class="switch-paddle" for="{{ radio.id_for_label }}">
+                                        <span class="show-for-sr">{{ radio.choice_label }}</span>
+                                    </label>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
         </div>
@@ -87,7 +101,7 @@
             <ol start="{{ page_obj.start_index }}" class="search-results senators-in-year">
                 {% for result in object_list %}
                     <li>
-                            {% include "search/person-senate.html" with doc=result querydict=querydict %}
+                        {% include "search/person-senate.html" with doc=result querydict=querydict %}
 
                     </li>
                 {% empty %}
@@ -101,7 +115,7 @@
 {% endblock main %}
 
 {% block footerscripts %}
-{{ block.super }}
-<script src="{% static 'javascripts/search.js' %}"></script>
+    {{ block.super }}
+    <script src="{% static 'javascripts/search.js' %}"></script>
 {% endblock %}
 

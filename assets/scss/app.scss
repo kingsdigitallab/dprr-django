@@ -193,6 +193,11 @@ ul {
     margin-bottom: .5rem;
 }
 
+.inline-list.no-bullet.collapse {
+    margin: 0;
+    padding: 0;
+}
+
 .inline-list i {
     display: inline-block;
 }
@@ -1217,6 +1222,10 @@ svg {
     .pagination-centred,
     .results-preview.fixed {
         display: none;
+    }
+
+    li {
+        page-break-inside: avoid !important;
     }
 
     .results-preview {

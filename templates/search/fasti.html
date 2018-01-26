@@ -249,8 +249,8 @@
     </div>
     <div class="row" id="search-results-box">
         <div class="large-12 columns">
-            <hr>
-            <h2>Search Results
+            <hr class="do-not-print">
+            <h2 class="do-not-print">Search Results
                 <span class="label radius">{{ paginator.count }}</span>
                 <a href="#search" class="less-padding button right edit-search do-not-print">
                     <i class="fa fa-edit"></i>
@@ -299,7 +299,7 @@
 
                                 {% for career in careers %}
                                     {% with career.grouper|last as career_name %}
-                                        <h4>{{ career_name }}</h4>
+                                    <h4>{{ career_name }}</h4>
                                     {% endwith %}
 
                                     <ol class="search-results">
@@ -309,8 +309,11 @@
                                                     <a class="person_detail_link"
                                                        href="{% url 'person-detail' result.person_id %}?facet_view=fasti_search&{% get_request_parameters 'facet_view' %}">
                                                         {% if result.uncertain_exact %}
-                                                            <span class="uncertain">{{ result.person_title }}</span>{% else %}
-                                                            {{ result.person_title }}{% endif %}</a>
+                                                        <span class="uncertain">{{ result.person_title }}</span>
+                                                        {% else %}
+                                                        {{ result.person_title }}
+                                                        {% endif %}
+                                                    </a>
                                                 </h4>
                                             </li>
                                         {% endfor %}
@@ -321,7 +324,7 @@
                     {% endfor %}
                 </div>
             {% endcache %}
-            <div class="jplist-panel">
+            <div class="jplist-panel do-not-print">
                 <!-- pagination control -->
                 <div class="jplist-pagination pagination pagination-fasti" data-control-type="pagination"
                      data-control-name="paging" data-control-action="paging" data-items-per-page="10"

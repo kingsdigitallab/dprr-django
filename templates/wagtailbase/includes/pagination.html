@@ -2,7 +2,7 @@
 
 {% get_request_parameters exclude="page" as params %}
 
-<ul class="pagination">
+<ul class="pagination do-not-print">
     <li class="arrow{% if not pages.has_previous %} unavailable{% endif %}">
     <a href="{% if pages.has_previous %}?page={{ pages.previous_page_number }}{{ params }}{% endif %}">&laquo;</a>
     </li>

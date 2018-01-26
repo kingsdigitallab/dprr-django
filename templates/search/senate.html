@@ -32,20 +32,24 @@
             <div class="small-3 medium-2 large-1 columns">
                 {{ form.senate_date }}
             </div>
-            <div class="small-3 medium-3 large-2 columns">
+            <div class="small-3 medium-2 large-2 columns">
                 <button type="submit" class="small button secondary expand less-padding">Apply</button>
             </div>
-            <div class="small-3 medium-2 large-1 columns end">
-            <a class="right" aria-lablledby="#print" id="printme">
-                        <i class="fa fa-print"></i>
-                        <label id="print">Print</label>
-                    </a>
-
-
-                    <a class="right" aria-lablledby="#pdf" href="/pdf{{request.get_full_path}}">
-                        <i class="fa fa-file-pdf-o"></i>
-                        <label id="pdf">Save PDF<br>(All results)</label>
-                    </a>
+            <div class="small-12 medium-2 columns">
+                <ul class="no-bullet inline-list collapse">
+                    <li>
+                        <a aria-lablledby="#print" id="printme">
+                            <i class="fa fa-print"></i>
+                            <label id="print">Print</label>
+                        </a>
+                    </li>
+                    <li>
+                        <a aria-lablledby="#pdf" href="/pdf{{request.get_full_path}}">
+                            <i class="fa fa-file-pdf-o"></i>
+                            <label id="pdf">Save PDF</label>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
         <div class="row do-not-print">

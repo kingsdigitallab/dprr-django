@@ -307,9 +307,9 @@ FABRIC_USER = ''
 
 PDFKIT_OPTIONS = {
     'page-size': 'A4',
-    'margin-top': '0.75in',
+    'margin-top': '0.65in',
     'margin-right': '0.75in',
-    'margin-bottom': '0.75in',
+    'margin-bottom': '0.65in',
     'margin-left': '0.75in',
     'encoding': "UTF-8"
 }

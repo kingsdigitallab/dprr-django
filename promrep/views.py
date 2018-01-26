@@ -293,6 +293,13 @@ class SenateSearchView(SearchView):
     form_class = SenateSearchForm
     queryset = SearchQuerySet().models(StatusAssertion)
     template_name = 'search/senate.html'
+    pdf_paginate = 10000
+
+    def get_paginate_by(self, queryset):
+        if self.request.GET.get('pdf_view'):
+            return self.pdf_paginate
+        else:
+            return self.paginate_by
 
     def get_queryset(self):
         queryset = super(SenateSearchView, self).get_queryset()

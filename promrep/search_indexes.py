@@ -1,5 +1,6 @@
 import re
 from django.conf import settings as s
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from haystack import indexes
 from promrep.forms import PromrepFacetedSearchForm, SenateSearchForm
@@ -236,7 +237,7 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
 
             if sen_q:
                 olist = olist.exclude(sen_q)
-        except:
+        except ObjectDoesNotExist:
             pass
 
         olist = olist.values_list('office__id', flat=True)
@@ -303,7 +304,9 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         return self.get_model().objects.all().exclude(
             office__name__in=exclude_offices).exclude(
             unknown=True).exclude(
-            Q(date_start__isnull=True) & Q(date_end__isnull=True))
+            Q(date_start__isnull=True) & Q(date_end__isnull=True)).exclude(
+            date_start__gt=-31).exclude(
+            date_end__gt=-31)
 
     def prepare_office(self, object):
         # Hierarquical facet

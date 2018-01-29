@@ -7,7 +7,7 @@ beautifulsoup4
 bleach
 django==1.10
 django-appconf
-django-author
+django-author==1.0.1
 django-extensions
 django-grappelli
 django-model-utils

@@ -49,7 +49,7 @@ class SecondarySource(TimeStampedModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ("id__iexact", "name", "abbrev")
+        return ("id__iexact", "name", "abbrev_name")
 
 
 class PrimarySource(models.Model):

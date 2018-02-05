@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.views.decorators.cache import cache_page
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtailcore import urls as wagtail_urls
+from wagtail.wagtaildocs import urls as wagtaildocs_urls
 
 from ddhldap.signal_handlers import \
     register_signal_handlers as ddhldap_register_signal_handlers
@@ -47,6 +48,7 @@ except ImportError:
 
 urlpatterns += [
     url(r'^wagtail/', include(wagtailadmin_urls)),
+    url(r'^documents/', include(wagtaildocs_urls)),
     url(r'', include(wagtail_urls)),
 ]
 

@@ -25,13 +25,13 @@ $(document).ready(function () {
     // Expand / Collapse
 
     $('.panel-head h4').bind("click", function () {
-        $(this).parent().next('.panel-body').slideToggle(400).removeClass("hide");
+        $(this).parent().next('.panel-body').slideToggle(400).toggleClass("hide show");
         $("i", this).toggleClass("fa-caret-down fa-caret-right");
         return false;
     });
 
     $('.expander').bind("click", function () {
-        $(this).next('.collapsible').slideToggle(400).removeClass("hide");
+        $(this).next('.collapsible').slideToggle(400).toggleClass("hide show");
         $("i", this).toggleClass("fa-caret-down fa-caret-right");
         $(".expander ~ span.info").toggleClass("hide show");
         return false;

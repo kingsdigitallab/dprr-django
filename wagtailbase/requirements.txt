@@ -1,4 +1,4 @@
 django-compressor
 django-libsass
 django-modelcluster
-wagtail
+wagtail < 2.0

@@ -1217,6 +1217,10 @@ svg {
 
     .hide {
         display: table !important;
+
+        &.do-not-print {
+            display: none !important;
+        }
     }
 
     header,

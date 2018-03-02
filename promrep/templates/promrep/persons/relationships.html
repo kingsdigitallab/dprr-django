@@ -30,7 +30,7 @@
         <a href="#" class="expander life-dates right">
             Expand <i class="fa fa-caret-right"></i>
         </a>
-        <p class="hide collapsible">
+        <p class="hide collapsible do-not-print">
             {% for ref in r.references.all %}
             {{ ref.print_primary_source_refs }}{% if not forloop.last %}, {% endif %}
             {% endfor %}

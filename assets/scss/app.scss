@@ -1182,8 +1182,14 @@ svg {
             font-size: 11px !important;
         }
 
+        h3 {
+            font-size: 14px !important;
+            margin: 0 !important;
+            line-height: 1 !important;
+        }
         h4 {
             font-size: 12px !important;
+            margin: 0 !important;
         }
     }
 
@@ -1211,6 +1217,10 @@ svg {
 
     .hide {
         display: table !important;
+
+        &.do-not-print {
+            display: none !important;
+        }
     }
 
     header,

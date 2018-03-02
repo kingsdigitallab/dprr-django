@@ -23,12 +23,12 @@
         <a href="#" class="expander right">Expand
             <i class="fa fa-caret-right"></i>
         </a>
-        <p class="hide collapsible">{{ pa.get_ruepke_notes|capfirst }}</p>
+        <p class="hide collapsible do-not-print">{{ pa.get_ruepke_notes|capfirst }}</p>
         {% elif pa.notes.count %}
         <a href="#" class="expander right">Expand
             <i class="fa fa-caret-right"></i>
         </a>
-        <ul class="no-bullet hide collapsible">
+        <ul class="no-bullet hide collapsible do-not-print">
             {% for note in pa.notes.all %}
             <li>{{ note.text }} (<em>{{ note.secondary_source.abbrev_name }}</em>)</li>
             {% endfor %}

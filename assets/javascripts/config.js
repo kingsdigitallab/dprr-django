@@ -31,7 +31,7 @@ $(document).ready(function () {
     });
 
     $('.expander').bind("click", function () {
-        $(this).next('.collapsible').slideToggle(400).toggleClass("hide show");
+        $(this).next('.collapsible').slideToggle(400).toggleClass("hide show do-not-print");
         $("i", this).toggleClass("fa-caret-down fa-caret-right");
         $(".expander ~ span.info").toggleClass("hide show");
         return false;

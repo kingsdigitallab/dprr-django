@@ -139,7 +139,8 @@ class PaginationDisplay (object):
         data.append(self._get_data(current, ['current'], current))
         if page.has_next():
             # Add links to the following pages.
-            for number in page_range[context + 1:context + 1 + near_count]:
+            for number in list(
+                    page_range)[context + 1:context + 1 + near_count]:
                 data.append(self._get_data(number, [], number))
             end = last - context - 1 - near_count
             if end > end_count:
@@ -148,7 +149,7 @@ class PaginationDisplay (object):
                 data.append(self._get_data('&hellip;', ['unavailable']))
             if end > 0:
                 # Add links to the last pages.
-                for number in page_range[-min(end, end_count):]:
+                for number in list(page_range)[-min(end, end_count):]:
                     data.append(self._get_data(number, [], number))
             # Add a link to the next page.
             data.append(self._get_data(

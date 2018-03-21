@@ -72,10 +72,9 @@ class RelationshipAssertionListInline(admin.TabularInline):
             RelationshipAssertion._meta.model_name),
             args=(instance.relationshipassertion.id,))
 
-        return format_html(u'<a href="{}">{}</a>',
+        return format_html("<a href=\"{}\">{}</a>",
                            url,
                            instance.relationshipassertion)
-    link.allow_tags = True
 
 
 class RelationshipTypeAdmin(admin.ModelAdmin):

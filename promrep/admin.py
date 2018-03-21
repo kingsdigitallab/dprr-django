@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from django.contrib.contenttypes.admin import GenericStackedInline
 from django.core.urlresolvers import reverse
-from django.utils.html import format_html, mark_safe
+from django.utils.html import mark_safe
 from django_mptt_admin.admin import DjangoMpttAdmin
 from models import (DateInformation, DateType, Gens, GensAssertion,
                     Office, Person, PersonNote, PostAssertion,
@@ -70,12 +70,13 @@ class RelationshipAssertionListInline(admin.TabularInline):
         url = reverse('admin:%s_%s_change' % (
             RelationshipAssertion._meta.app_label,
             RelationshipAssertion._meta.model_name),
-            args=(instance.relationshipassertion.id,))
+            args=(instance.relationshipassertion.id,)
+        )
 
-        link_html = format_html("<a href=\"{}\">{}</a>",
-                                url,
-                                instance.relationshipassertion
-                                )
+        link_html = "<a href=\"{}\">{}</a>".format(
+            url,
+            instance.relationshipassertion
+        )
         return mark_safe(link_html)
 
 

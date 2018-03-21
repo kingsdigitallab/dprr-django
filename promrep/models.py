@@ -547,7 +547,7 @@ class Person(TimeStampedModel):
     url_to_edit_person.short_description = 'Person'
 
     def related_label(self):
-        return self.url_to_edit_person()
+        return mark_safe(self.url_to_edit_person())
 
     def has_status_information(self):
         return self.patrician or self.nobilis or self.novus or self.is_eques()

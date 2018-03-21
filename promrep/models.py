@@ -10,7 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-from django.utils.html import mark_safe
+from django.utils.html import mark_safe, format_html
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey
 
@@ -540,8 +540,10 @@ class Person(TimeStampedModel):
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
-        return mark_safe(u'<a href="%s">%s</a>' % (url, u'test:'))
-
+        return format_html(u'<a href="{}">{}</a>',
+                           url,
+                           self.__unicode__()
+                           )
     url_to_edit_person.short_description = 'Person'
 
     def related_label(self):

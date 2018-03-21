@@ -540,7 +540,7 @@ class Person(TimeStampedModel):
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
-        return mark_safe(u'<a href="%s">%s</a>' % (url, self.__unicode__()))
+        return mark_safe(u'<a href="%s">%s</a>' % (url, u'test:'))
 
     url_to_edit_person.short_description = 'Person'
 

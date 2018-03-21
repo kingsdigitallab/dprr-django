@@ -2,18 +2,17 @@
 # -*- coding: utf-8 -*-
 
 import re
-
 from author.decorators import with_author
+from django.conf import settings as s
 from django.contrib.contenttypes.fields import (GenericForeignKey,
                                                 GenericRelation)
-from django.conf import settings as s
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Q
+from django.utils.html import mark_safe
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey
-
-from django.db.models import Q
 
 
 def date_to_string(date_int, date_uncertain, date_suffix=True):
@@ -96,7 +95,6 @@ class Sex(models.Model):
 
 @with_author
 class Gens(models.Model):
-
     class Meta:
         verbose_name_plural = "Gens"
 
@@ -135,7 +133,8 @@ class PrimarySourceReference(TimeStampedModel):
 
     limit = models.Q(app_label='promrep', model='PersonNote') | \
         models.Q(app_label='promrep', model='PostAssertionNote') | \
-        models.Q(app_label='promrep', model='RelationshipAssertionReference')
+        models.Q(app_label='promrep',
+                 model='RelationshipAssertionReference')
 
     content_type = models.ForeignKey(
         ContentType,
@@ -179,7 +178,6 @@ class Note(TimeStampedModel):
 
 @with_author
 class RelationshipAssertionReference(Note):
-
     """This is a SecondarySourceNote/Reference
     """
 
@@ -195,7 +193,9 @@ class RelationshipAssertionReference(Note):
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
-        return u'<a href="%s">%s</a>' % (url, self.__unicode__())
+        return mark_safe(
+            u'<a href="%s">%s</a>' % (url, self.__unicode__())
+        )
 
     def related_label(self):
         return u"[%s] %s (%s)<br><br>" % (
@@ -210,11 +210,12 @@ class RelationshipAssertionReference(Note):
 
 @with_author
 class PostAssertionNote(Note):
-
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
-        return u'<a href="%s">%s</a>' % (url, self.__unicode__())
+        return
+        return mark_safe(u'<a href="%s">%s</a>' % (url, self.__unicode__())
+                         )
 
     def related_label(self):
         return u"[%s - %s] %s <br>" % (
@@ -224,11 +225,12 @@ class PostAssertionNote(Note):
 
 @with_author
 class PersonNote(Note):
-
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
-        return u'<a href="%s">%s</a>' % (url, self.__unicode__())
+        return
+        return mark_safe(u'<a href="%s">%s</a>' % (url, self.__unicode__())
+                         )
 
     def related_label(self):
         return u"[%s - %s] %s<br><br>" % (
@@ -239,11 +241,11 @@ class PersonNote(Note):
 
 @with_author
 class StatusAssertionNote(Note):
-
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
-        return u'<a href="%s">%s</a>' % (url, self.__unicode__())
+        return
+        return mark_safe(u'<a href="%s">%s</a>' % (url, self.__unicode__()))
 
     def related_label(self):
         return u"[%s - %s] %s<br><br>" % (
@@ -539,9 +541,8 @@ class Person(TimeStampedModel):
     def url_to_edit_person(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
-        return u'<a href="%s">%s</a>' % (url, self.__unicode__())
+        return mark_safe(u'<a href="%s">%s</a>' % (url, self.__unicode__()))
 
-    url_to_edit_person.allow_tags = True
     url_to_edit_person.short_description = 'Person'
 
     def related_label(self):
@@ -567,7 +568,7 @@ class Person(TimeStampedModel):
 
         date_qs = self.dateinformation_set.exclude(
             date_type__name=s.LOOKUPS['dates']['person_exclude']).order_by(
-                'value')
+            'value')
 
         dates = list(date_qs)
 
@@ -844,9 +845,8 @@ class PostAssertion(TimeStampedModel):
 
                 provinces.append(name)
 
-        return ", ".join(provinces)
+        return mark_safe(", ".join(provinces))
 
-    print_provinces.allow_tags = True
     print_provinces.short_description = 'Provinces'
 
     def print_date(self):  # noqa
@@ -1148,9 +1148,8 @@ class StatusAssertion(TimeStampedModel):
     #  uncertainty info, etc.
     def print_provinces(self):
         pl = [p.__unicode__() for p in self.statusassertionprovince_set.all()]
-        return ", ".join(pl)
+        return mark_safe(", ".join(pl))
 
-    print_provinces.allow_tags = True
     print_provinces.short_description = 'Provinces'
 
     def __unicode__(self):

@@ -213,7 +213,6 @@ class PostAssertionNote(Note):
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
-        return
         return mark_safe(u'<a href="%s">%s</a>' % (url, self.__unicode__())
                          )
 
@@ -228,7 +227,7 @@ class PersonNote(Note):
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
-        return
+
         return mark_safe(u'<a href="%s">%s</a>' % (url, self.__unicode__())
                          )
 
@@ -244,7 +243,7 @@ class StatusAssertionNote(Note):
     def url_to_edit_note(self):
         url = reverse('admin:%s_%s_change' % (
             self._meta.app_label, self._meta.model_name), args=[self.id])
-        return
+
         return mark_safe(u'<a href="%s">%s</a>' % (url, self.__unicode__()))
 
     def related_label(self):

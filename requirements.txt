@@ -9,7 +9,7 @@ django==1.10
 django-appconf
 django-author==1.0.1
 django-extensions
-django-grappelli
+django-grappelli==2.10.1
 django-model-utils
 django-mptt
 django-mptt-admin

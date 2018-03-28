@@ -976,6 +976,17 @@ footer.main-footer {
         a {
             border: none !important;
         }
+
+        img,
+        svg {
+            max-height: 150px;
+            vertical-align: bottom;
+        }
+
+        p {
+            margin: 5px 0 0 0;
+            text-align: center;
+        }
     }
 
     .right p {

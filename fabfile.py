@@ -1,27 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from fabric.api import local, task, prefix, run, sudo, env, require, cd, quiet
-from fabric.colors import green, yellow
-from fabric.contrib import django
-from functools import wraps
-import sys
 import os.path
-
+import sys
+from functools import wraps
 from getpass import getuser
 from socket import gethostname
 
+from django.conf import settings  # noqa
+from fabric.api import cd, env, local, prefix, quiet, require, run, sudo, task
+from fabric.colors import green, yellow
+from fabric.contrib import django
 
 # put project directory in path
 project_root = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(project_root)
 
 django.project('dprr')
-from django.conf import settings  # noqa
 
 REPOSITORY = 'git@github.com:kingsdigitallab/dprr-django.git'
 
 env.user = settings.FABRIC_USER
+env.gateway = 'ssh.cch.kcl.ac.uk'
 env.hosts = ['dprr.dighum.kcl.ac.uk']
 env.root_path = '/vol/dprr/webroot/'
 env.envs_path = os.path.join(env.root_path, 'envs')
@@ -144,27 +144,20 @@ def setup_environment():
     clone_repo()
     install_requirements()
 
-# quicker deployment - no requirements/migrations
-
 
 @task
-def quick_deploy(branch=None):
-    update(branch)
-    own_django_log()
-    collect_static()
-    update_index()
-    touch_wsgi()
-
-
-@task
-def deploy(branch=None):
+def deploy(branch=None, index='yes'):
     update(branch)
     install_requirements()
+    # migrate also creates the cache table
     migrate()
     own_django_log()
     collect_static()
     # clear_cache()
-    update_index()
+
+    if index.lower() == 'yes':
+        update_index()
+
     touch_wsgi()
 
 
@@ -204,6 +197,7 @@ def migrate(app=None):
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 
     with cd(env.path), prefix(env.within_virtualenv):
+        run('./manage.py createcachetable')
         run('./manage.py migrate {}'.format(app if app else ''))
 
 
@@ -216,6 +210,17 @@ def update_index():
         run('mv schema.xml ../../solr/collection1/conf/')
         sudo('service tomcat7-{} restart'.format(env.srvr))
         run('./manage.py update_index')
+
+
+@task
+def rebuild_index():
+    require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
+
+    with cd(env.path), prefix(env.within_virtualenv):
+        run('./manage.py build_solr_schema > schema.xml')
+        run('mv schema.xml ../../solr/collection1/conf/')
+        sudo('service tomcat7-{} restart'.format(env.srvr))
+        run('./manage.py rebuild_index')
 
 
 @task
@@ -282,6 +287,14 @@ def touch_wsgi():
 
     with cd(os.path.join(env.path, 'dprr')), prefix(env.within_virtualenv):
         run('touch wsgi.py')
+
+
+@task
+def command(name=None):
+    require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
+
+    with cd(env.path), prefix(env.within_virtualenv):
+        run('./manage.py {}'.format(name if name else ''))
 
 
 @task

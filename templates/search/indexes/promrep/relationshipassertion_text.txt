@@ -1,0 +1,5 @@
+{% for note in object.references.all %}
+<p>
+    {{ note }}
+</p>
+{% endfor %}

@@ -2,9 +2,6 @@ from base import *  # noqa
 
 DEBUG = True
 
-CACHE_REDIS_DATABASE = '3'
-CACHES['default']['LOCATION'] = '127.0.0.1:6379:' + CACHE_REDIS_DATABASE  # noqa
-
 INTERNAL_IPS = ('dprr-dev.dighum.kcl.ac.uk', '137.73.123.239', )
 
 DATABASES = {
@@ -23,8 +20,6 @@ LOGGING['loggers']['django']['level'] = LOGGING_LEVEL  # noqa
 LOGGING['loggers']['django_auth_ldap']['level'] = LOGGING_LEVEL  # noqa
 LOGGING['loggers']['promrep']['level'] = LOGGING_LEVEL  # noqa
 
-TEMPLATE_DEBUG = True
-
 # -----------------------------------------------------------------------------
 # Development Installed Applications Settings
 # -----------------------------------------------------------------------------
@@ -35,9 +30,7 @@ TEMPLATE_DEBUG = True
 
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE':
-        ('promrep.'
-         'solr_backends.solr_backend_field_collapsing.GroupedSolrEngine'),
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
         'URL': 'http://127.0.0.1:8182/solr'
     },
 }

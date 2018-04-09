@@ -1,0 +1,45 @@
+{% load wagtailbase_tags %}
+
+{% if relationships %}
+<h3>Relationships</h3>
+<dl class="top-padding relationships">
+    {% for relationship_type in relationships.keys %}
+    <dt class="capitalize">{{ relationship_type }}</dt>
+
+    {% for r in relationships|get_item:relationship_type %}
+    <dd class="{% if r.relationship_number %}relationship-{{ r.relationship_number }}{% endif %} {% if r.uncertain %}uncertain{% endif %}">
+
+        <span class="label">{% if r.relationship_number %}{{ r.relationship_number }}{% endif %}</span>
+
+        {% if r.uncertain %}?{% endif %}
+
+        {% with person=r.related_person %}
+        <a href="{% url 'person-detail' person.id %}{{ querystring }}">
+            {{ person }}
+            {% if person.highest_office %}
+            ({{ person.highest_office }})
+            {% endif %}
+        </a>
+        {% endwith %}
+
+        {% if r.secondary_source %}
+        ({{ r.secondary_source }})
+        {% endif %}
+
+        {% if r.references.all %}
+        <a href="#" class="expander life-dates right">
+            Expand <i class="fa fa-caret-right"></i>
+        </a>
+        <p class="hide collapsible do-not-print">
+            {% for ref in r.references.all %}
+            {{ ref.print_primary_source_refs }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+        {% endif %}
+
+    </dd>
+    {% endfor %}
+
+    {% endfor %}
+</dl>
+{% endif %}

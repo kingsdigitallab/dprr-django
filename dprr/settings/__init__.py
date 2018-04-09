@@ -6,5 +6,12 @@
 # imported here. Use it for settings specific to the installation and do not
 # commit to version control.
 # -----------------------------------------------------------------------------
+import os
+path = os.path.abspath(__name__)
 
-from liv import *  # noqa
+if '/dev/' in path or '/vagrant' in path:
+    from dev import *  # noqa
+elif 'stg' in path:
+    from stg import *  # noqa
+else:
+    from liv import *  # noqa

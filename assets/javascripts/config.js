@@ -1,32 +1,53 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
-	// Expand / Collapse
+    /*---------------------------------------------------- */
+    /* Cookies disclaimer
+    /* https://github.com/js-cookie/js-cookie
+    ------------------------------------------------------ */
 
-	$('.panel-head h4').bind("click", function() {
-		$(this).parent().next('.panel-body').slideToggle(400).removeClass("hide");
-		$("i", this).toggleClass("fa-caret-down fa-caret-right");
-		return false;
-	});
+    $(document).ready(function() {
+      if (!Cookies.get('dprr-cookie')) {
+          $("#cookie-disclaimer").removeClass('hide');
+      }
+      // Set cookie
+      $('#cookie-disclaimer .closeme').on("click", function() {
+          Cookies.set('dprr-cookie', 'dprr-cookie-set', {
+              expires: 30
+          });
+      });
 
-	$('.expander').bind("click", function() {
-		$(this).next('.collapsible').slideToggle(400).removeClass("hide");
-		$("i", this).toggleClass("fa-caret-down fa-caret-right");
-		return false;
-	});
+      $('.closeme').bind("click", function () {
+        $('#cookie-disclaimer').addClass("hide");
+        return false;
+      });
+    });
 
-	$('button.options').bind("click", function() {
-		var txt = $(".search-box").is(':visible') ? 'Show' : 'Hide';
-		$('.search-box').slideToggle(400);
-		$('#showhide').text(txt);
-		// toggle extra-margin class to remove blank space when collapsing
-		// the search box
-		$('#search-results-box').toggleClass("extra-margin");
-		return false;
-	});
+    // Expand / Collapse
 
-	// Printing search results
-	$('#printme').bind("click", function() {
-		// TODO: remove pagination and show full list of results
-		window.print();
-	});
+    $('.panel-head h4').bind("click", function () {
+        $(this).parent().next('.panel-body').slideToggle(400).toggleClass("hide show");
+        $("i", this).toggleClass("fa-caret-down fa-caret-right");
+        return false;
+    });
+
+    $('.expander').bind("click", function () {
+        $(this).next('.collapsible').slideToggle(400).toggleClass("hide show do-not-print");
+        $("i", this).toggleClass("fa-caret-down fa-caret-right");
+        $(".expander ~ span.info").toggleClass("hide show");
+        return false;
+    });
+
+    $('button.options').bind("click", function () {
+        var txt = $(".search-box").is(':visible') ? 'Show' : 'Hide';
+        $('.search-box').slideToggle(400);
+        $('#showhide').text(txt);
+        return false;
+    });
+
+    // Printing search results
+    $('#printme').bind("click", function (event) {
+        // Trigger reload with minimal pagination for printing
+        event.preventDefault();
+        window.print();
+    });
 });

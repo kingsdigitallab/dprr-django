@@ -8,7 +8,7 @@ from __future__ import absolute_import
 
 import logging
 
-from django.db.models.loading import get_model
+from django.apps import apps
 from haystack.backends import EmptyResults
 from haystack.backends.solr_backend import (SolrEngine, SolrSearchBackend,
                                             SolrSearchQuery)
@@ -16,11 +16,11 @@ from haystack.constants import DJANGO_CT, DJANGO_ID, ID
 from haystack.models import SearchResult
 from haystack.query import SearchQuerySet
 
+get_model = apps.get_model
+
 
 # Since there's no chance of this being portable (yet!) we'll import explicitly
 # rather than using the generic imports:
-
-
 class GroupedSearchQuery(SolrSearchQuery):
 
     def __init__(self, *args, **kwargs):
@@ -185,8 +185,9 @@ class GroupedSolrSearchBackend(SolrSearchBackend):
             *args, **kwargs)
 
         res.update(group_kwargs)
-        if group_kwargs and 'sort' not in kwargs:
-            res['sort'] = 'score desc, item_id asc'
+
+        if group_kwargs and 'sort_by' not in kwargs:
+            res['sort'] = 'score desc'
 
         return res
 

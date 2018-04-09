@@ -5,20 +5,19 @@ from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from django.contrib.contenttypes.admin import GenericStackedInline
 from django.core.urlresolvers import reverse
-from django.utils.html import format_html
+from django.utils.html import mark_safe
 from django_mptt_admin.admin import DjangoMpttAdmin
-from models import (DateInformation, DateType, Gens, GensAssertion, Group,
+from models import (DateInformation, DateType, Gens, GensAssertion,
                     Office, Person, PersonNote, PostAssertion,
-                    PostAssertionNote, Praenomen, PrimarySource,
-                    PrimarySourceReference, Province, RelationshipAssertion,
-                    RelationshipAssertionReference, RelationshipType, RoleType,
+                    PostAssertionNote, Praenomen, PrimarySourceReference,
+                    Province, RelationshipAssertion,
+                    RelationshipAssertionReference, RelationshipType,
                     SecondarySource, StatusAssertion, StatusAssertionNote,
-                    StatusType, Tribe, TribeAssertion)
+                    StatusType, Tribe, TribeAssertion, PrimarySource)
 from promrep.forms import (PostInlineForm, RelationshipAssertionInlineForm,
                            StatusInlineForm)
 
 admin.site.register(DateType)
-admin.site.register(RoleType)
 admin.site.register(StatusAssertionNote)
 
 
@@ -38,7 +37,7 @@ class StatusAssertionInline(admin.StackedInline):
     ordering = ('-date_start', '-date_end', )
     readonly_fields = ('id', )
 
-    fields = (('id', 'review_flag', ),
+    fields = (('id', 'review_flag', 'is_verified'),
               ('status', 'uncertain'),
               ('secondary_source', ),
               ('original_text', ),
@@ -71,22 +70,27 @@ class RelationshipAssertionListInline(admin.TabularInline):
         url = reverse('admin:%s_%s_change' % (
             RelationshipAssertion._meta.app_label,
             RelationshipAssertion._meta.model_name),
-            args=(instance.relationshipassertion.id,))
+            args=(instance.relationshipassertion.id,)
+        )
 
-        return format_html(u'<a href="{}">{}</a>',
-                           url,
-                           unicode(instance.relationshipassertion))
+        link_html = "<a href=\"{}\">{}</a>".format(
+            url,
+            instance.relationshipassertion
+        )
+        return mark_safe(link_html)
 
 
 class RelationshipTypeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'description', 'created', 'modified')
+    list_display = ('id', 'name', 'order', 'description', 'created',
+                    'modified')
     list_display_links = ('name', 'description')
     readonly_fields = ('id', 'created', 'modified')
 
     search_fields = ('name', 'description')
-    fields = ('id', ('name', 'description'), )
+    fields = ('id', ('name', 'order', 'description'), )
 
     show_change_link = True
+
 
 admin.site.register(RelationshipType, RelationshipTypeAdmin)
 
@@ -112,6 +116,7 @@ class RelationshipAssertionReferenceAdmin(admin.ModelAdmin):
                     'print_primary_source_refs', 'created', 'modified')
 
     inlines = (PrimarySourceReferenceInline, RelationshipAssertionListInline, )
+
 
 admin.site.register(RelationshipAssertionReference,
                     RelationshipAssertionReferenceAdmin)
@@ -139,6 +144,7 @@ class RelationshipAssertionReferenceInline(admin.StackedInline):
 class RelationshipAssertionAdmin(admin.ModelAdmin):
     list_display = ('id', 'person', 'relationship', 'related_person',
                     'relationship_number', 'uncertain', 'secondary_source',
+                    'extra_info',
                     'review_flag', 'created', 'modified')
 
     readonly_fields = ('id', 'created', 'modified')
@@ -168,6 +174,7 @@ class RelationshipAssertionAdmin(admin.ModelAdmin):
                      'person__id',
                      'related_person__id',
                      'person__re_number',
+                     'extra_info',
                      'related_person__re_number', )
 
     inlines = (RelationshipAssertionReferenceInline, )
@@ -175,12 +182,14 @@ class RelationshipAssertionAdmin(admin.ModelAdmin):
 
     show_change_link = True
 
+
 admin.site.register(RelationshipAssertion, RelationshipAssertionAdmin)
 
 
 class InverseRelationshipInline(admin.StackedInline):
     model = RelationshipAssertion
     form = RelationshipAssertionInlineForm
+
     fk_name = 'related_person'
     extra = 0
 
@@ -212,6 +221,7 @@ class InverseRelationshipInline(admin.StackedInline):
 class DirectRelationshipInline(admin.StackedInline):
     model = RelationshipAssertion
     form = RelationshipAssertionInlineForm
+
     fk_name = 'person'
     extra = 0
 
@@ -319,6 +329,8 @@ class PostAssertionAdmin(admin.ModelAdmin):
     list_display = ('id',
                     'person',
                     'office',
+                    'uncertain',
+                    'unknown',
                     'date_start',
                     'print_provinces',
                     'date_end',
@@ -328,7 +340,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
                     'created',
                     'modified')
 
-    list_filter = ('role', 'office', 'secondary_source', )
+    list_filter = ('office', 'secondary_source', 'uncertain', 'unknown',)
 
     readonly_fields = ('id', )
 
@@ -340,8 +352,7 @@ class PostAssertionAdmin(admin.ModelAdmin):
                   'person',
                   'office',
                   'secondary_source',
-                  ('role', 'uncertain'),
-                  'group',
+                  ('uncertain', 'unknown',),
                   ('original_text', 'office_xref'),
               ),
               }
@@ -357,13 +368,14 @@ class PostAssertionAdmin(admin.ModelAdmin):
         )})
     ]
 
-    raw_id_fields = ('group', 'person', 'office', )
+    raw_id_fields = ('person', 'office', )
 
     related_lookup_fields = {
-        'fk': ['group', 'person', 'office', ],
+        'fk': ['person', 'office', ],
     }
 
     inlines = (PostAssertionNoteInline, PostAssertionProvinceInline)
+
 
 admin.site.register(PostAssertion, PostAssertionAdmin)
 
@@ -380,6 +392,7 @@ class NoteAdmin(admin.ModelAdmin):
 
     show_change_link = True
 
+
 admin.site.register(PostAssertionNote, NoteAdmin)
 admin.site.register(PersonNote, NoteAdmin)
 
@@ -395,6 +408,7 @@ class ProvinceAdmin(DjangoMpttAdmin):
     fields = ('id', 'name', 'description')
 
     show_change_link = True
+
 
 admin.site.register(Province, ProvinceAdmin)
 
@@ -417,6 +431,7 @@ class PersonNoteInline(admin.StackedInline):
 
 
 class PostAssertionInline(admin.StackedInline):
+
     """Included in the Person Admin"""
 
     model = PostAssertion
@@ -434,10 +449,9 @@ class PostAssertionInline(admin.StackedInline):
     readonly_fields = ('id', )
 
     fields = (('id', 'review_flag', ),
-              ('office', 'role'),
-              ('uncertain', ),
+              ('office',),
+              ('uncertain', 'unknown',),
               ('secondary_source', ),
-              ('group', ),
               ('original_text', 'office_xref'),
               ('date_display_text',),
               ('date_source_text', 'date_secondary_source', ),
@@ -449,10 +463,9 @@ class PostAssertionInline(admin.StackedInline):
               'edit_link',
               )
 
-    raw_id_fields = ('notes', 'group',)
+    raw_id_fields = ('notes',)
 
     related_lookup_fields = {
-        'fk': ['group', ],
         'm2m': ['notes', ],
     }
 
@@ -535,12 +548,13 @@ class PersonAdmin(admin.ModelAdmin):
 
     fieldsets = [
         ('Database', {
-            'fields': [('id', 'review_flag'), 'review_notes']},
+            'fields': [('id', 'dprr_id', 'review_flag'), 'review_notes']},
          ),
         ('General Info',
          {
              'classes': ('grp-collapse grp-open',),
              'fields': (
+                 ('uncertain',),
                  ('sex',),
                  ('praenomen', 'praenomen_uncertain'),
                  'alt_praenomen',
@@ -554,6 +568,12 @@ class PersonAdmin(admin.ModelAdmin):
          {'classes': ('grp-collapse grp-open',),
           'fields': (
              ('re_number', 're_number_old', ),
+         )}
+         ),
+        ('Highest Office',
+         {'classes': ('grp-collapse grp-open',),
+          'fields': (
+             ('highest_office', 'highest_office_edited', ),
          )}
          ),
         ('Patrician', {
@@ -582,7 +602,9 @@ class PersonAdmin(admin.ModelAdmin):
 
     list_display = (
         'id',
+        'dprr_id',
         'url_to_edit_person',
+        'uncertain',
         'review_flag',
         'updated_by',
         'modified',
@@ -590,11 +612,13 @@ class PersonAdmin(admin.ModelAdmin):
         'created',
     )
 
-    search_fields = ['id', 'nomen', 'cognomen', 'praenomen__abbrev',
-                     'praenomen__name', 'other_names', 're_number', ]
+    search_fields = ['id', 'dprr_id', 'nomen', 'cognomen',
+                     'praenomen__abbrev', 'praenomen__name',
+                     'alt_praenomen__abbrev', 'alt_praenomen__name',
+                     'other_names', 're_number', ]
 
-    list_filter = ('nomen', 'review_flag', REUpdatedListFilter, 'patrician',
-                   'novus', 'nobilis', )
+    list_filter = ('nomen', 'uncertain', 'review_flag', REUpdatedListFilter,
+                   'patrician', 'novus', 'nobilis', )
 
     inlines = (
         DateInformationInline, GensAssertionInline, TribeAssertionInline,
@@ -604,16 +628,8 @@ class PersonAdmin(admin.ModelAdmin):
 
     exclude = ('assertions', )
 
+
 admin.site.register(Person, PersonAdmin)
-
-
-class PostInline(admin.TabularInline):
-    model = Group
-    classes = ('grp-collapse grp-open',)
-
-    readonly_fields = ('id', 'get_persons', 'related_label')
-    fields = ('id', 'related_label', 'get_persons')
-    extra = 0
 
 
 class OfficeAdmin(DjangoMpttAdmin):
@@ -627,50 +643,15 @@ class OfficeAdmin(DjangoMpttAdmin):
         'description',
     )
 
+
 admin.site.register(Office, OfficeAdmin)
-
-
-class GroupAdmin(admin.ModelAdmin):
-
-    search_fields = ['id',
-                     'postassertion__person__nomen',
-                     'postassertion__person__cognomen',
-                     'postassertion__office']
-
-    list_display = (
-        'id',
-        'date_year',
-        'date_info',
-        'notes',
-        'modified',
-        'created',
-    )
-
-    readonly_fields = ('id', )
-    list_display_links = ('id', 'notes', )
-
-    fieldsets = [('Database Info', {'fields': [('id')]}),
-                 ('',
-                  {
-                      'fields': (
-                          ('date_year', 'date_info', ),
-                          ('notes', ),
-                      ),
-                  }
-                  ),
-                 ]
-
-    inlines = [PostAssertionInline, ]
-    exclude = ('persons',)
-
-admin.site.register(Group, GroupAdmin)
 
 
 class StatusAssertionAdmin(admin.ModelAdmin):
     list_display = ('id', 'person', 'status',
                     'uncertain', 'date_start', 'date_end')
 
-    fields = (('id', 'review_flag', ),
+    fields = (('id', 'review_flag', 'is_verified'),
               ('person', 'status', ),
               ('secondary_source', 'uncertain',),
               ('original_text'),
@@ -691,6 +672,7 @@ class StatusAssertionAdmin(admin.ModelAdmin):
 
     inlines = (StatusAssertionProvinceInline, StatusAssertionNoteInline, )
 
+
 admin.site.register(StatusAssertion, StatusAssertionAdmin)
 
 
@@ -699,6 +681,7 @@ class StatusTypeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', )
     list_display_links = ('id', 'name', )
     readonly_fields = ('id', )
+
 
 admin.site.register(StatusType, StatusTypeAdmin)
 
@@ -709,6 +692,7 @@ class GensAdmin(admin.ModelAdmin):
     readonly_fields = ('id', )
     list_display_links = ('id', 'name', )
 
+
 admin.site.register(Gens, GensAdmin)
 
 
@@ -717,6 +701,7 @@ class TribeAdmin(admin.ModelAdmin):
     list_display = ('id', 'abbrev', 'name', )
     readonly_fields = ('id', )
     list_display_links = ('id', 'abbrev', 'name', )
+
 
 admin.site.register(Tribe, TribeAdmin)
 
@@ -745,5 +730,6 @@ class PrimarySourceAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'abbrev_name', 'biblio')
     readonly_fields = ('id', )
     list_display_links = ('id', 'abbrev_name', 'name', 'biblio')
+
 
 admin.site.register(PrimarySource, PrimarySourceAdmin)

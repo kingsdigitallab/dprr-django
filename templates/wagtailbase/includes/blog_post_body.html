@@ -8,7 +8,7 @@
         {% endblock %}
 
         {% block blog_post_author %}
-        <p class="byline"><time datetime="{{ post.date|date:'c' }}">{{ post.date }}</time> <span class="optional">by <a href="{% routablepageurl post.blog_index.specific 'author' post.owner %}">{{ post.owner|unslugify }}</a></span>
+        <p class="byline"><time datetime="{{ post.date|date:'c' }}">{{ post.date }}</time> <span class="optional">by <a href="{% routablepageurl post.blog_index.specific 'author' post.owner %}">{{ post.owner.get_full_name }}</a></span>
 
             {% are_comments_allowed as allow_comments %}
             {% if allow_comments %}

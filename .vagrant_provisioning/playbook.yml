@@ -32,28 +32,6 @@
     tags:
       -system
 
-  - name: apt | add node key
-    become: yes
-    apt_key:
-      url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-      state: present
-    tags:
-      - system
-
-  - name: apt | add nodejs sources
-    apt_repository:
-      repo: 'deb https://deb.nodesource.com/node wheezy main'
-      state: present
-    tags:
-      - system
-
-  - name: apt | add nodejs sourcecode sources
-    apt_repository:
-      repo: 'deb-src https://deb.nodesource.com/node wheezy main'
-      state: present
-    tags:
-      - system
-
   - name: apt | add postgresql key
     become: yes
     apt_key:
@@ -74,7 +52,7 @@
       pkg: "{{item}}"
       state: installed
       update_cache: yes
-    with_items: system_packages
+    with_items: "{{system_packages}}"
     tags:
       - system
 
@@ -96,38 +74,57 @@
 - hosts: all
   vars_files:
     - vars.yml
+
   gather_facts: false
   tasks:
-  - name: pip | create virtualenv folder
-    command: mkdir -p {{ python.virtualenv_location }}}}
+  - name: python | easy install pip
+    become: yes
+    command: "easy_install -f https://pypi.python.org/simple/pip pip"
     tags:
       - python
 
-  - name: pip | setup virtualenv
-    command: virtualenv {{ python.virtualenv_location }}
+  - name: python | install setuptools
+    become: yes
+    pip: name=setuptools state=latest
     tags:
       - python
 
-  - name: pip | update setuptools
-    pip:
-      name: setuptools
-      virtualenv: "{{ python.virtualenv_location }}"
-      state: latest
+  - name: python | install virtualenv
+    become: yes
+    pip: name=virtualenv state=latest
     tags:
       - python
 
-  - name: pip | update pip
+  - name: python | install psycopg2
+    become: yes
+    pip: name=psycopg2 state=latest
+    tags:
+      - python
+
+  - name: python | install urllib3
+    become: yes
+    pip: name=urllib3[secure] state=latest
+    tags:
+      - python
+
+  - name: python | setup virtualenv
+    file: path={{ python.virtualenv_location }} state=directory
+  - command: virtualenv {{ python.virtualenv_location }}
+    tags:
+      - python
+
+  - name: python | update pip
     pip:
       name: pip
-      virtualenv: "{{ python.virtualenv_location }}"
+      virtualenv: '{{ python.virtualenv_location }}'
       state: latest
     tags:
       - python
 
-  - name: pip | ensure python requirements are installed to latest version
+  - name: python | ensure python requirements are installed to latest version
     pip:
-      requirements: "{{ project_root }}/{{ python.requirements }}"
-      virtualenv: "{{ python.virtualenv_location }}"
+      requirements: '{{ project_root }}/{{ python.requirements }}'
+      virtualenv: '{{ python.virtualenv_location }}'
     tags:
       - python
 
@@ -419,7 +416,6 @@
     become: yes
     service: name=tomcat7 state=restarted
 
-# TODO: only created this new play to ensure tomcat is restarted before we rebuild the index...
 - hosts: all
   vars_files:
     - vars.yml
@@ -444,7 +440,7 @@
       - git
 
   - name: git | flake8 pre-commit hook
-    command: "{{ user_home }}/venv/bin/flake8 --install-hook"
+    command: "{{ user_home }}/venv/bin/flake8 --install-hook=git"
     args:
       chdir: "{{ project_root }}"
     tags:

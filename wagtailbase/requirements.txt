@@ -1,6 +1,4 @@
-Django>=1.7.1,<1.9
 django-compressor
-django-modelcluster==0.6.2
-wagtail==1.0
-django-taggit
 django-libsass
+django-modelcluster
+wagtail < 2.0

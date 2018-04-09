@@ -1,0 +1,13 @@
+{% load promrep_tags ddh_utils_tags wagtailbase_tags%}
+<h4>
+    <a href="{% url 'person-detail' doc.person_id %}?facet_view=person_search{% get_request_parameters 'facet_view' %}">
+        {{ doc.dprr_id }}
+        {{ doc.object }}
+
+        {% if doc.object.highest_office %}
+        ({{ doc.object.highest_office }})
+        {% endif %}
+        
+        {% get_office_badges doc.person_id%}
+    </a>
+</h4>

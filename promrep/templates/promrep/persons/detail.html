@@ -1,138 +1,60 @@
 {% extends "base.html" %}
-{% load ddh_utils_tags staticfiles wagtailbase_tags wagtailcore_tags %}
+{% load wagtailbase_tags %}
 
 {% block meta_title %}Person Details{% endblock %}
 
 {% block main %}
 
-<div class="row">
-    <div class="large-12 columns">
+    <div class="row">
+        <div class="large-12 columns">
+            <h2>{{ person.dprr_id }} {{ person }}
 
-        <h1>{{ person }}</h1>
-
-        <p>
-            ID: {{ person.id }} <br />
-
-            {% if person.patrician %}
-            Patrician: {% if person.patrician_uncertainty %}?{% endif %}{{ person.patrician }} <br />
-            {% endif %}
-            {% if person.gens %}
-            Gens: {% if person.gens_uncertainty %}?{% endif %}{{ person.gens }} <br />
-            {% endif %}
-        </p>
-
-        {% if person.review_flag %}
-        <p><b>Warning: person needs revision</b></p>
-        {% endif %}
-
-        {% if person.dateinformation_set.all %}
-        <h2>Life Dates</h2>
-        <ul>
-            {% for di in person.dateinformation_set.all %}
-            <li>{{ di }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-
-        <div id="network-container">
-            <h2 class="svg-title">Relationships recorded in the sources</h2>
-            <style type="text/css">
-                #network {
-                    width: 100%;
-                    height: 600px;
-                    margin: 10px;
-                }
-
-                .sigma-tooltip {
-                  max-width: 400px;
-                  max-height: 280px;
-                  background-color: rgb(249, 247, 237);
-                  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-                  border-radius: 6px;
-              }
-
-              .sigma-tooltip-header {
-                  font-variant: small-caps;
-                  font-size: 120%;
-                  color: #437356;
-                  border-bottom: 1px solid #aac789;
-                  padding: 10px;
-              }
-
-              .sigma-tooltip-body {
-                  padding: 10px;
-              }
-
-              .sigma-tooltip-body th {
-                  color: #999;
-                  text-align: left;
-              }
-
-              .sigma-tooltip-footer {
-                  padding: 10px;
-                  border-top: 1px solid #aac789;
-              }
-
-              .sigma-tooltip > .arrow {
-                  border-width: 10px;
-                  position: absolute;
-                  display: block;
-                  width: 0;
-                  height: 0;
-                  border-color: transparent;
-                  border-style: solid;
-              }
-
-              .sigma-tooltip.top {
-                  margin-top: -12px;
-              }
-              .sigma-tooltip.top > .arrow {
-                  left: 50%;
-                  bottom: -10px;
-                  margin-left: -10px;
-                  border-top-color: rgb(249, 247, 237);
-                  border-bottom-width: 0;
-              }
-          </style>
-          <div id="network"></div>
-      </div>
-
-      <h2>Offices</h2>
-      <ul class="timeline no-bullet bottom-margin">
-        {% for pa in person.post_assertions.all %}
-        <li><span class="label radius{% if pa.uncertain == True %} gray-bg{% else %} green-bg{% endif %}">{{ pa.print_date | safe}}</span> <strong>{{ pa.office | title}} {% if pa.provinces %} <a href="#">{{ pa.print_provinces }}</a> {% endif %}</strong>
-
-            {% if pa.notes.count %}
-            <ul class="no-bullet">
-                {% for note in pa.notes.all %}
-                <li>{{note.text}} (in <em>{{note.secondary_source.abbrev_name}}</em>)</li>
-                {% endfor %}
+            <ul class="inline-list right export do-not-print">
+                <li>
+                    <a class="right" aria-lablledby="#print" id="printme">
+                        <i class="fa fa-print"></i>
+                        <label id="print">Print</label>
+                    </a>
+                </li>
             </ul>
+
+            </h2>
+
+            {% if person.review_flag %}
+                <p><strong>Warning: person under revision</strong></p>
             {% endif %}
 
-        </li>
-        {% endfor %}
-    </ul>
-</div>
-</div>
+            {% for note in person.get_reference_notes %}
+                <p class="note">
+                    {{ note }} (<em>{{ note.secondary_source.abbrev_name }}</em>)
+                </p>
+            {% endfor %}
 
-{% endblock %}
+            {% if person.has_status_information %}
+                <h3>Status</h3>
+                <ul class="timeline no-bullet">
+                    {% include "promrep/persons/status.html" with title="Patrician" status=person.patrician uncertain=person.patrician_uncertain notes=person.patrician_notes %}
+                    {% include "promrep/persons/status.html" with title="Nobilis" status=person.nobilis uncertain=person.nobilis_uncertain notes=person.nobilis_notes %}
+                    {% include "promrep/persons/status.html" with title="Novus" status=person.novus uncertain=person.novus_uncertain notes=person.novus_notes %}
 
-{% block footerscripts %}
-<script src="{% static 'vendor/linkurious.js/dist/sigma.min.js' %}"></script>
-<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.layouts.forceLink.min.js' %}"></script>
-<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.parsers.json.min.js' %}"></script>
-<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.plugins.animate.min.js' %}"></script>
-<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.plugins.dragNodes.min.js' %}"></script>
-<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.plugins.tooltips.min.js' %}"></script>
-<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.renderers.edgeLabels.min.js' %}"></script>
-<script src="{% static 'vendor/linkurious.js/dist/plugins/sigma.renderers.linkurious.min.js' %}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
-<script src="{% static 'javascripts/network.js' %}"></script>
+                    {% with eques=person.get_eques_status_assertion %}
+                        {% include "promrep/persons/status.html" with title="Eques R" status=eques uncertain=eques.uncertain notes=eques.notes %}
+                    {% endwith %}
+                </ul>
+            {% endif %}
 
-<script>
-    $(document).ready(function() {
-        networkGraph.load({{ person.id }}, "{% url 'person-network' person.id %}");
-    });
-</script>
+            {% include "promrep/persons/life_dates.html" %}
+
+            {% include "promrep/persons/relationships.html" with querystring=querystring%}
+
+            {% include "promrep/persons/career.html" %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="large-12 columns">
+            {% if querystring %}
+              <h4>  <a href="{% url facet_view %}?{% get_request_parameters 'facet_view' %}">< Back to results</a></h4>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

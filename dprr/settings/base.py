@@ -14,7 +14,6 @@ https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 import os
 
 from ddhldap.settings import *  # noqa
-from django.conf import global_settings
 from wagtailbase import settings as ws
 
 BASE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..')
@@ -28,7 +27,6 @@ PROJECT_TITLE = 'Digitising the Prosopography of the Roman Republic'
 # -----------------------------------------------------------------------------
 
 ADMINS = (
-    ('Luis Figueira', 'luis.figueira@kcl.ac.uk'),
 )
 MANAGERS = ADMINS
 
@@ -36,18 +34,10 @@ ALLOWED_HOSTS = []
 
 # https://docs.djangoproject.com/en/1.6/ref/settings/#caches
 # https://docs.djangoproject.com/en/dev/topics/cache/
-# http://redis.io/topics/lru-cache
-# http://niwibe.github.io/django-redis/
-CACHE_REDIS_DATABASE = '1'
-
 CACHES = {
     'default': {
-        'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': '127.0.0.1:6379:' + CACHE_REDIS_DATABASE,
-        'OPTIONS': {
-            'CLIENT_CLASS': 'redis_cache.client.DefaultClient',
-            'IGNORE_EXCEPTIONS': True
-        }
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'dprr_cache',
     }
 }
 
@@ -58,7 +48,6 @@ DATABASES = {
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-TEMPLATE_DEBUG = False
 
 INSTALLED_APPS = (
     'grappelli.dashboard',
@@ -111,9 +100,11 @@ LOGGING = {
     'handlers': {
         'file': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOGGING_ROOT, 'django.log'),
-            'formatter': 'verbose'
+            'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 21
         },
         'console': {
             'level': 'DEBUG',
@@ -141,7 +132,9 @@ LOGGING = {
 }
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -156,16 +149,25 @@ ROOT_URLCONF = PROJECT_NAME + '.urls'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ''
 
-TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
-    'django.core.context_processors.request',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.media',
+                'django.template.context_processors.request',
+                'django.template.context_processors.static',
+                'django.contrib.messages.context_processors.messages',
+            ],
+            'debug': False,
+        },
+    },
+]
 
-TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'), )
-
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
 
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 LANGUAGE_CODE = 'en-gb'
@@ -230,13 +232,44 @@ if not os.path.exists(MEDIA_ROOT):
 
 ITEMS_PER_PAGE = ws.ITEMS_PER_PAGE
 
-
 # -----------------------------------------------------------------------------
 # Django Compressor
 # http://django-compressor.readthedocs.org/en/latest/
 # -----------------------------------------------------------------------------
 
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.cssmin.CSSMinFilter'
+]
+
 COMPRESS_PRECOMPILERS = ws.COMPRESS_PRECOMPILERS
+
+
+# -----------------------------------------------------------------------------
+# DPRR
+# -----------------------------------------------------------------------------
+
+LOOKUPS = {
+    'offices': {
+        'magisterial': 2, 'promagistracies': 214, 'priesthoods': 1,
+        'non_magisterial': 210, 'distinctions': 270
+    },
+    'notes': {
+        'ruepke_source': 'ruepke', 'date_information_source': 'ruepke_LD',
+        'post_assertion_source': 'ruepke_B'
+    },
+    'status': {
+        'eques': 'eques romanus', 'senator': 'senator'
+    },
+    'dates': {
+        'person_exclude': 'attested'
+    }
+}
+
+# -----------------------------------------------------------------------------
+# Haystack
+# -----------------------------------------------------------------------------
+
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 50
 
 # -----------------------------------------------------------------------------
 # Wagtail
@@ -267,3 +300,17 @@ AUTHOR_CREATED_BY_FIELD_NAME = 'created_by'
 # -----------------------------------------------------------------------------
 
 FABRIC_USER = ''
+
+# -----------------------------------------------------------------------------
+# pdfkit
+# -----------------------------------------------------------------------------
+
+PDFKIT_OPTIONS = {
+    'page-size': 'A4',
+    'margin-top': '1.5cm',
+    'margin-right': '1.5cm',
+    'margin-bottom': '1.5cm',
+    'margin-left': '1.5cm',
+    'encoding': "UTF-8",
+    'print-media-type': '--quiet'
+}

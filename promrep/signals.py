@@ -12,4 +12,5 @@ def delete_parent_group(sender, instance, *args, **kwargs):
         if instance.group.postassertion_set.count() == 0:
             instance.group.delete()
 
+
 post_delete.connect(delete_parent_group, sender=PostAssertion)

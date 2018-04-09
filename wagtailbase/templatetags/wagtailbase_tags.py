@@ -17,6 +17,13 @@ logger = logging.getLogger(__name__)
 register = template.Library()
 
 
+@register.simple_tag
+def url_replace(request, field, value):
+    dict_ = request.GET.copy()
+    dict_[field] = value
+    return dict_.urlencode()
+
+
 @register.inclusion_tag('wagtailbase/tags/breadcrumbs.html',
                         takes_context=True)
 def breadcrumbs(context, root, current_page, extra=None):
@@ -50,7 +57,8 @@ def get_request_parameters(context, exclude=None):
 
     for key, value in request.GET.items():
         if key != exclude:
-            params += '&{key}={value}'.format(key=key, value=value)
+            for val in request.GET.getlist(key):
+                params += '&{key}={value}'.format(key=key, value=val)
 
     return params
 
@@ -309,5 +317,7 @@ def select_facet_link(context, facetname, option):
 
     if 'page' in query:
         del query['page']
+    if 'printme' in query:
+        del query['printme']
 
     return "?" + query.urlencode(safe=":?")

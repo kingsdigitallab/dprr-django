@@ -25,6 +25,12 @@ logger = logging.getLogger(__name__)
 class IndexPage(BaseIndexPage):
     search_name = 'Index Page'
     subpage_types = ['IndexPage', 'RichTextPage', 'BlogIndexPage']
+    icon = models.CharField(max_length=24, help_text='Icon', null=True)
+
+
+class LandingPage(BaseIndexPage):
+    search_name = 'Landing Page'
+    subpage_types = ['IndexPage']
 
 
 class IndexPageRelatedLink(Orderable, AbstractRelatedLink):
@@ -36,11 +42,13 @@ class IndexPageAttachment(Orderable, AbstractAttachment):
     page = ParentalKey('wagtailbase.IndexPage',
                        related_name='attachments')
 
+
 IndexPage.content_panels = [
     FieldPanel('title', classname='full title'),
+    FieldPanel('icon', classname='full'),
     FieldPanel('introduction', classname='full'),
-    InlinePanel(IndexPage, 'related_links', label='Related links'),
-    InlinePanel(IndexPage, 'attachments', label='Attachments')
+    InlinePanel('related_links', label='Related links'),
+    InlinePanel('attachments', label='Attachments')
 ]
 
 IndexPage.promote_panels = [
@@ -66,8 +74,8 @@ class RichTextAttachment(Orderable, AbstractAttachment):
 RichTextPage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('content', classname='full'),
-    InlinePanel(RichTextPage, 'related_links', label='Related links'),
-    InlinePanel(RichTextPage, 'attachments', label='Attachments')
+    InlinePanel('related_links', label='Related links'),
+    InlinePanel('attachments', label='Attachments')
 ]
 
 RichTextPage.promote_panels = [
@@ -78,7 +86,8 @@ RichTextPage.promote_panels = [
 
 class HomePage(BaseRichTextPage):
     search_name = 'Home Page'
-    subpage_types = ['IndexPage', 'RichTextPage', 'BlogIndexPage']
+    subpage_types = ['IndexPage', 'RichTextPage', 'BlogIndexPage',
+                     'LandingPage']
 
     class Meta:
         verbose_name = 'Homepage'
@@ -92,7 +101,7 @@ class HomePageAttachment(Orderable, AbstractAttachment):
 HomePage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('content', classname='full'),
-    InlinePanel(HomePage, 'attachments', label='Attachments')
+    InlinePanel('attachments', label='Attachments')
 ]
 
 HomePage.promote_panels = [
@@ -274,8 +283,8 @@ class BlogIndexPageAttachment(Orderable, AbstractAttachment):
 BlogIndexPage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('introduction', classname='full'),
-    InlinePanel(BlogIndexPage, 'related_links', label='Related links'),
-    InlinePanel(BlogIndexPage, 'attachments', label='Attachments')
+    InlinePanel('related_links', label='Related links'),
+    InlinePanel('attachments', label='Attachments')
 ]
 
 BlogIndexPage.promote_panels = [
@@ -299,10 +308,10 @@ class BlogPost(BaseRichTextPage):
 
     search_name = 'Blog post'
 
-    search_fields = BaseRichTextPage.search_fields + (
+    search_fields = BaseRichTextPage.search_fields + [
         index.FilterField('date'),
-        index.FilterField('featured'),
-    )
+        index.FilterField('featured')
+    ]
 
     @property
     def blog_index(self):
@@ -329,8 +338,8 @@ BlogPost.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('date'),
     FieldPanel('content', classname='full'),
-    InlinePanel(BlogPost, 'related_links', label='Related links'),
-    InlinePanel(BlogPost, 'attachments', label='Attachments')
+    InlinePanel('related_links', label='Related links'),
+    InlinePanel('attachments', label='Attachments')
 ]
 
 BlogPost.promote_panels = [

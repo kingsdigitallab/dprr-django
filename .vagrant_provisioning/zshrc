@@ -45,7 +45,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(command-not-found colorize debian django history-substring-search linux mercurial pip python zsh-syntax-highlighting)
+plugins=(command-not-found colorize debian django history-substring-search mercurial pip python)
 
 # User configuration
 
@@ -64,9 +64,6 @@ export EDITOR='vim'
 zmodload zsh/terminfo
 bindkey "$terminfo[kcuu1]" history-substring-search-up
 bindkey "$terminfo[kcud1]" history-substring-search-down
-
-# zsh syntax highlighting
-ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 
 # Activates the virtual environment
 source ~/venv/bin/activate

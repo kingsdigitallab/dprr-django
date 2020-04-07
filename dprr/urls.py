@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
+
 from django.views.decorators.cache import cache_page
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtailcore import urls as wagtail_urls
@@ -17,6 +18,7 @@ from promrep.views import get_pdf
 ddhldap_register_signal_handlers()
 
 admin.autodiscover()
+
 
 urlpatterns = [
     url(r'^browse/', include(promrep_urls)),

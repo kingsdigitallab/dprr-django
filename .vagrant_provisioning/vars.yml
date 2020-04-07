@@ -1,6 +1,6 @@
 app: {name: dprr}
 postgresql: {admin_user: postgres, cluster_name: main, cluster_reset: false, default_auth_method: trust,
-  encoding: UTF-8, initial_data_file: dprr.db, locale: en_GB.UTF-8, user: app_dprr,
+  encoding: UTF-8, initial_data_file: data.sql, locale: en_GB.UTF-8, user: app_dprr,
   user_password: app_dprr, version: 9.6}
 project_root: /vagrant
 python: {requirements: requirements-dev.txt, virtualenv_location: /home/vagrant/venv}

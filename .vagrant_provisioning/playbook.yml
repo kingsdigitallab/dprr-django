@@ -422,6 +422,7 @@
     command: "{{ user_home }}/venv/bin/flake8 --install-hook=git"
     args:
       chdir: "{{ project_root }}"
+    ignore_errors: yes
     tags:
       - git
 

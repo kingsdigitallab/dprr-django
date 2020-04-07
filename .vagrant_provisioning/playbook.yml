@@ -17,40 +17,19 @@
     tags:
       - system
 
-  - name: apt | add wheezy backports
-    apt_repository:
-      repo: deb http://http.debian.net/debian wheezy-backports main
-      state: present
-    tags:
-      - system
 
   - name: apt | install https transport for apt
     apt:
       pkg: apt-transport-https
-      state: installed
+      state: latest
       # update_cache: yes
     tags:
       -system
 
-  - name: apt | add postgresql key
-    become: yes
-    apt_key:
-      url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
-      state: present
-    tags:
-      - system
-
-  - name: apt | add postgresql sources
-    apt_repository:
-      repo: 'deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main'
-      state: present
-    tags:
-      - system
-
   - name: apt | install required system packages
     apt:
       pkg: "{{item}}"
-      state: installed
+      state: latest
       update_cache: yes
     with_items: "{{system_packages}}"
     tags:
@@ -269,19 +248,19 @@
   vars_files:
     - vars.yml
   tasks:
-  - name: Install Tomcat 7.
+  - name: Install Tomcat 8.
     become: yes
     apt: "name={{ item }} state=present"
     with_items:
-      - tomcat7
-      - tomcat7-admin
+      - tomcat8
+      - tomcat8-admin
     tags:
       - tomcat
       - solr
 
-  - name: Ensure Tomcat 7 is started and enabled on boot.
+  - name: Ensure Tomcat 8 is started and enabled on boot.
     become: yes
-    service: name=tomcat7 state=started enabled=yes
+    service: name=tomcat8 state=started enabled=yes
     tags:
       - tomcat
       - solr
@@ -327,12 +306,12 @@
 
       # Solr log4j logging configuration.
       - src: "{{ solr.dir }}/example/lib/ext/*"
-        dest: "/var/lib/tomcat7/shared/"
-        creates: "/var/lib/tomcat7/shared/log4j-1.2.16.jar"
+        dest: "/var/lib/tomcat8/lib/"
+        creates: "/var/lib/tomcat8/lib/log4j-1.2.16.jar"
 
       - src: "{{ solr.dir }}/example/resources/log4j.properties"
-        dest: "/var/lib/tomcat7/shared/classes"
-        creates: "/var/lib/tomcat7/shared/classes/log4j.properties"
+        dest: "/var/lib/tomcat8/lib"
+        creates: "/var/lib/tomcat8/lib/log4j.properties"
 
     notify: restart tomcat
     # TODO: needed because on the next task we delete the example folder
@@ -355,8 +334,8 @@
     file:
       path: "{{ solr.dir }}/data"
       state: directory
-      owner: tomcat7
-      group: tomcat7
+      owner: tomcat8
+      group: tomcat8
     tags:
       - solr
 
@@ -375,8 +354,8 @@
     file:
       path: "{{ solr.dir }}"
       recurse: yes
-      owner: tomcat7
-      group: tomcat7
+      owner: tomcat8
+      group: tomcat8
     tags:
       - solr
 
@@ -384,9 +363,9 @@
     become: yes
     template:
       src: solr.xml.j2
-      dest: /etc/tomcat7/Catalina/localhost/solr.xml
+      dest: /etc/tomcat8/Catalina/localhost/solr.xml
       owner: root
-      group: tomcat7
+      group: tomcat8
       mode: 0644
     notify: restart tomcat
     tags:
@@ -414,7 +393,7 @@
   handlers:
   - name: restart tomcat
     become: yes
-    service: name=tomcat7 state=restarted
+    service: name=tomcat8 state=restarted
 
 - hosts: all
   vars_files:
@@ -450,5 +429,6 @@
     command: "git config flake8.strict True"
     args:
       chdir: "{{ project_root }}"
+    ignore_errors: yes
     tags:
       - git

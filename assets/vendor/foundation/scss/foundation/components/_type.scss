@@ -216,9 +216,17 @@ $align-class-breakpoints:
       padding:0;
     }
 
+    /* skip to main content */
+    .skip-main { 
+      font-size: 1px; 
+      position: absolute; 
+      top:-25px; 
+  }
+
     /* Default Link Styles */
     a {
       color: $anchor-font-color;
+      font-weight: bold;
       line-height: inherit;
       text-decoration: $anchor-text-decoration;
 

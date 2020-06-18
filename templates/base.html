@@ -42,11 +42,12 @@
         </script>
     </head>
     <body id="body"{% block pageclass %}{% endblock %}>
-
+        <div role="complementary" class="skip-main"><a href="#maincontent">Skip to main content</a></div>
         {% include "includes/header.html" %}
-
+        
         {% include "includes/nav.html" %}
-
+        <div id="maincontent" tabindex="0"></div>
+        
         <div class="contain-to-grid content-area">
             <section class="main">
                 {% block main %}

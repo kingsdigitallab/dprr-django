@@ -8,6 +8,10 @@
 
 /*** Global ***/
 
+.icons {
+    font-family:"FontAwesome";
+}
+
 hr {
     height: 1px;
     color: scale-color($primary-color, $lightness: 60%);
@@ -69,7 +73,7 @@ ul {
 // Cookies
 
 .cookies-box {
-    background: $primary-color;
+    background: scale-color($primary-color, $lightness:-20%);
     bottom: 0;
     color: $white;
     left: 0;
@@ -102,6 +106,10 @@ ul {
 
     .closeme {
         margin-left: 1rem;
+        background-color: scale-color($success-color,$lightness:-50%) !important;
+        &:hover {
+            background-color: $success-color !important;
+        }
     }
 
     p {
@@ -363,11 +371,12 @@ h6 {
 }
 
 .top-bar-section .dropdown li:not(.has-form):not(.active) > a:not(.button) {
+    background: scale-color($royal-blue, $lightness:-30%) !important;
     border-bottom: 1px solid scale-color($royal-blue, $lightness: 15%);
 }
 
 .top-bar-section .dropdown li:not(.has-form):not(.active) > a:not(.button):hover {
-    background: scale-color($royal-blue, $lightness: -15%);
+    background: scale-color($royal-blue, $lightness:-50%) !important;
 }
 
 /*** Side Nav ***/
@@ -907,7 +916,7 @@ p.meta,
 
 .caption {
     font-size: .875rem;
-    color: #666;
+    color: #545151;
     padding: .5rem 0 1rem;
 }
 
@@ -963,7 +972,7 @@ footer.main-footer {
 
     a {
         border-bottom: 1px dotted $dark-gold;
-        color: $dark-gold;
+        color: scale-color($dark-gold, $lightness:-50%);
     }
 
     p {

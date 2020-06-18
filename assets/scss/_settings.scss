@@ -267,7 +267,7 @@ $code-color: $royal-blue;
 // We use these to style anchors
 // $anchor-text-decoration: none;
 // $anchor-text-decoration-hover: none;
-// $anchor-font-color: $primary-color;
+// $anchor-font-color: scale-color($primary-color, $lightness:-30%);
 // $anchor-font-color-hover: scale-color($anchor-font-color, $lightness: -14%);
 
 // We use these to style the <hr> element

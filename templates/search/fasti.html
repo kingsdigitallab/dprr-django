@@ -157,7 +157,7 @@
                                             </h4>
 
                                             <a href="#" class="expander smaller-fontsize">Expand list of available
-                                                locations <i class="fa fa-caret-right"></i></a>
+                                                locations <span class="icons">&#xf0da;</span></a>
 
                                             <div class="panel radius fixed-height collapsible hide">
                                                 <ul class="no-bullet hierarchical-facets">
@@ -180,8 +180,7 @@
 
                                                                             <a href="{% select_facet_link 'location' node.name %}"><span
                                                                                     class="label radius secondary pull-right">Add all</a>
-                                                                            <a class="show expander" href="#"><i
-                                                                                    class="fa fa-caret-right"></i> {{ node.name }}
+                                                                            <a class="show expander" href="#"><span class="icons">&#xf0da;</span> {{ node.name }}
                                                                             </a>
                                                                             <ul class="hide collapsible">
                                                                                 {{ children }}

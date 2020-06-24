@@ -73,7 +73,7 @@ ul {
 // Cookies
 
 .cookies-box {
-    background: scale-color($primary-color, $lightness:-20%);
+    background: scale-color($primary-color, $lightness:-30%);
     bottom: 0;
     color: $white;
     left: 0;
@@ -196,7 +196,7 @@ ul {
 
 .info {
     font-size: .875rem;
-    color: $primary-color !important;
+    color: scale-color($primary-color, $lightness:-30%) !important;
     font-style: italic;
     margin-bottom: .5rem;
 }
@@ -967,7 +967,7 @@ ul.local-navigation {
 /*** Footer ***/
 
 footer.main-footer {
-    color: $dark-gold;
+    color: $black;
     font-size: .75rem;
     padding-top: 1rem;
 

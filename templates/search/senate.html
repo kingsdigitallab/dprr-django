@@ -14,7 +14,7 @@
                 <small>B.C.</small>
             </h1>
             <p class="info do-not-print">
-                <i class="fa fa-info-circle"></i>
+                <span class="icons">&#xf05a;</span>
                 Drag the slider or input a number within the range from 180 B.C. to 31 B.C.
             </p>
         </div>
@@ -39,13 +39,13 @@
                 <ul class="no-bullet inline-list collapse">
                     <li>
                         <a aria-lablledby="#print" id="printme">
-                            <i class="fa fa-print"></i>
+                            <span class="icons">&#xf02f;</span>
                             <label id="print">Print<br>(Current page)</label>
                         </a>
                     </li>
                     <li>
                         <a aria-lablledby="#pdf" href="/pdf{{ request.get_full_path }}">
-                            <i class="fa fa-file-pdf-o"></i>
+                            <span class="icons">&#xf1c1;</span>
                             <label id="pdf">Save PDF<br>(All results)</label>
                         </a>
                     </li>
@@ -57,7 +57,7 @@
                 <h2>Dating Certainty
                 <a data-dropdown="dating-certainty" aria-controls="dating-certainty"
                                                    aria-expanded="false" class="smaller-fontsize">
-                                                    <i class="fa fa-info-circle"></i>
+                                                   <span class="icons">&#xf05a;</span>
                                                 </a>
                 </h2>
 
@@ -80,7 +80,7 @@
                             <li {% if forloop.first %}class="alpha"{% endif %}>
                                 {{ radio.choice_label }}
                                 <div class="switch">
-                                    <input class="switch-input" id="{{ radio.id_for_label }}" type="radio"
+                                    <input class="switch-input" aria-label="group" role="group" id="{{ radio.id_for_label }}" type="radio"
                                            {% if radio.choice_value == form.dating_certainty.value %}checked{% endif %}
                                            value="{{ radio.choice_value }}"
                                            name="{{ form.dating_certainty.name }}">

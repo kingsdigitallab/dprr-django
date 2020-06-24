@@ -158,10 +158,10 @@ $button-disabled-cursor: $cursor-default-value !default;
     $bg-lightness: lightness($bg);
     $bg-hover-lightness: lightness($bg-hover);
 
-    background-color: $bg;
+    background-color: scale-color($bg, $lightness: 30%);
     border-color: $border-color;
     &:hover,
-    &:focus { background-color: $bg-hover; }
+    &:focus { background-color: #ffffff; }
 
     // We control the text color for you based on the background color.
     color: if($bg-lightness > 70%, $button-font-color-alt, $button-font-color);
@@ -222,7 +222,7 @@ $button-disabled-cursor: $cursor-default-value !default;
 
       @include single-transition(background-color);
 
-      &.secondary { @include button-style($bg:$secondary-button-bg-color, $bg-hover:$secondary-button-bg-hover, $border-color:$secondary-button-border-color); }
+      &.secondary { @include button-style($bg:$secondary-button-bg-color, $bg-hover:$secondary-button-bg-hover, $border-color:$white); }
       &.success   { @include button-style($bg:$success-button-bg-color, $bg-hover:$success-button-bg-hover, $border-color:$success-button-border-color); }
       &.alert     { @include button-style($bg:$alert-button-bg-color, $bg-hover:$alert-button-bg-hover, $border-color:$alert-button-border-color); }
       &.warning   { @include button-style($bg:$warning-button-bg-color, $bg-hover:$warning-button-bg-hover, $border-color:$warning-button-border-color); }

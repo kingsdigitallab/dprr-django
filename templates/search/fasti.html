@@ -16,17 +16,17 @@
             <header class="top-search">
                 <h1 id="search-box">Fasti</h1>
                 <p class="info">
-                    <i class="fa fa-info-circle"></i>
+                    <span class="icons">&#xf05a;</span>
                     Career search, ordered by year and office.
                 </p>
                 <button class="small button secondary options">
-                    <i class="fa fa-cog"></i>
+                    <span class="icons">&#xf013;</span>
                     <span id="showhide">Hide</span>
                     search settings
                 </button>
                 <a href="{% url 'fasti_search' %}" class="right options">
                 <span class="small button">
-                    <i class="fa fa-refresh"></i>
+                    <span class="icons">&#xf021;</span>
                     Start new search
                 </span>
                 </a>
@@ -39,22 +39,22 @@
                     <section data-section="non-expandable" data-expandable-group-member="facets" id="dprr-filter">
                         <div class="row do-not-print">
                             <div class="large-12 columns">
-                                <h4>Refine your search</h4>
+                                <h2>Refine your search</h2>
                             </div>
                         </div>
                         <div class="row">
                             <div class="large-12 columns">
                                 <div class="panel results-preview" data-magellan-expedition="fixed">
-                                    <h4>Search results
+                                    <h3>Search results
                                         <a href="#search-results-box" class="less-padding button right do-not-print">
                                             Show <strong>{{ paginator.count }}</strong> results
                                         </a>
-                                    </h4>
+                                    </h3>
                                     <h4>
                                         <strong>{{ paginator.count }}</strong>
                                         records available based on your filters
                                         <a href="{% url 'fasti_search' %}#search" class="do-not-print">
-                                            <i class="fa fa-trash"></i> Clear all
+                                            <span class="icons">&#xf1f8;</span> Clear all
                                         </a>
                                     </h4>
 
@@ -68,7 +68,7 @@
                                 <div class="panel callout">
                                     <h3 class="panel-heading">Name</h3>
                                     <p class="info">
-                                        <i class="fa fa-info-circle"></i>
+                                        <span class="icons">&#xf05a;</span>
                                         Autocomplete suggestions will appear once you start typing
                                     </p>
 
@@ -78,7 +78,7 @@
                             <div class="large-12 columns">
                                 <div class="panel callout">
                                     <h3 class="panel-heading">Career</h3>
-                                    <p class="info"><i class="fa fa-info-circle"></i> Time frame: 509 B.C. - 31 B.C.</p>
+                                    <p class="info"><span class="icons">&#xf05a;</span> Time frame: 509 B.C. - 31 B.C.</p>
                                     {{ form.date_from.errors }}
                                     {{ form.date_to.errors }}
                                     <div class="row range">
@@ -88,7 +88,7 @@
                                                 Career Dates
                                                 <a data-dropdown="career-dates" aria-controls="career-dates"
                                                    aria-expanded="false" class="smaller-fontsize">
-                                                    <i class="fa fa-info-circle"></i>
+                                                   <span class="icons">&#xf05a;</span>
                                                 </a>
                                             </h4>
 
@@ -106,7 +106,6 @@
                                             {{ form.date_to }}
                                         </div>
                                         <div class="medium-2 columns">
-                                            <label>&nbsp;</label>
                                             <button type="submit" class="less-padding expand secondary">Apply</button>
                                         </div>
                                     </div>
@@ -152,7 +151,7 @@
                                             <h4 class="panel-heading">Location
                                                 <a data-dropdown="location" aria-controls="location"
                                                    aria-expanded="false" class="smaller-fontsize">
-                                                    <i class="fa fa-info-circle"></i>
+                                                   <span class="icons">&#xf05a;</span>
                                                 </a>
                                             </h4>
 
@@ -178,7 +177,7 @@
                                                                         <li><span
                                                                                 class="label radius pull-right">{{ province_fdict|lookup:node.name }}</span>
 
-                                                                            <a href="{% select_facet_link 'location' node.name %}"><span
+                                                                            <a href="{% select_facet_link 'location' node.name %}" aria-label="link to add {{node.name}}"><span
                                                                                     class="label radius secondary pull-right">Add all</a>
                                                                             <a class="show expander" href="#"><span class="icons">&#xf0da;</span> {{ node.name }}
                                                                             </a>
@@ -223,7 +222,7 @@
             <h2 class="do-not-print">Search Results
                 <span class="label radius">{{ paginator.count }}</span>
                 <a href="#search" class="less-padding button right edit-search do-not-print">
-                    <i class="fa fa-edit"></i>
+                    <span class="icons">&#xf044;</span> 
                     Edit search
                 </a>
                 <ul class="inline-list right export do-not-print">
@@ -231,24 +230,24 @@
                         {% if "order=-date" in request.get_full_path %}
                             <a class="right" href="?{% url_replace request 'order' 'date' %}">
                                 <i class="fa fa-arrow-down"></i>
-                                <label id="print">Date Desc.</label>
+                                <label id="date desc">Date Desc.</label>
                             </a>
                         {% else %}
                             <a class="right" href="?{% url_replace request 'order' '-date' %}">
-                                <i class="fa fa-arrow-up"></i>
-                                <label id="print">Date Asc.</label>
+                                <span class="icons">&#xf062;</span> 
+                                <label id="date asc">Date Asc.</label>
                             </a>
                         {% endif %}
                     </li>
                     <li>
                         <a class="right" aria-lablledby="#print" id="printme">
-                            <i class="fa fa-print"></i>
+                            <span class="icons">&#xf062;</span> 
                             <label id="print">Print<br>(Current page)</label>
                         </a>
                     </li>
                     <li>
                         <a class="right" aria-lablledby="#pdf" href="/pdf{{ request.get_full_path }}">
-                            <i class="fa fa-file-pdf-o"></i>
+                            <span class="icons">&#xf02f;</span>
                             <label id="pdf">Save PDF<br>(All results)</label>
                         </a>
                     </li>

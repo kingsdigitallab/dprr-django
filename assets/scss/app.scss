@@ -651,8 +651,8 @@ div.group ol.search-results{
     button.secondary,
     .button.secondary,
     .label.secondary {
-        color:#455050 !important;
-        background: scale-color($secondary-color, $lightness: -10%);
+        color: scale-color($secondary-color, $lightness: -70%) !important;
+        background: $secondary-color;
 
         &:hover {
             background: scale-color($secondary-color, $lightness: -25%);

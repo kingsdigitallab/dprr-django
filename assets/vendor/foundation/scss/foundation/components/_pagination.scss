@@ -50,7 +50,7 @@ $pagination-link-current-active-bg: $primary-color !default;
 @mixin pagination-unavailable-item {
   a, button {
     cursor: $pagination-link-unavailable-cursor;
-    color: $pagination-link-unavailable-font-color;
+    color: #595959;
     pointer-events: none;
   }
   &:hover a,

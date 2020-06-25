@@ -51,7 +51,7 @@ $label-font-family: $body-font-family !default;
 // We use this mixin to add label styles.
 // $bg - Default: $primary-color (found in settings file)
 // $radius - Default: false, Options: true, sets radius to $global-radius (found in settings file)
-@mixin label-style($bg:$primary-color, $radius:false) {
+@mixin label-style($bg:scale-color($primary-color, $lightness:-30%), $radius:false) {
 
   // We control which background color comes through
   @if $bg {

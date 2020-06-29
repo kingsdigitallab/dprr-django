@@ -251,7 +251,7 @@ ul {
 }
 
 .uncertain {
-    color: $jumbo;
+    color: scale-color($jumbo, $lightness:-20%);
     font-style: italic;
 }
 
@@ -620,7 +620,7 @@ div.group ol.search-results{
     margin-bottom: 1rem;
 
     button {
-        color: #999 !important;
+        color: #595959 !important;
         font-size: 0.75rem !important;
         height: 1.5rem !important;
         margin-left: 0.3125rem !important;
@@ -635,7 +635,7 @@ div.group ol.search-results{
     }
 
     .jplist-current {
-        background: $primary-color !important;
+        background: scale-color($primary-color,$lightness:-30%) !important;
         color: #fff !important;
         cursor: default;
         font-weight: bold;

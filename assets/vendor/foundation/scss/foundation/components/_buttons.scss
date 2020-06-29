@@ -158,7 +158,7 @@ $button-disabled-cursor: $cursor-default-value !default;
     $bg-lightness: lightness($bg);
     $bg-hover-lightness: lightness($bg-hover);
 
-    background-color: scale-color($bg, $lightness: 30%);
+    background-color: scale-color($bg, $lightness: -80%);
     border-color: $border-color;
     &:hover,
     &:focus { background-color: #475959 }
@@ -222,7 +222,7 @@ $button-disabled-cursor: $cursor-default-value !default;
 
       @include single-transition(background-color);
 
-      &.secondary { @include button-style($bg:scale-color($primary-color, $lightness: -30%), $bg-hover:$secondary-button-bg-hover, $border-color:$white); }
+      &.secondary { @include button-style($bg:scale-color($primary-color, $lightness: -80%), $bg-hover:$secondary-button-bg-hover, $border-color:$white); }
       &.success   { @include button-style($bg:$success-button-bg-color, $bg-hover:$success-button-bg-hover, $border-color:$success-button-border-color); }
       &.alert     { @include button-style($bg:$alert-button-bg-color, $bg-hover:$alert-button-bg-hover, $border-color:$alert-button-border-color); }
       &.warning   { @include button-style($bg:$warning-button-bg-color, $bg-hover:$warning-button-bg-hover, $border-color:$warning-button-border-color); }
@@ -230,7 +230,7 @@ $button-disabled-cursor: $cursor-default-value !default;
 
       &.large  { @include button-size($padding:$button-lrg); }
       &.small  { @include button-size($padding:$button-sml); }
-      &.small  { @include button-style($bg:scale-color($primary-color, $lightness: -30%), $bg-hover: $button-bg-hover);}
+      &.small  { @include button-style($bg:scale-color($primary-color, $lightness: -80%), $bg-hover: $button-bg-hover);}
       &.tiny   { @include button-size($padding:$button-tny); }
       &.expand { @include button-size($full-width:true); }
 

@@ -6,7 +6,7 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.insert_key = false
 
-  config.vm.box = "debian/stretch64"
+  config.vm.box = "bento/ubuntu-18.04"
 
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = ".vagrant_provisioning/playbook.yml"
@@ -27,7 +27,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.define "dprr" do |machine|
-    machine.vm.box = "debian/stretch64"
+    machine.vm.box = "bento/ubuntu-18.04"
 
     machine.vm.hostname = "dprr.vagrant"
     machine.vm.network "private_network", ip: "192.168.101.20"

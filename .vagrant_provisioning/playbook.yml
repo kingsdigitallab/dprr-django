@@ -269,7 +269,7 @@
     get_url:
       url: "https://archive.apache.org/dist/lucene/solr/{{ solr.version }}/solr-{{ solr.version }}.tgz"
       dest: "{{ solr.download_dir }}/solr-{{ solr.version }}.tgz"
-      sha256sum: "{{ solr.sha256sum }}"
+      checksum: "sha1:fd8676aea9c93e7d8dbee0a728f459d8cd3b3ae4"
     tags:
       - solr
 

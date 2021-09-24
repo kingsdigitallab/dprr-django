@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+POSTGRES_DB=app_dprr_local
+POSTGRES_USER=app_dprr
+POSTGRES_PASSWORD=app_dprr

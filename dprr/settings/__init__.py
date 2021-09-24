@@ -9,8 +9,8 @@
 import os
 path = os.path.abspath(__name__)
 
-if '/dev/' in path or '/vagrant' in path:
-    from dev import *  # noqa
+if '/dev/' in path or '/app' in path:
+    from .dev import *  # noqa
 elif 'stg' in path:
     from stg import *  # noqa
 else:

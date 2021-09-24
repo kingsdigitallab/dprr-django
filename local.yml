@@ -1,0 +1,30 @@
+version: '3'
+
+volumes:
+  local_postgres_data: {}
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: ./compose/local/postgres/Dockerfile
+    image: dprr_local_postgres
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.envs/.local/.postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db

@@ -1,4 +1,4 @@
-django-compressor
+django-compressor==2.4  # https://github.com/django-compressor/django-compressor
 django-libsass
 django-modelcluster
 wagtail>=2.9,<3 # https://github.com/wagtail/wagtail

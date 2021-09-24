@@ -4,9 +4,8 @@
 import csv
 from os import path
 
-from promrep.models import (
-    DateInformation, DateType, Person, Praenomen, SecondarySource, Sex
-)
+from promrep.models import (DateInformation, DateType, Person, Praenomen,
+                            SecondarySource, Sex)
 
 ICSV_COLUMNS = [
     "person_id",
@@ -50,7 +49,7 @@ def clean_field(field, a_string):
     for ch in unc_chars:
         if ch in a_string:
             uncertain = True
-            a_string = a_string.replace(ch, '')
+            a_string = a_string.replace(ch, "")
 
     dict_obj = {
         field: a_string,
@@ -68,32 +67,32 @@ def create_person(row_dict):
     """
 
     person_dict = {}
-    person_dict['sex'] = Sex.objects.get(name="Male")
+    person_dict["sex"] = Sex.objects.get(name="Male")
 
-    if 'sex' in row_dict and row_dict['sex'].strip() == "F":
-        person_dict['sex'] = Sex.objects.get(name="Female")
+    if "sex" in row_dict and row_dict["sex"].strip() == "F":
+        person_dict["sex"] = Sex.objects.get(name="Female")
 
     # praenomen special case
     # we initially clean the string, and then add the object to the dictionary
-    praenomen_str = row_dict.get('praenomen')
+    praenomen_str = row_dict.get("praenomen")
     if praenomen_str:
         if "." not in praenomen_str:
             praenomen_str = praenomen_str + "."
 
-    praenomen_dic = clean_field('praenomen', praenomen_str)
+    praenomen_dic = clean_field("praenomen", praenomen_str)
 
     try:
-        praenomen = Praenomen.objects.get(abbrev=praenomen_dic['praenomen'])
+        praenomen = Praenomen.objects.get(abbrev=praenomen_dic["praenomen"])
     except Praenomen.DoesNotExist:
-        praenomen = Praenomen.objects.get(abbrev='-.')
+        praenomen = Praenomen.objects.get(abbrev="-.")
 
-    praenomen_dic['praenomen'] = praenomen
+    praenomen_dic["praenomen"] = praenomen
 
     # add praenomen info to person object
     person_dict.update(praenomen_dic)
 
     # cleans the remaining person name fields
-    for field in ['nomen', 'cognomen', 'other_names', 'filiation']:
+    for field in ["nomen", "cognomen", "other_names", "filiation"]:
         field_string = row_dict.get(field)
 
         if field_string:
@@ -102,7 +101,7 @@ def create_person(row_dict):
             person_dict.update(d_obj)
 
     # remaining person fields, where names were not standard
-    person_dict['re_number'] = row_dict.get('re')
+    person_dict["re_number"] = row_dict.get("re")
 
     print(person_dict)
 
@@ -110,7 +109,7 @@ def create_person(row_dict):
     person, created = Person.objects.get_or_create(**person_dict)
 
     if created:
-        print("Created person with id={}".format(person.id))
+        print(("Created person with id={}".format(person.id)))
 
     return person.id, created
 
@@ -127,7 +126,7 @@ def get_sec_source_from_abbrev_str(ssource_str):
         sec_source, cted = SecondarySource.objects.get_or_create(
             name=ssource_str + " Descriptive name",
             biblio=ssource_str + " Biblio",
-            abbrev_name=ssource_str
+            abbrev_name=ssource_str,
         )
 
     return sec_source
@@ -141,14 +140,14 @@ def get_praenomen_dict(praenomen_str):
         if "." not in praenomen_str:
             praenomen_str = praenomen_str + "."
 
-    praenomen_dict = clean_field('praenomen', praenomen_str)
+    praenomen_dict = clean_field("praenomen", praenomen_str)
 
     try:
-        praenomen = Praenomen.objects.get(abbrev=praenomen_dict['praenomen'])
+        praenomen = Praenomen.objects.get(abbrev=praenomen_dict["praenomen"])
     except Praenomen.DoesNotExist:
-        praenomen = Praenomen.objects.get(abbrev='-.')
+        praenomen = Praenomen.objects.get(abbrev="-.")
 
-    praenomen_dict['praenomen'] = praenomen
+    praenomen_dict["praenomen"] = praenomen
 
     return praenomen_dict
 
@@ -158,18 +157,18 @@ def update_person_from_csv_dict_row(person, row_dict):
 
     # Updates person empty fields
     # updates praenomen
-    praenomen_str = row_dict["praenomen"].replace(
-        "(", "").replace(")", "").strip("")
+    praenomen_str = row_dict["praenomen"].replace("(", "").replace(")", "").strip("")
 
     if person.praenomen.abbrev == "-.":
         if praenomen_str not in ["-", ""]:
             praenomen_dict = get_praenomen_dict(praenomen_str)
-            person.praenomen = praenomen_dict['praenomen']
+            person.praenomen = praenomen_dict["praenomen"]
             person.praenomen_uncertain = praenomen_dict.get(
-                'praenomen_uncertain', False)
+                "praenomen_uncertain", False
+            )
 
             updated = True
-            print("DEBUG: Updated praenomen for person {}").format(person.id)
+            print(("DEBUG: Updated praenomen for person {}").format(person.id))
 
     # check if the csv has extra info
     for field in ["nomen", "filiation", "cognomen", "other_names"]:
@@ -180,13 +179,16 @@ def update_person_from_csv_dict_row(person, row_dict):
                 if fvalue != "":
                     setattr(person, field, fvalue)
                     updated = True
-                    print("DEBUG: Updated field {} for person {}").format(
-                        field, person.id)
+                    print(
+                        ("DEBUG: Updated field {} for person {}").format(
+                            field, person.id
+                        )
+                    )
 
     # RE case
     # only update if existing is empty
     if person.re_number == "":
-        re_str = row_dict['re'].strip()
+        re_str = row_dict["re"].strip()
         if re_str != "":
             person.re_number = re_str
             updated = True
@@ -203,27 +205,29 @@ def read_input_file(ifname):  # noqa
 
     log_fname = file_basename + "_import-log.csv"
 
-#    sec_source, created = SecondarySource.objects.get_or_create(
-#        name="Nicolet Equites Data", biblio="Nicolet Biblio Entry",
-#        abbrev_name="Nicolet")
+    #    sec_source, created = SecondarySource.objects.get_or_create(
+    #        name="Nicolet Equites Data", biblio="Nicolet Biblio Entry",
+    #        abbrev_name="Nicolet")
 
     # log file with the ids of the objects created in the database
-    csv_log = csv.DictWriter(open(log_fname, 'wb'),
-                             ["person_id_new"] + ICSV_COLUMNS,
-                             dialect='excel',
-                             # delimiter=";",
-                             extrasaction='ignore')
+    csv_log = csv.DictWriter(
+        open(log_fname, "wb"),
+        ["person_id_new"] + ICSV_COLUMNS,
+        dialect="excel",
+        # delimiter=";",
+        extrasaction="ignore",
+    )
     csv_log.writeheader()
 
-    with open(ifname, 'rU') as csvfile:
+    with open(ifname, "rU") as csvfile:
         csvDict = csv.DictReader(csvfile, fieldnames=ICSV_COLUMNS)
 
         # skips header row
-        csvDict.next()
+        next(csvDict)
 
         for row_dict in csvDict:
-            person_id = int(row_dict['person_id'])
-            print("DEBUG --> person_id {}".format(person_id)),
+            person_id = int(row_dict["person_id"])
+            print(("DEBUG --> person_id {}".format(person_id)), end=" ")
 
             try:
                 if person_id:
@@ -238,30 +242,28 @@ def read_input_file(ifname):  # noqa
                         "filiation": row_dict.get("filiation", ""),
                         "cognomen": row_dict["cognomen"],
                         "other_names": row_dict["other_names"],
-                        "review_flag": row_dict.get("review_flag", False)
+                        "review_flag": row_dict.get("review_flag", False),
                     }
 
                     person_id, created = create_person(person_dict)
                     if created:
-                        print("Added Person: id={}".format(person_id))
+                        print(("Added Person: id={}".format(person_id)))
                     else:
-                        print("Found Person: id={}".format(person_id))
+                        print(("Found Person: id={}".format(person_id)))
 
                 else:
-                    print("Found Person: id={}".format(person_id))
+                    print(("Found Person: id={}".format(person_id)))
 
                 person = Person.objects.get(id=person_id)
-                person, updated = update_person_from_csv_dict_row(person,
-                                                                  row_dict)
+                person, updated = update_person_from_csv_dict_row(person, row_dict)
 
                 # can have up to 4 dates
                 for i in range(1, 5):
-                    date_str = row_dict['date_{}'.format(i)].strip()
-                    date_ref = row_dict['date_{}_ref'.format(i)].strip()
-                    uncertain_str = row_dict[
-                        'date_{}_uncertain'.format(i)].strip()
-                    date_type_str = row_dict['date_{}_type'.format(i)].strip()
-                    date_note = row_dict['date_{}_notes'.format(i)].strip()
+                    date_str = row_dict["date_{}".format(i)].strip()
+                    date_ref = row_dict["date_{}_ref".format(i)].strip()
+                    uncertain_str = row_dict["date_{}_uncertain".format(i)].strip()
+                    date_type_str = row_dict["date_{}_type".format(i)].strip()
+                    date_note = row_dict["date_{}_notes".format(i)].strip()
 
                     sec_source = False
 
@@ -276,7 +278,8 @@ def read_input_file(ifname):  # noqa
                             unc_flag = True
 
                         date_type, created = DateType.objects.get_or_create(
-                            name=date_type_str)
+                            name=date_type_str
+                        )
 
                         # date can be in intervals;
                         # if we have a before or after,
@@ -286,23 +289,23 @@ def read_input_file(ifname):  # noqa
                         if "before" in date_str:
                             # B: Before
                             interval = "B"
-                            date_str = date_str.replace('before', '').strip()
-                            date_str = - int(date_str)
+                            date_str = date_str.replace("before", "").strip()
+                            date_str = -int(date_str)
                         elif "after" in date_str:
                             # A: After
                             interval = "A"
-                            date_str = date_str.replace('after', '').strip()
-                            date_str = - int(date_str)
+                            date_str = date_str.replace("after", "").strip()
+                            date_str = -int(date_str)
                         elif "by" in date_str:
                             # B: Before
                             interval = "B"
-                            date_str = date_str.replace('by', '').strip()
-                            date_str = - int(date_str) - 1
+                            date_str = date_str.replace("by", "").strip()
+                            date_str = -int(date_str) - 1
                         elif "AD" in date_str:
-                            date_str = date_str.replace('AD', '').strip()
+                            date_str = date_str.replace("AD", "").strip()
                             date_str = int(date_str)
                         else:
-                            date_str = - int(date_str)
+                            date_str = -int(date_str)
 
                         try:
                             di = DateInformation.objects.create(
@@ -311,7 +314,7 @@ def read_input_file(ifname):  # noqa
                                 uncertain=unc_flag,
                                 date_type=date_type,
                                 notes=date_note,
-                                date_interval=interval
+                                date_interval=interval,
                             )
 
                             if sec_source:
@@ -319,24 +322,26 @@ def read_input_file(ifname):  # noqa
                                 di.save()
 
                         except:
-                            print("ERROR: Cannot create DateInformation"
-                                  " object {}".format(row_dict))
+                            print(
+                                (
+                                    "ERROR: Cannot create DateInformation"
+                                    " object {}".format(row_dict)
+                                )
+                            )
 
-                        print("Added {} to Person {}".format(di.id, person.id))
+                        print(("Added {} to Person {}".format(di.id, person.id)))
 
-                row_dict.update({
-                    'person_id_new': person_id
-                })
+                row_dict.update({"person_id_new": person_id})
                 csv_log.writerow(row_dict)
 
             except Exception as e:
-                print("ERROR: {}".format(e))
+                print(("ERROR: {}".format(e)))
 
-    print("Wrote log file \"{}\"".format(log_fname))
+    print(('Wrote log file "{}"'.format(log_fname)))
 
 
 def run():
     ifname = "promrep/scripts/data/LifeDataOtherSourcesV3.csv"
 
-    print("Importing data from \"{}\"".format(ifname))
+    print(('Importing data from "{}"'.format(ifname)))
     read_input_file(ifname)

@@ -1,9 +1,7 @@
-
 import unicodecsv as csv
-from promrep.models import (
-    DateInformation, DateType, NoteType, Office, Person, PersonNote,
-    PostAssertion, Praenomen, SecondarySource, Sex
-)
+from promrep.models import (DateInformation, DateType, NoteType, Office,
+                            Person, PersonNote, PostAssertion, Praenomen,
+                            SecondarySource, Sex)
 
 
 def clean_field(field, a_string):
@@ -18,7 +16,7 @@ def clean_field(field, a_string):
     for ch in unc_chars:
         if ch in a_string:
             uncertain = True
-            a_string = a_string.replace(ch, '')
+            a_string = a_string.replace(ch, "")
 
     dict_obj = {
         field: a_string,
@@ -33,28 +31,22 @@ def clean_field(field, a_string):
 def add_post_assertion_to_person(person, row_dict, ssource):
     """Returns a PostAssertion object or None if unable to create it"""
 
-    office, created = Office.objects.get_or_create(
-        name=row_dict["office_abbrev"]
-    )
+    office, created = Office.objects.get_or_create(name=row_dict["office_abbrev"])
 
-    pa_dict = {
-        "office": office,
-        "person": person,
-        "secondary_source": ssource
-    }
+    pa_dict = {"office": office, "person": person, "secondary_source": ssource}
 
     # date_source_text    date_start  date_start_uncertain    date_end
     # date_end_uncertain
 
-    pa_dict["date_source_text"] = row_dict['date_source_text']
+    pa_dict["date_source_text"] = row_dict["date_source_text"]
 
-    pa_dict["date_start"] = - int(row_dict['date_start'])
-    pa_dict["date_end"] = - int(row_dict['date_end'])
+    pa_dict["date_start"] = -int(row_dict["date_start"])
+    pa_dict["date_end"] = -int(row_dict["date_end"])
 
-    pa_dict["date_start_uncertain"] = row_dict['date_start_uncertain']
-    pa_dict["date_end_uncertain"] = row_dict['date_end_uncertain']
+    pa_dict["date_start_uncertain"] = row_dict["date_start_uncertain"]
+    pa_dict["date_end_uncertain"] = row_dict["date_end_uncertain"]
 
-    pa_dict["uncertain"] = row_dict['uncertain']
+    pa_dict["uncertain"] = row_dict["uncertain"]
 
     pa = PostAssertion.objects.create(**pa_dict)
 
@@ -76,26 +68,27 @@ def add_dates_to_person(person, row_dict, ssource):
             if "before" in date_str:
                 # B: Before
                 interval = "B"
-                date_str = date_str.replace('before', '').strip()
-                date_str = - int(date_str)
+                date_str = date_str.replace("before", "").strip()
+                date_str = -int(date_str)
             elif "after" in date_str:
                 # A: After
                 interval = "A"
-                date_str = date_str.replace('after', '').strip()
-                date_str = - int(date_str)
+                date_str = date_str.replace("after", "").strip()
+                date_str = -int(date_str)
             elif "by" in date_str:
                 # B: Before
                 interval = "B"
-                date_str = date_str.replace('by', '').strip()
-                date_str = - int(date_str) - 1
+                date_str = date_str.replace("by", "").strip()
+                date_str = -int(date_str) - 1
             elif "AD" in date_str:
-                date_str = date_str.replace('AD', '').strip()
+                date_str = date_str.replace("AD", "").strip()
                 date_str = int(date_str)
             else:
-                date_str = - int(date_str)
+                date_str = -int(date_str)
 
             dtype, created = DateType.objects.get_or_create(
-                name=row_dict["DateType_" + n])
+                name=row_dict["DateType_" + n]
+            )
 
             uncertain = row_dict["DateUncertain_" + n]
 
@@ -105,7 +98,7 @@ def add_dates_to_person(person, row_dict, ssource):
                 "date_type": dtype,
                 "uncertain": uncertain,
                 "secondary_source": ssource,
-                "date_interval": interval
+                "date_interval": interval,
             }
 
             # if we already have a life date of the same type
@@ -113,35 +106,41 @@ def add_dates_to_person(person, row_dict, ssource):
             # and with the same date value and certainty,
             # then don't add the new (repeated) life date record.
 
-            exc_dtypes = [DateType.objects.get(name='death'),
-                          DateType.objects.get(name='birth'),
-                          DateType.objects.get(name='attested')]
+            exc_dtypes = [
+                DateType.objects.get(name="death"),
+                DateType.objects.get(name="birth"),
+                DateType.objects.get(name="attested"),
+            ]
 
-            if dtype in exc_dtypes and DateInformation.objects.filter(
-                    person=person,
-                    date_type=dtype,
-                    uncertain=uncertain,
-                    value=date_str).count():
+            if (
+                dtype in exc_dtypes
+                and DateInformation.objects.filter(
+                    person=person, date_type=dtype, uncertain=uncertain, value=date_str
+                ).count()
+            ):
 
-                print "Did not create {} date for {}".format(
-                    dtype.name, person.id)
+                print("Did not create {} date for {}".format(dtype.name, person.id))
 
             # need to check violent death separately
-            elif dtype == DateType.objects.get(name='death')\
+            elif (
+                dtype == DateType.objects.get(name="death")
                 and DateInformation.objects.filter(
                     person=person,
-                    date_type=DateType.objects.get(name='death - violent'),
+                    date_type=DateType.objects.get(name="death - violent"),
                     uncertain=uncertain,
-                    value=date_str).count():
+                    value=date_str,
+                ).count()
+            ):
 
-                print("Did not create date for {}; had violent death ".format(
-                    person.id))
+                print(
+                    ("Did not create date for {}; had violent death ".format(person.id))
+                )
 
             else:
                 di, created = DateInformation.objects.get_or_create(**ddict)
 
                 if created:
-                    print("Added date {} to person {}".format(di, person.id))
+                    print(("Added date {} to person {}".format(di, person.id)))
 
 
 def add_notes_fields_to_person(person, row_dict, ssource):
@@ -174,15 +173,10 @@ def add_notes_fields_to_person(person, row_dict, ssource):
 
             ntype, created = NoteType.objects.get_or_create(name=nt_str)
 
-            note_dict = {
-                'note_type': ntype,
-                'text': ntext,
-                'secondary_source': ssource
-            }
+            note_dict = {"note_type": ntype, "text": ntext, "secondary_source": ssource}
 
             # test if note already exists
-            notes = PersonNote.objects.filter(
-                **note_dict).filter(person=person)
+            notes = PersonNote.objects.filter(**note_dict).filter(person=person)
 
             # if note doesn't exist, we'll create it and add it to the person
             if not notes:
@@ -202,43 +196,44 @@ def load_bio_data(ifname):
 
     persons_dict = {}
 
-    bio_csv_cols = ["ruepke_number",
-                    "sex",
-                    "name_original",
-                    "person_review_flag",
-                    "praenomen",
-                    "nomen",
-                    "filiation",
-                    "cognomen",
-                    "other_names",
-                    "patrician",
-                    "re_number",
-                    "Ref",
-                    "P",
-                    "ST",
-                    "LD",
-                    "B",
-                    "RA",
-                    "L",
-                    "LA",
-                    "N",
-                    "other",
-                    "Date_1",
-                    "DateUncertain_1",
-                    "DateType_1",
-                    "Date_2",
-                    "DateUncertain_2",
-                    "DateType_2",
-                    ]
+    bio_csv_cols = [
+        "ruepke_number",
+        "sex",
+        "name_original",
+        "person_review_flag",
+        "praenomen",
+        "nomen",
+        "filiation",
+        "cognomen",
+        "other_names",
+        "patrician",
+        "re_number",
+        "Ref",
+        "P",
+        "ST",
+        "LD",
+        "B",
+        "RA",
+        "L",
+        "LA",
+        "N",
+        "other",
+        "Date_1",
+        "DateUncertain_1",
+        "DateType_1",
+        "Date_2",
+        "DateUncertain_2",
+        "DateType_2",
+    ]
 
     # open CSV file
-    with open(ifname, 'rU') as csvfile:
+    with open(ifname, "rU") as csvfile:
 
         # sweep csv file
         csv_line = csv.DictReader(csvfile, fieldnames=bio_csv_cols)
 
         # skips first row
-        csv_line.next()
+        next(csv_line)
 
         for row_dict in csv_line:
 
@@ -246,38 +241,37 @@ def load_bio_data(ifname):
 
             person_dict = row_dict
 
-            if row_dict["sex"] != 'Mas.':
+            if row_dict["sex"] != "Mas.":
                 person_dict["sex"] = Sex.objects.get(name="Female")
             else:
                 person_dict["sex"] = Sex.objects.get(name="Male")
 
-            praenomen_orig = row_dict.get('praenomen')
+            praenomen_orig = row_dict.get("praenomen")
             praenomen_str = praenomen_orig
 
             if praenomen_str:
                 if "." not in praenomen_str:
                     praenomen_str = praenomen_str + "."
 
-            praenomen_dic = clean_field('praenomen', praenomen_str)
+            praenomen_dic = clean_field("praenomen", praenomen_str)
 
             try:
-                praenomen = Praenomen.objects.get(
-                    abbrev=praenomen_dic['praenomen'])
+                praenomen = Praenomen.objects.get(abbrev=praenomen_dic["praenomen"])
             except Praenomen.DoesNotExist:
-                praenomen = Praenomen.objects.get(abbrev='-.')
+                praenomen = Praenomen.objects.get(abbrev="-.")
 
-            person_dict['praenomen'] = praenomen
+            person_dict["praenomen"] = praenomen
 
             if "?" in row_dict["patrician"]:
-                person_dict['patrician_uncertain'] = True
+                person_dict["patrician_uncertain"] = True
             if "Patric." in row_dict["patrician"]:
-                person_dict['patrician'] = True
+                person_dict["patrician"] = True
 
             # will use either the ruepke number a tuple w/ names
             key_1 = row_dict["ruepke_number"].strip("-")
 
             key_2 = (
-                praenomen_orig.strip().strip('.'),
+                praenomen_orig.strip().strip("."),
                 row_dict["nomen"],
             )
 
@@ -295,10 +289,10 @@ def get_or_create_person(fas_row_dict, bio_dict, secondary_source):  # noqa
     need to check if the notes have already been added to the person object
     """
 
-    praenomen = fas_row_dict["praenomen"].strip('-')
+    praenomen = fas_row_dict["praenomen"].strip("-")
     nomen = fas_row_dict["nomen"]
-    ruepke_number = fas_row_dict["ruepke_number"].strip('-').strip()
-    person_id = fas_row_dict["person_id"].strip('-').strip()
+    ruepke_number = fas_row_dict["ruepke_number"].strip("-").strip()
+    person_id = fas_row_dict["person_id"].strip("-").strip()
 
     # flag indicates if person was created
     created = False
@@ -312,7 +306,7 @@ def get_or_create_person(fas_row_dict, bio_dict, secondary_source):  # noqa
     if not pdict:
         return None, created
 
-    if not pdict['nomen']:
+    if not pdict["nomen"]:
         return None, created
 
     person_id = int(person_id)
@@ -331,8 +325,7 @@ def get_or_create_person(fas_row_dict, bio_dict, secondary_source):  # noqa
             "re_number",
         ]
 
-        params_dict = {param: pdict[param]
-                       for param in params if param in pdict}
+        params_dict = {param: pdict[param] for param in params if param in pdict}
 
         # for param in params:
         #     if pdict[param]:
@@ -393,9 +386,8 @@ def load_fastii_data(csv_fname, persons_dict):
     """
 
     ssource, created = SecondarySource.objects.get_or_create(
-        name="Ruepke Data",
-        biblio="Ruepke Data Biblio Entry",
-        abbrev_name="Ruepke")
+        name="Ruepke Data", biblio="Ruepke Data Biblio Entry", abbrev_name="Ruepke"
+    )
 
     fas_csv_cols = [
         "person_id",
@@ -421,7 +413,7 @@ def load_fastii_data(csv_fname, persons_dict):
         "person_notes_1",
         "province_1",
         "province_uncertain_1",
-        "province_notes_1"
+        "province_notes_1",
     ]
 
     # output csv file file
@@ -431,21 +423,18 @@ def load_fastii_data(csv_fname, persons_dict):
     ocsv_cols = ["postassertion_id", "created_person"] + fas_csv_cols
 
     # open CSV files for reading and writing
-    with open(csv_fname, 'rU') as csvfile, open(ocsv_fname, 'w') as ocsvfile:
+    with open(csv_fname, "rU") as csvfile, open(ocsv_fname, "w") as ocsvfile:
 
         # sweep csv file
-        csv_line = csv.DictReader(csvfile,
-                                  fieldnames=fas_csv_cols,
-                                  dialect='excel',
-                                  delimiter=";")
+        csv_line = csv.DictReader(
+            csvfile, fieldnames=fas_csv_cols, dialect="excel", delimiter=";"
+        )
         # skips first row
-        csv_line.next()
+        next(csv_line)
 
         # writer for "log" file
         csv_writer = csv.DictWriter(
-            ocsvfile,
-            fieldnames=ocsv_cols,
-            extrasaction='ignore'
+            ocsvfile, fieldnames=ocsv_cols, extrasaction="ignore"
         )
         csv_writer.writeheader()
 
@@ -460,20 +449,15 @@ def load_fastii_data(csv_fname, persons_dict):
 
             # gets a person object or None
             try:
-                person, created = get_or_create_person(row_dict,
-                                                       persons_dict,
-                                                       ssource)
+                person, created = get_or_create_person(row_dict, persons_dict, ssource)
 
             except Exception as e:
-                print e.__doc__
-                print e.message
+                print(e.__doc__)
+                print(e.message)
 
             # and creates the PostAssertion
             if person:
-                pa_id = add_post_assertion_to_person(
-                    person,
-                    row_dict,
-                    ssource)
+                pa_id = add_post_assertion_to_person(person, row_dict, ssource)
 
                 # used to write to the output csv file
                 row_dict["postassertion_id"] = pa_id

@@ -16,31 +16,32 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
 
 ch = logging.StreamHandler()
-log_formatter = logging.Formatter(u"%(levelname)s: [%(asctime)s] %(message)s")
+log_formatter = logging.Formatter("%(levelname)s: [%(asctime)s] %(message)s")
 
 ch.setFormatter(log_formatter)
 LOGGER.addHandler(ch)
 
-ICSV_COLUMNS = ["person_1_id",
-                "person_1_sex",
-                "person_1_praenomen",
-                "person_1_nomen",
-                "person_1_re",
-                "person_1_cognomen",
-                "person_1_other_names",
-                "relationship",
-                "uncertain",
-                "marriage_no",
-                "person_2_id",
-                "person_2_sex",
-                "person_2_praenomen",
-                "person_2_nomen",
-                "person_2_re",
-                "person_2_cognomen",
-                "person_2_other_names",
-                "primary_source_refs",
-                "ignore-me",
-                ]
+ICSV_COLUMNS = [
+    "person_1_id",
+    "person_1_sex",
+    "person_1_praenomen",
+    "person_1_nomen",
+    "person_1_re",
+    "person_1_cognomen",
+    "person_1_other_names",
+    "relationship",
+    "uncertain",
+    "marriage_no",
+    "person_2_id",
+    "person_2_sex",
+    "person_2_praenomen",
+    "person_2_nomen",
+    "person_2_re",
+    "person_2_cognomen",
+    "person_2_other_names",
+    "primary_source_refs",
+    "ignore-me",
+]
 
 
 def clean_field(field, a_string):
@@ -55,7 +56,7 @@ def clean_field(field, a_string):
     for ch in unc_chars:
         if ch in a_string:
             uncertain = True
-            a_string = a_string.replace(ch, '')
+            a_string = a_string.replace(ch, "")
 
     dict_obj = {
         field: a_string,
@@ -74,34 +75,34 @@ def create_person(row_dict):
 
     person_dict = {}
 
-    if row_dict['sex'].strip() == "F":
+    if row_dict["sex"].strip() == "F":
         sex = Sex.objects.get(name="Female")
     else:
         sex = Sex.objects.get(name="Male")
 
-    person_dict['sex'] = sex
+    person_dict["sex"] = sex
 
     # praenomen special case
     # we initially clean the string, and then add the object to the dictionary
-    praenomen_str = row_dict.get('praenomen')
+    praenomen_str = row_dict.get("praenomen")
     if praenomen_str:
         if "." not in praenomen_str:
             praenomen_str = praenomen_str + "."
 
-    praenomen_dic = clean_field('praenomen', praenomen_str)
+    praenomen_dic = clean_field("praenomen", praenomen_str)
 
     try:
-        praenomen = Praenomen.objects.get(abbrev=praenomen_dic['praenomen'])
+        praenomen = Praenomen.objects.get(abbrev=praenomen_dic["praenomen"])
     except Praenomen.DoesNotExist:
-        praenomen = Praenomen.objects.get(abbrev='-.')
+        praenomen = Praenomen.objects.get(abbrev="-.")
 
-    praenomen_dic['praenomen'] = praenomen
+    praenomen_dic["praenomen"] = praenomen
 
     # add praenomen info to person object
     person_dict.update(praenomen_dic)
 
     # cleans the remining person name fields
-    for field in ['nomen', 'cognomen', 'other_names']:
+    for field in ["nomen", "cognomen", "other_names"]:
         field_string = row_dict.get(field)
 
         if field_string:
@@ -110,7 +111,7 @@ def create_person(row_dict):
             person_dict.update(d_obj)
 
     # remaining person fields, where names were not standard
-    person_dict['re_number'] = row_dict.get('re')
+    person_dict["re_number"] = row_dict.get("re")
 
     # logger.info(person_dict)
     person, created = Person.objects.get_or_create(**person_dict)
@@ -123,15 +124,15 @@ def create_person(row_dict):
 
 
 def read_notes_file_to_dict(ifname):
-    """ Reads a notes file to a dict
-        returns a dictionary where the key is the reference name
-        and the value is the note
+    """Reads a notes file to a dict
+    returns a dictionary where the key is the reference name
+    and the value is the note
     """
 
     notes_dict = {}
 
     # csvfile = codecs.open(ifname, 'r', encoding='latin1')
-    csvfile = open(ifname, 'r')
+    csvfile = open(ifname, "r")
 
     # with open(ifname, 'rU') as csvfile:
 
@@ -157,32 +158,33 @@ def read_input_file(ifname, notes_csv_fname):  # noqa
     notes_dict = read_notes_file_to_dict(notes_csv_fname)
 
     sec_source, created = SecondarySource.objects.get_or_create(
-        name="Zmeskal family data", biblio="Zmeskal family data biblio entry",
-        abbrev_name="Zmeskal")
+        name="Zmeskal family data",
+        biblio="Zmeskal family data biblio entry",
+        abbrev_name="Zmeskal",
+    )
 
     # log file with the ids of the objects created in the database
-    writer = csv.DictWriter(open(log_fname, 'wb'),
-                            ["person_1_id", "person_2_id",
-                                "relationshipassertion_id"],
-                            dialect='excel',
-                            delimiter=";",
-                            extrasaction='ignore')
+    writer = csv.DictWriter(
+        open(log_fname, "wb"),
+        ["person_1_id", "person_2_id", "relationshipassertion_id"],
+        dialect="excel",
+        delimiter=";",
+        extrasaction="ignore",
+    )
     writer.writeheader()
 
-    with open(ifname, 'rU') as csvfile:
+    with open(ifname, "rU") as csvfile:
 
-        csvDict = csv.DictReader(csvfile,
-                                 fieldnames=ICSV_COLUMNS,
-                                 delimiter=";")
+        csvDict = csv.DictReader(csvfile, fieldnames=ICSV_COLUMNS, delimiter=";")
 
         # skips first row
-        csvDict.next()
+        next(csvDict)
 
         for row_dict in csvDict:
 
             try:
-                p1_id = int(row_dict['person_1_id'])
-                p2_id = int(row_dict['person_2_id'])
+                p1_id = int(row_dict["person_1_id"])
+                p2_id = int(row_dict["person_2_id"])
 
                 if not p1_id:
                     p1_dict = {
@@ -191,7 +193,7 @@ def read_input_file(ifname, notes_csv_fname):  # noqa
                         "nomen": row_dict["person_1_nomen"],
                         "re": row_dict["person_1_re"],
                         "cognomen": row_dict["person_1_cognomen"],
-                        "other_names": row_dict["person_1_other_names"]
+                        "other_names": row_dict["person_1_other_names"],
                     }
 
                     p1_id, created_p1 = create_person(p1_dict)
@@ -207,7 +209,7 @@ def read_input_file(ifname, notes_csv_fname):  # noqa
                         "nomen": row_dict["person_2_nomen"],
                         "re": row_dict["person_2_re"],
                         "cognomen": row_dict["person_2_cognomen"],
-                        "other_names": row_dict["person_2_other_names"]
+                        "other_names": row_dict["person_2_other_names"],
                     }
 
                     p2_id, created_p2 = create_person(p2_dict)
@@ -220,10 +222,10 @@ def read_input_file(ifname, notes_csv_fname):  # noqa
                 rel_type_name = row_dict["relationship"].strip().lower()
 
                 rel_type, created = RelationshipType.objects.get_or_create(
-                    name=rel_type_name)
+                    name=rel_type_name
+                )
                 if created:
-                    LOGGER.info(
-                        "Created new relationship type {}".format(rel_type))
+                    LOGGER.info("Created new relationship type {}".format(rel_type))
 
                 uncertain_flag = False
                 uncertain = row_dict["uncertain"].strip()
@@ -245,15 +247,15 @@ def read_input_file(ifname, notes_csv_fname):  # noqa
                     relationship=rel_type,
                     uncertain=uncertain_flag,
                     secondary_source=sec_source,
-                    relationship_number=rel_num)
+                    relationship_number=rel_num,
+                )
 
                 if created:
-                    LOGGER.info(
-                        "Created new relationship with id={}".format(rel.id))
+                    LOGGER.info("Created new relationship with id={}".format(rel.id))
                 else:
                     LOGGER.info(
-                        "Relationship already existed with id={}".format(
-                            rel.id))
+                        "Relationship already existed with id={}".format(rel.id)
+                    )
 
                 # primary_source_refs cell parsing:
                 #   Each line corresponds to one RelationshipAssertionReference
@@ -265,8 +267,7 @@ def read_input_file(ifname, notes_csv_fname):  # noqa
 
                 # The relationship assertion reference is only created
                 #   if it doesn't exist already.
-                primary_references_str = row_dict[
-                    'primary_source_refs'].strip()
+                primary_references_str = row_dict["primary_source_refs"].strip()
 
                 if primary_references_str in notes_dict:
                     ra_ref_text = notes_dict[primary_references_str]
@@ -275,12 +276,14 @@ def read_input_file(ifname, notes_csv_fname):  # noqa
 
                 # if text and primary sources are the same, then there's
                 # no need to create a new secondary source
-                ra_reference, created = \
-                    RelationshipAssertionReference.objects.get_or_create(
-                        secondary_source=sec_source,
-                        extra_info=primary_references_str,
-                        text=ra_ref_text
-                    )
+                (
+                    ra_reference,
+                    created,
+                ) = RelationshipAssertionReference.objects.get_or_create(
+                    secondary_source=sec_source,
+                    extra_info=primary_references_str,
+                    text=ra_ref_text,
+                )
 
                 rel.references.add(ra_reference)
 
@@ -289,22 +292,21 @@ def read_input_file(ifname, notes_csv_fname):  # noqa
                     # RelAssertionRef was created
                     for psource in primary_references_str.split(","):
                         primary_reference = PrimarySourceReference(
-                            content_object=ra_reference,
-                            text=psource.strip())
+                            content_object=ra_reference, text=psource.strip()
+                        )
                         primary_reference.save()
 
                 # Upgrades and saves the row
-                row_dict.update({"p1_id": p1_id,
-                                 "relationshipassertion_id": rel.id,
-                                 "p2_id": p2_id})
+                row_dict.update(
+                    {"p1_id": p1_id, "relationshipassertion_id": rel.id, "p2_id": p2_id}
+                )
 
                 writer.writerow(row_dict)
 
             except Exception as e:
-                LOGGER.error(
-                    "Cannot import line from csv file: {}".format(e.message))
+                LOGGER.error("Cannot import line from csv file: {}".format(e.message))
 
-    LOGGER.info("Wrote log file \"{}\"".format(log_fname))
+    LOGGER.info('Wrote log file "{}"'.format(log_fname))
 
 
 def run():
@@ -313,6 +315,6 @@ def run():
     # re-exported from excel as semicolon separated csv in utf8
     notes_csv = "promrep/scripts/data/zmeskal/zmeskal_from_xlsx.csv"
 
-    LOGGER.info("Importing data from \"{}\"".format(ifname))
+    LOGGER.info('Importing data from "{}"'.format(ifname))
 
     read_input_file(ifname, notes_csv)

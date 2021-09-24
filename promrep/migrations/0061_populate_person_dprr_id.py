@@ -1,10 +1,8 @@
-from __future__ import unicode_literals
-
 from django.db import migrations
 
 
 def populate_dprr_id(apps, schema_editor):
-    Person = apps.get_model('promrep', 'Person')
+    Person = apps.get_model("promrep", "Person")
 
     for p in Person.objects.all():
         p.dprr_id = generate_dprr_id(p)
@@ -15,11 +13,11 @@ def generate_dprr_id(person):
     if not person.nomen:
         return None
 
-    return '{}{:0>4}'.format(person.nomen.upper()[:4], person.id)
+    return "{}{:0>4}".format(person.nomen.upper()[:4], person.id)
 
 
 def delete_dprr_id(apps, schema_editor):
-    Person = apps.get_model('promrep', 'Person')
+    Person = apps.get_model("promrep", "Person")
 
     for p in Person.objects.all():
         p.dprr_id = None
@@ -29,7 +27,7 @@ def delete_dprr_id(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('promrep', '0060_person_dprr_id'),
+        ("promrep", "0060_person_dprr_id"),
     ]
 
     operations = [

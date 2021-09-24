@@ -3,9 +3,8 @@
 import csv
 from os import path
 
-from promrep.models import (
-    Province, PostAssertion, Office, PostAssertionProvince
-)
+from promrep.models import (Office, PostAssertion, PostAssertionProvince,
+                            Province)
 
 ICSV_COLUMNS = ["post_id", "office_abbrev", "province"]
 
@@ -15,12 +14,15 @@ def read_input_file(ifname):  # noqa
     file_basename = path.basename(ifname)
     file_basename = path.splitext(file_basename)[0]
 
-    with open(ifname, 'rU') as csvfile:
+    with open(ifname, "rU") as csvfile:
 
-        csvDict = csv.DictReader(csvfile, fieldnames=ICSV_COLUMNS,)
+        csvDict = csv.DictReader(
+            csvfile,
+            fieldnames=ICSV_COLUMNS,
+        )
 
         # skips first row
-        csvDict.next()
+        next(csvDict)
 
         for row_dict in csvDict:
             post_id = int(row_dict["post_id"])
@@ -29,7 +31,7 @@ def read_input_file(ifname):  # noqa
             try:
                 pa = PostAssertion.objects.get(id=post_id)
             except:
-                print("PostAssertion not found {}".format(post_id))
+                print(("PostAssertion not found {}".format(post_id)))
 
             if pa:
                 # only used if necessary to correct info
@@ -39,12 +41,11 @@ def read_input_file(ifname):  # noqa
                     office_abbrev = office_abbrev.lower().strip(".").strip(",")
                     office_abbrev = office_abbrev + "."
 
-                    office = Office.objects.get(
-                        abbrev_name__iexact=office_abbrev)
+                    office = Office.objects.get(abbrev_name__iexact=office_abbrev)
 
                     pa.office = office
                     pa.save()
-                    print("Updated office for PostAssertion {}".format(pa.id))
+                    print(("Updated office for PostAssertion {}".format(pa.id)))
 
                 # provinces are separated by commas,
                 # question mark indicates uncertainty
@@ -60,28 +61,23 @@ def read_input_file(ifname):  # noqa
                     else:
                         unc = False
 
-                    print row_dict
+                    print(row_dict)
 
                     try:
-                        province = Province.objects.get(
-                            name__iexact=prov.lower()
-                        )
+                        province = Province.objects.get(name__iexact=prov.lower())
                     except:
                         province = Province(name=prov)
                         province.save()
 
-                        print("Created new province {}".format(province))
+                        print(("Created new province {}".format(province)))
 
-                    pap, created = \
-                        PostAssertionProvince.objects.get_or_create(
-                            post_assertion=pa,
-                            province=province,
-                            uncertain=unc
-                        )
+                    pap, created = PostAssertionProvince.objects.get_or_create(
+                        post_assertion=pa, province=province, uncertain=unc
+                    )
 
 
 def run():
     ifname = "promrep/scripts/data/ProvincesV3.csv"
 
-    print("Importing data from \"{}\"".format(ifname))
+    print(('Importing data from "{}"'.format(ifname)))
     read_input_file(ifname)

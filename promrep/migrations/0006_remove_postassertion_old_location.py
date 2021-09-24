@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
-from django.db import models, migrations
+
+from django.db import migrations
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('promrep', '0005_create_postassertionprovince'),
+        ("promrep", "0005_create_postassertionprovince"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='postassertion',
-            name='old_location',
+            model_name="postassertion",
+            name="old_location",
         ),
     ]

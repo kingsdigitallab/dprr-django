@@ -48,16 +48,14 @@ def person_rel_json(person):
             "id": rel.id,
             "source": rel.person.id,
             "target": rel.related_person.id,
-            "label": rel.relationship.__unicode__()}
+            "label": rel.relationship.__unicode__(),
+        }
 
         if rel_dict_el not in edges:
             edges.append(rel_dict_el)
 
     for person in persons:
-        p_el_dict = {
-            "id": person.id,
-            "label": person.__unicode__()
-        }
+        p_el_dict = {"id": person.id, "label": person.__unicode__()}
 
         if p_el_dict not in nodes:
             nodes.append(p_el_dict)
@@ -68,45 +66,47 @@ def person_rel_json(person):
 def run():
 
     rel_json = person_rel_json(Person.objects.get(id=1452))
-    print rel_json
+    print(rel_json)
 
     # visited_persons = set()
 
     # for p in Person.objects.filter(id=4172):
     # for p in Person.objects.all():
     #     print p.id
+
+
 #
-    #     if p.id not in visited_persons:
-    #         visited_persons.add(p.id)
-    #         p_rels, visited = dump_rels(p, [], [])
+#     if p.id not in visited_persons:
+#         visited_persons.add(p.id)
+#         p_rels, visited = dump_rels(p, [], [])
 #
-    #         for pers in visited:
-    #             visited_persons.add(pers.id)
+#         for pers in visited:
+#             visited_persons.add(pers.id)
 #
-    #         p_rels = set(p_rels)
+#         p_rels = set(p_rels)
 #
-    #         if len(p_rels) > 0:
+#         if len(p_rels) > 0:
 #
-    #             fname = "rel_csv/" + str(p.id) + ".csv"
+#             fname = "rel_csv/" + str(p.id) + ".csv"
 #
-    #             with open(fname, 'wb') as csvfile:
-    #                 spamwriter = csv.writer(
-    #                     csvfile, delimiter=';', quotechar='"',
-    #                        quoting=csv.QUOTE_MINIMAL)
-    #                 spamwriter.writerow(
-    #                     ["person1 ID", "person1",
-    #                      "relationship", "person2 ID", "person2"])
-    #
-    #                 for rel in p_rels:
-    #                     spamwriter.writerow(
-    #                         [rel.person.id, rel.person,
-    # rel.relationship, rel.related_person.id, rel.related_person])
+#             with open(fname, 'wb') as csvfile:
+#                 spamwriter = csv.writer(
+#                     csvfile, delimiter=';', quotechar='"',
+#                        quoting=csv.QUOTE_MINIMAL)
+#                 spamwriter.writerow(
+#                     ["person1 ID", "person1",
+#                      "relationship", "person2 ID", "person2"])
 #
-    #             csvfile.close()
-    #             print "Wrote {}".format(fname)
+#                 for rel in p_rels:
+#                     spamwriter.writerow(
+#                         [rel.person.id, rel.person,
+# rel.relationship, rel.related_person.id, rel.related_person])
 #
-    #         else:
-    #             print "No rels found for person {}".format(p.id)
+#             csvfile.close()
+#             print "Wrote {}".format(fname)
 #
-    #     else:
-    #         print "Skipping... {}".format(p.id)
+#         else:
+#             print "No rels found for person {}".format(p.id)
+#
+#     else:
+#         print "Skipping... {}".format(p.id)

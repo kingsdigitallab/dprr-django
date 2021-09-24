@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import csv
-
 from os import path
 
-from promrep.models import (
-    Person, Praenomen, SecondarySource, Sex,
-    Tribe, TribeAssertion, PersonNote, NoteType
-)
+from promrep.models import (NoteType, Person, PersonNote, Praenomen,
+                            SecondarySource, Sex, Tribe, TribeAssertion)
 
 ICSV_COLUMNS = [
     "person_id",
@@ -23,7 +20,7 @@ ICSV_COLUMNS = [
     "tribe",
     "tribe_secondary_source",
     "tribe_note",
-    "person_note"
+    "person_note",
 ]
 
 
@@ -39,7 +36,7 @@ def clean_field(field, a_string):
     for ch in unc_chars:
         if ch in a_string:
             uncertain = True
-            a_string = a_string.replace(ch, '')
+            a_string = a_string.replace(ch, "")
 
     dict_obj = {
         field: a_string,
@@ -59,14 +56,14 @@ def get_praenomen_dict(praenomen_str):
         if "." not in praenomen_str:
             praenomen_str = praenomen_str + "."
 
-    praenomen_dict = clean_field('praenomen', praenomen_str)
+    praenomen_dict = clean_field("praenomen", praenomen_str)
 
     try:
-        praenomen = Praenomen.objects.get(abbrev=praenomen_dict['praenomen'])
+        praenomen = Praenomen.objects.get(abbrev=praenomen_dict["praenomen"])
     except Praenomen.DoesNotExist:
-        praenomen = Praenomen.objects.get(abbrev='-.')
+        praenomen = Praenomen.objects.get(abbrev="-.")
 
-    praenomen_dict['praenomen'] = praenomen
+    praenomen_dict["praenomen"] = praenomen
 
     return praenomen_dict
 
@@ -77,18 +74,18 @@ def create_person(row_dict):
     """
 
     person_dict = {}
-    person_dict['sex'] = Sex.objects.get(name="Male")
+    person_dict["sex"] = Sex.objects.get(name="Male")
 
-    if 'sex' in row_dict and "F" in row_dict['sex'].strip():
-        person_dict['sex'] = Sex.objects.get(name="Female")
+    if "sex" in row_dict and "F" in row_dict["sex"].strip():
+        person_dict["sex"] = Sex.objects.get(name="Female")
 
-    praenomen_dict = get_praenomen_dict(row_dict.get('praenomen'))
+    praenomen_dict = get_praenomen_dict(row_dict.get("praenomen"))
 
     # add praenomen info to person object
     person_dict.update(praenomen_dict)
 
     # cleans the remining person name fields
-    for field in ['nomen', 'cognomen', 'other_names', 'filiation']:
+    for field in ["nomen", "cognomen", "other_names", "filiation"]:
         field_string = row_dict.get(field)
 
         if field_string:
@@ -97,7 +94,7 @@ def create_person(row_dict):
             person_dict.update(d_obj)
 
     # remaining person fields, where names were not standard
-    person_dict['re_number'] = row_dict.get('re')
+    person_dict["re_number"] = row_dict.get("re")
 
     print(person_dict)
 
@@ -105,7 +102,7 @@ def create_person(row_dict):
     person, created = Person.objects.get_or_create(**person_dict)
 
     if created:
-        print("Created person with id={}".format(person.id))
+        print(("Created person with id={}".format(person.id)))
 
     return person.id, created
 
@@ -121,7 +118,7 @@ def get_sec_source_from_abbrev_str(ssource_str):
         sec_source, cted = SecondarySource.objects.get_or_create(
             name=ssource_str + " Descriptive name",
             biblio=ssource_str + " Biblio",
-            abbrev_name=ssource_str
+            abbrev_name=ssource_str,
         )
 
     return sec_source
@@ -138,23 +135,25 @@ def read_input_file(ifname):  # noqa
     #        abbrev_name="Nicolet")
 
     # log file with the ids of the objects created in the database
-    csv_log = csv.DictWriter(open(log_fname, 'wb'),
-                             ["person_id_new"] + ICSV_COLUMNS,
-                             dialect='excel',
-                             # delimiter=";",
-                             extrasaction='ignore')
+    csv_log = csv.DictWriter(
+        open(log_fname, "wb"),
+        ["person_id_new"] + ICSV_COLUMNS,
+        dialect="excel",
+        # delimiter=";",
+        extrasaction="ignore",
+    )
     csv_log.writeheader()
-    reference_note_type = NoteType.objects.get(name='Reference Note')
+    reference_note_type = NoteType.objects.get(name="Reference Note")
 
-    with open(ifname, 'rU') as csvfile:
+    with open(ifname, "rU") as csvfile:
         csvDict = csv.DictReader(csvfile, fieldnames=ICSV_COLUMNS)
 
         # skips header row
-        csvDict.next()
+        next(csvDict)
 
         for row_dict in csvDict:
-            person_id = int(row_dict['person_id'])
-            print("DEBUG: {}".format(person_id)),
+            person_id = int(row_dict["person_id"])
+            print(("DEBUG: {}".format(person_id)), end=" ")
 
             try:
                 if person_id:
@@ -168,50 +167,57 @@ def read_input_file(ifname):  # noqa
                         "filiation": row_dict.get("filiation", ""),
                         "cognomen": row_dict["cognomen"],
                         "other_names": row_dict["other_names"],
-                        "review_flag": row_dict.get("review_flag", False)
+                        "review_flag": row_dict.get("review_flag", False),
                     }
 
                     person_id, created = create_person(person_dict)
                     if created:
-                        print("Added Person: id={}".format(person_id))
+                        print(("Added Person: id={}".format(person_id)))
                     else:
-                        print("Found Person: id={}".format(person_id))
+                        print(("Found Person: id={}".format(person_id)))
 
                 else:
-                    print("Found Person: id={}".format(person_id))
+                    print(("Found Person: id={}".format(person_id)))
 
                 person = Person.objects.get(id=person_id)
 
-                if "F" in row_dict['sex']:
+                if "F" in row_dict["sex"]:
                     person.sex = Sex.objects.get(name="Female")
 
                 # updates praenomen
                 praenomen_str = row_dict["praenomen"]
                 if person.praenomen.abbrev == "-.":
                     if praenomen_str != "-":
-                        praenomen_dict = get_praenomen_dict(
-                            row_dict.get('praenomen'))
-                        person.praenomen = praenomen_dict['praenomen']
+                        praenomen_dict = get_praenomen_dict(row_dict.get("praenomen"))
+                        person.praenomen = praenomen_dict["praenomen"]
                         person.praenomen_uncertain = praenomen_dict.get(
-                            'praenomen_uncertain', False)
-                        print("Updated praenomen for person {}").format(
-                            person.id)
+                            "praenomen_uncertain", False
+                        )
+                        print(("Updated praenomen for person {}").format(person.id))
 
                 # check if the csv has extra info
-                for field in ["nomen", "filiation", "cognomen",
-                              "other_names", "origin"]:
+                for field in [
+                    "nomen",
+                    "filiation",
+                    "cognomen",
+                    "other_names",
+                    "origin",
+                ]:
                     fvalue = row_dict[field].strip()
 
                     if getattr(person, field) == "":
                         if fvalue != "":
                             setattr(person, field, fvalue)
-                            print("Updated field {} for person {}").format(
-                                field, person.id)
+                            print(
+                                ("Updated field {} for person {}").format(
+                                    field, person.id
+                                )
+                            )
 
                 # re case
                 #  only update if existing is empty
                 if person.re_number == "":
-                    re_str = row_dict['re'].strip()
+                    re_str = row_dict["re"].strip()
                     if re_str != "":
                         person.re_number = re_str
 
@@ -222,39 +228,38 @@ def read_input_file(ifname):  # noqa
                 person.save()
 
                 # Tribe info
-                if row_dict['tribe']:
-                    tribe_notes = row_dict['tribe_note']
-                    for tribe in row_dict['tribe'].split(","):
+                if row_dict["tribe"]:
+                    tribe_notes = row_dict["tribe_note"]
+                    for tribe in row_dict["tribe"].split(","):
                         tribe_str = tribe.strip()
 
                         if tribe_str:
                             # TODO: tribes can be uncertain as well
                             tribe_uncertain = False
                             if "?" in tribe_str:
-                                tribe_str = tribe_str.replace('?', '')
+                                tribe_str = tribe_str.replace("?", "")
                                 tribe_uncertain = True
 
-                            tribes = Tribe.objects.filter(
-                                name__iexact=tribe_str)
+                            tribes = Tribe.objects.filter(name__iexact=tribe_str)
                             #
                             if tribes.count() == 0:
                                 tribe_obj = Tribe.objects.create(
-                                    name=tribe_str, abbrev=tribe_str)
+                                    name=tribe_str, abbrev=tribe_str
+                                )
                             else:
                                 tribe_obj = tribes.first()
 
-                            tribe_ssource_str = row_dict[
-                                "tribe_secondary_source"]
+                            tribe_ssource_str = row_dict["tribe_secondary_source"]
                             tribe_sec_source = get_sec_source_from_abbrev_str(
-                                tribe_ssource_str)
+                                tribe_ssource_str
+                            )
 
                             # only created if doesn't exist already
                             # if tribe_obj not in person.tribes.all():
-                            tr_assert, cr = \
-                                TribeAssertion.objects.get_or_create(
-                                    person=person,
-                                    tribe=tribe_obj,
-                                )
+                            tr_assert, cr = TribeAssertion.objects.get_or_create(
+                                person=person,
+                                tribe=tribe_obj,
+                            )
 
                             # only updates the secondary source if empty
                             if not tr_assert.secondary_source:
@@ -269,36 +274,32 @@ def read_input_file(ifname):  # noqa
                                 tr_assert.uncertain = tribe_uncertain
                                 tr_assert.save()
 
-                if row_dict['person_note']:
-                    person_note = row_dict['person_note']
+                if row_dict["person_note"]:
+                    person_note = row_dict["person_note"]
                     pnotes = Person.objects.filter(
-                        id=person.id,
-                        notes__text=person_note)
-                    if (pnotes.count() == 0):
+                        id=person.id, notes__text=person_note
+                    )
+                    if pnotes.count() == 0:
                         pn = PersonNote()
                     else:
                         pn = PersonNote.objects.get(text=person_note)
                     pn.text = person_note
                     pn.note_type = reference_note_type
-                    ssource_str = row_dict[
-                        "secondary_source"]
-                    secondary_source = get_sec_source_from_abbrev_str(
-                        ssource_str)
+                    ssource_str = row_dict["secondary_source"]
+                    secondary_source = get_sec_source_from_abbrev_str(ssource_str)
                     pn.secondary_source = secondary_source
                     pn.save()
                     if person:
                         person.notes.add(pn)
-                row_dict.update({
-                    'person_id_new': person_id
-                })
+                row_dict.update({"person_id_new": person_id})
                 csv_log.writerow(row_dict)
             except Exception as e:
-                print("ERROR: {}".format(e))
-    print("Wrote log file \"{}\"".format(log_fname))
+                print(("ERROR: {}".format(e)))
+    print(('Wrote log file "{}"'.format(log_fname)))
 
 
 def run():
     ifname = "promrep/scripts/data/SBPersonsExportV2.csv"
 
-    print("Importing data from \"{}\"".format(ifname))
+    print(('Importing data from "{}"'.format(ifname)))
     read_input_file(ifname)

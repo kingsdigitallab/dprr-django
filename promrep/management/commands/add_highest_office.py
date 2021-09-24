@@ -1,14 +1,15 @@
-from django.core.management.base import BaseCommand
-import logging
-from promrep.models import Person, Office
-from django.db.models import Q
 import csv
 import datetime
+import logging
+
+from django.core.management.base import BaseCommand
+from django.db.models import Q
+from promrep.models import Office, Person
 
 
 class Command(BaseCommand):
-    args = '<page document_path document_path ...>'
-    help = 'Adds the Highest office info to the Person model'
+    args = "<page document_path document_path ...>"
+    help = "Adds the Highest office info to the Person model"
 
     logger = logging.getLogger(__name__)
 
@@ -18,20 +19,40 @@ class Command(BaseCommand):
         date = now.strftime("%d_%B_%Y")
         log_fname = "highest_office-log_{}.csv".format(date)
 
-        cos_list = [o.name for o in Office.objects.get(
-            name="consul").get_descendants(include_self=True)]
+        cos_list = [
+            o.name
+            for o in Office.objects.get(name="consul").get_descendants(
+                include_self=True
+            )
+        ]
 
-        pra_list = [o.name for o in Office.objects.get(
-            name="praetor").get_descendants(include_self=True)]
+        pra_list = [
+            o.name
+            for o in Office.objects.get(name="praetor").get_descendants(
+                include_self=True
+            )
+        ]
 
-        aed_list = [o.name for o in Office.objects.get(
-            name="aedilis").get_descendants(include_self=True)]
+        aed_list = [
+            o.name
+            for o in Office.objects.get(name="aedilis").get_descendants(
+                include_self=True
+            )
+        ]
 
-        tri_list = [o.name for o in Office.objects.get(
-            name="tribunus plebis").get_descendants(include_self=True)]
+        tri_list = [
+            o.name
+            for o in Office.objects.get(name="tribunus plebis").get_descendants(
+                include_self=True
+            )
+        ]
 
-        qua_list = [o.name for o in Office.objects.get(
-            name="quaestor").get_descendants(include_self=True)]
+        qua_list = [
+            o.name
+            for o in Office.objects.get(name="quaestor").get_descendants(
+                include_self=True
+            )
+        ]
 
         cos_Q = Q(office__name__in=cos_list)
         pra_Q = Q(office__name__in=pra_list)
@@ -39,7 +60,7 @@ class Command(BaseCommand):
         tri_Q = Q(office__name__in=tri_list)
         qua_Q = Q(office__name__in=qua_list)
 
-        with open(log_fname, 'wb') as ofile:
+        with open(log_fname, "wb") as ofile:
             csv_log = csv.DictWriter(
                 ofile,
                 [
@@ -47,16 +68,16 @@ class Command(BaseCommand):
                     "name",
                     "highest_office",
                 ],
-                dialect='excel',
+                dialect="excel",
                 delimiter=",",
-                extrasaction='ignore')
+                extrasaction="ignore",
+            )
             csv_log.writeheader()
 
             # don't overwrite manually edited fields
             persons = Person.objects.filter(highest_office_edited=False)
 
-            print("Adding highest office info: {} persons".format(
-                persons.count()))
+            print(("Adding highest office info: {} persons".format(persons.count())))
 
             for p in persons:
                 hoffice = ""
@@ -68,10 +89,10 @@ class Command(BaseCommand):
                 # q. if achieved,(first one), otherwise
                 # sen. if achieved/eq. R.
                 pas = p.post_assertions.filter(
-                    cos_Q | pra_Q | aed_Q | tri_Q | qua_Q).order_by(
-                    'date_start')
+                    cos_Q | pra_Q | aed_Q | tri_Q | qua_Q
+                ).order_by("date_start")
 
-                sas = p.statusassertion_set.all().order_by('date_start')
+                sas = p.statusassertion_set.all().order_by("date_start")
 
                 if pas.exists():
                     off = ""
@@ -137,8 +158,10 @@ class Command(BaseCommand):
                 #     the inverse relationships - see DPRR-257
                 # - some inverse relationships checked.
                 # Highest relationship
-                elif p.relationships_as_subject.exists() or\
-                        p.relationships_as_object.exists():
+                elif (
+                    p.relationships_as_subject.exists()
+                    or p.relationships_as_object.exists()
+                ):
 
                     rel_per = None
                     rel_str = ""
@@ -153,24 +176,23 @@ class Command(BaseCommand):
                     pers_is_male_q = Q(person__sex__name="Male")
 
                     # son of male
-                    ra_son = p.relationships_as_subject.filter(
-                        son_q, rel_is_male_q)
+                    ra_son = p.relationships_as_subject.filter(son_q, rel_is_male_q)
 
                     # daughter of male
-                    ra_dau = p.relationships_as_subject.filter(
-                        dau_q, rel_is_male_q)
+                    ra_dau = p.relationships_as_subject.filter(dau_q, rel_is_male_q)
 
                     # Inverse "father of":
                     ra_father = p.relationships_as_object.filter(
-                        father_q, pers_is_male_q)
+                        father_q, pers_is_male_q
+                    )
 
                     # wife of male
-                    ra_wife = p.relationships_as_subject.filter(
-                        wife_q, pers_is_male_q)
+                    ra_wife = p.relationships_as_subject.filter(wife_q, pers_is_male_q)
 
                     # inverse wife of male
                     ra_wife_inv = p.relationships_as_object.filter(
-                        wife_q, rel_is_male_q)
+                        wife_q, rel_is_male_q
+                    )
 
                     ra_any = p.relationships_as_subject.all()
 
@@ -222,17 +244,16 @@ class Command(BaseCommand):
                         # Get the related person's highest office:
                         rel_per_ho = rel_per.get_real_highest_office()
                         if rel_per_ho:
-                            hoffice = "{}{} {} ({})".format(rel_str, unc_str,
-                                                            rel_per,
-                                                            rel_per_ho)
+                            hoffice = "{}{} {} ({})".format(
+                                rel_str, unc_str, rel_per, rel_per_ho
+                            )
                         else:
-                            hoffice = "{}{} {}".format(rel_str, unc_str,
-                                                       rel_per)
+                            hoffice = "{}{} {}".format(rel_str, unc_str, rel_per)
 
                 # default case, print the last office the person had
                 if hoffice == "":
                     if p.post_assertions.exists():
-                        pa = p.post_assertions.order_by('-date_start').first()
+                        pa = p.post_assertions.order_by("-date_start").first()
                         off = pa.office_str()
 
                         date = pa.print_date()
@@ -243,10 +264,6 @@ class Command(BaseCommand):
                 p.highest_office = hoffice
                 p.save()
 
-                csv_log.writerow({
-                                 "id": p.id,
-                                 "name": p,
-                                 "highest_office": hoffice
-                                 })
+                csv_log.writerow({"id": p.id, "name": p, "highest_office": hoffice})
 
-        print("Wrote {}".format(log_fname))
+        print(("Wrote {}".format(log_fname)))

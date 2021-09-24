@@ -1,11 +1,11 @@
+import unittest
+
 from django.test import TestCase
 from promrep.forms import PromrepFacetedSearchForm
-import unittest
 
 
 @unittest.skip("Skipping for now...")
 class PromrepFacetedSearchFormTest(TestCase):
-
     def setUp(self):
         self.form = PromrepFacetedSearchForm()
 

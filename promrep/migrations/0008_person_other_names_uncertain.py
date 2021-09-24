@@ -1,20 +1,22 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
-from django.db import models, migrations
+
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('promrep', '0007_office_abbrev_name'),
+        ("promrep", "0007_office_abbrev_name"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='person',
-            name='other_names_uncertain',
-            field=models.BooleanField(default=False, verbose_name=b'Uncertain Other Names'),
+            model_name="person",
+            name="other_names_uncertain",
+            field=models.BooleanField(
+                default=False, verbose_name=b"Uncertain Other Names"
+            ),
             preserve_default=True,
         ),
     ]

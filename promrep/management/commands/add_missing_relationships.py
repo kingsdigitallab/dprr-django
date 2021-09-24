@@ -2,13 +2,11 @@ import csv
 import datetime
 import logging
 
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from django.db.models import Q
-
-from promrep.models import Person, RelationshipAssertion, RelationshipType
-from promrep.models import SecondarySource, RelationshipInverse
-
+from promrep.models import (Person, RelationshipAssertion, RelationshipInverse,
+                            RelationshipType, SecondarySource)
 
 # Populate inferred family relationships based on rules in DPRR-257
 # IMPORTANT NOTE: Assumes inverse relationships already populated

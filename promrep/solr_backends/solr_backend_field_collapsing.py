@@ -4,7 +4,7 @@
 # See https://gist.github.com/3750774 for the current version of this code
 # See http://wiki.apache.org/solr/FieldCollapsing for the Solr feature
 # documentation
-from __future__ import absolute_import
+
 
 import logging
 
@@ -22,7 +22,6 @@ get_model = apps.get_model
 # Since there's no chance of this being portable (yet!) we'll import explicitly
 # rather than using the generic imports:
 class GroupedSearchQuery(SolrSearchQuery):
-
     def __init__(self, *args, **kwargs):
         super(GroupedSearchQuery, self).__init__(*args, **kwargs)
         self.grouping_field = None
@@ -42,10 +41,10 @@ class GroupedSearchQuery(SolrSearchQuery):
         # See matches dance in _process_results below:
         total = 0
 
-        if 'hits' in results:
-            total = int(results['hits'])
-        elif 'matches' in results:
-            total = int(results['matches'])
+        if "hits" in results:
+            total = int(results["hits"])
+        elif "matches" in results:
+            total = int(results["matches"])
 
         self._total_document_count = total
 
@@ -66,36 +65,40 @@ class GroupedSearchQuery(SolrSearchQuery):
     def build_params(self, *args, **kwargs):
         res = super(GroupedSearchQuery, self).build_params(*args, **kwargs)
         if self.grouping_field is not None:
-            res.update({'group': 'true',
-                        'group.field': self.grouping_field,
-                        'group.ngroups': 'true',
-                        'group.limit': 2,  # TODO: Don't hard-code this
-                        'group.sort': 'django_ct desc, score desc',
-                        'group.facet': 'true',
-                        'result_class': GroupedSearchResult})
+            res.update(
+                {
+                    "group": "true",
+                    "group.field": self.grouping_field,
+                    "group.ngroups": "true",
+                    "group.limit": 2,  # TODO: Don't hard-code this
+                    "group.sort": "django_ct desc, score desc",
+                    "group.facet": "true",
+                    "result_class": GroupedSearchResult,
+                }
+            )
         return res
 
 
 class GroupedSearchResult(object):
-
     def __init__(self, field_name, group_data, raw_results={}):
         self.field_name = field_name
-        self.key = group_data['groupValue']  # TODO: convert _to_python
-        self.hits = group_data['doclist']['numFound']
+        self.key = group_data["groupValue"]  # TODO: convert _to_python
+        self.hits = group_data["doclist"]["numFound"]
         self.documents = list(
             self.process_documents(
-                group_data['doclist']['docs'],
-                raw_results=raw_results))
+                group_data["doclist"]["docs"], raw_results=raw_results
+            )
+        )
 
     def __unicode__(self):
-        return 'GroupedSearchResult({}={}, hits={})'.format(
-            self.field_name,
-            self.group_key,
-            self.hits)
+        return "GroupedSearchResult({}={}, hits={})".format(
+            self.field_name, self.group_key, self.hits
+        )
 
     def process_documents(self, doclist, raw_results):
         # TODO: tame import spaghetti
         from haystack import connections
+
         # luisf
         # engine = connections["en"]
         engine = connections.all()[0]
@@ -105,48 +108,51 @@ class GroupedSearchResult(object):
         indexed_models = unified_index.get_indexed_models()
 
         for raw_result in doclist:
-            app_label, model_name = raw_result[DJANGO_CT].split('.')
+            app_label, model_name = raw_result[DJANGO_CT].split(".")
             additional_fields = {}
             model = get_model(app_label, model_name)
 
             if model and model in indexed_models:
-                for key, value in raw_result.items():
+                for key, value in list(raw_result.items()):
                     index = unified_index.get_index(model)
                     string_key = str(key)
 
-                    if string_key in index.fields and \
-                            hasattr(index.fields[string_key], 'convert'):
+                    if string_key in index.fields and hasattr(
+                        index.fields[string_key], "convert"
+                    ):
                         additional_fields[string_key] = index.fields[
-                            string_key].convert(value)
+                            string_key
+                        ].convert(value)
                     else:
                         additional_fields[string_key] = conn._to_python(value)
 
-                del(additional_fields[DJANGO_CT])
-                del(additional_fields[DJANGO_ID])
-                del(additional_fields['score'])
+                del additional_fields[DJANGO_CT]
+                del additional_fields[DJANGO_ID]
+                del additional_fields["score"]
 
-                if raw_result[ID] in getattr(raw_results, 'highlighting', {}):
-                    additional_fields['highlighted'] = \
-                        raw_results.highlighting[raw_result[ID]]
+                if raw_result[ID] in getattr(raw_results, "highlighting", {}):
+                    additional_fields["highlighted"] = raw_results.highlighting[
+                        raw_result[ID]
+                    ]
 
                 result = SearchResult(
                     app_label,
                     model_name,
                     raw_result[DJANGO_ID],
-                    raw_result['score'],
-                    **additional_fields)
+                    raw_result["score"],
+                    **additional_fields
+                )
                 yield result
 
 
 class GroupedSearchQuerySet(SearchQuerySet):
-
     def __init__(self, *args, **kwargs):
         super(GroupedSearchQuerySet, self).__init__(*args, **kwargs)
 
         if not isinstance(self.query, GroupedSearchQuery):
             raise TypeError(
-                "GroupedSearchQuerySet must be used "
-                "with a GroupedSearchQuery query")
+                "GroupedSearchQuerySet must be used " "with a GroupedSearchQuery query"
+            )
 
     def group_by(self, field_name):
         """Have Solr group results based on the provided field name"""
@@ -176,60 +182,57 @@ class GroupedSearchQuerySet(SearchQuerySet):
 
 
 class GroupedSolrSearchBackend(SolrSearchBackend):
-
     def build_search_kwargs(self, *args, **kwargs):
-        group_kwargs = [(i, kwargs.pop(i))
-                        for i in kwargs.keys() if i.startswith("group")]
+        group_kwargs = [
+            (i, kwargs.pop(i)) for i in list(kwargs.keys()) if i.startswith("group")
+        ]
 
-        res = super(GroupedSolrSearchBackend, self).build_search_kwargs(
-            *args, **kwargs)
+        res = super(GroupedSolrSearchBackend, self).build_search_kwargs(*args, **kwargs)
 
         res.update(group_kwargs)
 
-        if group_kwargs and 'sort_by' not in kwargs:
-            res['sort'] = 'score desc'
+        if group_kwargs and "sort_by" not in kwargs:
+            res["sort"] = "score desc"
 
         return res
 
     def _process_results(self, raw_results, result_class=None, **kwargs):
         res = super(GroupedSolrSearchBackend, self)._process_results(
-            raw_results,
-            result_class=result_class,
-            **kwargs)
+            raw_results, result_class=result_class, **kwargs
+        )
 
         if result_class and not issubclass(result_class, GroupedSearchResult):
             return res
 
         if len(raw_results.docs):
             raise RuntimeError(
-                "Grouped Solr searches should return "
-                "grouped elements, not docs!")
+                "Grouped Solr searches should return " "grouped elements, not docs!"
+            )
 
-        assert not res['results']
-        assert not res['hits']
+        assert not res["results"]
+        assert not res["hits"]
 
         if isinstance(raw_results, EmptyResults):
             return res
 
-        assert len(
-            raw_results.grouped) == 1,\
-            "Grouping on more than one field is not supported"
+        assert (
+            len(raw_results.grouped) == 1
+        ), "Grouping on more than one field is not supported"
 
-        res['results'] = results = []
-        for field_name, field_group in raw_results.grouped.items():
-            res['hits'] = field_group['ngroups']
-            res['matches'] = field_group['matches']
-            for group in field_group['groups']:
-                if group['groupValue'] is None:
+        res["results"] = results = []
+        for field_name, field_group in list(raw_results.grouped.items()):
+            res["hits"] = field_group["ngroups"]
+            res["matches"] = field_group["matches"]
+            for group in field_group["groups"]:
+                if group["groupValue"] is None:
                     logging.warning(
-                        "Unexpected NULL grouping",
-                        extra={'data': raw_results})
+                        "Unexpected NULL grouping", extra={"data": raw_results}
+                    )
 
                     # Avoid confusing Haystack with excluded bogon results
-                    res['hits'] -= 1
+                    res["hits"] -= 1
                     continue
-                results.append(
-                    result_class(field_name, group, raw_results=raw_results))
+                results.append(result_class(field_name, group, raw_results=raw_results))
 
         return res
 

@@ -7,26 +7,24 @@ from promrep.models import Person
 
 
 class Command(BaseCommand):
-    help = 'Imports life dates into the Persons from the CSV file in data'
+    help = "Imports life dates into the Persons from the CSV file in data"
 
     def handle(self, *args, **options):
         try:
-            file_name = 'data/era_dates.csv'
+            file_name = "data/era_dates.csv"
             file_path = os.path.abspath(file_name)
 
             csv_file = open(file_path)
             csv_dict = csv.DictReader(csv_file)
 
             for row in csv_dict:
-                person_id = row['person_id']
-                era_from = self._get_int_from_str(row['era_from'])
-                era_to = self._get_int_from_str(row['era_to'])
+                person_id = row["person_id"]
+                era_from = self._get_int_from_str(row["era_from"])
+                era_to = self._get_int_from_str(row["era_to"])
 
                 self._set_person_era(person_id, era_from, era_to)
         except IOError:
-            raise CommandError('Era dates file not found: {}'.format(
-                file_name
-            ))
+            raise CommandError("Era dates file not found: {}".format(file_name))
 
     def _get_int_from_str(self, value):
         try:
@@ -46,4 +44,4 @@ class Command(BaseCommand):
 
             person.save()
         except ObjectDoesNotExist:
-            self.stderr.write('Person with ID {} not found.'.format(person_id))
+            self.stderr.write("Person with ID {} not found.".format(person_id))

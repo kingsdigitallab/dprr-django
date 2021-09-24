@@ -8,10 +8,13 @@ def parse_primary_source(text):
 
     psource = ""
 
-    ref_regex = regex.compile(r"""
+    ref_regex = regex.compile(
+        r"""
                 (?P<psource>(\w+\.?\s?)+)
                 (\(?\d\)\s?)+
-                """, regex.VERBOSE)
+                """,
+        regex.VERBOSE,
+    )
 
     res = regex.search(ref_regex, text)
 

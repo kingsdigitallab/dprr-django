@@ -2,13 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import re
+
 from author.decorators import with_author
 from django.conf import settings as s
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.fields import (GenericForeignKey,
+                                                GenericRelation)
 from django.contrib.contenttypes.models import ContentType
-from django.urls import reverse
 from django.db import models
 from django.db.models import Q
+from django.urls import reverse
 from django.utils.html import mark_safe
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey

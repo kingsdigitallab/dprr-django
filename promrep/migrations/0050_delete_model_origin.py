@@ -1,29 +1,29 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
-from django.db import migrations, models
+
+from django.db import migrations
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('promrep', '0049_create_statusassertion_statusassertionprovince'),
+        ("promrep", "0049_create_statusassertion_statusassertionprovince"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='origin',
-            name='created_by',
+            model_name="origin",
+            name="created_by",
         ),
         migrations.RemoveField(
-            model_name='origin',
-            name='updated_by',
+            model_name="origin",
+            name="updated_by",
         ),
         migrations.RemoveField(
-            model_name='person',
-            name='origin',
+            model_name="person",
+            name="origin",
         ),
         migrations.DeleteModel(
-            name='Origin',
+            name="Origin",
         ),
     ]

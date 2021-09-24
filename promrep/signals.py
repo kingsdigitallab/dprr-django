@@ -1,5 +1,5 @@
-from promrep.models import PostAssertion
 from django.db.models.signals import post_delete
+from promrep.models import PostAssertion
 
 
 def delete_parent_group(sender, instance, *args, **kwargs):

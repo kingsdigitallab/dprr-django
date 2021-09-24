@@ -4,55 +4,75 @@
 import csv
 import os
 
-import parsing_aux as aux
 from promrep.models import (Location, Person, PostAssertion, PostAssertionNote,
                             Praenomen, RoleType, SecondarySource, Tribe)
 
+from . import parsing_aux as aux
+
 
 def run():
-    for vol in ['mrr2_a2', 'mrr2_a3']:
+    for vol in ["mrr2_a2", "mrr2_a3"]:
         processCSV(vol)
 
 
 def processCSV(volume):  # noqa
 
     sdict = {
-        'mrr2_a2': ['Broughton MRR2 Appendix 2',
-                    'promrep/scripts/data/MRRAppendix2v8.csv'],
-        'mrr2_a3': ['Broughton MRR2 Appendix 3',
-                    'promrep/scripts/data/MRRAppendix3v7.csv']
+        "mrr2_a2": [
+            "Broughton MRR2 Appendix 2",
+            "promrep/scripts/data/MRRAppendix2v8.csv",
+        ],
+        "mrr2_a3": [
+            "Broughton MRR2 Appendix 3",
+            "promrep/scripts/data/MRRAppendix3v7.csv",
+        ],
     }
 
     source = SecondarySource.objects.get(abbrev_name=sdict[volume][0])
     ifname = sdict[volume][1]
 
-    print 'Will read', source, 'from file', ifname, '\n\n'
+    print("Will read", source, "from file", ifname, "\n\n")
 
-    log_fname = os.path.splitext(os.path.basename(ifname))[0] + '.log'
+    log_fname = os.path.splitext(os.path.basename(ifname))[0] + ".log"
 
-    ifile = open(ifname, 'rU')
-    reader = csv.reader(ifile, delimiter=';', skipinitialspace=True)
+    ifile = open(ifname, "rU")
+    reader = csv.reader(ifile, delimiter=";", skipinitialspace=True)
 
     # skip header line
-    reader.next()
+    next(reader)
 
-    with open(log_fname, 'wb') as csvfile:
-        spamwriter = csv.writer(csvfile, delimiter=',',
-                                quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        spamwriter.writerow(('original_name', 'created',
-                             'person.id', 'post_assertion.id,' 'ap_note.id'))
+    with open(log_fname, "wb") as csvfile:
+        spamwriter = csv.writer(
+            csvfile, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
+        )
+        spamwriter.writerow(
+            ("original_name", "created", "person.id", "post_assertion.id," "ap_note.id")
+        )
 
         for original_row in reader:
             # Page  Review Later    Office  Revised Date Format Uncertain Date
             # Praenomen   Nomen   Filiation   Tribe   RE  Cognomen    Notes
             row = [a.strip() for a in original_row]
 
-            (page, review_later, office_name, date_source_text, date_start,
-             date_start_uncertain, date_end, date_end_uncertain,
-             praenomen_str, nomen, filiation, tribe, re, cognomen,
-             note_text) = row
+            (
+                page,
+                review_later,
+                office_name,
+                date_source_text,
+                date_start,
+                date_start_uncertain,
+                date_end,
+                date_end_uncertain,
+                praenomen_str,
+                nomen,
+                filiation,
+                tribe,
+                re,
+                cognomen,
+                note_text,
+            ) = row
 
-            print("{}: {}-{}".format(office_name, date_start, date_end))
+            print(("{}: {}-{}".format(office_name, date_start, date_end)))
 
             post_assertion_uncertain = False
             if "?" in office_name:
@@ -64,7 +84,8 @@ def processCSV(volume):  # noqa
             if "- Sicily" in office_name:
                 office_name = office_name.strip("- Sicily")
                 location, created = Location.objects.get_or_create(
-                    name="Sicily", location_type=2)
+                    name="Sicily", location_type=2
+                )
 
             office_obj = aux.get_office_obj(office_name)
 
@@ -74,10 +95,12 @@ def processCSV(volume):  # noqa
                 re_str = ""
 
             original_name = " ".join(
-                [x
-                 for x
-                 in [praenomen_str, nomen, filiation, tribe, re_str, cognomen]
-                 if x])
+                [
+                    x
+                    for x in [praenomen_str, nomen, filiation, tribe, re_str, cognomen]
+                    if x
+                ]
+            )
 
             praenomen_uncertain = False
 
@@ -100,15 +123,13 @@ def processCSV(volume):  # noqa
                     re_number=re,
                 )
 
-            except Exception as e:
+            except Exception:
                 # cases where the praenomen does not exist
                 # we'll simply create a new person without praenomen and
                 # flagged for review
 
                 person, created = Person.objects.get_or_create(
-                    nomen=praenomen_str + " " + nomen,
-                    re_number=re,
-                    review_flag=True
+                    nomen=praenomen_str + " " + nomen, re_number=re, review_flag=True
                 )
 
             # only updates fields if person was created
@@ -125,14 +146,14 @@ def processCSV(volume):  # noqa
                             tribe_obj = Tribe.objects.get(abbrev=tribe + ".")
                             person.tribe = tribe_obj
                     except Exception as e:
-                        print "ERROR getting tribe", tribe, e
+                        print("ERROR getting tribe", tribe, e)
 
                 person.save()
 
             # creates the PostAssertion
             post_assertion = PostAssertion.objects.create(
                 office=office_obj,
-                role=RoleType.objects.get(name='Holder'),
+                role=RoleType.objects.get(name="Holder"),
                 secondary_source=source,
                 person=person,
                 review_flag=review_later,
@@ -140,7 +161,7 @@ def processCSV(volume):  # noqa
                 date_start_uncertain=date_start_uncertain,
                 date_end_uncertain=date_end_uncertain,
                 original_text=original_name,
-                uncertain=post_assertion_uncertain
+                uncertain=post_assertion_uncertain,
             )
 
             if date_end:
@@ -156,13 +177,12 @@ def processCSV(volume):  # noqa
 
             if note_text:
                 note_text = note_text.replace("**", ";").strip('"')
-                ap_note = PostAssertionNote(
-                    text=note_text, secondary_source=source)
+                ap_note = PostAssertionNote(text=note_text, secondary_source=source)
                 ap_note.save()
                 post_assertion.notes.add(ap_note)
 
             spamwriter.writerow(
-                (original_name,
-                 created, person.id, post_assertion.id, ap_note.id))
+                (original_name, created, person.id, post_assertion.id, ap_note.id)
+            )
 
-    print "Wrote", log_fname
+    print("Wrote", log_fname)

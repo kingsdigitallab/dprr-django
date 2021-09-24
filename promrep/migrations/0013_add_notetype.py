@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
-from django.db import models, migrations
+
 import django.utils.timezone
 import model_utils.fields
+from django.db import migrations, models
 
 
 def load_data(apps, schema_editor):
@@ -16,26 +16,44 @@ def load_data(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('promrep', '0012_auto_20150914_1240'),
+        ("promrep", "0012_auto_20150914_1240"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='NoteType',
+            name="NoteType",
             fields=[
-                ('id', models.AutoField(
-                    verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('created', model_utils.fields.AutoCreatedField(
-                    default=django.utils.timezone.now, verbose_name='created', editable=False)),
-                ('modified', model_utils.fields.AutoLastModifiedField(
-                    default=django.utils.timezone.now, verbose_name='modified', editable=False)),
-                ('name', models.CharField(unique=True, max_length=128)),
-                ('description', models.TextField(max_length=1024, blank=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
+                    ),
+                ),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        verbose_name="created",
+                        editable=False,
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        verbose_name="modified",
+                        editable=False,
+                    ),
+                ),
+                ("name", models.CharField(unique=True, max_length=128)),
+                ("description", models.TextField(max_length=1024, blank=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
             bases=(models.Model,),
         ),

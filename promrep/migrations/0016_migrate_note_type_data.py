@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
-from django.db import models, migrations
+
+from django.db import migrations
 
 
 def populate_new_note_types(apps, schema_editor):
     """Populates the new note types"""
-    postassertion_note_model = apps.get_model('promrep', 'PostAssertionNote')
+    postassertion_note_model = apps.get_model("promrep", "PostAssertionNote")
 
     for pan in postassertion_note_model.objects.all():
         if pan.old_note_type:
@@ -17,7 +17,7 @@ def populate_new_note_types(apps, schema_editor):
 
 def populate_old_note_types(apps, schema_editor):
     """Populates the new note types"""
-    postassertion_note_model = apps.get_model('promrep', 'PostAssertionNote')
+    postassertion_note_model = apps.get_model("promrep", "PostAssertionNote")
 
     for pan in postassertion_note_model.objects.all():
         if pan.note_type:
@@ -29,11 +29,11 @@ def populate_old_note_types(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('promrep', '0015_postassertionnote_add_new_note_type'),
+        ("promrep", "0015_postassertionnote_add_new_note_type"),
     ]
 
     operations = [
         migrations.RunPython(
-            populate_new_note_types, reverse_code=populate_old_note_types),
-
+            populate_new_note_types, reverse_code=populate_old_note_types
+        ),
     ]

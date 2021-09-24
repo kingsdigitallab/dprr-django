@@ -14,4 +14,4 @@ def run():
     for a in Post.objects.all():
         for ap in a.PostAssertion_set.all():
             if ap.secondary_source.id == 1:
-                print ap.original_text
+                print(ap.original_text)

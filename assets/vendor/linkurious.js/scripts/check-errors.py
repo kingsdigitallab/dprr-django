@@ -9,31 +9,34 @@ Dependencies:
   - selenium (`sudo pip3 install selenium`)
   - firefox
 """
+import time
+import os
 from selenium import webdriver
-import time, os
 from os.path import isfile, join
 
 SERVER_URL = "http://127.0.0.1:8000/examples/"
 EXAMPLES_DIR = '../examples'
-#DESTINATION = 'screens/'
+# DESTINATION = 'screens/'
 
 driver = webdriver.Firefox()
 
-#empty the useless messages
+# empty the useless messages
 for entry in driver.get_log('browser'):
-	pass
+    pass
 
-#find the links to the examples
-l = [ f for f in os.listdir(EXAMPLES_DIR) if isfile(join(EXAMPLES_DIR,f)) \
-	and '.html' in f and 'index.html' not in f]
+# find the links to the examples
+links = [
+    f for f in os.listdir(EXAMPLES_DIR) if
+    isfile(join(EXAMPLES_DIR, f)) and '.html' in f and 'index.html' not in f
+]
 
-for a in l:
-    name = a.replace('.html','')
+for a in links:
+    name = a.replace('.html', '')
     print(name)
-    driver.get(SERVER_URL+a) #go to page
-    time.sleep(0.2) #wait for things to setup
+    driver.get(SERVER_URL + a)  # go to page
+    time.sleep(0.2)  # wait for things to setup
     for entry in driver.get_log('browser'):
-        if entry['level'] not in ('INFO','WARNING'):
-            print(entry['level'],entry['message'])
-    #driver.save_screenshot(DESTINATION+name+'.png')
+        if entry['level'] not in ('INFO', 'WARNING'):
+            print((entry['level'], entry['message']))
+    # driver.save_screenshot(DESTINATION+name+'.png')
 driver.quit()

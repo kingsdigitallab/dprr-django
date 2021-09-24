@@ -3,12 +3,13 @@ from django.conf import settings as s
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from haystack import indexes
+from haystack.fields import FacetMultiValueField
 from promrep.forms import PromrepFacetedSearchForm, SenateSearchForm
 from promrep.models import Office, Person, PostAssertion, StatusAssertion
 
 
 class MultiValueIntegerField(indexes.MultiValueField):
-    field_type = 'integer'
+    field_type = "integer"
 
     def convert(self, value):
         if value is None:
@@ -18,14 +19,16 @@ class MultiValueIntegerField(indexes.MultiValueField):
 
 # For Senate Search
 class StatusAssertionIndex(indexes.SearchIndex, indexes.Indexable):
-    person = indexes.CharField(model_attr='person', faceted=True)
-    rank = indexes.CharField(model_attr='status__name', faceted=True)
-    uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
+    person = indexes.CharField(model_attr="person", faceted=True)
+    rank = indexes.CharField(model_attr="status__name", faceted=True)
+    uncertain = indexes.BooleanField(model_attr="uncertain", faceted=True)
     date = MultiValueIntegerField(faceted=True)
     date_start_uncertain = indexes.BooleanField(
-        model_attr='date_start_uncertain', default=False)
+        model_attr="date_start_uncertain", default=False
+    )
     date_end_uncertain = indexes.BooleanField(
-        model_attr='date_end_uncertain', default=False)
+        model_attr="date_end_uncertain", default=False
+    )
     date_display = indexes.CharField()
     highest_office = indexes.CharField(faceted=False)
 
@@ -41,7 +44,8 @@ class StatusAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.filter(
-            status__name__iexact=s.LOOKUPS['status']['senator'])
+            status__name__iexact=s.LOOKUPS["status"]["senator"]
+        )
 
     def prepare_date(self, object):
         """range of dates for the post"""
@@ -56,7 +60,7 @@ class StatusAssertionIndex(indexes.SearchIndex, indexes.Indexable):
             end = object.date_end
 
         # need to increment the last point
-        res = range(start, end + 1, 1)
+        res = list(range(start, end + 1, 1))
 
         return res
 
@@ -80,17 +84,14 @@ class StatusAssertionIndex(indexes.SearchIndex, indexes.Indexable):
 class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=False)
 
-    person_id = indexes.IntegerField(model_attr='id')
-    dprr_id = indexes.CharField(model_attr='dprr_id', null=True)
+    person_id = indexes.IntegerField(model_attr="id")
+    dprr_id = indexes.CharField(model_attr="dprr_id", null=True)
 
     praenomen = indexes.MultiValueField(faceted=True, null=True)
     nomen = indexes.MultiValueField(faceted=True, null=True)
-    re_number = indexes.CharField(model_attr='re_number',
-                                  faceted=True, null=True)
-    f = indexes.MultiValueField(model_attr='f',
-                                faceted=True, null=True)
-    n = indexes.MultiValueField(model_attr='n',
-                                faceted=True, null=True)
+    re_number = indexes.CharField(model_attr="re_number", faceted=True, null=True)
+    f = indexes.MultiValueField(model_attr="f", faceted=True, null=True)
+    n = indexes.MultiValueField(model_attr="n", faceted=True, null=True)
     tribe = indexes.MultiValueField(faceted=True)
     cognomen = indexes.MultiValueField(faceted=True, null=True)
     other_names = indexes.MultiValueField(faceted=True, null=True)
@@ -98,24 +99,22 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     era = MultiValueIntegerField(faceted=True)
     era_order = indexes.IntegerField()
 
-    gender = indexes.CharField(
-        model_attr='sex__name', faceted=True, null=True)
+    gender = indexes.CharField(model_attr="sex__name", faceted=True, null=True)
 
     patrician = indexes.BooleanField(
-        model_attr='patrician', default=False, faceted=True)
-    novus = indexes.BooleanField(
-        model_attr='novus', default=False, faceted=True)
-    nobilis = indexes.BooleanField(
-        model_attr='nobilis', default=False, faceted=True)
+        model_attr="patrician", default=False, faceted=True
+    )
+    novus = indexes.BooleanField(model_attr="novus", default=False, faceted=True)
+    nobilis = indexes.BooleanField(model_attr="nobilis", default=False, faceted=True)
     eques = indexes.BooleanField(faceted=True, default=False)
 
     life_events = indexes.MultiValueField(faceted=True)
 
-    offices = indexes.FacetMultiValueField()
+    offices = FacetMultiValueField()
     location = indexes.MultiValueField(faceted=True)
     highest_office = indexes.CharField(faceted=False)
 
-    uncertain = indexes.CharField(model_attr='uncertain', null=True)
+    uncertain = indexes.CharField(model_attr="uncertain", null=True)
 
     def get_model(self):
         return Person
@@ -144,10 +143,10 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
         return object._split_name(nomen)
 
     def _clean_name(self, value):
-        return re.sub(r'[\?\[\]\(\)]', '', value)
+        return re.sub(r"[\?\[\]\(\)]", "", value)
 
     def prepare_tribe(self, object):
-        return list(set(object.tribes.values_list('name', flat=True)))
+        return list(set(object.tribes.values_list("name", flat=True)))
 
     def prepare_cognomen(self, object):
         """The list of cognomens to filter on should not show parentheses or
@@ -173,7 +172,7 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
         if person.era_to:
             end = person.era_to
 
-        res = range(start, end + 1, 1)
+        res = list(range(start, end + 1, 1))
 
         return res
 
@@ -189,35 +188,48 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare_eques(self, object):
         sa_list = StatusAssertion.objects.filter(person=object)
         for sa in sa_list.all():
-            if sa.status.name.lower() == s.LOOKUPS['status']['eques']:
+            if sa.status.name.lower() == s.LOOKUPS["status"]["eques"]:
                 return True
         return False
 
     def prepare_life_events(self, object):
-        date_types = ['birth', 'exiled', 'restored', 'proscribed',
-                      'expelled from Senate']
-        relationship_types = {'adopted son of': 'adopted'}
+        date_types = [
+            "birth",
+            "exiled",
+            "restored",
+            "proscribed",
+            "expelled from Senate",
+        ]
+        relationship_types = {"adopted son of": "adopted"}
 
-        life_dates = list(set(
-            object.dateinformation_set.filter(
-                date_type__name__in=date_types).values_list(
-                    'date_type__name', flat=True)
-        ))
+        life_dates = list(
+            set(
+                object.dateinformation_set.filter(
+                    date_type__name__in=date_types
+                ).values_list("date_type__name", flat=True)
+            )
+        )
 
-        if object.dateinformation_set.filter(
-            date_type__name='death').exclude(
-                date_type__name='death - violent').count() > 0:
-            life_dates.append('death')
-            life_dates.append('death - other')
+        if (
+            object.dateinformation_set.filter(date_type__name="death")
+            .exclude(date_type__name="death - violent")
+            .count()
+            > 0
+        ):
+            life_dates.append("death")
+            life_dates.append("death - other")
 
-        if object.dateinformation_set.filter(
-                date_type__name='death - violent').count() > 0:
-            life_dates.append('death')
-            life_dates.append('death - violent')
+        if (
+            object.dateinformation_set.filter(date_type__name="death - violent").count()
+            > 0
+        ):
+            life_dates.append("death")
+            life_dates.append("death - violent")
 
-        for relationship in relationship_types.keys():
+        for relationship in list(relationship_types.keys()):
             relationships = object.relationships_as_subject.filter(
-                relationship__name=relationship).count()
+                relationship__name=relationship
+            ).count()
             if relationships > 0:
                 life_dates.append(relationship_types[relationship])
 
@@ -231,8 +243,9 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
 
         # This is how it was done before... not going to mess with it.
         try:
-            senator_offices = Office.objects.get(
-                name='senator').get_descendants(include_self=True)
+            senator_offices = Office.objects.get(name="senator").get_descendants(
+                include_self=True
+            )
             sen_q = Q(office__in=senator_offices)
 
             if sen_q:
@@ -240,53 +253,47 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
         except ObjectDoesNotExist:
             pass
 
-        olist = olist.values_list('office__id', flat=True)
+        olist = olist.values_list("office__id", flat=True)
 
         # list of Office objects
         olist = [Office.objects.get(id=o) for o in list(set(olist))]
 
-        return [o.name
-                for off in olist
-                for o in off.get_ancestors(include_self=True)]
+        return [o.name for off in olist for o in off.get_ancestors(include_self=True)]
 
     def prepare_location(self, object):
         # hierarchical facet
-        return [pp.name
-                for pa in object.post_assertions.all()
-                for p in pa.provinces.all()
-                for pp in p.get_ancestors(include_self=True)
-                ]
+        return [
+            pp.name
+            for pa in object.post_assertions.all()
+            for p in pa.provinces.all()
+            for pp in p.get_ancestors(include_self=True)
+        ]
 
 
 class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     # These offices will be excluded from the queryset
-    exclude_offices = [
-        'senator',
-        'senator - office unknown',
-        'princeps senatus'
-    ]
-    office = indexes.FacetMultiValueField()
-    office_name = indexes.CharField(model_attr='office__name')
+    exclude_offices = ["senator", "senator - office unknown", "princeps senatus"]
+    office = FacetMultiValueField()
+    office_name = indexes.CharField(model_attr="office__name")
     office_sort = indexes.IntegerField()
-    uncertain = indexes.BooleanField(model_attr='uncertain', faceted=True)
-    unknown = indexes.BooleanField(model_attr='unknown', faceted=True)
+    uncertain = indexes.BooleanField(model_attr="uncertain", faceted=True)
+    unknown = indexes.BooleanField(model_attr="unknown", faceted=True)
     location = indexes.MultiValueField(faceted=True)
     date = MultiValueIntegerField(faceted=True)
     date_sort = indexes.IntegerField()
-    person = indexes.CharField(model_attr='person', faceted=True)
-    person_id = indexes.IntegerField(model_attr='person__id')
-    dprr_id = indexes.CharField(model_attr='person__dprr_id', null=True)
+    person = indexes.CharField(model_attr="person", faceted=True)
+    person_id = indexes.IntegerField(model_attr="person__id")
+    dprr_id = indexes.CharField(model_attr="person__dprr_id", null=True)
     person_title = indexes.CharField()
 
     praenomen = indexes.MultiValueField(faceted=True, null=True)
     nomen = indexes.MultiValueField(faceted=True, null=True)
-    f = indexes.MultiValueField(
-        model_attr='person__f', faceted=True, null=True)
-    n = indexes.MultiValueField(
-        model_attr='person__n', faceted=True, null=True)
-    re_number = indexes.CharField(model_attr='person__re_number',
-                                  faceted=True, null=True)
+    f = indexes.MultiValueField(model_attr="person__f", faceted=True, null=True)
+    n = indexes.MultiValueField(model_attr="person__n", faceted=True, null=True)
+    re_number = indexes.CharField(
+        model_attr="person__re_number", faceted=True, null=True
+    )
     cognomen = indexes.MultiValueField(faceted=True, null=True)
     other_names = indexes.MultiValueField(faceted=True, null=True)
     tribe = indexes.MultiValueField(faceted=True)
@@ -298,15 +305,19 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         """Used when the entire index for model is updated."""
         # Exclude all priesthoods as well
         exclude_offices = self.exclude_offices
-        for office in Office.objects.get(
-                name='Priesthoods').get_descendants(include_self=True):
+        for office in Office.objects.get(name="Priesthoods").get_descendants(
+            include_self=True
+        ):
             exclude_offices.append(office.name)
-        return self.get_model().objects.all().exclude(
-            office__name__in=exclude_offices).exclude(
-            unknown=True).exclude(
-            Q(date_start__isnull=True) & Q(date_end__isnull=True)).exclude(
-            date_start__gt=-31).exclude(
-            date_end__gt=-31)
+        return (
+            self.get_model()
+            .objects.all()
+            .exclude(office__name__in=exclude_offices)
+            .exclude(unknown=True)
+            .exclude(Q(date_start__isnull=True) & Q(date_end__isnull=True))
+            .exclude(date_start__gt=-31)
+            .exclude(date_end__gt=-31)
+        )
 
     def prepare_office(self, object):
         # Hierarquical facet
@@ -318,24 +329,26 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         # Right now unindexed lists come at the end
         parent_tree_name = object.office.get_root().name
         office_sort = 10000
-        if 'Magisterial Posts' in parent_tree_name:
+        if "Magisterial Posts" in parent_tree_name:
             office_sort = 1000
-        elif 'Distinctions' in parent_tree_name:
+        elif "Distinctions" in parent_tree_name:
             office_sort = 2000
-        elif 'Promagisterial Posts' in parent_tree_name:
+        elif "Promagisterial Posts" in parent_tree_name:
             office_sort = 3000
-        elif 'Priesthoods' in parent_tree_name:
+        elif "Priesthoods" in parent_tree_name:
             office_sort = 4000
-        elif 'Non-magisterial Posts' in parent_tree_name:
+        elif "Non-magisterial Posts" in parent_tree_name:
             office_sort = 5000
         office_sort += object.office.lft
         return office_sort
 
     def prepare_location(self, object):
         # hierarchical facet
-        return [pp.name
-                for p in object.provinces.all()
-                for pp in p.get_ancestors(include_self=True)]
+        return [
+            pp.name
+            for p in object.provinces.all()
+            for pp in p.get_ancestors(include_self=True)
+        ]
 
     def prepare_date(self, object):
         """range of dates for the post"""
@@ -349,7 +362,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
             end = object.date_end
 
         # need to increment the last point
-        res = range(start, end + 1, 1)
+        res = list(range(start, end + 1, 1))
 
         return res
 
@@ -393,7 +406,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         return object.person._split_name(nomen)
 
     def _clean_name(self, value):
-        return re.sub(r'[\?\[\]\(\)]', '', value)
+        return re.sub(r"[\?\[\]\(\)]", "", value)
 
     def prepare_cognomen(self, object):
         """The list of cognomens to filter on should not show parentheses or
@@ -408,4 +421,4 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
         return object.person._split_name(object.person.other_names_plain)
 
     def prepare_tribe(self, object):
-        return list(set(object.person.tribes.values_list('name', flat=True)))
+        return list(set(object.person.tribes.values_list("name", flat=True)))

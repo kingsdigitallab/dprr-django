@@ -2,6 +2,7 @@ version: '3'
 
 volumes:
   local_postgres_data: {}
+  local_solr_data: {}
 
 services:
   db:
@@ -16,6 +17,16 @@ services:
     ports:
       - "5432:5432"
     restart: unless-stopped
+
+  solr:
+    image: library/solr:6.6.5
+    ports:
+      - "8983:8983"
+    volumes:
+      - local_solr_data:/var/solr
+    command:
+      - solr-precreate
+      - dprr
 
   web:
     build:

@@ -7,11 +7,12 @@
 # commit to version control.
 # -----------------------------------------------------------------------------
 import os
+
 path = os.path.abspath(__name__)
 
-if '/dev/' in path or '/app' in path:
+if "/dev/" in path or "/app" in path:
     from .dev import *  # noqa
-elif 'stg' in path:
-    from stg import *  # noqa
+elif "stg" in path:
+    from .stg import *  # noqa
 else:
-    from liv import *  # noqa
+    from .liv import *  # noqa

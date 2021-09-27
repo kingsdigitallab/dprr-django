@@ -35,7 +35,8 @@ class Migration(migrations.Migration):
             model_name="province",
             name="parent",
             field=mptt.fields.TreeForeignKey(
-                related_name="children", blank=True, to="promrep.Province", null=True
+                related_name="children", blank=True,
+                to="promrep.Province", null=True, on_delete=models.SET_NULL
             ),
         ),
         migrations.AddField(

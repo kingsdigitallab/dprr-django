@@ -14,7 +14,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="postassertionnote",
             name="note_type",
-            field=models.ForeignKey(default=1, to="promrep.NoteType"),
+            field=models.ForeignKey(
+                default=1, to="promrep.NoteType",
+                null=True, on_delete=models.SET_NULL
+            ),
             preserve_default=True,
+
         ),
     ]

@@ -680,7 +680,9 @@ class TribeAssertion(TimeStampedModel):
 @with_author
 class GensAssertion(TimeStampedModel):
     person = models.ForeignKey(Person, null=True, on_delete=models.SET_NULL)
-    gens = models.ForeignKey(Gens, related_name="assertions", on_delete=models.SET_NULL)
+    gens = models.ForeignKey(
+        Gens, related_name="assertions", null=True, on_delete=models.SET_NULL
+    )
     uncertain = models.BooleanField(default=False)
 
     secondary_source = models.ForeignKey(
@@ -720,6 +722,7 @@ class DateInformation(TimeStampedModel):
         DateType,
         related_name="person_date",
         verbose_name="Type",
+        null=True,
         on_delete=models.SET_NULL,
     )
     date_interval = models.CharField(
@@ -852,7 +855,8 @@ class Province(MPTTModel, TimeStampedModel):
 @with_author
 class PostAssertion(TimeStampedModel):
     person = models.ForeignKey(
-        Person, related_name="post_assertions", on_delete=models.SET_NULL
+        Person, related_name="post_assertions",
+        null=True, on_delete=models.SET_NULL
     )
     office = models.ForeignKey(Office, null=True, on_delete=models.SET_NULL)
 

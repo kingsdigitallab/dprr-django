@@ -2,23 +2,26 @@ from .base import *  # noqa
 
 DEBUG = True
 
-INTERNAL_IPS = ('dprr-dev.dighum.kcl.ac.uk', '137.73.123.239', )
+INTERNAL_IPS = (
+    "dprr-dev.dighum.kcl.ac.uk",
+    "137.73.123.239",
+)
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'app_dprr_dev',
-        'USER': 'app_dprr',
-        'PASSWORD': '',
-        'HOST': '',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "app_dprr_dev",
+        "USER": "app_dprr",
+        "PASSWORD": "",
+        "HOST": "",
     }
 }
 
 LOGGING_LEVEL = logging.DEBUG  # noqa
 
-LOGGING['loggers']['django']['level'] = LOGGING_LEVEL  # noqa
-LOGGING['loggers']['django_auth_ldap']['level'] = LOGGING_LEVEL  # noqa
-LOGGING['loggers']['promrep']['level'] = LOGGING_LEVEL  # noqa
+LOGGING["loggers"]["django"]["level"] = LOGGING_LEVEL  # noqa
+LOGGING["loggers"]["django_auth_ldap"]["level"] = LOGGING_LEVEL  # noqa
+LOGGING["loggers"]["promrep"]["level"] = LOGGING_LEVEL  # noqa
 
 # -----------------------------------------------------------------------------
 # Development Installed Applications Settings
@@ -29,9 +32,9 @@ LOGGING['loggers']['promrep']['level'] = LOGGING_LEVEL  # noqa
 # -----------------------------------------------------------------------------
 
 HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://127.0.0.1:8182/solr'
+    "default": {
+        "ENGINE": "haystack.backends.solr_backend.SolrEngine",
+        "URL": "http://127.0.0.1:8182/solr",
     },
 }
 
@@ -43,7 +46,8 @@ HAYSTACK_CONNECTIONS = {
 
 try:
     import django_extensions  # noqa
-    INSTALLED_APPS = INSTALLED_APPS + ('django_extensions', )  # noqa
+
+    INSTALLED_APPS = INSTALLED_APPS + ("django_extensions",)  # noqa
 except ImportError:
     pass
 
@@ -52,31 +56,32 @@ except ImportError:
 # http://django-debug-toolbar.readthedocs.org/en/latest/
 # -----------------------------------------------------------------------------
 
-try:
-    import debug_toolbar  # noqa
-    INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
-    MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + (  # noqa
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
-    )
-    DEBUG_TOOLBAR_PATCH_SETTINGS = False
-
-    DEBUG_TOOLBAR_PANELS = [
-        'debug_toolbar.panels.versions.VersionsPanel',
-        'debug_toolbar.panels.timer.TimerPanel',
-        'debug_toolbar.panels.settings.SettingsPanel',
-        'debug_toolbar.panels.headers.HeadersPanel',
-        'debug_toolbar.panels.request.RequestPanel',
-        'debug_toolbar.panels.sql.SQLPanel',
-        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-        'debug_toolbar.panels.templates.TemplatesPanel',
-        'debug_toolbar.panels.cache.CachePanel',
-        'debug_toolbar.panels.signals.SignalsPanel',
-        'debug_toolbar.panels.logging.LoggingPanel',
-        'debug_toolbar.panels.redirects.RedirectsPanel',
-    ]
-
-except ImportError:
-    pass
+# try:
+#     import debug_toolbar  # noqa
+#
+#     INSTALLED_APPS = INSTALLED_APPS + ("debug_toolbar",)
+#     MIDDLEWARE_CLASSES += (  # noqa
+#         "debug_toolbar.middleware.DebugToolbarMiddleware",
+#     )
+#     DEBUG_TOOLBAR_PATCH_SETTINGS = False
+#
+#     DEBUG_TOOLBAR_PANELS = [
+#         "debug_toolbar.panels.versions.VersionsPanel",
+#         "debug_toolbar.panels.timer.TimerPanel",
+#         "debug_toolbar.panels.settings.SettingsPanel",
+#         "debug_toolbar.panels.headers.HeadersPanel",
+#         "debug_toolbar.panels.request.RequestPanel",
+#         "debug_toolbar.panels.sql.SQLPanel",
+#         "debug_toolbar.panels.staticfiles.StaticFilesPanel",
+#         "debug_toolbar.panels.templates.TemplatesPanel",
+#         "debug_toolbar.panels.cache.CachePanel",
+#         "debug_toolbar.panels.signals.SignalsPanel",
+#         "debug_toolbar.panels.logging.LoggingPanel",
+#         "debug_toolbar.panels.redirects.RedirectsPanel",
+#     ]
+#
+# except ImportError:
+#     pass
 
 
 # -----------------------------------------------------------------------------
@@ -87,8 +92,8 @@ except ImportError:
 try:
     import haystack_panel  # noqa
 
-    INSTALLED_APPS = INSTALLED_APPS + ('haystack_panel', )
-    DEBUG_TOOLBAR_PANELS.append('haystack_panel.panel.HaystackDebugPanel')
+    INSTALLED_APPS = INSTALLED_APPS + ("haystack_panel",)
+    DEBUG_TOOLBAR_PANELS.append("haystack_panel.panel.HaystackDebugPanel")
 
 except ImportError:
     pass
@@ -101,8 +106,9 @@ except ImportError:
 try:
     from .local import *  # noqa
 except ImportError:
-    print('failed to import local settings')
+    print("failed to import local settings")
 
     from .test import *  # noqa
-    print('the project is running with test settings')
-    print('please create a local settings file')
+
+    print("the project is running with test settings")
+    print("please create a local settings file")

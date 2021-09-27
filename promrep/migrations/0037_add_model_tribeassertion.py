@@ -44,7 +44,8 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "uncertain",
-                    models.BooleanField(default=False, verbose_name=b"Uncertain"),
+                    models.BooleanField(default=False,
+                                        verbose_name=b"Uncertain"),
                 ),
                 (
                     "created_by",
@@ -54,17 +55,28 @@ class Migration(migrations.Migration):
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
                         null=True,
+                        on_delete=models.SET_NULL
                     ),
                 ),
                 (
                     "notes",
-                    models.ManyToManyField(to="promrep.PostAssertionNote", blank=True),
+                    models.ManyToManyField(to="promrep.PostAssertionNote",
+                                           blank=True),
                 ),
-                ("person", models.ForeignKey(to="promrep.Person")),
-                ("secondary_source", models.ForeignKey(to="promrep.SecondarySource")),
+                ("person", models.ForeignKey(
+                    to="promrep.Person",
+                    null=True, on_delete=models.SET_NULL
+                )),
+                ("secondary_source", models.ForeignKey(
+                    to="promrep.SecondarySource",
+                    null=True, on_delete=models.SET_NULL
+                )),
                 (
                     "tribe",
-                    models.ForeignKey(related_name="assertions", to="promrep.Tribe"),
+                    models.ForeignKey(
+                        related_name="assertions", to="promrep.Tribe",
+                        null=True, on_delete=models.SET_NULL
+                    ),
                 ),
                 (
                     "updated_by",
@@ -74,6 +86,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
                         null=True,
+                        on_delete=models.SET_NULL
                     ),
                 ),
             ],

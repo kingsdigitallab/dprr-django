@@ -5,12 +5,8 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.shortcuts import render
 from django.template.loader import select_template
+from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooserPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-from wagtail.admin.edit_handlers import (
-    FieldPanel,
-    MultiFieldPanel,
-    PageChooserPanel,
-)
 from wagtail.core.fields import RichTextField
 from wagtail.core.models import Page
 from wagtail.documents.edit_handlers import DocumentChooserPanel
@@ -25,11 +21,19 @@ class AbstractLinkField(models.Model):
     """Abstract class for link fields."""
 
     link_document = models.ForeignKey(
-        "wagtaildocs.Document", blank=True, null=True, related_name="+"
+        "wagtaildocs.Document",
+        blank=True,
+        null=True,
+        related_name="+",
+        on_delete=models.SET_NULL,
     )
     link_external = models.URLField("External link", blank=True, null=True)
     link_page = models.ForeignKey(
-        "wagtailcore.Page", blank=True, null=True, related_name="+"
+        "wagtailcore.Page",
+        blank=True,
+        null=True,
+        related_name="+",
+        on_delete=models.SET_NULL,
     )
 
     panels = [

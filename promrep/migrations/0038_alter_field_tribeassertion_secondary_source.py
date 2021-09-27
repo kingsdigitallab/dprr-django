@@ -15,7 +15,8 @@ class Migration(migrations.Migration):
             model_name="tribeassertion",
             name="secondary_source",
             field=models.ForeignKey(
-                blank=True, to="promrep.SecondarySource", null=True
+                blank=True, to="promrep.SecondarySource",
+                null=True, on_delete=models.SET_NULL
             ),
         ),
     ]

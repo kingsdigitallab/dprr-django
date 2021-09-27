@@ -30,6 +30,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="primarysourcereference",
             name="primary_source",
-            field=models.ForeignKey(to="promrep.PrimarySource", null=True),
+            field=models.ForeignKey(
+                to="promrep.PrimarySource",
+                null=True, on_delete=models.SET_NULL
+            ),
         ),
     ]

@@ -19,14 +19,15 @@ class Migration(migrations.Migration):
                 verbose_name=b"primary source reference",
                 blank=True,
                 to="contenttypes.ContentType",
-                null=True,
+                null=True, on_delete=models.SET_NULL
             ),
         ),
         migrations.AddField(
             model_name="primarysourcereference",
             name="object_id",
             field=models.PositiveIntegerField(
-                null=True, verbose_name=b"related object"
+                null=True,
+                verbose_name=b"related object"
             ),
         ),
     ]

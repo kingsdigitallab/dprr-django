@@ -52,6 +52,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
                         null=True,
+                        on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -62,6 +63,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
                         null=True,
+                        on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -91,7 +93,7 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -101,7 +103,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -149,7 +151,7 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -201,7 +203,7 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -211,7 +213,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -262,7 +264,7 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -271,7 +273,7 @@ class Migration(migrations.Migration):
                         related_name="children",
                         blank=True,
                         to="promrep.Office",
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -281,7 +283,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -313,7 +315,7 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -323,7 +325,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -463,7 +465,7 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -472,7 +474,7 @@ class Migration(migrations.Migration):
                         related_name="person_first",
                         blank=True,
                         to="promrep.DateType",
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -481,7 +483,7 @@ class Migration(migrations.Migration):
                         related_name="person_last",
                         blank=True,
                         to="promrep.DateType",
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -552,7 +554,7 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -610,7 +612,7 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -641,7 +643,7 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -651,7 +653,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -715,7 +717,7 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -725,7 +727,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -811,7 +813,7 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -821,7 +823,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -869,7 +871,7 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -879,7 +881,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -891,7 +893,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="postassertionnote",
             name="secondary_source",
-            field=models.ForeignKey(to="promrep.SecondarySource"),
+            field=models.ForeignKey(
+                to="promrep.SecondarySource",
+                null=True, on_delete=models.SET_NULL
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -902,7 +907,7 @@ class Migration(migrations.Migration):
                 verbose_name="last updated by",
                 blank=True,
                 to=settings.AUTH_USER_MODEL,
-                null=True,
+                null=True, on_delete=models.SET_NULL
             ),
             preserve_default=True,
         ),
@@ -913,50 +918,67 @@ class Migration(migrations.Migration):
                 related_name="postassertion_date_secondary_source",
                 blank=True,
                 to="promrep.SecondarySource",
-                null=True,
+                null=True, on_delete=models.SET_NULL
             ),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="postassertion",
             name="group",
-            field=models.ForeignKey(blank=True, to="promrep.Group", null=True),
+            field=models.ForeignKey(
+                blank=True, to="promrep.Group", null=True,
+                on_delete=models.SET_NULL),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="postassertion",
             name="location",
-            field=models.ForeignKey(blank=True, to="promrep.Location", null=True),
+            field=models.ForeignKey(blank=True, to="promrep.Location",
+                                    null=True, on_delete=models.SET_NULL),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="postassertion",
             name="notes",
-            field=models.ManyToManyField(to="promrep.PostAssertionNote", blank=True),
+            field=models.ManyToManyField(
+                to="promrep.PostAssertionNote", blank=True,
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="postassertion",
             name="office",
-            field=models.ForeignKey(to="promrep.Office"),
+            field=models.ForeignKey(
+                to="promrep.Office",
+                null=True, on_delete=models.SET_NULL
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="postassertion",
             name="person",
-            field=models.ForeignKey(to="promrep.Person"),
+            field=models.ForeignKey(
+                to="promrep.Person",
+                null=True, on_delete=models.SET_NULL
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="postassertion",
             name="role",
-            field=models.ForeignKey(default=1, to="promrep.RoleType"),
+            field=models.ForeignKey(
+                default=1, to="promrep.RoleType",
+                null=True, on_delete=models.SET_NULL
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="postassertion",
             name="secondary_source",
-            field=models.ForeignKey(to="promrep.SecondarySource"),
+            field=models.ForeignKey(
+                to="promrep.SecondarySource",
+                null=True, on_delete=models.SET_NULL
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -967,7 +989,7 @@ class Migration(migrations.Migration):
                 verbose_name="last updated by",
                 blank=True,
                 to=settings.AUTH_USER_MODEL,
-                null=True,
+                null=True, on_delete=models.SET_NULL
             ),
             preserve_default=True,
         ),
@@ -975,38 +997,52 @@ class Migration(migrations.Migration):
             model_name="person",
             name="date_secondary_source",
             field=models.ForeignKey(
-                blank=True, to="promrep.SecondarySource", null=True
+                blank=True, to="promrep.SecondarySource",
+                null=True, on_delete=models.SET_NULL
             ),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="person",
             name="gens",
-            field=models.ForeignKey(blank=True, to="promrep.Gens", null=True),
+            field=models.ForeignKey(
+                blank=True, to="promrep.Gens", null=True,
+                on_delete=models.SET_NULL),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="person",
             name="origin",
-            field=models.ForeignKey(blank=True, to="promrep.Origin", null=True),
+            field=models.ForeignKey(
+                blank=True, to="promrep.Origin",
+                null=True, on_delete=models.SET_NULL),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="person",
             name="praenomen",
-            field=models.ForeignKey(blank=True, to="promrep.Praenomen", null=True),
+            field=models.ForeignKey(
+                blank=True, to="promrep.Praenomen",
+                null=True, on_delete=models.SET_NULL
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="person",
             name="sex",
-            field=models.ForeignKey(default=1, blank=True, to="promrep.Sex", null=True),
+            field=models.ForeignKey(
+                default=1, blank=True, to="promrep.Sex",
+                null=True, on_delete=models.SET_NULL
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="person",
             name="tribe",
-            field=models.ForeignKey(blank=True, to="promrep.Tribe", null=True),
+            field=models.ForeignKey(
+                blank=True, to="promrep.Tribe",
+                null=True, on_delete=models.SET_NULL
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1017,7 +1053,7 @@ class Migration(migrations.Migration):
                 verbose_name="last updated by",
                 blank=True,
                 to=settings.AUTH_USER_MODEL,
-                null=True,
+                null=True, on_delete=models.SET_NULL
             ),
             preserve_default=True,
         ),
@@ -1037,7 +1073,7 @@ class Migration(migrations.Migration):
                 verbose_name="last updated by",
                 blank=True,
                 to=settings.AUTH_USER_MODEL,
-                null=True,
+                null=True, on_delete=models.SET_NULL
             ),
             preserve_default=True,
         ),

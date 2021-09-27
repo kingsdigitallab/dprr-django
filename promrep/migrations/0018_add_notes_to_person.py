@@ -52,10 +52,17 @@ class Migration(migrations.Migration):
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
                         null=True,
+                        on_delete=models.SET_NULL
                     ),
                 ),
-                ("note_type", models.ForeignKey(default=1, to="promrep.NoteType")),
-                ("secondary_source", models.ForeignKey(to="promrep.SecondarySource")),
+                ("note_type", models.ForeignKey(
+                    default=1, to="promrep.NoteType",
+                    null=True, on_delete=models.SET_NULL
+                )),
+                ("secondary_source", models.ForeignKey(
+                    to="promrep.SecondarySource",
+                    null=True, on_delete=models.SET_NULL
+                )),
                 (
                     "updated_by",
                     models.ForeignKey(
@@ -64,6 +71,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
                         null=True,
+                        on_delete=models.SET_NULL
                     ),
                 ),
             ],

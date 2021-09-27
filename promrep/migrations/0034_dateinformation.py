@@ -68,6 +68,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
                         null=True,
+                        on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -76,13 +77,18 @@ class Migration(migrations.Migration):
                         related_name="person_date",
                         verbose_name=b"Type",
                         to="promrep.DateType",
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
-                ("person", models.ForeignKey(to="promrep.Person")),
+                ("person", models.ForeignKey(
+                    to="promrep.Person",
+                    null=True, on_delete=models.SET_NULL
+                )),
                 (
                     "secondary_source",
                     models.ForeignKey(
-                        blank=True, to="promrep.SecondarySource", null=True
+                        blank=True, to="promrep.SecondarySource",
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -92,7 +98,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],

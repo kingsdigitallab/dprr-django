@@ -51,6 +51,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
                         null=True,
+                        on_delete=models.SET_NULL,
                     ),
                 ),
                 (
@@ -59,12 +60,14 @@ class Migration(migrations.Migration):
                         related_name="primary_source_references",
                         to="promrep.PrimarySource",
                         null=True,
+                        on_delete=models.SET_NULL
                     ),
                 ),
                 (
                     "primary_source",
                     models.ForeignKey(
-                        related_name="references", to="promrep.PrimarySource", null=True
+                        related_name="references", to="promrep.PrimarySource",
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -75,6 +78,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
                         null=True,
+                        on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -119,17 +123,24 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
-                ("note_type", models.ForeignKey(default=1, to="promrep.NoteType")),
+                ("note_type", models.ForeignKey(
+                    default=1, to="promrep.NoteType",
+                    null=True, on_delete=models.SET_NULL
+                ))
+                ,
                 (
                     "primary_source_references",
                     models.ManyToManyField(
                         to="promrep.PrimarySourceReference", blank=True
                     ),
                 ),
-                ("secondary_source", models.ForeignKey(to="promrep.SecondarySource")),
+                ("secondary_source", models.ForeignKey(
+                    to="promrep.SecondarySource",
+                    null=True, on_delete=models.SET_NULL
+                )),
                 (
                     "updated_by",
                     models.ForeignKey(
@@ -137,7 +148,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],

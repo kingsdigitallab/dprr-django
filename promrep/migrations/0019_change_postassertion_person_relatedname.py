@@ -19,7 +19,8 @@ class Migration(migrations.Migration):
             model_name="postassertion",
             name="person",
             field=models.ForeignKey(
-                related_name="post_assertions", to="promrep.Person"
+                related_name="post_assertions",
+                to="promrep.Person", on_delete=models.SET_NULL,
             ),
             preserve_default=True,
         ),

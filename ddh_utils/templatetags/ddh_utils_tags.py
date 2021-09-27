@@ -4,7 +4,7 @@ from django import template
 register = template.Library()
 
 
-@register.inclusion_tag('includes/pagination.html')
+@register.inclusion_tag("includes/pagination.html")
 def display_pagination(qd, page):
     """Includes a template displaying a full pagination listing in the
     context of `page`.
@@ -17,7 +17,7 @@ def display_pagination(qd, page):
 
     """
     pd = PaginationDisplay(qd)
-    return {'data': pd.generate_data(page)}
+    return {"data": pd.generate_data(page)}
 
 
 @register.simple_tag
@@ -35,16 +35,16 @@ def add_facet_link(qd, facet, value):
 
     """
     qd = qd.copy()
-    qd['page'] = 1
-    if 'printme' in qd:
-        del qd['printme']
-    facets = qd.getlist('selected_facets', [])
+    qd["page"] = 1
+    if "printme" in qd:
+        del qd["printme"]
+    facets = qd.getlist("selected_facets", [])
     if len(facet) > 0:
-        facet_value = '{0}_exact:{1}'.format(facet, value.encode('utf-8'))
+        facet_value = "{0}_exact:{1}".format(facet, value.encode("utf-8"))
         if facet_value not in facets:
             facets.append(facet_value)
-            qd.setlist('selected_facets', facets)
-    return '?{0}'.format(qd.urlencode())
+            qd.setlist("selected_facets", facets)
+    return "?{0}".format(qd.urlencode())
 
 
 @register.simple_tag
@@ -60,13 +60,13 @@ def remove_facet_link(qd, facet):
 
     """
     qd = qd.copy()
-    qd['page'] = 1
-    facets = qd.getlist('selected_facets', [])
+    qd["page"] = 1
+    facets = qd.getlist("selected_facets", [])
     try:
         facets.remove(facet)
     except ValueError:
         pass
-    return '?{0}'.format(qd.urlencode())
+    return "?{0}".format(qd.urlencode())
 
 
 @register.filter
@@ -74,16 +74,16 @@ def facet_pretty_print(value):
     if not value:
         return None
 
-    suffix = '_exact'
+    suffix = "_exact"
     if suffix in value:
-        value = value.replace(suffix, '')
+        value = value.replace(suffix, "")
 
-    value = value.replace('_', ' ')
+    value = value.replace("_", " ")
 
-    obvious = ':true'
+    obvious = ":true"
     if obvious in value:
-        value = value.replace(obvious, '')
+        value = value.replace(obvious, "")
 
-    value = value.replace(':', ': ')
+    value = value.replace(":", ": ")
 
     return value.capitalize()

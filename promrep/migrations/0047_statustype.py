@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -61,7 +61,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],

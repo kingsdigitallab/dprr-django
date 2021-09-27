@@ -26,11 +26,16 @@ class Migration(migrations.Migration):
                 (
                     "inverse_relationship",
                     models.ForeignKey(
-                        related_name="inverse", to="promrep.RelationshipType"
+                        related_name="inverse",
+                        to="promrep.RelationshipType",
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
-                ("relationship", models.ForeignKey(to="promrep.RelationshipType")),
-                ("sex", models.ForeignKey(to="promrep.Sex")),
+                ("relationship", models.ForeignKey(
+                    to="promrep.RelationshipType",
+                    null=True, on_delete=models.SET_NULL)),
+                ("sex", models.ForeignKey(
+                    to="promrep.Sex", null=True, on_delete=models.SET_NULL)),
             ],
         )
     ]

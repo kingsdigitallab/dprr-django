@@ -26,6 +26,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 to=settings.AUTH_USER_MODEL,
                 null=True,
+                on_delete=models.SET_NULL
             ),
             preserve_default=True,
         ),
@@ -38,6 +39,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 to=settings.AUTH_USER_MODEL,
                 null=True,
+                on_delete=models.SET_NULL
             ),
             preserve_default=True,
         ),

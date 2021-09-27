@@ -77,6 +77,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
                         null=True,
+                        on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -86,6 +87,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         to="promrep.SecondarySource",
                         null=True,
+                        on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -94,7 +96,10 @@ class Migration(migrations.Migration):
                         to="promrep.StatusAssertionNote", blank=True
                     ),
                 ),
-                ("person", models.ForeignKey(to="promrep.Person")),
+                ("person", models.ForeignKey(
+                    to="promrep.Person",
+                    null=True, on_delete=models.SET_NULL
+                )),
             ],
             options={
                 "abstract": False,
@@ -125,10 +130,17 @@ class Migration(migrations.Migration):
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
                         null=True,
+                        on_delete=models.SET_NULL
                     ),
                 ),
-                ("province", models.ForeignKey(to="promrep.Province")),
-                ("status_assertion", models.ForeignKey(to="promrep.StatusAssertion")),
+                ("province", models.ForeignKey(
+                    to="promrep.Province",
+                    null=True, on_delete=models.SET_NULL
+                )),
+                ("status_assertion", models.ForeignKey(
+                    to="promrep.StatusAssertion",
+                    null=True, on_delete=models.SET_NULL
+                )),
                 (
                     "updated_by",
                     models.ForeignKey(
@@ -136,7 +148,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -153,12 +165,18 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="statusassertion",
             name="secondary_source",
-            field=models.ForeignKey(to="promrep.SecondarySource"),
+            field=models.ForeignKey(
+                to="promrep.SecondarySource",
+                null=True, on_delete=models.SET_NULL
+            ),
         ),
         migrations.AddField(
             model_name="statusassertion",
             name="status",
-            field=models.ForeignKey(to="promrep.StatusType"),
+            field=models.ForeignKey(
+                to="promrep.StatusType",
+                null=True, on_delete=models.SET_NULL
+            ),
         ),
         migrations.AddField(
             model_name="statusassertion",
@@ -168,7 +186,7 @@ class Migration(migrations.Migration):
                 verbose_name="last updated by",
                 blank=True,
                 to=settings.AUTH_USER_MODEL,
-                null=True,
+                null=True, on_delete=models.SET_NULL
             ),
         ),
     ]

@@ -51,18 +51,25 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
                     "gens",
-                    models.ForeignKey(related_name="assertions", to="promrep.Gens"),
+                    models.ForeignKey(
+                        related_name="assertions", to="promrep.Gens",
+                        null=True, on_delete=models.SET_NULL
+                    ),
                 ),
-                ("person", models.ForeignKey(to="promrep.Person")),
+                ("person", models.ForeignKey(
+                    to="promrep.Person",
+                    null=True, on_delete=models.SET_NULL
+                )),
                 (
                     "secondary_source",
                     models.ForeignKey(
-                        blank=True, to="promrep.SecondarySource", null=True
+                        blank=True, to="promrep.SecondarySource",
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
@@ -72,7 +79,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],

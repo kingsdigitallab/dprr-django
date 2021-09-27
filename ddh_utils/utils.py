@@ -29,7 +29,7 @@ def create_pagination(results, results_per_page, page_number):
     return paginator, page
 
 
-class PaginationDisplay (object):
+class PaginationDisplay(object):
 
     """Class for generating data from which a full set of links to a
     paginated set of items may be easily rendered.
@@ -81,10 +81,10 @@ class PaginationDisplay (object):
         :rtype: `tuple`
 
         """
-        url = ''
+        url = ""
         if number:
-            self._qd['page'] = number
-            url = '?{0}'.format(self._qd.urlencode())
+            self._qd["page"] = number
+            url = "?{0}".format(self._qd.urlencode())
         return (classes, url, text, title)
 
     def generate_data(self, page):
@@ -122,8 +122,7 @@ class PaginationDisplay (object):
             near_count = 3
         if current > 1:
             # Add a link to the previous page.
-            data.append(self._get_data('&laquo;', ['arrow'], current - 1,
-                                       'Previous'))
+            data.append(self._get_data("&laquo;", ["arrow"], current - 1, "Previous"))
             # Add links to the first pages.
             start = min(end_count, context)
             for number in page_range[0:start]:
@@ -131,27 +130,24 @@ class PaginationDisplay (object):
             if start + near_count < context:
                 # Add an elipsis to show the gap between the first and
                 # the preceding pages.
-                data.append(self._get_data('&hellip;', ['unavailable']))
-            for number in page_range[
-                    max(start, context - near_count):context]:
+                data.append(self._get_data("&hellip;", ["unavailable"]))
+            for number in page_range[max(start, context - near_count) : context]:
                 data.append(self._get_data(number, [], number))
         # Add the current page.
-        data.append(self._get_data(current, ['current'], current))
+        data.append(self._get_data(current, ["current"], current))
         if page.has_next():
             # Add links to the following pages.
-            for number in list(
-                    page_range)[context + 1:context + 1 + near_count]:
+            for number in list(page_range)[context + 1 : context + 1 + near_count]:
                 data.append(self._get_data(number, [], number))
             end = last - context - 1 - near_count
             if end > end_count:
                 # Add an ellipsis to show the gap between the
                 # following and the last pages.
-                data.append(self._get_data('&hellip;', ['unavailable']))
+                data.append(self._get_data("&hellip;", ["unavailable"]))
             if end > 0:
                 # Add links to the last pages.
-                for number in list(page_range)[-min(end, end_count):]:
+                for number in list(page_range)[-min(end, end_count) :]:
                     data.append(self._get_data(number, [], number))
             # Add a link to the next page.
-            data.append(self._get_data(
-                '&raquo;', ['arrow'], current + 1, 'Next'))
+            data.append(self._get_data("&raquo;", ["arrow"], current + 1, "Next"))
         return data

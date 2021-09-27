@@ -13,7 +13,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="relationshipassertionprimarysource",
             name="primary_source",
-            field=models.ForeignKey(blank=True, to="promrep.PrimarySource", null=True),
+            field=models.ForeignKey(
+                blank=True, to="promrep.PrimarySource",
+                null=True, on_delete=models.SET_NULL
+            ),
             preserve_default=True,
         ),
     ]

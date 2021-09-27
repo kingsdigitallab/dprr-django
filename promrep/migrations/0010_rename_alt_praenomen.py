@@ -20,6 +20,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 to="promrep.Praenomen",
                 null=True,
+                on_delete=models.SET_NULL,
             ),
             preserve_default=True,
         ),

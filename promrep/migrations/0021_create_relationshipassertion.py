@@ -64,18 +64,22 @@ class Migration(migrations.Migration):
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
                         null=True,
+                        on_delete=models.SET_NULL
                     ),
                 ),
                 (
                     "inverse_relationship",
                     models.ForeignKey(
-                        blank=True, to="promrep.RelationshipAssertion", null=True
+                        blank=True, to="promrep.RelationshipAssertion",
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
                     "person",
                     models.ForeignKey(
-                        related_name="relationships_as_subject", to="promrep.Person"
+                        related_name="relationships_as_subject",
+                        to="promrep.Person",
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -120,13 +124,19 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
-                ("primary_source", models.ForeignKey(to="promrep.PrimarySource")),
+                ("primary_source", models.ForeignKey(
+                    to="promrep.PrimarySource",
+                    null=True, on_delete=models.SET_NULL
+                )),
                 (
                     "relationship_assertion",
-                    models.ForeignKey(to="promrep.RelationshipAssertion"),
+                    models.ForeignKey(
+                        to="promrep.RelationshipAssertion",
+                        null=True, on_delete=models.SET_NULL
+                    ),
                 ),
                 (
                     "updated_by",
@@ -135,7 +145,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],
@@ -159,7 +169,8 @@ class Migration(migrations.Migration):
             model_name="relationshipassertion",
             name="related_person",
             field=models.ForeignKey(
-                related_name="relationships_as_object", to="promrep.Person"
+                related_name="relationships_as_object",
+                to="promrep.Person", null=True, on_delete=models.SET_NULL
             ),
             preserve_default=True,
         ),
@@ -170,20 +181,26 @@ class Migration(migrations.Migration):
                 related_name="next",
                 blank=True,
                 to="promrep.RelationshipAssertion",
-                null=True,
+                null=True, on_delete=models.SET_NULL
             ),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="relationshipassertion",
             name="relationship",
-            field=models.ForeignKey(to="promrep.RelationshipType"),
+            field=models.ForeignKey(
+                to="promrep.RelationshipType",
+                null=True, on_delete=models.SET_NULL
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="relationshipassertion",
             name="secondary_source",
-            field=models.ForeignKey(to="promrep.SecondarySource"),
+            field=models.ForeignKey(
+                to="promrep.SecondarySource",
+                null=True, on_delete=models.SET_NULL
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -194,7 +211,7 @@ class Migration(migrations.Migration):
                 verbose_name="last updated by",
                 blank=True,
                 to=settings.AUTH_USER_MODEL,
-                null=True,
+                null=True, on_delete=models.SET_NULL
             ),
             preserve_default=True,
         ),
@@ -206,7 +223,7 @@ class Migration(migrations.Migration):
                 verbose_name="author",
                 blank=True,
                 to=settings.AUTH_USER_MODEL,
-                null=True,
+                null=True, on_delete=models.SET_NULL
             ),
             preserve_default=True,
         ),
@@ -218,7 +235,7 @@ class Migration(migrations.Migration):
                 verbose_name="last updated by",
                 blank=True,
                 to=settings.AUTH_USER_MODEL,
-                null=True,
+                null=True, on_delete=models.SET_NULL
             ),
             preserve_default=True,
         ),

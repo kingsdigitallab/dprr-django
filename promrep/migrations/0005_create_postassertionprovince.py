@@ -63,11 +63,17 @@ class Migration(migrations.Migration):
                         verbose_name="author",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
-                ("province", models.ForeignKey(to="promrep.Province")),
-                ("post_assertion", models.ForeignKey(to="promrep.PostAssertion")),
+                ("province", models.ForeignKey(
+                    to="promrep.Province",
+                    null=True, on_delete=models.SET_NULL
+                )),
+                ("post_assertion", models.ForeignKey(
+                    to="promrep.PostAssertion",
+                    null=True, on_delete=models.SET_NULL
+                )),
                 (
                     "updated_by",
                     models.ForeignKey(
@@ -75,7 +81,7 @@ class Migration(migrations.Migration):
                         verbose_name="last updated by",
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
-                        null=True,
+                        null=True, on_delete=models.SET_NULL
                     ),
                 ),
             ],

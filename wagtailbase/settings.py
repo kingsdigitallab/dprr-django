@@ -7,27 +7,25 @@ sections.
 """
 
 INSTALLED_APPS = (
-    'compressor',
-    'taggit',
-    'modelcluster',
-
-    'wagtail.core',
-    'wagtail.admin',
-    'wagtail.documents',
-    'wagtail.snippets',
-    'wagtail.users',
-    'wagtail.images',
-    'wagtail.embeds',
-    'wagtail.search',
-    'wagtail.contrib.redirects',
-    'wagtail.contrib.forms',
-    'wagtail.sites',
-    'wagtail.api',
-    'wagtail.contrib.routable_page',
-    'wagtail.contrib.table_block',
-
-    # 'wagtail.wagtailcore',
-    # 'wagtail.wagtailadmin',
+    "compressor",
+    "taggit",
+    "modelcluster",
+    "wagtail.core",
+    "wagtail.admin",
+    "wagtail.documents",
+    "wagtail.snippets",
+    "wagtail.users",
+    "wagtail.images",
+    "wagtail.embeds",
+    "wagtail.search",
+    "wagtail.contrib.redirects",
+    "wagtail.contrib.forms",
+    "wagtail.sites",
+    "wagtail.api",
+    "wagtail.contrib.routable_page",
+    "wagtail.contrib.table_block",
+    # 'wagtail.core',
+    # 'wagtail.admin',
     # 'wagtail.wagtailsites',
     # 'wagtail.wagtaildocs',
     # 'wagtail.wagtailsnippets',
@@ -36,24 +34,20 @@ INSTALLED_APPS = (
     # 'wagtail.wagtailembeds',
     # 'wagtail.wagtailsearch',
     # 'wagtail.wagtailredirects',
-    # 'wagtail.contrib.wagtailroutablepage',
+    # 'wagtail.contrib.routable_page',
 )
 
 MIDDLEWARE_CLASSES = (
-    'wagtail.wagtailcore.middleware.SiteMiddleware',
-    'wagtail.wagtailredirects.middleware.RedirectMiddleware',
+    "wagtail.core.middleware.SiteMiddleware",
+    "wagtail.wagtailredirects.middleware.RedirectMiddleware",
 )
 
-STATICFILES_FINDERS = (
-    'compressor.finders.CompressorFinder',
-)
+STATICFILES_FINDERS = ("compressor.finders.CompressorFinder",)
 
-COMPRESS_PRECOMPILERS = (
-    ('text/x-scss', 'django_libsass.SassCompiler'),
-)
+COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 
 SOUTH_MIGRATION_MODULES = {
-    'taggit': 'taggit.south_migrations',
+    "taggit": "taggit.south_migrations",
 }
 
 ITEMS_PER_PAGE = 10

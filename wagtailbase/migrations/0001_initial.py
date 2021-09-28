@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="wagtailcore.Page",
-                        null=True, on_delete=models.SET_NULL
+                        on_delete=models.CASCADE
                     ),
                 ),
             ],
@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="wagtailbase.BasePage",
-                        null=True, on_delete=models.SET_NULL
+                        on_delete=models.CASCADE
                     ),
                 ),
                 ("introduction", wagtail.core.fields.RichTextField(blank=True)),
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="wagtailbase.BasePage",
-                        null=True, on_delete=models.SET_NULL
+                        on_delete=models.CASCADE
                     ),
                 ),
                 ("content", wagtail.core.fields.RichTextField()),
@@ -93,7 +93,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="wagtailbase.BaseIndexPage",
-                        null=True, on_delete=models.SET_NULL
+                        on_delete=models.CASCADE
                     ),
                 ),
             ],
@@ -121,15 +121,15 @@ class Migration(migrations.Migration):
                 (
                     "link_external",
                     models.URLField(
-                        null=True, verbose_name=b"External link", blank=True
+                        null=True, verbose_name="External link", blank=True
                     ),
                 ),
-                ("embed_url", models.URLField(verbose_name=b"Embed URL", blank=True)),
+                ("embed_url", models.URLField(verbose_name="Embed URL", blank=True)),
                 ("caption", models.CharField(max_length=255, blank=True)),
                 (
                     "image",
                     models.ForeignKey(
-                        related_name=b"+",
+                        related_name="+",
                         on_delete=django.db.models.deletion.SET_NULL,
                         blank=True,
                         to="wagtailimages.Image",
@@ -139,7 +139,7 @@ class Migration(migrations.Migration):
                 (
                     "link_document",
                     models.ForeignKey(
-                        related_name=b"+",
+                        related_name="+",
                         blank=True,
                         to="wagtaildocs.Document",
                         null=True, on_delete=models.SET_NULL,
@@ -148,14 +148,14 @@ class Migration(migrations.Migration):
                 (
                     "link_page",
                     models.ForeignKey(
-                        related_name=b"+", blank=True, to="wagtailcore.Page",
+                        related_name="+", blank=True, to="wagtailcore.Page",
                         null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
                     "page",
                     modelcluster.fields.ParentalKey(
-                        related_name=b"attachments", to="wagtailbase.BlogIndexPage"
+                        related_name="attachments", to="wagtailbase.BlogIndexPage"
                     ),
                 ),
             ],
@@ -184,14 +184,14 @@ class Migration(migrations.Migration):
                 (
                     "link_external",
                     models.URLField(
-                        null=True, verbose_name=b"External link", blank=True
+                        null=True, verbose_name="External link", blank=True
                     ),
                 ),
-                ("title", models.CharField(help_text=b"Link title", max_length=256)),
+                ("title", models.CharField(help_text="Link title", max_length=256)),
                 (
                     "link_document",
                     models.ForeignKey(
-                        related_name=b"+",
+                        related_name="+",
                         blank=True,
                         to="wagtaildocs.Document",
                         null=True,
@@ -201,7 +201,7 @@ class Migration(migrations.Migration):
                 (
                     "link_page",
                     models.ForeignKey(
-                        related_name=b"+", blank=True,
+                        related_name="+", blank=True,
                         to="wagtailcore.Page", null=True,
                         on_delete=models.SET_NULL
                     ),
@@ -209,7 +209,7 @@ class Migration(migrations.Migration):
                 (
                     "page",
                     modelcluster.fields.ParentalKey(
-                        related_name=b"related_links", to="wagtailbase.BlogIndexPage"
+                        related_name="related_links", to="wagtailbase.BlogIndexPage"
                     ),
                 ),
             ],
@@ -230,13 +230,13 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="wagtailbase.BaseRichTextPage",
-                        null=True, on_delete=models.SET_NULL
+                        on_delete=models.CASCADE
                     ),
                 ),
                 (
                     "date",
                     models.DateField(
-                        default=datetime.date.today, verbose_name=b"Post Date"
+                        default=datetime.date.today, verbose_name="Post Date"
                     ),
                 ),
             ],
@@ -264,15 +264,15 @@ class Migration(migrations.Migration):
                 (
                     "link_external",
                     models.URLField(
-                        null=True, verbose_name=b"External link", blank=True
+                        null=True, verbose_name="External link", blank=True
                     ),
                 ),
-                ("embed_url", models.URLField(verbose_name=b"Embed URL", blank=True)),
+                ("embed_url", models.URLField(verbose_name="Embed URL", blank=True)),
                 ("caption", models.CharField(max_length=255, blank=True)),
                 (
                     "image",
                     models.ForeignKey(
-                        related_name=b"+",
+                        related_name="+",
                         on_delete=django.db.models.deletion.SET_NULL,
                         blank=True,
                         to="wagtailimages.Image",
@@ -282,7 +282,7 @@ class Migration(migrations.Migration):
                 (
                     "link_document",
                     models.ForeignKey(
-                        related_name=b"+",
+                        related_name="+",
                         blank=True,
                         to="wagtaildocs.Document",
                         null=True, on_delete=models.SET_NULL
@@ -291,7 +291,7 @@ class Migration(migrations.Migration):
                 (
                     "link_page",
                     models.ForeignKey(
-                        related_name=b"+", blank=True,
+                        related_name="+", blank=True,
                         to="wagtailcore.Page", null=True,
                         on_delete=models.SET_NULL
                     ),
@@ -299,7 +299,7 @@ class Migration(migrations.Migration):
                 (
                     "page",
                     modelcluster.fields.ParentalKey(
-                        related_name=b"attachments", to="wagtailbase.BlogPost"
+                        related_name="attachments", to="wagtailbase.BlogPost"
                     ),
                 ),
             ],
@@ -328,14 +328,14 @@ class Migration(migrations.Migration):
                 (
                     "link_external",
                     models.URLField(
-                        null=True, verbose_name=b"External link", blank=True
+                        null=True, verbose_name="External link", blank=True
                     ),
                 ),
-                ("title", models.CharField(help_text=b"Link title", max_length=256)),
+                ("title", models.CharField(help_text="Link title", max_length=256)),
                 (
                     "link_document",
                     models.ForeignKey(
-                        related_name=b"+",
+                        related_name="+",
                         blank=True,
                         to="wagtaildocs.Document",
                         null=True, on_delete=models.SET_NULL
@@ -344,14 +344,14 @@ class Migration(migrations.Migration):
                 (
                     "link_page",
                     models.ForeignKey(
-                        related_name=b"+", blank=True, to="wagtailcore.Page",
+                        related_name="+", blank=True, to="wagtailcore.Page",
                         null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
                     "page",
                     modelcluster.fields.ParentalKey(
-                        related_name=b"related_links", to="wagtailbase.BlogPost"
+                        related_name="related_links", to="wagtailbase.BlogPost"
                     ),
                 ),
             ],
@@ -376,14 +376,14 @@ class Migration(migrations.Migration):
                 (
                     "content_object",
                     modelcluster.fields.ParentalKey(
-                        related_name=b"tagged_items", to="wagtailbase.BlogPost"
+                        related_name="tagged_items", to="wagtailbase.BlogPost"
                     ),
                 ),
                 (
                     "tag",
                     models.ForeignKey(
                         related_name="wagtailbase_blogposttag_items",
-                        to="taggit.Tag", null=True, on_delete=models.SET_NULL
+                        to="taggit.Tag", on_delete=models.CASCADE
                     ),
                 ),
             ],
@@ -403,7 +403,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="wagtailbase.BaseRichTextPage",
-                        null=True, on_delete=models.SET_NULL
+                        on_delete=models.CASCADE
                     ),
                 ),
             ],
@@ -431,15 +431,15 @@ class Migration(migrations.Migration):
                 (
                     "link_external",
                     models.URLField(
-                        null=True, verbose_name=b"External link", blank=True
+                        null=True, verbose_name="External link", blank=True
                     ),
                 ),
-                ("embed_url", models.URLField(verbose_name=b"Embed URL", blank=True)),
+                ("embed_url", models.URLField(verbose_name="Embed URL", blank=True)),
                 ("caption", models.CharField(max_length=255, blank=True)),
                 (
                     "image",
                     models.ForeignKey(
-                        related_name=b"+",
+                        related_name="+",
                         on_delete=django.db.models.deletion.SET_NULL,
                         blank=True,
                         to="wagtailimages.Image",
@@ -449,7 +449,7 @@ class Migration(migrations.Migration):
                 (
                     "link_document",
                     models.ForeignKey(
-                        related_name=b"+",
+                        related_name="+",
                         blank=True,
                         to="wagtaildocs.Document",
                         null=True, on_delete=models.SET_NULL
@@ -458,14 +458,14 @@ class Migration(migrations.Migration):
                 (
                     "link_page",
                     models.ForeignKey(
-                        related_name=b"+", blank=True, to="wagtailcore.Page",
+                        related_name="+", blank=True, to="wagtailcore.Page",
                         null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
                     "page",
                     modelcluster.fields.ParentalKey(
-                        related_name=b"attachments", to="wagtailbase.HomePage"
+                        related_name="attachments", to="wagtailbase.HomePage"
                     ),
                 ),
             ],
@@ -486,7 +486,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="wagtailbase.BaseIndexPage",
-                        null=True, on_delete=models.SET_NULL
+                        on_delete=models.CASCADE
                     ),
                 ),
             ],
@@ -514,15 +514,15 @@ class Migration(migrations.Migration):
                 (
                     "link_external",
                     models.URLField(
-                        null=True, verbose_name=b"External link", blank=True
+                        null=True, verbose_name="External link", blank=True
                     ),
                 ),
-                ("embed_url", models.URLField(verbose_name=b"Embed URL", blank=True)),
+                ("embed_url", models.URLField(verbose_name="Embed URL", blank=True)),
                 ("caption", models.CharField(max_length=255, blank=True)),
                 (
                     "image",
                     models.ForeignKey(
-                        related_name=b"+",
+                        related_name="+",
                         on_delete=django.db.models.deletion.SET_NULL,
                         blank=True,
                         to="wagtailimages.Image",
@@ -532,7 +532,7 @@ class Migration(migrations.Migration):
                 (
                     "link_document",
                     models.ForeignKey(
-                        related_name=b"+",
+                        related_name="+",
                         blank=True,
                         to="wagtaildocs.Document",
                         null=True, on_delete=models.SET_NULL
@@ -541,14 +541,14 @@ class Migration(migrations.Migration):
                 (
                     "link_page",
                     models.ForeignKey(
-                        related_name=b"+", blank=True, to="wagtailcore.Page",
+                        related_name="+", blank=True, to="wagtailcore.Page",
                         null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
                     "page",
                     modelcluster.fields.ParentalKey(
-                        related_name=b"attachments", to="wagtailbase.IndexPage"
+                        related_name="attachments", to="wagtailbase.IndexPage"
                     ),
                 ),
             ],
@@ -577,14 +577,14 @@ class Migration(migrations.Migration):
                 (
                     "link_external",
                     models.URLField(
-                        null=True, verbose_name=b"External link", blank=True
+                        null=True, verbose_name="External link", blank=True
                     ),
                 ),
-                ("title", models.CharField(help_text=b"Link title", max_length=256)),
+                ("title", models.CharField(help_text="Link title", max_length=256)),
                 (
                     "link_document",
                     models.ForeignKey(
-                        related_name=b"+",
+                        related_name="+",
                         blank=True,
                         to="wagtaildocs.Document",
                         null=True, on_delete=models.SET_NULL
@@ -593,14 +593,14 @@ class Migration(migrations.Migration):
                 (
                     "link_page",
                     models.ForeignKey(
-                        related_name=b"+", blank=True, to="wagtailcore.Page",
+                        related_name="+", blank=True, to="wagtailcore.Page",
                         null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
                     "page",
                     modelcluster.fields.ParentalKey(
-                        related_name=b"related_links", to="wagtailbase.IndexPage"
+                        related_name="related_links", to="wagtailbase.IndexPage"
                     ),
                 ),
             ],
@@ -629,15 +629,15 @@ class Migration(migrations.Migration):
                 (
                     "link_external",
                     models.URLField(
-                        null=True, verbose_name=b"External link", blank=True
+                        null=True, verbose_name="External link", blank=True
                     ),
                 ),
-                ("embed_url", models.URLField(verbose_name=b"Embed URL", blank=True)),
+                ("embed_url", models.URLField(verbose_name="Embed URL", blank=True)),
                 ("caption", models.CharField(max_length=255, blank=True)),
                 (
                     "image",
                     models.ForeignKey(
-                        related_name=b"+",
+                        related_name="+",
                         on_delete=django.db.models.deletion.SET_NULL,
                         blank=True,
                         to="wagtailimages.Image",
@@ -647,7 +647,7 @@ class Migration(migrations.Migration):
                 (
                     "link_document",
                     models.ForeignKey(
-                        related_name=b"+",
+                        related_name="+",
                         blank=True,
                         to="wagtaildocs.Document",
                         null=True, on_delete=models.SET_NULL
@@ -656,7 +656,7 @@ class Migration(migrations.Migration):
                 (
                     "link_page",
                     models.ForeignKey(
-                        related_name=b"+", blank=True, to="wagtailcore.Page",
+                        related_name="+", blank=True, to="wagtailcore.Page",
                         null=True, on_delete=models.SET_NULL
                     ),
                 ),
@@ -678,7 +678,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="wagtailbase.BaseRichTextPage",
-                        null=True, on_delete=models.SET_NULL
+                        on_delete=models.CASCADE
                     ),
                 ),
             ],
@@ -706,14 +706,14 @@ class Migration(migrations.Migration):
                 (
                     "link_external",
                     models.URLField(
-                        null=True, verbose_name=b"External link", blank=True
+                        null=True, verbose_name="External link", blank=True
                     ),
                 ),
-                ("title", models.CharField(help_text=b"Link title", max_length=256)),
+                ("title", models.CharField(help_text="Link title", max_length=256)),
                 (
                     "link_document",
                     models.ForeignKey(
-                        related_name=b"+",
+                        related_name="+",
                         blank=True,
                         to="wagtaildocs.Document",
                         null=True, on_delete=models.SET_NULL
@@ -722,14 +722,14 @@ class Migration(migrations.Migration):
                 (
                     "link_page",
                     models.ForeignKey(
-                        related_name=b"+", blank=True, to="wagtailcore.Page",
+                        related_name="+", blank=True, to="wagtailcore.Page",
                         null=True, on_delete=models.SET_NULL
                     ),
                 ),
                 (
                     "page",
                     modelcluster.fields.ParentalKey(
-                        related_name=b"related_links", to="wagtailbase.RichTextPage"
+                        related_name="related_links", to="wagtailbase.RichTextPage"
                     ),
                 ),
             ],
@@ -743,7 +743,7 @@ class Migration(migrations.Migration):
             model_name="richtextattachment",
             name="page",
             field=modelcluster.fields.ParentalKey(
-                related_name=b"attachments", to="wagtailbase.RichTextPage"
+                related_name="attachments", to="wagtailbase.RichTextPage"
             ),
             preserve_default=True,
         ),

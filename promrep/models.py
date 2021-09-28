@@ -332,7 +332,7 @@ class Person(TimeStampedModel):
 
     origin = models.TextField(blank=True)
 
-    patrician = models.NullBooleanField(
+    patrician = models.BooleanField(
         verbose_name="Patrician", default=None, null=True
     )
     patrician_uncertain = models.BooleanField(
@@ -340,11 +340,11 @@ class Person(TimeStampedModel):
     )
     patrician_notes = models.TextField(blank=True)
 
-    novus = models.NullBooleanField(default=None, null=True)
-    novus_uncertain = models.NullBooleanField(default=False)
+    novus = models.BooleanField(default=None, null=True)
+    novus_uncertain = models.BooleanField(default=False)
     novus_notes = models.TextField(blank=True)
 
-    nobilis = models.NullBooleanField(default=None, null=True)
+    nobilis = models.BooleanField(default=None, null=True)
     nobilis_uncertain = models.BooleanField(default=False)
     nobilis_notes = models.TextField(blank=True)
 

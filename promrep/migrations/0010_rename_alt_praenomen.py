@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name="alt_praenomen",
             field=models.ForeignKey(
                 related_name="person_alt_praenomen_set",
-                verbose_name=b"Alternative Praenomen",
+                verbose_name="Alternative Praenomen",
                 blank=True,
                 to="promrep.Praenomen",
                 null=True,

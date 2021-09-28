@@ -48,13 +48,13 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "uncertain",
-                    models.BooleanField(default=False, verbose_name=b"Uncertain"),
+                    models.BooleanField(default=False, verbose_name="Uncertain"),
                 ),
                 ("original_text", models.CharField(max_length=1024, blank=True)),
                 ("notes", models.TextField(blank=True)),
                 (
                     "review_flag",
-                    models.BooleanField(default=False, verbose_name=b"Review needed"),
+                    models.BooleanField(default=False, verbose_name="Review needed"),
                 ),
                 (
                     "created_by",

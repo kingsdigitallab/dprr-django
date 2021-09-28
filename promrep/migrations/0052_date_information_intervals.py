@@ -14,10 +14,10 @@ class Migration(migrations.Migration):
             model_name="dateinformation",
             name="date_interval",
             field=models.CharField(
-                default=b"S",
+                default="S",
                 max_length=1,
-                verbose_name=b"Interval",
-                choices=[(b"S", b"Single"), (b"B", b"Before"), (b"A", b"After")],
+                verbose_name="Interval",
+                choices=[("S", "Single"), ("B", "Before"), ("A", "After")],
             ),
         ),
     ]

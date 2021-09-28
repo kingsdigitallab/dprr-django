@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             model_name="person",
             name="other_names_uncertain",
             field=models.BooleanField(
-                default=False, verbose_name=b"Uncertain Other Names"
+                default=False, verbose_name="Uncertain Other Names"
             ),
             preserve_default=True,
         ),

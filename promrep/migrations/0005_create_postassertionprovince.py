@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "uncertain",
-                    models.BooleanField(default=False, verbose_name=b"Uncertain"),
+                    models.BooleanField(default=False, verbose_name="Uncertain"),
                 ),
                 ("note", models.CharField(max_length=1024, blank=True)),
                 (

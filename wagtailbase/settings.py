@@ -24,17 +24,6 @@ INSTALLED_APPS = (
     "wagtail.api",
     "wagtail.contrib.routable_page",
     "wagtail.contrib.table_block",
-    # 'wagtail.core',
-    # 'wagtail.admin',
-    # 'wagtail.wagtailsites',
-    # 'wagtail.wagtaildocs',
-    # 'wagtail.wagtailsnippets',
-    # 'wagtail.wagtailusers',
-    # 'wagtail.wagtailimages',
-    # 'wagtail.wagtailembeds',
-    # 'wagtail.wagtailsearch',
-    # 'wagtail.wagtailredirects',
-    # 'wagtail.contrib.routable_page',
 )
 
 MIDDLEWARE_CLASSES = (

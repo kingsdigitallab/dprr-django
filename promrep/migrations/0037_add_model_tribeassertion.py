@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
                 (
                     "uncertain",
                     models.BooleanField(default=False,
-                                        verbose_name=b"Uncertain"),
+                                        verbose_name="Uncertain"),
                 ),
                 (
                     "created_by",

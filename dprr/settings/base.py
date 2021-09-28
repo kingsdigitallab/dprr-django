@@ -40,6 +40,8 @@ CACHES = {
     }
 }
 
+# Fixing auto field upgrade warning to 3.2
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 DATABASES = {}

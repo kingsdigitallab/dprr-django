@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="blogpost",
             name="featured",
-            field=models.BooleanField(default=False, help_text=b"Feature this post"),
+            field=models.BooleanField(default=False, help_text="Feature this post"),
             preserve_default=True,
         ),
     ]

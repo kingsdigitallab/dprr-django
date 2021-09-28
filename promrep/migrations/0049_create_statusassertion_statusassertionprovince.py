@@ -44,18 +44,18 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "uncertain",
-                    models.BooleanField(default=False, verbose_name=b"Uncertain"),
+                    models.BooleanField(default=False, verbose_name="Uncertain"),
                 ),
                 ("original_text", models.CharField(max_length=1024, blank=True)),
                 (
                     "extra_info",
                     models.TextField(
-                        help_text=b"Extra info about the status assertion", blank=True
+                        help_text="Extra info about the status assertion", blank=True
                     ),
                 ),
                 (
                     "review_flag",
-                    models.BooleanField(default=False, verbose_name=b"Review needed"),
+                    models.BooleanField(default=False, verbose_name="Review needed"),
                 ),
                 ("date_start", models.IntegerField(null=True, blank=True)),
                 ("date_start_uncertain", models.BooleanField(default=False)),
@@ -119,7 +119,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "uncertain",
-                    models.BooleanField(default=False, verbose_name=b"Uncertain"),
+                    models.BooleanField(default=False, verbose_name="Uncertain"),
                 ),
                 ("note", models.CharField(max_length=1024, blank=True)),
                 (

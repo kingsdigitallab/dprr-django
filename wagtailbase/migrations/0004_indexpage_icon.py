@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="indexpage",
             name="icon",
-            field=models.CharField(help_text=b"Icon", max_length=24, null=True),
+            field=models.CharField(help_text="Icon", max_length=24, null=True),
         ),
     ]

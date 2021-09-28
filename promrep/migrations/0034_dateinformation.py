@@ -46,13 +46,13 @@ class Migration(migrations.Migration):
                 (
                     "date_interval",
                     models.CharField(
-                        default=b"A",
+                        default="A",
                         max_length=1,
-                        verbose_name=b"Interval",
+                        verbose_name="Interval",
                         choices=[
-                            (b"A", b"Attestation"),
-                            (b"F", b"First"),
-                            (b"L", b"Last"),
+                            ("A", "Attestation"),
+                            ("F", "First"),
+                            ("L", "Last"),
                         ],
                     ),
                 ),
@@ -75,7 +75,7 @@ class Migration(migrations.Migration):
                     "date_type",
                     models.ForeignKey(
                         related_name="person_date",
-                        verbose_name=b"Type",
+                        verbose_name="Type",
                         to="promrep.DateType",
                         null=True, on_delete=models.SET_NULL
                     ),

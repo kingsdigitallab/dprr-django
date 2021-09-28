@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="statusassertion",
             name="is_verified",
-            field=models.BooleanField(default=False, verbose_name=b"Editor Verified"),
+            field=models.BooleanField(default=False, verbose_name="Editor Verified"),
         ),
     ]

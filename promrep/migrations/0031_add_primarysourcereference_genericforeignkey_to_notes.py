@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             model_name="primarysourcereference",
             name="content_type",
             field=models.ForeignKey(
-                verbose_name=b"primary source reference",
+                verbose_name="primary source reference",
                 blank=True,
                 to="contenttypes.ContentType",
                 null=True, on_delete=models.SET_NULL
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
             name="object_id",
             field=models.PositiveIntegerField(
                 null=True,
-                verbose_name=b"related object"
+                verbose_name="related object"
             ),
         ),
     ]

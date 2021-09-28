@@ -38,8 +38,8 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    "wagtail.core.middleware.SiteMiddleware",
-    "wagtail.wagtailredirects.middleware.RedirectMiddleware",
+
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 )
 
 STATICFILES_FINDERS = ("compressor.finders.CompressorFinder",)

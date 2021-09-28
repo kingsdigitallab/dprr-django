@@ -213,7 +213,7 @@ STATICFILES_FINDERS = (
 
 STATICFILES_FINDERS += ws.STATICFILES_FINDERS
 
-MEDIA_URL = STATIC_URL + "media/"
+MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL.strip("/"))
 
 if not os.path.exists(MEDIA_ROOT):

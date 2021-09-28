@@ -1,4 +1,4 @@
-{% load cache ddh_utils_tags wagtailbase_tags highlight staticfiles mptt_tags promrep_tags %}
+{% load cache ddh_utils_tags wagtailbase_tags highlight static mptt_tags promrep_tags %}
 <div class="search-results">
     {% regroup object_list by date_sort as year_list %}
     {% for year in year_list %}

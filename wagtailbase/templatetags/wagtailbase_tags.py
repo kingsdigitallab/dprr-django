@@ -10,6 +10,7 @@ from wagtail.contrib.routable_page.templatetags.wagtailroutablepage_tags import 
 from wagtail.core.models import Page
 from wagtail.core.templatetags.wagtailcore_tags import pageurl
 from wagtailbase.util import unslugify
+from wagtail.core.models import Site
 
 from ..models import BlogPost, HomePage
 
@@ -77,7 +78,7 @@ def get_site_root(context):
 
     :rtype: `wagtail.core.models.Page`
     """
-    return context["request"].site.root_page
+    return Site.find_for_request(context["request"]).root_page
 
 
 @register.simple_tag(takes_context=True)

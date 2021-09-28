@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags wagtailbase_tags %}
-
+{% wagtail_site as current_site %}
 {% block meta_title %}{{ self.title }}{% endblock %}
 
 {% block title %}{{ self.title }}{% endblock %}

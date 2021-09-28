@@ -5,8 +5,7 @@ import re
 
 from author.decorators import with_author
 from django.conf import settings as s
-from django.contrib.contenttypes.fields import (GenericForeignKey,
-                                                GenericRelation)
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Q
@@ -47,6 +46,9 @@ class SecondarySource(TimeStampedModel):
     def __unicode__(self):
         return self.abbrev_name
 
+    def __str__(self):
+        return self.__unicode__()
+
     @staticmethod
     def autocomplete_search_fields():
         return ("id__iexact", "name", "abbrev_name")
@@ -60,6 +62,9 @@ class PrimarySource(models.Model):
     def __unicode__(self):
         return self.abbrev_name
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 @with_author
 class Praenomen(models.Model):
@@ -72,6 +77,9 @@ class Praenomen(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def __str__(self):
+        return self.__unicode__()
 
     @property
     def alternate_name(self):
@@ -93,6 +101,9 @@ class Sex(models.Model):
     def __unicode__(self):
         return self.name
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 @with_author
 class Gens(models.Model):
@@ -105,6 +116,9 @@ class Gens(models.Model):
     def __unicode__(self):
         return self.name
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 @with_author
 class Tribe(models.Model):
@@ -114,6 +128,9 @@ class Tribe(models.Model):
 
     def __unicode__(self):
         return self.abbrev
+
+    def __str__(self):
+        return self.__unicode__()
 
     class Meta:
         ordering = [
@@ -127,6 +144,9 @@ class NoteType(TimeStampedModel):
 
     def __unicode__(self):
         return self.name
+
+    def __str__(self):
+        return self.__unicode__()
 
 
 @with_author
@@ -164,6 +184,9 @@ class PrimarySourceReference(TimeStampedModel):
     def __unicode__(self):
         return self.text
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 class Note(TimeStampedModel):
     # TODO: rename to SecondarySourceReference?
@@ -187,6 +210,9 @@ class Note(TimeStampedModel):
 
     def __unicode__(self):
         return self.text.strip()
+
+    def __str__(self):
+        return self.__unicode__()
 
 
 @with_author
@@ -225,6 +251,9 @@ class RelationshipAssertionReference(Note):
             self.print_primary_source_refs(),
         )
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 @with_author
 class PostAssertionNote(Note):
@@ -260,6 +289,9 @@ class PersonNote(Note):
             self.text,
         )
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 @with_author
 class StatusAssertionNote(Note):
@@ -277,6 +309,9 @@ class StatusAssertionNote(Note):
             self.secondary_source.abbrev_name,
             self.text,
         )
+
+    def __str__(self):
+        return self.__unicode__()
 
 
 @with_author
@@ -332,9 +367,7 @@ class Person(TimeStampedModel):
 
     origin = models.TextField(blank=True)
 
-    patrician = models.BooleanField(
-        verbose_name="Patrician", default=None, null=True
-    )
+    patrician = models.BooleanField(verbose_name="Patrician", default=None, null=True)
     patrician_uncertain = models.BooleanField(
         verbose_name="Uncertain Patrician", default=False
     )
@@ -655,6 +688,9 @@ class Person(TimeStampedModel):
     def get_reference_notes(self):
         return self.notes.filter(note_type=1)
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 @with_author
 class TribeAssertion(TimeStampedModel):
@@ -675,6 +711,9 @@ class TribeAssertion(TimeStampedModel):
 
     def __unicode__(self):
         return "{}{}".format(self.tribe.abbrev, "?" if self.uncertain else "")
+
+    def __str__(self):
+        return self.__unicode__()
 
 
 @with_author
@@ -698,6 +737,9 @@ class GensAssertion(TimeStampedModel):
     def __unicode__(self):
         return "{}{}".format(self.gens.name, " ?" if self.uncertain else "")
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 @with_author
 class DateType(TimeStampedModel):
@@ -709,6 +751,9 @@ class DateType(TimeStampedModel):
 
     def __unicode__(self):
         return "%s" % self.name
+
+    def __str__(self):
+        return self.__unicode__()
 
 
 @with_author
@@ -760,6 +805,9 @@ class DateInformation(TimeStampedModel):
             di_str += " ({})".format(self.secondary_source)
 
         return di_str
+
+    def __str__(self):
+        return self.__unicode__()
 
     def has_ruepke_secondary_source(self):
         if not self.secondary_source:
@@ -816,6 +864,9 @@ class Office(MPTTModel, TimeStampedModel):
             "name__icontains",
         )
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 @with_author
 class RelationshipType(TimeStampedModel):
@@ -825,6 +876,9 @@ class RelationshipType(TimeStampedModel):
 
     def __unicode__(self):
         return self.name
+
+    def __str__(self):
+        return self.__unicode__()
 
 
 @with_author
@@ -851,12 +905,14 @@ class Province(MPTTModel, TimeStampedModel):
     def __unicode__(self):
         return self.name
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 @with_author
 class PostAssertion(TimeStampedModel):
     person = models.ForeignKey(
-        Person, related_name="post_assertions",
-        null=True, on_delete=models.SET_NULL
+        Person, related_name="post_assertions", null=True, on_delete=models.SET_NULL
     )
     office = models.ForeignKey(Office, null=True, on_delete=models.SET_NULL)
 
@@ -934,6 +990,9 @@ class PostAssertion(TimeStampedModel):
 
         name = name + " (" + self.secondary_source.abbrev_name + ")"
         return name
+
+    def __str__(self):
+        return self.__unicode__()
 
     def print_provinces(self):
         provinces = []
@@ -1056,6 +1115,9 @@ class PostAssertionProvince(models.Model):
 
         return self.province.name + " " + un
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 @with_author
 class RelationshipAssertion(TimeStampedModel):
@@ -1109,6 +1171,9 @@ class RelationshipAssertion(TimeStampedModel):
     def __unicode__(self):
         return "{} is {} {}".format(self.person, self.relationship, self.related_person)
 
+    def __str__(self):
+        return self.__unicode__()
+
     # flag indicates that the Status Assertion was manually verified
     # and should not be edited/deleted automatically
     is_verified = models.BooleanField(verbose_name="Editor Verified", default=False)
@@ -1145,6 +1210,9 @@ class StatusType(TimeStampedModel):
 
     def __unicode__(self):
         return "{}".format(self.name)
+
+    def __str__(self):
+        return self.__unicode__()
 
     def get_display_name(self):
         if self.abbrev_name:
@@ -1284,6 +1352,9 @@ class StatusAssertion(TimeStampedModel):
             self.secondary_source.abbrev_name,
         )
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 @with_author
 class StatusAssertionProvince(models.Model):
@@ -1300,3 +1371,6 @@ class StatusAssertionProvince(models.Model):
             un = "?"
 
         return self.province.name + " " + un
+
+    def __str__(self):
+        return self.__unicode__()

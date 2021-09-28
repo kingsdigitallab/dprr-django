@@ -18,6 +18,8 @@ services:
       - "5432:5432"
     restart: unless-stopped
 
+
+  # Core config at /opt/solr/server/solr/mycores/dprr/conf
   solr:
     image: library/solr:6.6.5
     ports:
@@ -28,6 +30,10 @@ services:
       - solr-precreate
       - dprr
 
+  # Remember to copy the schema! (Not automatic at present)
+  # To build:
+  # docker-compose -f local.yml run --rm web python manage.py build_solr_schema --configure-directory=/app/solr_config/config
+  # then docker cp results to solr folder above
   web:
     build:
       context: .
@@ -39,3 +45,4 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - solr

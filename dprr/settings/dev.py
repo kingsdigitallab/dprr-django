@@ -38,6 +38,20 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 
+# for docker if using
+# HAYSTACK_CONNECTIONS = {
+#     'default': {
+#         'ENGINE': ('promrep.solr_backends.'
+#                    'solr_backend_field_collapsing.GroupedSolrEngine'),
+#         'URL': 'http://solr:8983/solr/dprr',
+#         # Assuming you created a core named 'tester' as described in
+#         # installing search engines.
+#         'ADMIN_URL': 'http://127.0.0.1:8983/solr/admin/cores'
+#         # ...or for multicore...
+#         # 'URL': 'http://127.0.0.1:8983/solr/mysite',
+#     },
+# }
+
 
 # -----------------------------------------------------------------------------
 # Django Extensions
@@ -97,7 +111,6 @@ try:
 
 except ImportError:
     pass
-
 
 # -----------------------------------------------------------------------------
 # Local settings

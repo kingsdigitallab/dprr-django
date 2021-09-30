@@ -23,7 +23,7 @@ $panel-margin-bottom: rem-calc(20) !default;
 $panel-padding: rem-calc(20) !default;
 
 // We use these to set default font colors
-$panel-font-color: $oil !default;
+$panel-font-color: $jet !default;
 $panel-font-color-alt: $white !default;
 
 $panel-header-adjust: true !default;
@@ -88,11 +88,11 @@ $callout-panel-link-color-hover: scale-color($callout-panel-link-color, $lightne
       &.callout {
         @include panel($callout-panel-bg);
         a:not(.button) {
-          color: $callout-panel-link-color;
+          color: scale-color($callout-panel-link-color, $lightness:-70%);
 
           &:hover,
           &:focus {
-            color: $callout-panel-link-color-hover;
+            color: scale-color($callout-panel-link-color-hover, $lightness:-40%);
           }
         }
       }

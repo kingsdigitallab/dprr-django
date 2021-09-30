@@ -267,8 +267,8 @@ $code-color: $royal-blue;
 // We use these to style anchors
 // $anchor-text-decoration: none;
 // $anchor-text-decoration-hover: none;
-// $anchor-font-color: $primary-color;
-// $anchor-font-color-hover: scale-color($anchor-font-color, $lightness: -14%);
+// $anchor-font-color: scale-color($primary-color, $lightness:-30%);
+// $anchor-font-color-hover: scale-color($anchor-font-color, $lightness: -40%);
 
 // We use these to style the <hr> element
 // $hr-border-width: 1px;
@@ -457,7 +457,7 @@ $button-font-color-alt: $royal-blue;
 // $button-font-align: center;
 
 // We use these to control various hover effects.
-// $button-function-factor: -20%;
+// $button-function-factor: -50%;
 
 // We use these to control button border styles.
 // $button-border-width: 0;
@@ -997,7 +997,7 @@ $panel-bg: scale-color($sand, $lightness: 15%);
 // $panel-padding: rem-calc(20);
 
 // We use these to set default font colors
-$panel-font-color: $dark-gold;
+$panel-font-color: scale-color($dark-gold, $lightness:-20%);
 // $panel-font-color-alt: $white;
 
 // $panel-header-adjust: true;

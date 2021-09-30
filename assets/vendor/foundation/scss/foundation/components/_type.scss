@@ -216,15 +216,23 @@ $align-class-breakpoints:
       padding:0;
     }
 
+    /* skip to main content */
+    .skip-main { 
+      font-size: 1px; 
+      position: absolute; 
+      top:-25px; 
+  }
+
     /* Default Link Styles */
     a {
-      color: $anchor-font-color;
+      color: #3a4040;
+      font-weight: bold;
       line-height: inherit;
       text-decoration: $anchor-text-decoration;
 
       &:hover,
       &:focus {
-        color: $anchor-font-color-hover;
+        color: scale-color($anchor-font-color-hover, $lightness:-40%);
         @if $anchor-text-decoration-hover != $anchor-text-decoration {
         	text-decoration: $anchor-text-decoration-hover;
         }

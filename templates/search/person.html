@@ -1,5 +1,5 @@
 {% load promrep_tags ddh_utils_tags wagtailbase_tags%}
-<h4>
+<p>
     <a href="{% url 'person-detail' doc.person_id %}?facet_view=person_search{% get_request_parameters 'facet_view' %}">
         {{ doc.dprr_id }}
         {{ doc.object }}
@@ -10,4 +10,4 @@
         
         {% get_office_badges doc.person_id%}
     </a>
-</h4>
+</p>

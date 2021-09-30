@@ -16,7 +16,7 @@ django-mptt-admin
 django-haystack==3.1.1
 lxml
 psycopg2
-pysolr
+pysolr==3.9.0
 regex
 sqlparse
 unicodecsv

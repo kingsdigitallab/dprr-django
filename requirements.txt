@@ -14,7 +14,7 @@ django-model-utils==4.0.0
 django-mptt==0.13.3
 django-mptt-admin
 django-haystack==3.1.1
-Rust >=1.41.0
+RUST==0.1.1
 setuptools-rust==0.12.1
 lxml==4.6.3
 psycopg2==2.9.1

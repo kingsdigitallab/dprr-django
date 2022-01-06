@@ -1,71 +1,65 @@
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9" lang="en"> <![endif]-->
 
 {% load compress static wagtailbase_tags wagtailuserbar %}
 
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=IE8">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=IE8">
 
-        <!-- TODO: implement keywords and description -->
-        <meta name="keywords" content="{% block meta_keywords %}{% endblock %}">
-        <meta name="description" content="{% block meta_description %}{% endblock %}">
+    <!-- TODO: implement keywords and description -->
+    <meta name="keywords" content="{% block meta_keywords %}{% endblock %}">
+    <meta name="description" content="{% block meta_description %}{% endblock %}">
 
-        <!-- Favicon -->
-        {% include 'includes/favicon.html' %}
+    <!-- Favicon -->
+    {% include 'includes/favicon.html' %}
 
-        <title>{% block meta_title %}{% endblock %} | DPRR</title>
+    <title>{% block meta_title %}{% endblock %} | DPRR</title>
 
-        <!-- <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" /> -->
+    <!-- <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" /> -->
 
-        {% compress css %}
+    {% compress css %}
         {# SCSS compilation relies on django compressor #}
-        <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/app.scss' %}" />
-        {% endcompress %}
+        <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/app.scss' %}"/>
+    {% endcompress %}
 
-        {% block headercss %}
-        {% endblock %}
+    {% block headercss %}
+    {% endblock %}
 
-        {% compress js %}
+    {% compress js %}
         <script src="{% static 'vendor/modernizr/modernizr.js' %}"></script>
-        {% endcompress %}
-        <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-67707155-3"></script>
-        <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
+    {% endcompress %}
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-67707155-3"></script>
 
-          gtag('config', 'UA-67707155-3');
-        </script>
-    </head>
-    <body id="body"{% block pageclass %}{% endblock %}>
-        <div role="complementary" class="skip-main"><a href="#maincontent">Skip to main content</a></div>
-        {% include "includes/header.html" %}
-        
-        {% include "includes/nav.html" %}
-        <div id="maincontent" tabindex="0"></div>
-        
-        <div class="contain-to-grid content-area">
-            <section class="main">
-                {% block main %}
-                {% endblock %}
-            </section>
-        </div>
+</head>
+<body id="body"{% block pageclass %}{% endblock %}>
+<div role="complementary" class="skip-main"><a href="#maincontent">Skip to main content</a></div>
+{% include "includes/header.html" %}
 
-        {% include "includes/footer.html" %}
+{% include "includes/nav.html" %}
+<div id="maincontent" tabindex="0"></div>
 
-        {% compress js %}
-        <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
-        <script src="{% static 'vendor/foundation/js/foundation.min.js' %}"></script>
-        <script src="{% static 'vendor/js-cookie/src/js.cookie.js' %}"></script>
-        <script src="{% static 'javascripts/config.js' %}"></script>
-
-        {% block footerscripts %}
+<div class="contain-to-grid content-area">
+    <section class="main">
+        {% block main %}
         {% endblock %}
+    </section>
+</div>
 
-        {% endcompress %}
-    </body>
+{% include "includes/footer.html" %}
+
+{% compress js %}
+    <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/foundation/js/foundation.min.js' %}"></script>
+    <script src="{% static 'vendor/js-cookie/src/js.cookie.js' %}"></script>
+    <script src="{% static 'javascripts/config.js' %}"></script>
+
+{% endcompress %}
+{% block footerscripts %}
+{% endblock %}
+</body>
 </html>

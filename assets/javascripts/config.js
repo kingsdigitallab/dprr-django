@@ -5,22 +5,27 @@ $(document).ready(function () {
     /* https://github.com/js-cookie/js-cookie
     ------------------------------------------------------ */
 
-    $(document).ready(function() {
-      if (!Cookies.get('dprr-cookie')) {
-          $("#cookie-disclaimer").removeClass('hide');
-      }
-      // Set cookie
-      $('#cookie-disclaimer .closeme').on("click", function() {
-          Cookies.set('dprr-cookie', 'dprr-cookie-set', {
-              expires: 30
-          });
-      });
+    $(document).foundation({
+        slider: {
+            precision: 0
+        }
+    });
 
-      $('.closeme').bind("click", function () {
+    if (!Cookies.get('dprr-cookie')) {
+        $("#cookie-disclaimer").removeClass('hide');
+    }
+    // Set cookie
+    $('#cookie-disclaimer .closeme').on("click", function () {
+        Cookies.set('dprr-cookie', 'dprr-cookie-set', {
+            expires: 30
+        });
+    });
+
+    $('.closeme').bind("click", function () {
         $('#cookie-disclaimer').addClass("hide");
         return false;
-      });
     });
+
 
     // Expand / Collapse
 

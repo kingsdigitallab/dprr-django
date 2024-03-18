@@ -5,7 +5,7 @@ Pillow
 Unidecode
 beautifulsoup4
 bleach
-django==3.2
+django==3.2.25
 django-appconf>=1.0.3
 django-author==1.0.1
 django-extensions==1.9.7

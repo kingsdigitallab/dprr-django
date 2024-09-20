@@ -12,14 +12,25 @@ https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 """
 
 import os
-
 from ddhldap.settings import *  # noqa
 from wagtailbase import settings as ws
+import environ
 
-BASE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "..")
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 PROJECT_NAME = "dprr"
 PROJECT_TITLE = "Digitising the Prosopography of the Roman Republic"
+
+COMPOSE_DIR = os.path.join(BASE_DIR, "compose")
+
+env = environ.Env()
+
+READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=True)
+if READ_DOT_ENV_FILE:
+    # OS environment variables take precedence over variables from .env
+    environ.Env.read_env(os.path.join(COMPOSE_DIR, '.env'))
+
 
 # -----------------------------------------------------------------------------
 # Core Settings

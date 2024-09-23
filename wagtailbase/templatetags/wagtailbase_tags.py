@@ -298,7 +298,7 @@ def lookup(dict, index):
     #  useful to use variables in templates
     # differs from get item as it checks if key exists
 
-    if index in dict:
+    if dict and len(dict) > 0 and index in dict:
         return dict[index]
     return ""
 

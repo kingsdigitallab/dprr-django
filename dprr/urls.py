@@ -25,7 +25,7 @@ urlpatterns = [
     url(r"^senate/$", SenateSearchView.as_view(), name="senate_search"),
     url(
         r"^fasti/$",
-        cache_page(60 * 60 * 24)(FastiSearchView.as_view()),
+        FastiSearchView.as_view(), #cache_page(60 * 60 * 24)(
         name="fasti_search",
     ),
     url(r"^person/$", PromrepFacetedSearchView.as_view(), name="person_search"),

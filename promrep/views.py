@@ -50,21 +50,26 @@ class PromrepFacetedSearchView(FacetedSearchView):
         queryset = super(PromrepFacetedSearchView, self).get_queryset()
 
         all_facets = self.autocomplete_facets + self.facet_fields
-
+        options = {"size": 10000}
         for facet in all_facets:
             # only return results with a mincount of 1
-            queryset = queryset.facet(facet, sort="index", limit=-1, mincount=1)
+            # queryset = queryset.facet(facet, sort="index", limit=-1,
+            #                           mincount=1)
+            queryset = queryset.facet(facet, **options)
 
-        if "order" in self.request.GET and self.request.GET["order"] == "-date":
-            return queryset.order_by("uncertain", "-era_order")
+        if "order" in self.request.GET and self.request.GET[
+            "order"] == "-date":
+            return queryset.order_by("uncertain_exact", "-era_order")
 
-        return queryset.order_by("uncertain", "era_order")
+        return queryset.order_by("uncertain_exact", "era_order")
 
     def get_context_data(self, **kwargs):  # noqa
-        context = super(PromrepFacetedSearchView, self).get_context_data(**kwargs)
+        context = super(PromrepFacetedSearchView, self).get_context_data(
+            **kwargs)
 
         if self.request.GET.getlist("selected_facets"):
-            context["selected_facets"] = self.request.GET.getlist("selected_facets")
+            context["selected_facets"] = self.request.GET.getlist(
+                "selected_facets")
 
             # stores all selected offices for later use in search results
             selected_offices = []
@@ -73,7 +78,8 @@ class PromrepFacetedSearchView(FacetedSearchView):
                     office_name = facet.split(":")[1]
                     selected_offices.append(office_name)
                     office = Office.objects.get(name=office_name)
-                    selected_offices.extend([o.name for o in office.get_descendants()])
+                    selected_offices.extend(
+                        [o.name for o in office.get_descendants()])
 
             context["selected_offices"] = selected_offices
 
@@ -121,12 +127,14 @@ class PromrepFacetedSearchView(FacetedSearchView):
         try:
             magisterial = Office.objects.get(id=office_lookups["magisterial"])
             if magisterial:
-                context["magisterial_office_list"] = magisterial.get_descendants()
+                context[
+                    "magisterial_office_list"] = magisterial.get_descendants()
         except:
             pass
 
         try:
-            promagistracies = Office.objects.get(id=office_lookups["promagistracies"])
+            promagistracies = Office.objects.get(
+                id=office_lookups["promagistracies"])
             if promagistracies:
                 context[
                     "promagistracies_office_list"
@@ -137,12 +145,14 @@ class PromrepFacetedSearchView(FacetedSearchView):
         try:
             priesthoods = Office.objects.get(id=office_lookups["priesthoods"])
             if priesthoods:
-                context["priesthoods_office_list"] = priesthoods.get_descendants()
+                context[
+                    "priesthoods_office_list"] = priesthoods.get_descendants()
         except:
             pass
 
         try:
-            non_magisterial = Office.objects.get(id=office_lookups["non_magisterial"])
+            non_magisterial = Office.objects.get(
+                id=office_lookups["non_magisterial"])
             if non_magisterial:
                 context[
                     "non_magisterial_office_list"
@@ -151,19 +161,26 @@ class PromrepFacetedSearchView(FacetedSearchView):
             pass
 
         try:
-            distinctions = Office.objects.get(id=office_lookups["distinctions"])
+            distinctions = Office.objects.get(
+                id=office_lookups["distinctions"])
             if distinctions:
-                context["distinctions_office_list"] = distinctions.get_descendants()
+                context[
+                    "distinctions_office_list"] = (
+                    distinctions.get_descendants())
         except:
             pass
 
-        if "offices" not in context["facets"]["fields"]:
-            context.update({"facets": self.get_queryset().facet_counts()})
-
-        context["office_fdict"] = dict(context["facets"]["fields"]["offices"])
+        if "facets" in context and "fields" in context["facets"]:
+            if "offices" not in context["facets"]["fields"]:
+                context.update({"facets": self.get_queryset().facet_counts()})
+            if "offices" in context["facets"]["fields"]:
+                context["office_fdict"] = dict(
+                    context["facets"]["fields"]["offices"])
+            if "location" in context["facets"]["fields"]:
+                context["province_fdict"] = dict(
+                    context["facets"]["fields"]["location"])
 
         context["province_list"] = Province.objects.all()
-        context["province_fdict"] = dict(context["facets"]["fields"]["location"])
 
         return context
 
@@ -173,7 +190,8 @@ def _get_date_url_and_filter(qs, view_name, field_from, field_to):
         field_text = None
 
         if qs.get(field_from) and qs.get(field_to):
-            field_text = "{} to {}".format(qs.pop(field_from)[0], qs.pop(field_to)[0])
+            field_text = "{} to {}".format(qs.pop(field_from)[0],
+                                           qs.pop(field_to)[0])
         elif qs.get(field_to):
             field_text = "Before {}".format(qs.pop(field_to)[0])
         elif qs.get(field_from):
@@ -335,21 +353,25 @@ class FastiSearchView(FacetedSearchView):
         queryset = super(FastiSearchView, self).get_queryset()
         queryset = self._apply_facets_to_queryset(queryset)
 
-        if "order" in self.request.GET and self.request.GET["order"] == "-date":
+        if "order" in self.request.GET and self.request.GET[
+            "order"] == "-date":
             return queryset.order_by(
                 "unknown_exact",
                 "-date_sort",
                 "office_sort",
-                "office_name",
+                "office_name_exact",
             )
-
+        # , "office_name_exact"
         return queryset.order_by(
-            "unknown_exact", "date_sort", "office_sort", "office_name"
+            "unknown_exact", "date_sort", "office_sort"
         )
 
     def _apply_facets_to_queryset(self, queryset):
+        options = {"size": 10000}
         for facet in self.autocomplete_facets + self.facet_fields:
-            queryset = queryset.facet(facet, sort="index", limit=-1, mincount=1)
+            # queryset = queryset.facet(facet, sort="index", limit=-1,
+            #                           mincount=1)
+            queryset = queryset.facet(facet, **options)
 
         return queryset
 
@@ -360,7 +382,7 @@ class FastiSearchView(FacetedSearchView):
         params = self.request.GET
 
         if ("date_from" in params and params["date_from"]) or (
-            "date_to" in params and params["date_to"]
+                "date_to" in params and params["date_to"]
         ):
             query = "date:[{} TO {}]".format(
                 -1 * int(params["date_from"])
@@ -374,7 +396,8 @@ class FastiSearchView(FacetedSearchView):
 
         for field in PromrepFacetedSearchForm.AUTOCOMPLETE_FACETS:
             if field in params and params[field]:
-                queryset = queryset.narrow("{}:{}".format(field, params[field]))
+                queryset = queryset.narrow(
+                    "{}:{}".format(field, params[field]))
 
         return queryset.facet_counts()
 
@@ -418,12 +441,14 @@ class FastiSearchView(FacetedSearchView):
         try:
             magisterial = Office.objects.get(id=office_lookups["magisterial"])
             if magisterial:
-                context["magisterial_office_list"] = magisterial.get_descendants()
+                context[
+                    "magisterial_office_list"] = magisterial.get_descendants()
         except:
             pass
 
         try:
-            promagistracies = Office.objects.get(id=office_lookups["promagistracies"])
+            promagistracies = Office.objects.get(
+                id=office_lookups["promagistracies"])
             if promagistracies:
                 context[
                     "promagistracies_office_list"
@@ -434,12 +459,14 @@ class FastiSearchView(FacetedSearchView):
         try:
             priesthoods = Office.objects.get(id=office_lookups["priesthoods"])
             if priesthoods:
-                context["priesthoods_office_list"] = priesthoods.get_descendants()
+                context[
+                    "priesthoods_office_list"] = priesthoods.get_descendants()
         except:
             pass
 
         try:
-            non_magisterial = Office.objects.get(id=office_lookups["non_magisterial"])
+            non_magisterial = Office.objects.get(
+                id=office_lookups["non_magisterial"])
             if non_magisterial:
                 context[
                     "non_magisterial_office_list"
@@ -448,17 +475,24 @@ class FastiSearchView(FacetedSearchView):
             pass
 
         try:
-            distinctions = Office.objects.get(id=office_lookups["distinctions"])
+            distinctions = Office.objects.get(
+                id=office_lookups["distinctions"])
             if distinctions:
-                context["distinctions_office_list"] = distinctions.get_descendants()
+                context[
+                    "distinctions_office_list"] = (
+                    distinctions.get_descendants())
         except:
             pass
 
         context.update({"facets": self.get_queryset().facet_counts()})
 
-        context["office_fdict"] = dict(self.get_facet_counts()["fields"]["office"])
+        context["office_fdict"] = dict(
+            self.get_facet_counts()["fields"]["office"])
 
         context["province_list"] = Province.objects.all()
-        context["province_fdict"] = dict(context["facets"]["fields"]["location"])
+        if "facets" in context and "fields" in context[
+            "facets"] and "location" in context["facets"]["fields"]:
+            context["province_fdict"] = dict(
+                context["facets"]["fields"]["location"])
 
         return context

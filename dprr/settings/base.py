@@ -44,12 +44,12 @@ ALLOWED_HOSTS = []
 
 # https://docs.djangoproject.com/en/1.6/ref/settings/#caches
 # https://docs.djangoproject.com/en/dev/topics/cache/
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-        "LOCATION": "dprr_cache",
-    }
-}
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+#         "LOCATION": "dprr_cache",
+#     }
+# }
 
 # Fixing auto field upgrade warning to 3.2
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

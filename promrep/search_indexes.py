@@ -114,7 +114,7 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     location = indexes.MultiValueField(faceted=True)
     highest_office = indexes.CharField(faceted=False)
 
-    uncertain = indexes.CharField(model_attr="uncertain", null=True)
+    uncertain = indexes.BooleanField(model_attr="uncertain", faceted=True, null=True)
 
     def get_model(self):
         return Person
@@ -275,7 +275,7 @@ class PostAssertionIndex(indexes.SearchIndex, indexes.Indexable):
     # These offices will be excluded from the queryset
     exclude_offices = ["senator", "senator - office unknown", "princeps senatus"]
     office = FacetMultiValueField()
-    office_name = indexes.CharField(model_attr="office__name")
+    office_name = indexes.CharField(model_attr="office__name", faceted=True)
     office_sort = indexes.IntegerField()
     uncertain = indexes.BooleanField(model_attr="uncertain", faceted=True)
     unknown = indexes.BooleanField(model_attr="unknown", faceted=True)

@@ -78,6 +78,23 @@ services:
       - "9300:9300"
     restart: unless-stopped
 
+  # Original repositories located at: /vol/poms3/webroot/rdf/repositories
+  # files will be added manually to volumes on server
+  rdf:
+    image: tomcat:9
+    restart: unless-stopped
+    ports:
+      - "8180:8080"
+    volumes:
+      #- ../volumes/tomcat/logs:/usr/local/tomcat/logs/
+      - ../volumes/tomcat/webapps:/usr/local/tomcat/webapps
+      #- ../volumes/tomcat/rdf/repositories:/usr/local/etc/rdf4j/repositories
+    environment:
+      VIRTUAL_HOST: ${DJANGO_ALLOWED_HOSTS}
+      VIRTUAL_PATH: "/rdf"
+      VIRTUAL_PROTO: http
+      VIRTUAL_PORT: 8080
+
 #  postgres:
 #    build:
 #      context: ../

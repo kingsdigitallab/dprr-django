@@ -66,6 +66,7 @@ def remove_facet_link(qd, facet):
         facets.remove(facet)
     except ValueError:
         pass
+    qd.setlist("selected_facets", facets)
     return "?{0}".format(qd.urlencode())
 
 

@@ -86,9 +86,9 @@ services:
     ports:
       - "8180:8080"
     volumes:
-      #- ../volumes/tomcat/logs:/usr/local/tomcat/logs/
+      - ../volumes/tomcat/logs:/usr/local/tomcat/logs/
       - ../volumes/tomcat/webapps:/usr/local/tomcat/webapps
-      #- ../volumes/tomcat/rdf/repositories:/usr/local/etc/rdf4j/repositories
+      - ../volumes/tomcat/rdf4j:/usr/local/etc/rdf4j
     environment:
       VIRTUAL_HOST: ${DJANGO_ALLOWED_HOSTS}
       VIRTUAL_PATH: "/rdf"

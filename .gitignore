@@ -69,6 +69,6 @@ static/
 # Vagrant
 .vagrant/
 playbook.retry
-
+volumes/*
 compose/.env
 compose/.env64

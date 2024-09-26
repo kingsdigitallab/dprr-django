@@ -69,7 +69,7 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.sessions",
     "django.contrib.staticfiles",
-    "ddhldap",
+    #"ddhldap",
     "haystack",
     "mptt",
     "django_mptt_admin",

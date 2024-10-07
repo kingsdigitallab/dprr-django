@@ -1,3 +1,9 @@
 User-agent: *
 crawl-delay: 10
-Disallow: /search
+Disallow: /person/
+
+User-agent: *
+Disallow: /fasti/
+
+User-agent: *
+Disallow: /senate/

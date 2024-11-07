@@ -5,7 +5,7 @@ from .base import *  # noqa
 from .base import env
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = False
 
 # Added for backward compatibility with some old migrations

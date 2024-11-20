@@ -19,18 +19,21 @@
             </p>
         </div>
     </div>
-
-    <form method="get" action=".">
+    <!--action="." data-options="start: 180; end: 31;" min="31" max="180" data-initial-start="{{ senate_date }}" -->
+    <form method="get">
         <div class="row small-collapse medium-uncollapse do-not-print">
+
             <div class="small-6 columns">
+
                 <div class="range-slider slider" data-slider
-                     data-options="display_selector: #id_senate_date; initial: {{ senate_date }}; start: 180; end: 31;">
-                    <span class="range-slider-handle" role="slider" tabindex="0"></span>
+                     data-options="display_selector: #id_senate_date; initial:{{ senate_date }};start: 180; end: 31;">
+
+                    <span class="range-slider-handle" data-slider-handle role="slider" tabindex="0"></span>
                     <span class="range-slider-active-segment"></span>
                 </div>
             </div>
             <div class="small-3 medium-2 large-1 columns">
-                {{ form.senate_date }}
+                <input type="number" name="senate_date" required="" value="{{ senate_date }}" id="id_senate_date">
             </div>
             <div class="small-3 medium-2 large-2 columns">
                 <button type="submit" class="small button secondary expand less-padding">Apply</button>
@@ -55,37 +58,42 @@
         <div class="row do-not-print">
             <div class="large-12 columns">
                 <h2>Dating Certainty
-                <a data-dropdown="dating-certainty" aria-controls="dating-certainty"
-                                                   aria-expanded="false" class="smaller-fontsize">
-                                                   <span class="icons">&#xf05a;</span>
-                                                </a>
+                    <a data-dropdown="dating-certainty-explanation" aria-controls="dating-certainty"
+                       aria-expanded="false" class="smaller-fontsize">
+                        <span class="icons">&#xf05a;</span>
+                    </a>
                 </h2>
 
-                <div id="dating-certainty" data-dropdown-content class="f-dropdown content"
+                <div id="dating-certainty-explanation" data-dropdown-content class="f-dropdown content"
                      aria-hidden="true" tabindex="-1">
-                    <p><strong>Certain</strong> - persons documented as a senator in the chosen year. Sorted on estimated date of
+                    <p><strong>Certain</strong> - persons documented as a senator in the chosen year. Sorted on
+                        estimated date of
                         entering the senate.</p>
-                    <p><strong>Uncertain</strong> - persons possibly a senator in the chosen year. Sorted on estimated date of entering
+                    <p><strong>Uncertain</strong> - persons possibly a senator in the chosen year. Sorted on estimated
+                        date of entering
                         the senate. </p>
-                    <p><strong>Attested before</strong> - persons documented in or possibly in a senatorial post before the chosen year.
+                    <p><strong>Attested before</strong> - persons documented in or possibly in a senatorial post before
+                        the chosen year.
                         Those closest to the chosen date listed first.</p>
-                    <p><strong>Attested after</strong> - persons documented in or possibly in a senatorial post after the chosen year.
+                    <p><strong>Attested after</strong> - persons documented in or possibly in a senatorial post after
+                        the chosen year.
                         Those closest to the chosen date listed first.</p>
 
                 </div>
                 <div class="button-group certainty_switch">
                     <ul>
+                        {% for value, text in form.dating_certainty.field.choices %}
 
-                        {% for radio in form.dating_certainty %}
                             <li {% if forloop.first %}class="alpha"{% endif %}>
-                                {{ radio.choice_label }}
+                                {{ text }}
                                 <div class="switch">
-                                    <input class="switch-input" aria-label="group" role="group" id="{{ radio.id_for_label }}" type="radio"
-                                           {% if radio.choice_value == form.dating_certainty.value %}checked{% endif %}
-                                           value="{{ radio.choice_value }}"
+                                    <input class="switch-input" aria-label="group" role="group"
+                                           id="certaintyRadioSwitch{{ value }}" type="radio"
+                                           {% if value == dating_certainty %}checked{% endif %}
+                                           value="{{ value }}"
                                            name="{{ form.dating_certainty.name }}">
-                                    <label class="switch-paddle" for="{{ radio.id_for_label }}">
-                                        <span class="show-for-sr">{{ radio.choice_label }}</span>
+                                    <label class="switch-paddle" for="certaintyRadioSwitch{{ value }}">
+                                        <span class="show-for-sr">{{ text }}</span>
                                     </label>
                                 </div>
                             </li>
@@ -116,6 +124,6 @@
 
 {% block footerscripts %}
     {{ block.super }}
-    <script src="{% static 'javascripts/search.js' %}"></script>
+    script src="{% static 'javascripts/search.js' %}"></script>
 {% endblock %}
 

@@ -11,6 +11,7 @@ from promrep.forms import (FastiSearchForm, PromrepFacetedSearchForm,
                            SenateSearchForm)
 from promrep.models import (Office, Person, PostAssertion, Province,
                             RelationshipAssertion, StatusAssertion)
+from wagtail.admin.templatetags.wagtailadmin_tags import querystring
 
 
 class PromrepFacetedSearchView(FacetedSearchView):
@@ -312,17 +313,25 @@ class SenateSearchView(SearchView):
 
     def get_queryset(self):
         queryset = super(SenateSearchView, self).get_queryset()
+        certainty = None
+        if "dating_certainty" in self.request.GET:
+            certainty = int(self.request.GET["dating_certainty"])
 
-        if "senate_date" in self.request.GET:
-            queryset = SearchQuerySet().models(StatusAssertion)
+        if certainty and "senate_date" in self.request.GET:
+            #queryset = SearchQuerySet().models(StatusAssertion)
+            # queryset = queryset.narrow(
+            #     "date:[{0} TO {0}]".format(self.request.GET["senate_date"])
+            # )
+            if certainty == 1:
+                queryset = queryset.filter(date__in=self.request.GET["senate_date"])
         else:
             queryset = queryset.narrow(
                 "date:[{0} TO {0}]".format(SenateSearchForm.INITIAL_DATE)
             )
 
-        certainty = self.request.GET.get("dating_certainty")
 
-        if certainty is not None and certainty == "3":
+
+        if certainty is not None and certainty == 3:
             return queryset.order_by("-date_end")
 
         return queryset.order_by("date_start")
@@ -330,15 +339,20 @@ class SenateSearchView(SearchView):
     def get_context_data(self, **kwargs):  # noqa
         context = super(SenateSearchView, self).get_context_data(**kwargs)
         qs = self.request.GET.copy()
-        senate_date = SenateSearchForm.INITIAL_DATE_DISPLAY
+        senateForm = context["form"]
+
+        senate_date = SenateSearchForm.INITIAL_DATE
+        dating_certainty = SenateSearchForm.INITIAL_DATING_CERTAINTTY
 
         context["querydict"] = qs.copy()
 
-        if "senate_date" in qs:
-            senate_date = qs.pop("senate_date")[0]
+        if "senate_date" in senateForm.cleaned_data:
+            senate_date = senateForm.cleaned_data["senate_date"]
+        if "dating_certainty" in senateForm.cleaned_data:
+            dating_certainty = senateForm.cleaned_data["dating_certainty"]
 
-        context["senate_date"] = senate_date
-
+        context["dating_certainty"] = str(dating_certainty)
+        context["senate_date"] = int(senate_date) * -1
         return context
 
 

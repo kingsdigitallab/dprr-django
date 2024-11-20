@@ -314,18 +314,24 @@ DATING_CERTAINTY_CHOICES = (
 class SenateSearchForm(SearchForm):
     INITIAL_DATE = -180
     INITIAL_DATE_DISPLAY = -1 * INITIAL_DATE
+    INITIAL_DATING_CERTAINTTY = 1
+
+    q = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={"type": "search"}),
+    )
 
     senate_date = forms.IntegerField(
         required=True,
-        initial=INITIAL_DATE_DISPLAY,
-        max_value=INITIAL_DATE_DISPLAY,
-        min_value=PromrepFacetedSearchForm.MIN_DATE_FORM,
+        initial=INITIAL_DATE,
+        #max_value=INITIAL_DATE,
+        #min_value=-31
     )
 
     dating_certainty = forms.ChoiceField(
         required=True,
         widget=forms.RadioSelect,
-        initial="1",
+        initial=INITIAL_DATING_CERTAINTTY,
         choices=DATING_CERTAINTY_CHOICES,
     )
 
@@ -346,6 +352,9 @@ class SenateSearchForm(SearchForm):
             dating_certainty = data.get("dating_certainty", "1")
 
             if senate_date:
+                if int(senate_date) > 0:
+                    # make this bc e.g. negative
+                    senate_date = int(senate_date) * -1
                 if dating_certainty == "1":
                     # Certain they are a senator
                     sqs = sqs.narrow(

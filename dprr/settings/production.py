@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from pickle import FALSE
 
 from .base import *  # noqa
 from .base import env
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DJANGO_DEBUG",False)
 TEMPLATE_DEBUG = False
 
 # Added for backward compatibility with some old migrations

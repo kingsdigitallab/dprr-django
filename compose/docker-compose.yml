@@ -52,9 +52,6 @@ services:
       VIRTUAL_PORT: 8000
 
   db:
-    #    build:
-    #      context: ../
-    #      dockerfile: ./compose/local/postgres/Dockerfile
     image: postgres:12.3
     volumes:
       - ../volumes/local_postgres_data:/var/lib/postgresql/data
@@ -94,61 +91,3 @@ services:
       VIRTUAL_PATH: "/rdf"
       VIRTUAL_PROTO: http
       VIRTUAL_PORT: 8080
-
-#  postgres:
-#    build:
-#      context: ../
-#      dockerfile: ./compose/production/postgres/Dockerfile
-#    restart: unless-stopped
-#    image: postgres
-#    environment:
-#      #POSTGRES_USER: ${POSTGRES_USER}
-#      #POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-#      PGDATA: /var/lib/postgresql/data/pgdata
-#    healthcheck:
-#      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
-#      timeout: 10s
-#      interval: 5s
-#      retries: 10
-#    volumes:
-#      - ../volumes/postgres_data:/var/lib/postgresql/data:Z
-#      - ../volumes/postgres_data_backups:/backups:z
-#    env_file:
-#      - .env
-#    expose:
-#      - "5432"
-
-
-
-
-
-  # Core config at /opt/solr/server/solr/mycores/dprr/conf
-  #  solr:
-  #    image: solr:6.6.5
-  #    ports:
-  #      - "8983:8983"
-  #    volumes:
-  #      - local_solr_data:/var/solr
-  #    command:
-  #      - solr-precreate
-  #      - dprr
-
-  # Remember to copy the schema! (Not automatic at present)
-  # To build:
-  # docker-compose -f local.yml run --rm web python manage.py build_solr_schema --configure-directory=/app/solr_config/config
-  # then docker cp results to solr folder above
-#  web:
-#    build:
-#      context: ../
-#      dockerfile: django/Dockerfile
-#    #command: python manage.py runserver 0.0.0.0:8000
-#    command: /start
-##    volumes:
-##      - .:/app
-#    ports:
-#      - "8000:8000"
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#      solr:
-#        condition: service_started

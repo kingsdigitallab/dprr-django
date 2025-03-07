@@ -1,5 +1,31 @@
 [![Build Status](https://travis-ci.org/kingsdigitallab/dprr-django.svg?branch=develop)](https://travis-ci.org/kingsdigitallab/dprr-django)
 
+# DPRR:  Digital Prosopography of the Roman Republic (DPRR)
+## [romanrepublic.ac.uk](romanrepublic.ac.uk)
+
+### Overview
+
+This is the repository for Digital Prosopography of the Roman Republic, currently maintained by [King's Digital Lab](https://github.com/kingsdigitallab/).
+
+This project has been redesigned to run in a Docker container, aimed at an Openstack deployment. 
+
+Containers:
+
+- [nginx-proxy](https://hub.docker.com/r/nginxproxy/nginx-proxy): This is the primary entry point for the stack, runnning on 80.  It automatically builds a proxy to other containers.
+- [django 3.2](https://hub.docker.com/layers/library/python/3.6-slim-buster/images/sha256-5dd134d6d97c67dd02e4642ab24ecbb9d23059ea018a8b5185784d29dce2f37a?context=explore): The main container for the project (see more detailed description below.) 
+- [nginx](https://hub.docker.com/_/nginx): This is the static data container, serving Django's static content.
+- db ([Postgres 12.3](https://www.postgresql.org/docs/12/index.html)): The database container for Django above.
+- elasticsearch [7.10](https://hub.docker.com/_/elasticsearch): The indexing container, used by Haystack 3.2.1. (Pre-migration, Haystack 2 was using Solr 6.)
+- rdf: This container is an encapsulation of a Tomcat server running John Bradley's modified [RDF4J](https://rdf4j.org/) to provide the DPRR dataset as linked open data.  For more information, see the documentation at [DPRRRDF](https://romanrepublic.ac.uk/rdf/doc/index.html)
+
+### Deployment notes
+
+- After deployment, don't forget to run python manage.py update_index to build the Haystack index.  This won't happen automatically.
+
+
+
+   
+
 ### Requirements
 
 Python/Django requirements can be found in the `requirements.txt` file.

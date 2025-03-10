@@ -9,14 +9,42 @@ This is the repository for Digital Prosopography of the Roman Republic, currentl
 
 This project has been redesigned to run in a Docker container, aimed at an Openstack deployment. 
 
-Containers:
+### Containers:
 
-- [nginx-proxy](https://hub.docker.com/r/nginxproxy/nginx-proxy): This is the primary entry point for the stack, runnning on 80.  It automatically builds a proxy to other containers.
+- [nginx-proxy](https://hub.docker.com/r/nginxproxy/nginx-proxy): This is the primary entry point for the stack, running on 80.  It automatically builds a proxy to other containers.
 - [django 3.2](https://hub.docker.com/layers/library/python/3.6-slim-buster/images/sha256-5dd134d6d97c67dd02e4642ab24ecbb9d23059ea018a8b5185784d29dce2f37a?context=explore): The main container for the project (see more detailed description below.) 
 - [nginx](https://hub.docker.com/_/nginx): This is the static data container, serving Django's static content.
 - db ([Postgres 12.3](https://www.postgresql.org/docs/12/index.html)): The database container for Django above.
 - elasticsearch [7.10](https://hub.docker.com/_/elasticsearch): The indexing container, used by Haystack 3.2.1. (Pre-migration, Haystack 2 was using Solr 6.)
 - rdf: This container is an encapsulation of a Tomcat server running John Bradley's modified [RDF4J](https://rdf4j.org/) to provide the DPRR dataset as linked open data.  For more information, see the documentation at [DPRRRDF](https://romanrepublic.ac.uk/rdf/doc/index.html)
+
+### ENV file
+
+The compose file will look for deployment variables in a compose/.env file.  Below is a sample file:
+
+```
+#Django
+DJANGO_READ_DOT_ENV_FILE=True
+DJANGO_ALLOWED_HOSTS=
+DJANGO_SECRET_KEY=
+DJANGO_DEBUG=False
+
+# Elasticsearch
+# ------------------------------------------------------------------------------
+discovery.type=single-node
+
+
+# Postgres
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+#POSTGRES_DB=
+POSTGRES_DB=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+```
+
+Fill in the database credentials and Django variables.  If deploying via a CI pipeling such as Gitlab, this file will need to be included in its variables (in the KDL setup, we encode this in base64 and add it to the CI/CD variables in the repository settings.)
 
 ### Deployment notes
 

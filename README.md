@@ -44,7 +44,7 @@ POSTGRES_USER=
 POSTGRES_PASSWORD=
 ```
 
-Fill in the database credentials and Django variables.  If deploying via a CI pipeling such as Gitlab, this file will need to be included in its variables (in the KDL setup, we encode this in base64 and add it to the CI/CD variables in the repository settings.)
+Fill in the database credentials and Django variables.  If deploying via a CI pipeline such as Gitlab, this file will need to be included in its variables (in the KDL setup, we encode this in base64 and add it to the CI/CD variables in the repository settings.)
 
 ### Deployment notes
 

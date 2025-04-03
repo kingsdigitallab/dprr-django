@@ -28,3 +28,4 @@ sqlparse
 unicodecsv
 pdfkit
 django-environ==0.4.5
+gunicorn

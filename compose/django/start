@@ -8,4 +8,5 @@ python manage.py migrate
 python manage.py collectstatic --noinput
 #python manage.py update_index
 
-python manage.py runserver 0.0.0.0:8000
+#python manage.py runserver 0.0.0.0:8000
+/usr/local/bin/gunicorn dprr.wsgi --bind 0.0.0.0:8000 --chdir=/app --workers 3 --threads 2 --max-requests 500 --max-requests-jitter 50 --timeout 180 --forwarded-allow-ips=0.0.0.0

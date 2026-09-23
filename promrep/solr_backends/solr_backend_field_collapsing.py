@@ -90,9 +90,9 @@ class GroupedSearchResult(object):
             )
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return "GroupedSearchResult({}={}, hits={})".format(
-            self.field_name, self.group_key, self.hits
+            self.field_name, self.key, self.hits
         )
 
     def process_documents(self, doclist, raw_results):

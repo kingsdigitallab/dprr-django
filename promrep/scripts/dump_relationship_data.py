@@ -48,14 +48,14 @@ def person_rel_json(person):
             "id": rel.id,
             "source": rel.person.id,
             "target": rel.related_person.id,
-            "label": rel.relationship.__unicode__(),
+            "label": rel.relationship.__str__(),
         }
 
         if rel_dict_el not in edges:
             edges.append(rel_dict_el)
 
     for person in persons:
-        p_el_dict = {"id": person.id, "label": person.__unicode__()}
+        p_el_dict = {"id": person.id, "label": person.__str__()}
 
         if p_el_dict not in nodes:
             nodes.append(p_el_dict)

@@ -43,11 +43,9 @@ class SecondarySource(TimeStampedModel):
     abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
     biblio = models.CharField(max_length=512, unique=True, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.abbrev_name
 
-    def __str__(self):
-        return self.__unicode__()
 
     @staticmethod
     def autocomplete_search_fields():
@@ -59,11 +57,8 @@ class PrimarySource(models.Model):
     abbrev_name = models.CharField(max_length=256, unique=True, blank=True)
     biblio = models.CharField(max_length=512, unique=True, blank=True)
 
-    def __unicode__(self):
-        return self.abbrev_name
-
     def __str__(self):
-        return self.__unicode__()
+        return self.abbrev_name
 
 
 @with_author
@@ -75,11 +70,9 @@ class Praenomen(models.Model):
         verbose_name_plural = "Praenomina"
         ordering = ["name"]
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
-    def __str__(self):
-        return self.__unicode__()
 
     @property
     def alternate_name(self):
@@ -98,11 +91,8 @@ class Praenomen(models.Model):
 class Sex(models.Model):
     name = models.CharField(max_length=32, unique=True)
 
-    def __unicode__(self):
-        return self.name
-
     def __str__(self):
-        return self.__unicode__()
+        return self.name
 
 
 @with_author
@@ -113,11 +103,8 @@ class Gens(models.Model):
     name = models.CharField(max_length=128, unique=True)
     extra_info = models.CharField(max_length=1024, blank=True)
 
-    def __unicode__(self):
-        return self.name
-
     def __str__(self):
-        return self.__unicode__()
+        return self.name
 
 
 @with_author
@@ -126,11 +113,9 @@ class Tribe(models.Model):
     name = models.CharField(max_length=128)
     extra_info = models.CharField(max_length=1024, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.abbrev
 
-    def __str__(self):
-        return self.__unicode__()
 
     class Meta:
         ordering = [
@@ -142,11 +127,8 @@ class NoteType(TimeStampedModel):
     name = models.CharField(max_length=128, unique=True)
     description = models.TextField(max_length=1024, blank=True)
 
-    def __unicode__(self):
-        return self.name
-
     def __str__(self):
-        return self.__unicode__()
+        return self.name
 
 
 @with_author
@@ -181,11 +163,8 @@ class PrimarySourceReference(TimeStampedModel):
     )
     text = models.TextField(blank=True)
 
-    def __unicode__(self):
-        return self.text
-
     def __str__(self):
-        return self.__unicode__()
+        return self.text
 
 
 class Note(TimeStampedModel):
@@ -208,11 +187,8 @@ class Note(TimeStampedModel):
             "id",
         ]
 
-    def __unicode__(self):
-        return self.text.strip()
-
     def __str__(self):
-        return self.__unicode__()
+        return self.text.strip()
 
 
 @with_author
@@ -227,7 +203,7 @@ class RelationshipAssertionReference(Note):
 
     def print_primary_source_refs(self):
         return ", ".join(
-            [pref.__unicode__() for pref in self.primary_source_references.all()]
+            [pref.__str__() for pref in self.primary_source_references.all()]
         )
 
     def url_to_edit_note(self):
@@ -235,7 +211,7 @@ class RelationshipAssertionReference(Note):
             "admin:%s_%s_change" % (self._meta.app_label, self._meta.model_name),
             args=[self.id],
         )
-        return mark_safe('<a href="%s">%s</a>' % (url, self.__unicode__()))
+        return mark_safe('<a href="%s">%s</a>' % (url, self.__str__()))
 
     def related_label(self):
         return "[%s] %s (%s)<br><br>" % (
@@ -244,15 +220,12 @@ class RelationshipAssertionReference(Note):
             self.print_primary_source_refs(),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s, %s (%s)" % (
             self.secondary_source.abbrev_name,
             self.text,
             self.print_primary_source_refs(),
         )
-
-    def __str__(self):
-        return self.__unicode__()
 
 
 @with_author
@@ -262,7 +235,7 @@ class PostAssertionNote(Note):
             "admin:%s_%s_change" % (self._meta.app_label, self._meta.model_name),
             args=[self.id],
         )
-        return mark_safe('<a href="%s">%s</a>' % (url, self.__unicode__()))
+        return mark_safe('<a href="%s">%s</a>' % (url, self.__str__()))
 
     def related_label(self):
         return "[%s - %s] %s <br>" % (
@@ -280,7 +253,7 @@ class PersonNote(Note):
             args=[self.id],
         )
 
-        return mark_safe('<a href="%s">%s</a>' % (url, self.__unicode__()))
+        return mark_safe('<a href="%s">%s</a>' % (url, self.__str__()))
 
     def related_label(self):
         return "[%s - %s] %s<br><br>" % (
@@ -288,9 +261,6 @@ class PersonNote(Note):
             self.secondary_source.abbrev_name,
             self.text,
         )
-
-    def __str__(self):
-        return self.__unicode__()
 
 
 @with_author
@@ -301,7 +271,7 @@ class StatusAssertionNote(Note):
             args=[self.id],
         )
 
-        return mark_safe('<a href="%s">%s</a>' % (url, self.__unicode__()))
+        return mark_safe('<a href="%s">%s</a>' % (url, self.__str__()))
 
     def related_label(self):
         return "[%s - %s] %s<br><br>" % (
@@ -309,9 +279,6 @@ class StatusAssertionNote(Note):
             self.secondary_source.abbrev_name,
             self.text,
         )
-
-    def __str__(self):
-        return self.__unicode__()
 
 
 @with_author
@@ -407,7 +374,7 @@ class Person(TimeStampedModel):
             "id",
         ]
 
-    def __unicode__(self):  # noqa
+    def __str__(self):  # noqa
         name_l = []
 
         # TODO: only showing praenomen for men
@@ -637,7 +604,7 @@ class Person(TimeStampedModel):
             "admin:%s_%s_change" % (self._meta.app_label, self._meta.model_name),
             args=[self.id],
         )
-        return mark_safe('<a href="{}">{}</a>'.format(url, self.__unicode__()))
+        return mark_safe('<a href="{}">{}</a>'.format(url, self.__str__()))
 
     url_to_edit_person.short_description = "Person"
 
@@ -688,9 +655,6 @@ class Person(TimeStampedModel):
     def get_reference_notes(self):
         return self.notes.filter(note_type=1)
 
-    def __str__(self):
-        return self.__unicode__()
-
 
 @with_author
 class TribeAssertion(TimeStampedModel):
@@ -709,11 +673,8 @@ class TribeAssertion(TimeStampedModel):
     class Meta:
         verbose_name = "Tribe"
 
-    def __unicode__(self):
-        return "{}{}".format(self.tribe.abbrev, "?" if self.uncertain else "")
-
     def __str__(self):
-        return self.__unicode__()
+        return "{}{}".format(self.tribe.abbrev, "?" if self.uncertain else "")
 
 
 @with_author
@@ -734,11 +695,8 @@ class GensAssertion(TimeStampedModel):
         verbose_name = "Gens"
         verbose_name_plural = "Gentes"
 
-    def __unicode__(self):
-        return "{}{}".format(self.gens.name, " ?" if self.uncertain else "")
-
     def __str__(self):
-        return self.__unicode__()
+        return "{}{}".format(self.gens.name, " ?" if self.uncertain else "")
 
 
 @with_author
@@ -749,11 +707,8 @@ class DateType(TimeStampedModel):
     class Meta:
         ordering = ["name"]
 
-    def __unicode__(self):
-        return "%s" % self.name
-
     def __str__(self):
-        return self.__unicode__()
+        return "%s" % self.name
 
 
 @with_author
@@ -785,7 +740,7 @@ class DateInformation(TimeStampedModel):
     class Meta:
         verbose_name = "Date"
 
-    def __unicode__(self):
+    def __str__(self):
         date_str = ""
 
         if self.value >= 0:
@@ -806,8 +761,6 @@ class DateInformation(TimeStampedModel):
 
         return di_str
 
-    def __str__(self):
-        return self.__unicode__()
 
     def has_ruepke_secondary_source(self):
         if not self.secondary_source:
@@ -854,7 +807,7 @@ class Office(MPTTModel, TimeStampedModel):
     class MPTTMeta:
         order_insertion_by = ["name"]
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @staticmethod
@@ -864,9 +817,6 @@ class Office(MPTTModel, TimeStampedModel):
             "name__icontains",
         )
 
-    def __str__(self):
-        return self.__unicode__()
-
 
 @with_author
 class RelationshipType(TimeStampedModel):
@@ -874,11 +824,8 @@ class RelationshipType(TimeStampedModel):
     order = models.PositiveSmallIntegerField(default=0)
     description = models.CharField(max_length=1024, blank=True, null=True)
 
-    def __unicode__(self):
-        return self.name
-
     def __str__(self):
-        return self.__unicode__()
+        return self.name
 
 
 @with_author
@@ -902,11 +849,8 @@ class Province(MPTTModel, TimeStampedModel):
     class MPTTMeta:
         order_insertion_by = ["name"]
 
-    def __unicode__(self):
-        return self.name
-
     def __str__(self):
-        return self.__unicode__()
+        return self.name
 
 
 @with_author
@@ -980,19 +924,17 @@ class PostAssertion(TimeStampedModel):
 
         return name
 
-    def __unicode__(self):
+    def __str__(self):
 
         off = "No office"
         if self.office:
-            off = self.office.__unicode__()
+            off = self.office.__str__()
 
-        name = str(self.person.__unicode__()) + ": " + off + " " + self.print_date()
+        name = str(self.person.__str__()) + ": " + off + " " + self.print_date()
 
         name = name + " (" + self.secondary_source.abbrev_name + ")"
         return name
 
-    def __str__(self):
-        return self.__unicode__()
 
     def print_provinces(self):
         provinces = []
@@ -1108,15 +1050,12 @@ class PostAssertionProvince(models.Model):
     uncertain = models.BooleanField(verbose_name="Uncertain", default=False)
     note = models.CharField(max_length=1024, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         un = ""
         if self.uncertain:
             un = "?"
 
         return self.province.name + " " + un
-
-    def __str__(self):
-        return self.__unicode__()
 
 
 @with_author
@@ -1168,11 +1107,9 @@ class RelationshipAssertion(TimeStampedModel):
 
     review_flag = models.BooleanField(verbose_name="Review needed", default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return "{} is {} {}".format(self.person, self.relationship, self.related_person)
 
-    def __str__(self):
-        return self.__unicode__()
 
     # flag indicates that the Status Assertion was manually verified
     # and should not be edited/deleted automatically
@@ -1208,11 +1145,9 @@ class StatusType(TimeStampedModel):
     abbrev_name = models.CharField(max_length=32, blank=True, null=True)
     description = models.CharField(max_length=1024, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return "{}".format(self.name)
 
-    def __str__(self):
-        return self.__unicode__()
 
     def get_display_name(self):
         if self.abbrev_name:
@@ -1338,12 +1273,12 @@ class StatusAssertion(TimeStampedModel):
     # we need to use the connecting table unicode method in order to print
     #  uncertainty info, etc.
     def print_provinces(self):
-        pl = [p.__unicode__() for p in self.statusassertionprovince_set.all()]
+        pl = [p.__str__() for p in self.statusassertionprovince_set.all()]
         return mark_safe(", ".join(pl))
 
     print_provinces.short_description = "Provinces"
 
-    def __unicode__(self):
+    def __str__(self):
         return "{} {}{} {} ({})".format(
             self.person,
             self.status,
@@ -1351,9 +1286,6 @@ class StatusAssertion(TimeStampedModel):
             self.print_date(),
             self.secondary_source.abbrev_name,
         )
-
-    def __str__(self):
-        return self.__unicode__()
 
 
 @with_author
@@ -1365,12 +1297,9 @@ class StatusAssertionProvince(models.Model):
     uncertain = models.BooleanField(verbose_name="Uncertain", default=False)
     note = models.CharField(max_length=1024, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         un = ""
         if self.uncertain:
             un = "?"
 
         return self.province.name + " " + un
-
-    def __str__(self):
-        return self.__unicode__()

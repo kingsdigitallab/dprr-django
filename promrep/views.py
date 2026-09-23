@@ -271,14 +271,14 @@ def _get_relationships_network(person):
     relationships = RelationshipAssertion.objects.filter(person=person)
     for relationship in relationships:
         for person in [relationship.person, relationship.related_person]:
-            node = {"id": person.id, "label": person.__unicode__()}
+            node = {"id": person.id, "label": person.__str__()}
 
             if node not in nodes:
                 nodes.append(node)
 
         edge = {
             "id": relationship.id,
-            "label": relationship.relationship.__unicode__(),
+            "label": relationship.relationship.__str__(),
             "source": relationship.person.id,
             "target": relationship.related_person.id,
         }

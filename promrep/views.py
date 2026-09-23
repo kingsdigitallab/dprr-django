@@ -303,24 +303,24 @@ class SenateSearchView(SearchView):
 
     def get_queryset(self):
         queryset = super(SenateSearchView, self).get_queryset()
-        certainty = None
-        if "dating_certainty" in self.request.GET:
-            certainty = int(self.request.GET["dating_certainty"])
 
-        if certainty and "senate_date" in self.request.GET:
-            # queryset = SearchQuerySet().models(StatusAssertion)
-            # queryset = queryset.narrow(
-            #     "date:[{0} TO {0}]".format(self.request.GET["senate_date"])
-            # )
-            if certainty == 1:
-                senate_date = -1 * int(self.request.GET["senate_date"])
-                queryset = queryset.filter(date__in=[senate_date])
-        else:
+        # Validate parameters through the form: raw int() parsing raised
+        # ValueError (HTTP 500) on non-numeric input, and clean_senate_date
+        # already converts years to negative BC values and applies the
+        # date/certainty filters in search(). Invalid/default submissions
+        # (e.g. the landing page) fall back to the initial senate year.
+        certainty = None
+        if self.request.GET.get("dating_certainty"):
+            form = SenateSearchForm(self.request.GET, searchqueryset=queryset)
+            if form.is_valid():
+                certainty = form.cleaned_data.get("dating_certainty")
+
+        if certainty is None:
             queryset = queryset.narrow(
                 "date:[{0} TO {0}]".format(SenateSearchForm.INITIAL_DATE)
             )
 
-        if certainty is not None and certainty == 3:
+        if certainty == "3":
             return queryset.order_by("-date_end")
 
         return queryset.order_by("date_start")

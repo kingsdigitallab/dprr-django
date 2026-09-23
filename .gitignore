@@ -72,3 +72,6 @@ playbook.retry
 volumes/*
 compose/.env
 compose/.env64
+
+# Backups (stale pre-edit snapshots; history is the real backup)
+*.bak

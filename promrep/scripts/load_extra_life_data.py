@@ -321,7 +321,7 @@ def read_input_file(ifname):  # noqa
                                 di.secondary_source = sec_source
                                 di.save()
 
-                        except:
+                        except Exception:
                             print(
                                 (
                                     "ERROR: Cannot create DateInformation"

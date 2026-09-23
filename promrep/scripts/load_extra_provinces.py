@@ -30,7 +30,7 @@ def read_input_file(ifname):  # noqa
             pa = None
             try:
                 pa = PostAssertion.objects.get(id=post_id)
-            except:
+            except Exception:
                 print(("PostAssertion not found {}".format(post_id)))
 
             if pa:
@@ -65,7 +65,7 @@ def read_input_file(ifname):  # noqa
 
                     try:
                         province = Province.objects.get(name__iexact=prov.lower())
-                    except:
+                    except Exception:
                         province = Province(name=prov)
                         province.save()
 

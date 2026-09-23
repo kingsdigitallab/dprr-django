@@ -2,7 +2,7 @@ from promrep.models import Person, RelationshipAssertion
 
 try:
     import simplejson as json
-except:
+except Exception:
     import json
 
 

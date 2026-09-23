@@ -51,7 +51,7 @@ def read_input_file(ifname):  # noqa
                             sec_source = SecondarySource.objects.get(
                                 abbrev_name=date_ref
                             )
-                        except:
+                        except Exception:
                             sec_source, created = SecondarySource.objects.get_or_create(
                                 abbrev_name=date_ref, biblio=date_ref, name=date_ref
                             )
@@ -107,7 +107,7 @@ def read_input_file(ifname):  # noqa
                                 di.secondary_source = sec_source
                                 di.save()
 
-                        except:
+                        except Exception:
                             print(
                                 (
                                     "Cannot create DateInformation object".format(

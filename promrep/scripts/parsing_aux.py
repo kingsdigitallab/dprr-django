@@ -116,7 +116,7 @@ def parse_person(text):  # noqa
                     praenomen = Praenomen.objects.get(abbrev=praenomen_str)
                 else:
                     praenomen = Praenomen.objects.get(name=praenomen_str)
-            except:
+            except Exception:
                 logger.error("ERROR: Praenomen lookup error: %s", praenomen_str)
                 return None
 
@@ -163,7 +163,7 @@ def parse_person(text):  # noqa
 
         return person_data
 
-    except:
+    except Exception:
         print("Unable to parse the name:", text)
         return None
 
@@ -230,7 +230,7 @@ def parse_brennan_person(text):  # noqa
 
         try:
             praenomen = Praenomen.objects.get(abbrev=praenomen_str)
-        except:
+        except Exception:
             logger.error("Praenomen lookup error: %s", praenomen_str)
             return None
 
@@ -306,7 +306,7 @@ def get_office_obj(office_name):
     # tries to get the normalized office name from the
     try:
         oname = OFFICE_NAMES_DIC[office_name]
-    except:
+    except Exception:
         oname = office_name
 
     try:

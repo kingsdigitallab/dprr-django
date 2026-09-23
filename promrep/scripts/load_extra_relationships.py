@@ -114,7 +114,7 @@ def create_or_update_person(person_idx, row_dict):  # noqa
     if person_id != 0:
         try:
             person = Person.objects.get(id=person_id)
-        except:
+        except Exception:
             print(("ERROR: Person with ID={} not in db".format(person_id)))
             # we'll simply create this person from scratch...
             person_id = 0

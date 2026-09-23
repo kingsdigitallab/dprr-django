@@ -129,7 +129,7 @@ class PromrepFacetedSearchView(FacetedSearchView):
             magisterial = Office.objects.get(id=office_lookups["magisterial"])
             if magisterial:
                 context["magisterial_office_list"] = magisterial.get_descendants()
-        except:
+        except Exception:
             pass
 
         try:
@@ -138,14 +138,14 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 context["promagistracies_office_list"] = (
                     promagistracies.get_descendants()
                 )
-        except:
+        except Exception:
             pass
 
         try:
             priesthoods = Office.objects.get(id=office_lookups["priesthoods"])
             if priesthoods:
                 context["priesthoods_office_list"] = priesthoods.get_descendants()
-        except:
+        except Exception:
             pass
 
         try:
@@ -154,14 +154,14 @@ class PromrepFacetedSearchView(FacetedSearchView):
                 context["non_magisterial_office_list"] = (
                     non_magisterial.get_descendants()
                 )
-        except:
+        except Exception:
             pass
 
         try:
             distinctions = Office.objects.get(id=office_lookups["distinctions"])
             if distinctions:
                 context["distinctions_office_list"] = distinctions.get_descendants()
-        except:
+        except Exception:
             pass
 
         if "facets" in context and "fields" in context["facets"]:
@@ -441,7 +441,7 @@ class FastiSearchView(FacetedSearchView):
             magisterial = Office.objects.get(id=office_lookups["magisterial"])
             if magisterial:
                 context["magisterial_office_list"] = magisterial.get_descendants()
-        except:
+        except Exception:
             pass
 
         try:
@@ -450,14 +450,14 @@ class FastiSearchView(FacetedSearchView):
                 context["promagistracies_office_list"] = (
                     promagistracies.get_descendants()
                 )
-        except:
+        except Exception:
             pass
 
         try:
             priesthoods = Office.objects.get(id=office_lookups["priesthoods"])
             if priesthoods:
                 context["priesthoods_office_list"] = priesthoods.get_descendants()
-        except:
+        except Exception:
             pass
 
         try:
@@ -466,14 +466,14 @@ class FastiSearchView(FacetedSearchView):
                 context["non_magisterial_office_list"] = (
                     non_magisterial.get_descendants()
                 )
-        except:
+        except Exception:
             pass
 
         try:
             distinctions = Office.objects.get(id=office_lookups["distinctions"])
             if distinctions:
                 context["distinctions_office_list"] = distinctions.get_descendants()
-        except:
+        except Exception:
             pass
 
         context.update({"facets": self.get_queryset().facet_counts()})

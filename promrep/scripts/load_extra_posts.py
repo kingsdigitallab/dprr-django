@@ -219,7 +219,7 @@ def read_input_file(ifname):  # noqa
             try:
                 if person_id:
                     Person.objects.get(id=person_id)
-            except:
+            except Exception:
                 print(("ERROR: person id does not exist: {}".format(person_id)))
                 person_id = 0
 
@@ -280,7 +280,7 @@ def read_input_file(ifname):  # noqa
                     date_start = int(date_start)
                     if date_start > 0:
                         date_start = -date_start
-                except:
+                except Exception:
                     print(("ERROR: Date '{}' is not an integer.".format(date_start)))
                     date_start = None
 
@@ -289,7 +289,7 @@ def read_input_file(ifname):  # noqa
                     date_end = int(date_end)
                     if date_end > 0:
                         date_end = -date_end
-                except:
+                except Exception:
                     print(("ERROR: Date '{}' is not an integer.".format(date_end)))
                     date_end = None
 

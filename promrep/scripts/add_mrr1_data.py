@@ -361,7 +361,7 @@ def processXML(volume):  # noqa
                                     )
                                     ap_fnote.save()
                                     post_assertion.notes.add(ap_fnote)
-                                except:
+                                except Exception:
                                     print("ERROR ADDING NOTES!!!")
                             else:
                                 print(
